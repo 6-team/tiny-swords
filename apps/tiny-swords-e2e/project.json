@@ -1,0 +1,22 @@
+{
+  "name": "tiny-swords-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/tiny-swords-e2e/src",
+  "targets": {
+    "e2e": {
+      "executor": "@nx/playwright:playwright",
+      "outputs": ["{workspaceRoot}/dist/.playwright/apps/tiny-swords-e2e"],
+      "options": {
+        "config": "apps/tiny-swords-e2e/playwright.config.ts"
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/tiny-swords-e2e/**/*.{js,ts}"]
+      }
+    }
+  },
+  "implicitDependencies": ["tiny-swords"]
+}
