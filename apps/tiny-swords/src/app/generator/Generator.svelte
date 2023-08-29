@@ -4,46 +4,53 @@
   import { TileName } from "../entites/scene/scene.const";
 
   const waterMap = [
-    new Array(10).fill(TileName.WATER_MIDDLE_MIDDLE),
-    new Array(10).fill(TileName.WATER_MIDDLE_MIDDLE),
-    new Array(10).fill(TileName.WATER_MIDDLE_MIDDLE),
-    new Array(10).fill(TileName.WATER_MIDDLE_MIDDLE),
-    new Array(10).fill(TileName.WATER_MIDDLE_MIDDLE),
-    new Array(10).fill(TileName.WATER_MIDDLE_MIDDLE),
-    new Array(10).fill(TileName.WATER_MIDDLE_MIDDLE),
-    new Array(10).fill(TileName.WATER_MIDDLE_MIDDLE),
-    new Array(10).fill(TileName.WATER_MIDDLE_MIDDLE),
-    new Array(10).fill(TileName.WATER_MIDDLE_MIDDLE),
-  ];
-
-  const elevationMap = [
-    [],
-    [],
-    [null, TileName.ELEVATION_TOP_LEFT,    TileName.ELEVATION_TOP_RIGHT],
-    [null, TileName.ELEVATION_BOTTOM_LEFT, TileName.GROUND_MIDDLE_MIDDLE,      TileName.ELEVATION_TOP_MIDDLE,       TileName.ELEVATION_HORIZONTAL_RIGHT],
-    [null, TileName.ELEVATION_EDGE_LEFT,   TileName.GROUND_VERTICAL_MIDDLE,    TileName.ELEVATION_HORIZONTAL_RIGHT, TileName.ELEVATION_EDGE_RIGHT],
-    [null, null,                           TileName.ELEVATION_VERTICAL_BOTTOM, TileName.ELEVATION_EDGE_RIGHT],
-    [null, null,                           TileName.ELEVATION_VERTICAL_EDGE]
+    new Array(15).fill(TileName.WATER_MIDDLE_MIDDLE),
+    new Array(15).fill(TileName.WATER_MIDDLE_MIDDLE),
+    new Array(15).fill(TileName.WATER_MIDDLE_MIDDLE),
+    [...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE), ...new Array(11).fill(null), ...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE)],
+    [...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE), ...new Array(11).fill(null), ...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE)],
+    [...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE), ...new Array(11).fill(null), ...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE)],
+    [...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE), ...new Array(11).fill(null), ...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE)],
+    [...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE), ...new Array(11).fill(null), ...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE)],
+    new Array(15).fill(TileName.WATER_MIDDLE_MIDDLE),
+    new Array(15).fill(TileName.WATER_MIDDLE_MIDDLE),
   ];
 
   const sandMap = [
     [],
-    [null, null, TileName.SAND_TOP_LEFT,    TileName.SAND_TOP_RIGHT],
-    [null, null, TileName.SAND_MIDDLE_LEFT, TileName.SAND_MIDDLE_RIGHT],
-    [null, null, null,                      TileName.SAND_BOTTOM_RIGHT]
+    [],
+    [],
+    [null, TileName.SAND_TOP_LEFT,    ...new Array(11).fill(null), TileName.SAND_TOP_RIGHT],
+    [null, TileName.SAND_MIDDLE_LEFT, ...new Array(11).fill(null), TileName.SAND_MIDDLE_RIGHT],
+    [null, TileName.SAND_MIDDLE_LEFT, ...new Array(11).fill(null), TileName.SAND_MIDDLE_RIGHT],
+    [null, TileName.SAND_MIDDLE_LEFT, ...new Array(11).fill(null), TileName.SAND_MIDDLE_RIGHT],
+    [null, TileName.SAND_MIDDLE_LEFT, ...new Array(11).fill(TileName.SAND_MIDDLE_MIDDLE), TileName.SAND_MIDDLE_RIGHT],
+    [null, TileName.SAND_BOTTOM_LEFT, ...new Array(11).fill(TileName.SAND_BOTTOM_MIDDLE), TileName.SAND_BOTTOM_RIGHT],
   ]
+
+  const elevationMap = [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [null, null, TileName.ELEVATION_BOTTOM_LEFT, ...new Array(9).fill(TileName.ELEVATION_BOTTOM_MIDDLE), TileName.ELEVATION_BOTTOM_RIGHT],
+    [null, null, TileName.ELEVATION_EDGE_LEFT,   ...new Array(9).fill(TileName.ELEVATION_EDGE_MIDDLE),   TileName.ELEVATION_EDGE_RIGHT],
+  ];
 
   const groundMap = [
     [],
     [],
-    [null, TileName.GROUND_TOP_LEFT,    TileName.GROUND_TOP_RIGHT],
-    [null, TileName.GROUND_BOTTOM_LEFT, TileName.GROUND_MIDDLE_MIDDLE,   TileName.GROUND_TOP_MIDDLE,    TileName.GROUND_HORIZONTAL_RIGHT],
-    [null, null,                        TileName.GROUND_MIDDLE_LEFT,     TileName.GROUND_BOTTOM_RIGHT],
-    [null, null,                        TileName.GROUND_VERTICAL_BOTTOM]
+    [null, null, TileName.GROUND_TOP_LEFT,    ...new Array(9).fill(TileName.GROUND_TOP_MIDDLE),    TileName.GROUND_TOP_RIGHT],
+    [null, null, TileName.GROUND_MIDDLE_LEFT, ...new Array(9).fill(TileName.GROUND_MIDDLE_MIDDLE), TileName.GROUND_MIDDLE_RIGHT],
+    [null, null, TileName.GROUND_MIDDLE_LEFT, ...new Array(9).fill(TileName.GROUND_MIDDLE_MIDDLE), TileName.GROUND_MIDDLE_RIGHT],
+    [null, null, TileName.GROUND_MIDDLE_LEFT, ...new Array(9).fill(TileName.GROUND_MIDDLE_MIDDLE), TileName.GROUND_MIDDLE_RIGHT],
+    [null, null, TileName.GROUND_BOTTOM_LEFT, ...new Array(9).fill(TileName.GROUND_BOTTOM_MIDDLE), TileName.GROUND_BOTTOM_RIGHT],
   ];
 
   onMount(async () => {
-    const scene = new Scene({ tileSize: 32, scale: 1 });
+    const scene = new Scene({ tileSize: 64, scale: 1 });
 
     await scene.renderLayer(waterMap);
     await scene.renderLayer(sandMap);
@@ -53,5 +60,5 @@
 </script>
 
 <div>
-  <canvas id="canvas" width="800" height="500"></canvas>
+  <canvas id="canvas" width="1000" height="700"></canvas>
 </div>
