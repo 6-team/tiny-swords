@@ -4,23 +4,25 @@
   import { TileName } from "../entites/scene/scene.const";
 
   const waterMap = [
-    [TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE],
-    [TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE],
-    [TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE],
-    [TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE],
-    [TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE],
-    [TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE],
-    [TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE],
-    [TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE, TileName.WATER_MIDDLE_MIDDLE],
+    new Array(10).fill(TileName.WATER_MIDDLE_MIDDLE),
+    new Array(10).fill(TileName.WATER_MIDDLE_MIDDLE),
+    new Array(10).fill(TileName.WATER_MIDDLE_MIDDLE),
+    new Array(10).fill(TileName.WATER_MIDDLE_MIDDLE),
+    new Array(10).fill(TileName.WATER_MIDDLE_MIDDLE),
+    new Array(10).fill(TileName.WATER_MIDDLE_MIDDLE),
+    new Array(10).fill(TileName.WATER_MIDDLE_MIDDLE),
+    new Array(10).fill(TileName.WATER_MIDDLE_MIDDLE),
+    new Array(10).fill(TileName.WATER_MIDDLE_MIDDLE),
+    new Array(10).fill(TileName.WATER_MIDDLE_MIDDLE),
   ];
 
   const elevationMap = [
     [],
     [],
     [null, TileName.ELEVATION_TOP_LEFT,    TileName.ELEVATION_TOP_RIGHT],
-    [null, TileName.ELEVATION_BOTTOM_LEFT, TileName.GROUND_MIDDLE_MIDDLE,     TileName.ELEVATION_HORIZONTAL_RIGHT],
-    [null, TileName.ELEVATION_EDGE_LEFT,   TileName.GROUND_VERTICAL_MIDDLE,   TileName.ELEVATION_EDGE_RIGHT,                           null],
-    [null, null,                           TileName.ELEVATION_VERTICAL_BOTTOM],
+    [null, TileName.ELEVATION_BOTTOM_LEFT, TileName.GROUND_MIDDLE_MIDDLE,      TileName.ELEVATION_TOP_MIDDLE,       TileName.ELEVATION_HORIZONTAL_RIGHT],
+    [null, TileName.ELEVATION_EDGE_LEFT,   TileName.GROUND_VERTICAL_MIDDLE,    TileName.ELEVATION_HORIZONTAL_RIGHT, TileName.ELEVATION_EDGE_RIGHT],
+    [null, null,                           TileName.ELEVATION_VERTICAL_BOTTOM, TileName.ELEVATION_EDGE_RIGHT],
     [null, null,                           TileName.ELEVATION_VERTICAL_EDGE]
   ];
 
@@ -35,13 +37,13 @@
     [],
     [],
     [null, TileName.GROUND_TOP_LEFT,    TileName.GROUND_TOP_RIGHT],
-    [null, TileName.GROUND_BOTTOM_LEFT, TileName.GROUND_MIDDLE_MIDDLE,   TileName.GROUND_HORIZONTAL_RIGHT],
-    [null, null,                        TileName.GROUND_VERTICAL_MIDDLE],
+    [null, TileName.GROUND_BOTTOM_LEFT, TileName.GROUND_MIDDLE_MIDDLE,   TileName.GROUND_TOP_MIDDLE,    TileName.GROUND_HORIZONTAL_RIGHT],
+    [null, null,                        TileName.GROUND_MIDDLE_LEFT,     TileName.GROUND_BOTTOM_RIGHT],
     [null, null,                        TileName.GROUND_VERTICAL_BOTTOM]
   ];
 
   onMount(async () => {
-    const scene = new Scene({ tileSize: 64, scale: 1 });
+    const scene = new Scene({ tileSize: 32, scale: 1 });
 
     await scene.renderLayer(waterMap);
     await scene.renderLayer(sandMap);

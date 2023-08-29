@@ -21,6 +21,7 @@ export class Scene {
     this.#context = canvas.getContext('2d');
     this.#tileSize = tileSize;
     this.#scale = scale;
+    this.#context.imageSmoothingEnabled = false; // Отключаю сглаживание
   }
 
   async render(tileCoords: [number, number], tile: ITile) {
