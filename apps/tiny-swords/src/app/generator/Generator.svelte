@@ -1,20 +1,26 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { Scene } from '../entites/scene/scene';
-  import { TileName } from "../entites/scene/scene.const";
+  import {mapTileNameToClass, TileName} from "../entites/scene/scene.const";
+  import {get1Level} from "./generate";
+  import {generate, level1, level2} from "./new-generator";
 
-  const waterMap = [
-    new Array(15).fill(TileName.WATER_MIDDLE_MIDDLE),
-    new Array(15).fill(TileName.WATER_MIDDLE_MIDDLE),
-    new Array(15).fill(TileName.WATER_MIDDLE_MIDDLE),
-    [...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE), ...new Array(11).fill(null), ...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE)],
-    [...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE), ...new Array(11).fill(null), ...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE)],
-    [...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE), ...new Array(11).fill(null), ...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE)],
-    [...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE), ...new Array(11).fill(null), ...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE)],
-    [...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE), ...new Array(11).fill(null), ...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE)],
-    new Array(15).fill(TileName.WATER_MIDDLE_MIDDLE),
-    new Array(15).fill(TileName.WATER_MIDDLE_MIDDLE),
-  ];
+  // const [water, level2] = get1Level()
+
+  // console.log(water, level2)
+
+  // const waterMap = water
+    // new Array(15).fill(TileName.WATER_MIDDLE_MIDDLE),
+    // new Array(15).fill(TileName.WATER_MIDDLE_MIDDLE),
+    // new Array(15).fill(TileName.WATER_MIDDLE_MIDDLE),
+    // [...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE), ...new Array(11).fill(null), ...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE)],
+    // [...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE), ...new Array(11).fill(null), ...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE)],
+    // [...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE), ...new Array(11).fill(null), ...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE)],
+    // [...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE), ...new Array(11).fill(null), ...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE)],
+    // [...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE), ...new Array(11).fill(null), ...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE)],
+    // new Array(15).fill(TileName.WATER_MIDDLE_MIDDLE),
+    // new Array(15).fill(TileName.WATER_MIDDLE_MIDDLE),
+  // ];
 
   const sandMap = [
     [],
@@ -52,13 +58,24 @@
   onMount(async () => {
     const scene = new Scene({ tileSize: 64, scale: 1 });
 
-    await scene.renderLayer(waterMap);
-    await scene.renderLayer(sandMap);
-    await scene.renderLayer(elevationMap);
-    await scene.renderLayer(groundMap);
+    const map = generate()
+    console.log(map)
+
+    console.log(level2)
+
+
+
+    await scene.renderLayer(map);
+    // await scene.renderLayer(level2);
+    // for (const sceneElement of scene) {
+    //
+    // }
+    // await scene.renderLayer(sandMap);
+    // await scene.renderLayer(elevationMap);
+    // await scene.renderLayer(groundMap);
   });
 </script>
 
 <div>
-  <canvas id="canvas" width="1000" height="700"></canvas>
+  <canvas id="canvas" width="1900" height="1500"></canvas>
 </div>
