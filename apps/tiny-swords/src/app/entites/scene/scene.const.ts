@@ -4,7 +4,13 @@ import { GroundTile } from "../ground/ground";
 import { GroundType } from "../ground/ground.const";
 import { SandTile } from "../sand/sand";
 import { SandType } from "../sand/sand.const";
+import { FoamTile } from "../foam/foam";
+import { FoamType } from "../foam/foam.const";
 import { WaterTile } from "../water/water";
+import { BridgeTile } from "../bridge/bridge";
+import { BridgeType } from "../bridge/bridge.const";
+import { DecoTile } from "../deco/deco";
+import { DecoType } from "../deco/deco.const";
 
 export const enum TileName {
   SAND_TOP_LEFT,
@@ -59,7 +65,37 @@ export const enum TileName {
   ELEVATION_EDGE_MIDDLE,
   ELEVATION_EDGE_RIGHT,
 
+  FOAM_TOP,
+  FOAM_LEFT,
+  FOAM_RIGHT,
+  FOAM_BOTTOM,
+  FOAM_MIDDLE,
+
   WATER_MIDDLE_MIDDLE,
+
+  BRIDGE_LEFT,
+  BRIDGE_MIDDLE,
+  BRIDGE_RIGHT,
+  BRIDGE_SHADOW,
+
+  DECO_MUSHROOM_S,
+  DECO_MUSHROOM_M,
+  DECO_MUSHROOM_L,
+  DECO_STONE_S,
+  DECO_STONE_M,
+  DECO_STONE_L,
+  DECO_BUSH_S,
+  DECO_BUSH_M,
+  DECO_BUSH_L,
+  DECO_WEED_S,
+  DECO_WEED_M,
+  DECO_PUMPKIN_S,
+  DECO_PUMPKIN_M,
+  DECO_BONE_S,
+  DECO_BONE_M,
+  DECO_SIGN_STOP,
+  DECO_SIGH_RIGHT,
+  DECO_SCARECROW,
 };
 
 export const mapTileNameToClass: Partial<Record<TileName, { constructor: any, args: Array<any> }>> = {
@@ -115,5 +151,35 @@ export const mapTileNameToClass: Partial<Record<TileName, { constructor: any, ar
   [TileName.ELEVATION_EDGE_MIDDLE]: { constructor: ElevationTile, args: [ElevationType.EDGE_MIDDLE] },
   [TileName.ELEVATION_EDGE_RIGHT]: { constructor: ElevationTile, args: [ElevationType.EDGE_RIGHT] },
 
+  [TileName.FOAM_TOP]: { constructor: FoamTile, args: [FoamType.TOP] },
+  [TileName.FOAM_LEFT]: { constructor: FoamTile, args: [FoamType.LEFT] },
+  [TileName.FOAM_RIGHT]: { constructor: FoamTile, args: [FoamType.RIGHT] },
+  [TileName.FOAM_BOTTOM]: { constructor: FoamTile, args: [FoamType.BOTTOM] },
+  [TileName.FOAM_MIDDLE]: { constructor: FoamTile, args: [FoamType.MIDDLE] },
+
   [TileName.WATER_MIDDLE_MIDDLE]: { constructor: WaterTile, args: [] },
+
+  [TileName.BRIDGE_LEFT]: { constructor: BridgeTile, args: [BridgeType.LEFT] },
+  [TileName.BRIDGE_MIDDLE]: { constructor: BridgeTile, args: [BridgeType.MIDDLE] },
+  [TileName.BRIDGE_RIGHT]: { constructor: BridgeTile, args: [BridgeType.RIGHT] },
+  [TileName.BRIDGE_SHADOW]: { constructor: BridgeTile, args: [BridgeType.SHADOW] },
+
+  [TileName.DECO_MUSHROOM_S]: { constructor: DecoTile, args: [DecoType.MUSHROOM_S] },
+  [TileName.DECO_MUSHROOM_M]: { constructor: DecoTile, args: [DecoType.MUSHROOM_M] },
+  [TileName.DECO_MUSHROOM_L]: { constructor: DecoTile, args: [DecoType.MUSHROOM_L] },
+  [TileName.DECO_STONE_S]: { constructor: DecoTile, args: [DecoType.STONE_S] },
+  [TileName.DECO_STONE_M]: { constructor: DecoTile, args: [DecoType.STONE_M] },
+  [TileName.DECO_STONE_L]: { constructor: DecoTile, args: [DecoType.STONE_L] },
+  [TileName.DECO_BUSH_S]: { constructor: DecoTile, args: [DecoType.BUSH_S] },
+  [TileName.DECO_BUSH_M]: { constructor: DecoTile, args: [DecoType.BUSH_M] },
+  [TileName.DECO_BUSH_L]: { constructor: DecoTile, args: [DecoType.BUSH_L] },
+  [TileName.DECO_WEED_S]: { constructor: DecoTile, args: [DecoType.WEED_S] },
+  [TileName.DECO_WEED_M]: { constructor: DecoTile, args: [DecoType.WEED_M] },
+  [TileName.DECO_PUMPKIN_S]: { constructor: DecoTile, args: [DecoType.PUMPKIN_S] },
+  [TileName.DECO_PUMPKIN_M]: { constructor: DecoTile, args: [DecoType.PUMPKIN_M] },
+  [TileName.DECO_BONE_S]: { constructor: DecoTile, args: [DecoType.BONE_S] },
+  [TileName.DECO_BONE_M]: { constructor: DecoTile, args: [DecoType.BONE_M] },
+  [TileName.DECO_SIGN_STOP]: { constructor: DecoTile, args: [DecoType.SIGN_STOP] },
+  [TileName.DECO_SIGH_RIGHT]: { constructor: DecoTile, args: [DecoType.SIGH_RIGHT] },
+  [TileName.DECO_SCARECROW]: { constructor: DecoTile, args: [DecoType.SCARECROW] },
 };
