@@ -95,13 +95,27 @@
     [...new Array(9).fill(null), TileName.DECO_MUSHROOM_L, TileName.DECO_MUSHROOM_M],
     [...new Array(10).fill(null), TileName.DECO_MUSHROOM_S, TileName.DECO_MUSHROOM_S],
     [...new Array(7).fill(null), TileName.DECO_STONE_S],
-    [...new Array(4).fill(null), TileName.DECO_BUSH_M],
+    [...new Array(4).fill(null), TileName.DECO_BUSH_M, ...new Array(4).fill(null), TileName.DECO_STONE_L,],
     [...new Array(5).fill(null), TileName.DECO_PUMPKIN_S, TileName.DECO_BUSH_L],
     [...new Array(5).fill(null), TileName.DECO_STONE_L, ...new Array(4).fill(null), TileName.DECO_WEED_M],
     [...new Array(9).fill(null), TileName.DECO_WEED_S, ...new Array(7).fill(null), TileName.DECO_BONE_S],
     [...new Array(7).fill(null), TileName.DECO_STONE_M, ...new Array(7).fill(null),  TileName.DECO_BONE_M],
   ];
 
+  const boundaryMap = [
+    [],
+    [null, ...new Array(18).fill(TileName.BOUNDARY)],
+    [null, TileName.BOUNDARY, ...new Array(16).fill(null), TileName.BOUNDARY],
+    [null, TileName.BOUNDARY, ...new Array(16).fill(null), TileName.BOUNDARY],
+    [TileName.BOUNDARY, ...new Array(17).fill(null), TileName.BOUNDARY],
+    [null, TileName.BOUNDARY, ...new Array(7).fill(null), TileName.BOUNDARY, ...new Array(8).fill(null), TileName.BOUNDARY],
+    [null, TileName.BOUNDARY, ...new Array(4).fill(null), TileName.BOUNDARY, ...new Array(11).fill(null), TileName.BOUNDARY, TileName.BOUNDARY],
+    [null, TileName.BOUNDARY, ...new Array(3).fill(null), TileName.BOUNDARY],
+    [null, TileName.BOUNDARY, ...new Array(16).fill(null), TileName.BOUNDARY, TileName.BOUNDARY],
+    [null, TileName.BOUNDARY, ...new Array(16).fill(null), TileName.BOUNDARY],
+    [null, ...new Array(18).fill(TileName.BOUNDARY)],
+  ];
+  
   onMount(async () => {
     const scene = new Scene({ tileSize: 64, scale: 0.75 });
 
@@ -112,6 +126,7 @@
     await scene.renderLayer(groundMap);
     await scene.renderLayer(bridgeMap);
     await scene.renderLayer(decoMap);
+    await scene.renderLayer(boundaryMap);
   });
 </script>
 

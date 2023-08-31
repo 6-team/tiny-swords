@@ -11,6 +11,8 @@ import { BridgeTile } from "../bridge/bridge";
 import { BridgeType } from "../bridge/bridge.const";
 import { DecoTile } from "../deco/deco";
 import { DecoType } from "../deco/deco.const";
+import { BoundaryType } from "../boundary/boundary.const";
+import { BoundaryTile } from "../boundary/boundary";
 
 export const enum TileName {
   SAND_TOP_LEFT,
@@ -96,6 +98,8 @@ export const enum TileName {
   DECO_SIGN_STOP,
   DECO_SIGH_RIGHT,
   DECO_SCARECROW,
+
+  BOUNDARY,
 };
 
 export const mapTileNameToClass: Partial<Record<TileName, { constructor: any, args: Array<any> }>> = {
@@ -182,4 +186,6 @@ export const mapTileNameToClass: Partial<Record<TileName, { constructor: any, ar
   [TileName.DECO_SIGN_STOP]: { constructor: DecoTile, args: [DecoType.SIGN_STOP] },
   [TileName.DECO_SIGH_RIGHT]: { constructor: DecoTile, args: [DecoType.SIGH_RIGHT] },
   [TileName.DECO_SCARECROW]: { constructor: DecoTile, args: [DecoType.SCARECROW] },
+
+  [TileName.BOUNDARY]: { constructor: BoundaryTile, args: [BoundaryType.MIDDLE] },
 };
