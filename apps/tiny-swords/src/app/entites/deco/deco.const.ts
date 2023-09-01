@@ -16,8 +16,10 @@ export const enum DecoType {
     PUMPKIN_M,
     BONE_S,
     BONE_M,
-    SIGN_STOP,
-    SIGH_RIGHT,
+    SIGN_STOP_TOP,
+    SIGN_STOP_BOTTOM,
+    SIGN_RIGHT_TOP,
+    SIGN_RIGHT_BOTTOM,
     SCARECROW,
 }
 
@@ -37,7 +39,9 @@ export const mapTerrainToCoords: Record<DecoType, CoordsTuple> = {
     [DecoType.PUMPKIN_M]: [0, 0],
     [DecoType.BONE_S]: [0, 0],
     [DecoType.BONE_M]: [0, 0],
-    [DecoType.SIGN_STOP]: [0, 0],
-    [DecoType.SIGH_RIGHT]: [0, 0],
+    [DecoType.SIGN_STOP_TOP]: [0, 0],
+    [DecoType.SIGN_STOP_BOTTOM]: [0, 64],
+    [DecoType.SIGN_RIGHT_TOP]: [0, 0],
+    [DecoType.SIGN_RIGHT_BOTTOM]: [0, 64],
     [DecoType.SCARECROW]: [0, 0],
 };

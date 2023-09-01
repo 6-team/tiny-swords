@@ -92,8 +92,8 @@
   const decoMap = [
     [],
     [],
-    [...new Array(9).fill(null), TileName.DECO_MUSHROOM_L, TileName.DECO_MUSHROOM_M],
-    [...new Array(10).fill(null), TileName.DECO_MUSHROOM_S, TileName.DECO_MUSHROOM_S],
+    [null, TileName.DECO_SIGN_STOP_TOP, ...new Array(7).fill(null), TileName.DECO_MUSHROOM_L, TileName.DECO_MUSHROOM_M, ...new Array(7).fill(null), TileName.DECO_SIGN_RIGHT_TOP],
+    [null, TileName.DECO_SIGN_STOP_BOTTOM, ...new Array(8).fill(null), TileName.DECO_MUSHROOM_S, TileName.DECO_MUSHROOM_S, ...new Array(6).fill(null), TileName.DECO_SIGN_RIGHT_BOTTOM],
     [...new Array(7).fill(null), TileName.DECO_STONE_S],
     [...new Array(4).fill(null), TileName.DECO_BUSH_M, ...new Array(4).fill(null), TileName.DECO_STONE_L,],
     [...new Array(5).fill(null), TileName.DECO_PUMPKIN_S, TileName.DECO_BUSH_L],
@@ -126,7 +126,7 @@
     await scene.renderLayer(groundMap);
     await scene.renderLayer(bridgeMap);
     await scene.renderLayer(decoMap);
-    await scene.renderLayer(boundaryMap);
+    // await scene.renderLayer(boundaryMap);
   });
 </script>
 
