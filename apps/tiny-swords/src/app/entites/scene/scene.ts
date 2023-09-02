@@ -1,10 +1,11 @@
 import { Maybe } from '../../tools/monads/maybe';
 import { mapTileNameToClass } from './scene.const';
 import { ITile, SceneConfig } from './scene.types';
-import { ITile as ITestTail } from '../../generator/generate';
-import { level1, level2, level3, level4, level5, level6 } from '../../generator/new-generator';
+import { bridgeLevel, level1, level2, level3, level4, level5, level6, level7 } from '../../generator/generate';
+import { DecoTile } from '../deco/deco';
+import { Tile } from '../tile/tile';
 
-function* enumerate<T>(iterable: Iterable<T>): Generator<[number, T], void, void> {
+export function* enumerate<T>(iterable: Iterable<T>): Generator<[number, T], void, void> {
   let index = 0;
 
   for (const value of iterable) {
@@ -35,35 +36,40 @@ export class Scene {
 
     this.#context.drawImage(image, coords[0], coords[1], size, size, destTileX, destTileY, destTileSize, destTileSize);
 
-    const imageLevel = async (level) => {
+    const imageLevel = (level, tileDeco = false) => {
       if (level[`${tileCoords[1]}.${tileCoords[0]}`]) {
         const newTail = level[`${tileCoords[1]}.${tileCoords[0]}`];
-        const { constructor: Constructor, args } = mapTileNameToClass[newTail.tail];
+        let tail: Tile<number>;
+        if (!tileDeco) {
+          const { constructor: Constructor, args } = mapTileNameToClass[newTail.tail];
 
-        const tail = new Constructor(...args);
+          tail = new Constructor(...args);
+        } else {
+          tail = new DecoTile(newTail.tail);
+        }
 
-        const { image, coords, size } = await tail.getData();
-
-        this.#context.drawImage(
-          image,
-          coords[0],
-          coords[1],
-          size,
-          size,
-          destTileX,
-          destTileY,
-          destTileSize,
-          destTileSize,
-        );
+        tail.getData().then(({ image, coords, size }) => {
+          this.#context.drawImage(
+            image,
+            coords[0],
+            coords[1],
+            size,
+            size,
+            destTileX,
+            destTileY,
+            destTileSize,
+            destTileSize,
+          );
+        });
       }
     };
 
-    await imageLevel(level1);
-    await imageLevel(level2);
-    await imageLevel(level3);
-    await imageLevel(level4);
-    await imageLevel(level5);
-    await imageLevel(level6);
+    imageLevel(level1);
+    imageLevel(level2);
+    imageLevel(level3);
+    imageLevel(level4);
+    imageLevel(bridgeLevel);
+    imageLevel(level7, true);
 
     return this;
   }
@@ -75,10 +81,10 @@ export class Scene {
         const keyLevel2 = level2[`${rowIndex}.${tileNameIndex}`];
         const keyLevel3 = level3[`${rowIndex}.${tileNameIndex}`];
         const keyLevel4 = level4[`${rowIndex}.${tileNameIndex}`];
-        const keyLevel5 = level5[`${rowIndex}.${tileNameIndex}`];
-        const keyLevel6 = level6[`${rowIndex}.${tileNameIndex}`];
+        const keyLevel7 = level7[`${rowIndex}.${tileNameIndex}`];
+        const keyBridgeLevel = bridgeLevel[`${rowIndex}.${tileNameIndex}`];
 
-        const current = keyLevel1 || keyLevel2 || keyLevel3 || keyLevel4 || keyLevel5 || keyLevel6;
+        const current = keyLevel1 || keyLevel2 || keyLevel3 || keyLevel4 || keyBridgeLevel || keyLevel7;
 
         if (current) {
           await new Maybe(tileName)
