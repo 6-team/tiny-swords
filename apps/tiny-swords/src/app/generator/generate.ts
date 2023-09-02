@@ -28,10 +28,21 @@ export let level1 = {};
 export let level2 = {};
 export let level3 = {};
 export let level4 = {};
-export const level5 = {};
-export const level6 = {};
-export const level7 = {};
-export const bridgeLevel = {};
+export let level5 = {};
+export let level6 = {};
+export let level7 = {};
+export let bridgeLevel = {};
+
+const resetLevels = () => {
+  level1 = {};
+  level2 = {};
+  level3 = {};
+  level4 = {};
+  level5 = {};
+  level6 = {};
+  level7 = {};
+  bridgeLevel = {};
+};
 
 const setLevel = (x, y, level, tile?: TileName) => {
   const key = `${x}.${y}`;
@@ -228,6 +239,7 @@ const generateBridge = (vectorGame) => {
 };
 
 export const generate = (): VectorGame => {
+  resetLevels();
   const vectorGame: VectorGame = [];
   const [ledgeIndexStart, ledgeIndexEnd] = rangeLedge;
   const [ledgeIndexStartBottom, ledgeIndexEndBottom] = rangeLedgeBottom;

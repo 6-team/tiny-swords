@@ -16,6 +16,7 @@ export class Level4 implements ILevel {
     const { paddingWidth, sizeMap, paddingHeight } = this._map;
     for (const [x, row] of enumerate(this._vector)) {
       for (const [y] of enumerate(row)) {
+        if (!this._vector[x][y]) continue;
         const key = `${x}.${y}`;
 
         if (this._vector[x][y]) {
