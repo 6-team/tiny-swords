@@ -5,8 +5,8 @@ export default abstract class Sprite {
   #col: number;
   #x: number;
   #y: number;
-  #image: HTMLImageElement;
   #isLoaded: boolean;
+  readonly #image: HTMLImageElement;
   protected scale = 0.75;
   protected step = 64;
   protected constructor(protected options: Options) {
@@ -16,18 +16,34 @@ export default abstract class Sprite {
     this.#y = options.y;
     this.#isLoaded = false;
 
-
-   this.#image = new Image();
-   this.#image.src = this.options.spriteSrc;
-   this.#image.onload = () => {
-     this.#isLoaded = true
-   }
+    this.#image = new Image();
+    this.#image.src = this.options.spriteSrc;
+    this.#image.onload = () => {
+      this.#isLoaded = true;
+    };
   }
 
-  protected draw() {
+  #getCornerCoordinates(): [number, number] {
+    const { spriteSize } = this.options;
+
+    switch (this.scale) {
+      case 0.75:
+        return [
+          (spriteSize * this.scale + this.step * this.scale) * this.#col,
+          (spriteSize * this.scale + this.step * this.scale) * this.#row
+        ]
+      case 1:
+        return [
+          spriteSize * this.scale * this.#col,
+          spriteSize * this.scale * this.#row
+        ]
+    }
+  }
+
+
+  protected draw(): void {
     const { spriteSize, ctx, spriteFramesCount } = this.options;
-    const sx = (spriteSize * this.scale + this.step * this.scale) * this.#col;
-    const sy = (spriteSize * this.scale + this.step * this.scale) * this.#row;
+    const [sx, sy] = this.#getCornerCoordinates()
     const dx = this.#x * this.scale;
     const dy = this.#y * this.scale;
     const sWidth = spriteSize;
@@ -35,7 +51,7 @@ export default abstract class Sprite {
     const dWidth = spriteSize * this.scale;
     const dHeight = spriteSize * this.scale;
 
-    if(this.#isLoaded) {
+    if (this.#isLoaded) {
       ctx?.drawImage(this.#image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
     }
 
@@ -43,15 +59,15 @@ export default abstract class Sprite {
     else this.#col = 0;
   }
 
-  protected changeXCoordinate(value: number) {
+  protected changeXCoordinate(value: number): void {
     this.#x += value;
   }
 
-  protected changeYCoordinate(value: number) {
+  protected changeYCoordinate(value: number): void {
     this.#y += value;
   }
 
-  protected changeAnimation(row: number) {
+  protected changeAnimation(row: number): void {
     this.#row = row;
   }
 }

@@ -1,6 +1,8 @@
 export enum CharacterAction {
   STANDS_STILL,
+  STANDS_STILL_LEFT,
   RUN,
+  RUN_LEFT,
   RIGHT_ATTACK_UP,
   RIGHT_ATTACK_DOWN,
   FRONT_ATTACK_UP,
