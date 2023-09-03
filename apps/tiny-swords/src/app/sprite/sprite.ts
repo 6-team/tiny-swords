@@ -5,6 +5,8 @@ export default abstract class Sprite {
   #col: number;
   #x: number;
   #y: number;
+  #image: HTMLImageElement;
+  #isLoaded: boolean;
   protected scale = 0.75;
   protected step = 64;
   protected constructor(protected options: Options) {
@@ -12,13 +14,18 @@ export default abstract class Sprite {
     this.#col = 0;
     this.#x = options.x;
     this.#y = options.y;
+    this.#isLoaded = false;
+
+
+   this.#image = new Image();
+   this.#image.src = this.options.spriteSrc;
+   this.#image.onload = () => {
+     this.#isLoaded = true
+   }
   }
 
   protected draw() {
-    const { spriteSrc, spriteSize, ctx, spriteFramesCount } = this.options;
-    const image = new Image();
-    image.src = spriteSrc;
-
+    const { spriteSize, ctx, spriteFramesCount } = this.options;
     const sx = (spriteSize * this.scale + this.step * this.scale) * this.#col;
     const sy = (spriteSize * this.scale + this.step * this.scale) * this.#row;
     const dx = this.#x * this.scale;
@@ -28,10 +35,9 @@ export default abstract class Sprite {
     const dWidth = spriteSize * this.scale;
     const dHeight = spriteSize * this.scale;
 
-    image.onload = () => {
-      ctx?.clearRect(0, 0, ctx?.canvas.width, ctx?.canvas.height);
-      ctx?.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
-    };
+    if(this.#isLoaded) {
+      ctx?.drawImage(this.#image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+    }
 
     if (this.#col < spriteFramesCount - 1) this.#col += 1;
     else this.#col = 0;
