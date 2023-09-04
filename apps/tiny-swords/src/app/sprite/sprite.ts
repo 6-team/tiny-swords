@@ -6,16 +6,26 @@ export default abstract class Sprite {
   #x: number;
   #y: number;
   #isLoaded: boolean;
+  #framePerTime: number;
+  readonly #spriteSize: number;
+  readonly #spriteFramesCount: number;
   readonly #image: HTMLImageElement;
+  readonly #fps: number;
   protected scale = 0.75;
   protected step = 64;
-  protected constructor(protected options: Options) {
+
+  protected constructor(protected readonly options: Options) {
     this.#row = 0;
     this.#col = 0;
     this.#x = options.x;
     this.#y = options.y;
+    this.#spriteSize = options.spriteSize || 192;
+    this.#spriteFramesCount = options.spriteFramesCount || 6;
     this.#isLoaded = false;
-
+    // FPS control
+    this.#fps = 10;
+    this.#framePerTime = 0;
+    // Sprite Image init
     this.#image = new Image();
     this.#image.src = this.options.spriteSrc;
     this.#image.onload = () => {
@@ -24,39 +34,35 @@ export default abstract class Sprite {
   }
 
   #getCornerCoordinates(): [number, number] {
-    const { spriteSize } = this.options;
-
+    const scaledSize = this.#spriteSize * this.scale;
     switch (this.scale) {
       case 0.75:
-        return [
-          (spriteSize * this.scale + this.step * this.scale) * this.#col,
-          (spriteSize * this.scale + this.step * this.scale) * this.#row
-        ]
+        return [(scaledSize + this.step * this.scale) * this.#col, (scaledSize + this.step * this.scale) * this.#row];
       case 1:
-        return [
-          spriteSize * this.scale * this.#col,
-          spriteSize * this.scale * this.#row
-        ]
+        return [scaledSize * this.#col, scaledSize * this.#row];
     }
   }
 
-
-  protected draw(): void {
-    const { spriteSize, ctx, spriteFramesCount } = this.options;
-    const [sx, sy] = this.#getCornerCoordinates()
+  protected draw(deltaTime: number): void {
+    const { ctx } = this.options;
+    const [sx, sy] = this.#getCornerCoordinates();
     const dx = this.#x * this.scale;
     const dy = this.#y * this.scale;
-    const sWidth = spriteSize;
-    const sHeight = spriteSize;
-    const dWidth = spriteSize * this.scale;
-    const dHeight = spriteSize * this.scale;
+    const sWidth = this.#spriteSize;
+    const sHeight = this.#spriteSize;
+    const dWidth = this.#spriteSize * this.scale;
+    const dHeight = this.#spriteSize * this.scale;
 
     if (this.#isLoaded) {
       ctx?.drawImage(this.#image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
     }
 
-    if (this.#col < spriteFramesCount - 1) this.#col += 1;
-    else this.#col = 0;
+    if (this.#framePerTime > 1000 / this.#fps) {
+      this.#col < this.#spriteFramesCount - 1 ? this.#col += 1 : (this.#col = 0);
+      this.#framePerTime = 0;
+    } else {
+      this.#framePerTime += deltaTime;
+    }
   }
 
   protected changeXCoordinate(value: number): void {

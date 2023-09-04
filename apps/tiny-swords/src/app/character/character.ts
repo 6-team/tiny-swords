@@ -7,7 +7,6 @@ export default class Character extends Sprite {
   readonly #directionStep: Record<Directions, number>;
   #pushedButtons: (Directions)[] = [];
   #movingProgressRemaining: number;
-  #delayedDirection: Directions;
   #isRightDirection = true;
   direction: Directions;
 
@@ -15,8 +14,6 @@ export default class Character extends Sprite {
     super({
       ctx,
       spriteSrc: '/img/Factions/Knights/Troops/Warrior/Blue/Warrior_Blue.png',
-      spriteSize: 192,
-      spriteFramesCount: 6,
       x: 48,
       y: 168,
     });
@@ -32,10 +29,10 @@ export default class Character extends Sprite {
       'KeyD': 'right',
     }
     this.#directionStep = {
-      up: -16,
-      down: 16,
-      left: -16,
-      right: 16
+      up: -1,
+      down: 1,
+      left: -1,
+      right: 1
     }
   }
 
@@ -45,11 +42,18 @@ export default class Character extends Sprite {
 
   move(code: string): void {
     const direction = this.#pushedKeys[code];
-
     if(direction && this.#pushedButtons.indexOf(direction) === -1) {
       this.#pushedButtons.unshift(direction);
-      this.#delayedDirection = direction;
+
+      if(direction === 'left') {
+        this.#isRightDirection = false;
+      }
+
+      if(direction === 'right') {
+        this.#isRightDirection = true
+      }
     }
+
   }
 
   stop(code: string): void {
@@ -58,18 +62,10 @@ export default class Character extends Sprite {
     if(directionIdx > -1) {
       this.#pushedButtons.splice(directionIdx, 1)
     }
-
-    if(this.direction === 'left') {
-      this.#isRightDirection = false;
-    }
-
-    if(this.direction === 'right') {
-      this.#isRightDirection = true
-    }
   }
 
-  init(): void {
-    this.draw();
+  init(deltaTime: number): void {
+    this.draw(deltaTime);
     this.updatePosition();
   }
 
@@ -88,7 +84,7 @@ export default class Character extends Sprite {
         this.changeAnimation(this.#isRightDirection ? CharacterAction.RUN : CharacterAction.RUN_LEFT);
       }
 
-      this.#movingProgressRemaining -= 16
+      this.#movingProgressRemaining -= 1
     } else {
       const animation = this.#isRightDirection ? CharacterAction.STANDS_STILL : CharacterAction.STANDS_STILL_LEFT
       this.changeAnimation(animation);
@@ -96,7 +92,7 @@ export default class Character extends Sprite {
 
     if(this.#movingProgressRemaining === 0 && this.#direction) {
       this.#movingProgressRemaining = this.step * this.scale;
-      this.direction = this.#delayedDirection;
+      this.direction = this.#direction;
     }
   }
 }
