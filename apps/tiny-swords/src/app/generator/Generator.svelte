@@ -196,19 +196,6 @@
     await staticScene.renderStaticLayer(decoMap);
 
     /**
-     * Рендер границ
-    */
-    const boundsScene = new Renderer({
-      canvas: document.getElementById('canvas_bounds') as HTMLCanvasElement,
-      scale: SCALE,
-      coordinateSystem: system,
-    });
-
-    for (const coords of boundaries) {
-      boundsScene.addInteractiveElement(new Movable(new WaterTile(), coords[0], coords[1], 1));
-    }
-
-    /**
      * Рендер интерактивных элементов, которые будут в движении
      */
     const interactiveScene = new Renderer({
@@ -247,10 +234,10 @@
           return;
       }
 
-      for (const element of boundsScene.interactives) {
+      for (const bound of boundaries) {
         const hasCollision = CoordinateSystem.checkCollision(
           system.transformToPixels(person.coords[0], person.coords[1], person.sizes[0], person.sizes[1]),
-          system.transformToPixels(element.coords[0], element.coords[1], element.sizes[0], element.sizes[1]),
+          system.transformToPixels(bound[0], bound[1], 1, 1),
         );
 
         if (hasCollision) {
