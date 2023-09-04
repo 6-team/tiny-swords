@@ -1,73 +1,104 @@
 <script>
-    let menuLink = ['Новая игра', "Продолжить", 'Сетевая игра','Настройки']
-    function handleClick(e){
-        console.log(e)
+    import Modal from '../Modals/Modal.svelte';
+    import { Router, Link, Route } from "svelte-routing";
+      import {isActiveCloseButton} from './store'
+    let showModal = false;
+    let menuLink = [{title: 'Новая игра', value: 'newGame'}, {title: 'Продолжить', value: 'continue'},{title: 'Сетевая игра', value: 'multiPlayer'}]
+    function handleClick(e, item) {
+      if(item === 'multiPlayer') {
+        showModal = true
+      }
     }
   </script>
 
-<div class="container">
+
     <div class="wrapper">
-        <div class="menu">
-            {#each menuLink as item }
-                <button on:click={handleClick}>{item}</button>
+      <Router>  
+      <div class="menu-wrapper">
+            <div>
+              {#each menuLink as { title, value } }
+               <button class="menu-btn" on:click={(e)=>handleClick(e, value)}>
+                <span class="menu-title"> {title}</span>
+              </button>
             {/each}
+            </div>
         </div>
         <img src="https://img.itch.zone/aW1nLzEwNDkxNTQ1LmdpZg==/original/k%2BhWls.gif" alt="main-menu"/>
+      </Router>
     </div>
-</div>
 
-<style>
-    :global(body) {
-    background-color: rgba(71, 171, 169, 1);
-    cursor: url("images/01.png"), auto;
-  }
+<Modal bind:showModal isActiveCloseButtonStore={isActiveCloseButton}>
+  Hello
+</Modal>
+
+<style lang="scss">
   div.wrapper {
     height: 100vh;
     max-width: 100%;
     text-align: center;
     width: auto;
     position: relative;
-  }
-  div.wrapper img {
-    max-width: 100%;
-  }
-  div.container {
     min-height: 788px;
     max-width: 1000px;
     margin: 0 auto;
   }
+  div.wrapper img {
+    max-width: 100%;
+  }
   
-  div.menu {
-    font-size: 36px;
-    font-family: "Vinque", serif;
-    color: #885458;
-    font-weight: 600;
+  div.menu-wrapper {
     position: absolute;
-    top: 50%;
+    top: 75%;
     left: 50%;
     transform: translate(-50%, -50%);
+    background: no-repeat url(images/svg.svg);
+    background-size: contain;
+    width: 200px;
+    height: 182px;
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    justify-content: center;
+    padding-top: 17px;
+  }
+  button.menu-btn {
+    position: relative;
+    padding: 0;
+    border: none;
+    font: inherit;
+    .menu-title {
+      position: absolute;
+    top: 15%;
+    left: 50%;
+    font-family: "Vinque", serif;
+    font-size: 16px;
+    transform: translate(-50%, 0);
+    text-wrap: nowrap;
+
+    }
   }
   
-  div.menu button {
-    cursor: url("images/01.png"), auto;
-    font-size: 36px;
-    padding: 10px 20px;
-    background: no-repeat url(images/Carved_3Slides.png);
+  div.menu-wrapper button {
+    font-size: 16px;
+    background: no-repeat url(images/Button_Blue_3Slides.png);
     background-size: cover;
     width: fit-content;
-    border: none;
     font-family: "Vinque", serif;
-    color: #885458;
+    background-color: inherit;
+    width: 128px;
+    height: 43px;
   }
-  
-  div.menu button:hover {
-    cursor: url("images/01.png"), auto;
-    padding: 10px 20px;
-    font-size: 40px;
-    background: no-repeat url(images/Carved_3Slides.png);
+  div.menu-wrapper button:active {
+    background: no-repeat url(images/Button_Blue_3Slides_Pressed.png);
     background-size: cover;
+    width: fit-content;
+    font-family: "Vinque", serif;
+    background-color: inherit;
+    width: 128px;
+    height: 43px;
+  }
+  div.menu-wrapper button:active {
+    .menu-title {
+      top:20%
+    }
+    
   }
   </style>
