@@ -198,13 +198,14 @@
     /**
      * Рендер интерактивных элементов, которые будут в движении
      */
+    const interactiveSystem = new CoordinateSystem({ tileSize: 32, maxX: 40, maxY: 40 });
     const interactiveScene = new Renderer({
       canvas: document.getElementById('canvas_interactive') as HTMLCanvasElement,
       scale: SCALE,
-      coordinateSystem: system,
+      coordinateSystem: interactiveSystem,
     });
 
-    const person = new Movable(new DecoTile(), 1, 4, 1); // Для примера будем управлять грибом
+    const person = new Movable(new DecoTile(), 2, 8, 2); // Для примера будем управлять грибом
     interactiveScene.addInteractiveElement(person);
     interactiveScene.renderInteractives();
 
@@ -236,7 +237,7 @@
 
       for (const bound of boundaries) {
         const hasCollision = CoordinateSystem.checkCollision(
-          system.transformToPixels(person.coords[0], person.coords[1], person.sizes[0], person.sizes[1]),
+          interactiveSystem.transformToPixels(person.coords[0], person.coords[1], person.sizes[0], person.sizes[1]),
           system.transformToPixels(bound[0], bound[1], 1, 1),
         );
 
