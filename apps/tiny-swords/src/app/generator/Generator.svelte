@@ -5,8 +5,6 @@
   import { CoordinateSystem } from '../entites/coordinate-system/coordinate-system';
   import { DecoTile } from "../entites/deco/deco";
   import { Movable } from '../entites/movable/movable';
-  import { DecoType } from "../entites/deco/deco.const";
-  import { WaterTile } from "../entites/water/water";
 
   const waterMap = [
     new Array(20).fill(TileName.WATER_MIDDLE_MIDDLE),
@@ -205,30 +203,33 @@
       coordinateSystem: interactiveSystem,
     });
 
-    const person = new Movable(new DecoTile(), 2, 8, 2); // Для примера будем управлять грибом
-    interactiveScene.addInteractiveElement(person);
+    const mushroom = new DecoTile() // Для примера будем управлять грибом
+      .addAbility("movable", new Movable({ initialX: 2, initialY: 8, initialHeight: 2 }));
+    const movableAbility = mushroom.abilities.get("movable");
+
+    interactiveScene.addInteractiveElement(mushroom);
     interactiveScene.renderInteractiveLayer();
 
     document.addEventListener('keydown', (event) => {
       switch (event.key) {
         case "ArrowLeft":
         case "a":
-          person.setCoords(([prevX, prevY]) => [prevX - 1, prevY]);
+          movableAbility.setCoords(([prevX, prevY]: [number, number]) => [prevX - 1, prevY]);
 
           break;
         case "ArrowRight":
         case "d":
-          person.setCoords(([prevX, prevY]) => [prevX + 1, prevY]);
+          movableAbility.setCoords(([prevX, prevY]: [number, number]) => [prevX + 1, prevY]);
 
           break;
         case "ArrowUp":
         case "w":
-          person.setCoords(([prevX, prevY]) => [prevX, prevY - 1]);
+          movableAbility.setCoords(([prevX, prevY]: [number, number]) => [prevX, prevY - 1]);
 
           break;
         case "ArrowDown":
         case "d":
-          person.setCoords(([prevX, prevY]) => [prevX, prevY + 1]);
+          movableAbility.setCoords(([prevX, prevY]: [number, number]) => [prevX, prevY + 1]);
 
           break;
         default:
@@ -237,12 +238,12 @@
 
       for (const bound of boundaries) {
         const hasCollision = CoordinateSystem.checkCollision(
-          interactiveSystem.transformToPixels(person.coords[0], person.coords[1], person.sizes[0], person.sizes[1]),
+          interactiveSystem.transformToPixels(movableAbility.coords[0], movableAbility.coords[1], movableAbility.sizes[0], movableAbility.sizes[1]),
           system.transformToPixels(bound[0], bound[1], 1, 1),
         );
 
         if (hasCollision) {
-          person.back();
+          movableAbility.back();
 
           break;
         }

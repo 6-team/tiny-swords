@@ -7,6 +7,7 @@ export abstract class Tile<Types extends string | number | symbol> {
 
   protected _size = 64;
   protected _image?: HTMLImageElement;
+  protected _abilities = new Map();
 
   protected _load() {
     return new Promise<HTMLImageElement>((resolve, reject) => {
@@ -19,6 +20,19 @@ export abstract class Tile<Types extends string | number | symbol> {
   }
 
   protected abstract _getCoordsMap(): Record<Types, CoordsTuple>;
+
+  addAbility<TName extends string | symbol, TAbility>(
+    name: TName,
+    ability: TAbility,
+  ): this & { abilities: Map<TName, TAbility> } {
+    this._abilities.set(name, ability);
+
+    return this;
+  }
+
+  get abilities() {
+    return this._abilities;
+  }
 
   async getData() {
     if (!this._image) {

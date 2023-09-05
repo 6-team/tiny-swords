@@ -1,5 +1,6 @@
-import { ICoordinateSystem, IMovableElement, ITile } from '../../common/common.types';
+import { ICoordinateSystem, ITile } from '../../common/common.types';
 import { Maybe } from '../../tools/monads/maybe';
+import { IWithCoordsMethods } from '../coordinate-system/coordinate-system.types';
 import { TileName, mapTileNameToClass } from './renderer.const';
 import { RendererConfig } from './renderer.types';
 
@@ -20,7 +21,7 @@ export class Renderer {
   #context: CanvasRenderingContext2D;
   #system: ICoordinateSystem;
   #scale: number;
-  #interactives = new Set<IMovableElement>();
+  #interactives = new Set<ITile & { abilities: Map<'movable', IWithCoordsMethods> }>();
 
   constructor({ canvas, coordinateSystem, scale }: RendererConfig) {
     this.#canvas = canvas;
@@ -68,7 +69,7 @@ export class Renderer {
     }
   }
 
-  addInteractiveElement(element: IMovableElement) {
+  addInteractiveElement(element: ITile & { abilities: Map<'movable', IWithCoordsMethods> }) {
     this.#interactives.add(element);
   }
 
@@ -76,9 +77,9 @@ export class Renderer {
     this._clear();
 
     for (const interactive of this.#interactives) {
-      const { coords, sizes } = interactive;
+      const { coords, sizes } = interactive.abilities.get('movable');
 
-      this.render(this.#system.transformToPixels(coords[0], coords[1], sizes[0], sizes[1]), interactive.element);
+      this.render(this.#system.transformToPixels(coords[0], coords[1], sizes[0], sizes[1]), interactive);
     }
   }
 

@@ -19,7 +19,3 @@ export interface ITile {
     size: number;
   }>;
 }
-
-export interface IMovableElement extends IWithCoordsMethods {
-  element: ITile;
-}
