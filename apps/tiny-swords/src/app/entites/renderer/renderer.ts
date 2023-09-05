@@ -72,7 +72,7 @@ export class Renderer {
     this.#interactives.add(element);
   }
 
-  async renderInteractives() {
+  async renderInteractiveLayer() {
     this._clear();
 
     for (const interactive of this.#interactives) {

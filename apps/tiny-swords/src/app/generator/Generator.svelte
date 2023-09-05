@@ -207,7 +207,7 @@
 
     const person = new Movable(new DecoTile(), 2, 8, 2); // Для примера будем управлять грибом
     interactiveScene.addInteractiveElement(person);
-    interactiveScene.renderInteractives();
+    interactiveScene.renderInteractiveLayer();
 
     document.addEventListener('keydown', (event) => {
       switch (event.key) {
@@ -248,7 +248,7 @@
         }
       }
 
-      requestAnimationFrame(() => interactiveScene.renderInteractives());
+      requestAnimationFrame(() => interactiveScene.renderInteractiveLayer());
     });
   });
 </script>
