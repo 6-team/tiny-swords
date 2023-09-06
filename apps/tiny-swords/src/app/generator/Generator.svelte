@@ -196,15 +196,14 @@
     /**
      * Рендер интерактивных элементов, которые будут в движении
      */
-    const interactiveSystem = new CoordinateSystem({ tileSize: TILE_SIZE / 2, maxX: 40, maxY: 40 });
     const interactiveScene = new Renderer({
       canvas: document.getElementById('canvas_interactive') as HTMLCanvasElement,
       scale: SCALE,
-      coordinateSystem: interactiveSystem,
+      coordinateSystem: system,
     });
 
     const mushroom = new DecoTile() // Для примера будем управлять грибом
-      .addAbility("movable", new Movable({ initialX: 2, initialY: 8, initialHeight: 2 }))
+      .addAbility("movable", new Movable({ initialX: 1, initialY: 4, initialHeight: 1 }))
     const movableAbility = mushroom.getAbility<Movable>("movable");
 
     interactiveScene.addInteractiveElement(mushroom);
@@ -238,7 +237,7 @@
 
       for (const bound of boundaries) {
         const hasCollision = CoordinateSystem.checkCollision(
-          interactiveSystem.transformToPixels(movableAbility.coords[0], movableAbility.coords[1], movableAbility.sizes[0], movableAbility.sizes[1]),
+          system.transformToPixels(movableAbility.coords[0], movableAbility.coords[1], movableAbility.sizes[0], movableAbility.sizes[1]),
           system.transformToPixels(bound[0], bound[1], 1, 1),
         );
 
