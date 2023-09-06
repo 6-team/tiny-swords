@@ -41,6 +41,10 @@ export class WFC {
     console.timeEnd();
   }
 
+  get grid() {
+    return this.#grid;
+  }
+
   #generate() {
     let j = 0;
 
@@ -109,7 +113,7 @@ export class WFC {
       return this.#random(gridCopy);
     }
 
-    #weightedRandom(items) {
+    weightedRandom(items) {
       const table = items
         .flatMap(([item, weight]) => Array(weight).fill(item))
     
@@ -118,7 +122,7 @@ export class WFC {
 
     #setRandomTileByIndex(cell: Cell) {
       const optionsWeight = TILE_WEIGHT.filter(([tile]) => cell.options.includes(tile));
-      const pick = this.#weightedRandom(optionsWeight);
+      const pick = this.weightedRandom(optionsWeight);
   
       this.#grid[cell.index] = {
         index: cell.index,
@@ -244,19 +248,19 @@ export class WFC {
         }
   
         // Добавляем полоску земли
-        // const middleRow = width * Math.floor((height - 1) / 2);
+        const middleRow = width * Math.floor((height - 2) / 2);
   
-        // if (
-        //   (middleRow + 3) < i && i < (middleRow + width - 3)                    // середина
-        //     ||  (middleRow - width + 3) < i && i < (middleRow - width * 2 - 3)  // ряд вперед
-        //     ||  (middleRow + width + 3) < i && i < (middleRow + width * 2 - 3)  // ряд назад
-        // ) {
-        //   tile = {
-        //     ...tile,
-        //     collapsed: true,
-        //     options: [TileName.GROUND_MIDDLE_MIDDLE],
-        //   }
-        // }
+        if (
+          (middleRow + 4) < i && i < (middleRow + width - 4)                    // середина
+            // || (middleRow + width + 4) < i && i < (middleRow + width * 2 - 4)   // ряд вперед
+            // || (middleRow - width + 4) < i && i < (middleRow - 4)               // ряд назад 
+        ) {
+          tile = {
+            ...tile,
+            collapsed: true,
+            options: [TileName.GROUND_MIDDLE_MIDDLE],
+          }
+        }
 
         // Добавляем начало острова с мостом
         if (i === 62) {
@@ -293,17 +297,17 @@ export class WFC {
       return result;
     }
 
-    map() {
+    map(grid, gridX, gridY) {
       // Создаем матрицу для рендера
       const map = [];
 
-      for (let y = 0; y < this.#gridY; y++) {
+      for (let y = 0; y < gridY; y++) {
         const row = [];
 
-        for (let x = 0; x < this.#gridX; x++) {
-          const cell = this.#grid[this.#gridX * y + x];
+        for (let x = 0; x < gridX; x++) {
+          const cell = grid[gridX * y + x];
           
-          if (cell.collapsed) {
+          if (cell?.collapsed) {
             row.push(cell.options[0]);
           } else {
             row.push(null);

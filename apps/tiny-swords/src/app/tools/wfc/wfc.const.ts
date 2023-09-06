@@ -17,19 +17,35 @@ export const TILE_TYPES = [
 ];
 
 export const TILE_WEIGHT = [
-  [TileName.WATER_MIDDLE_MIDDLE,  2],
+  [TileName.WATER_MIDDLE_MIDDLE,  5],
   [TileName.GROUND_TOP_LEFT,      10],
   [TileName.GROUND_TOP_MIDDLE,    10],
   [TileName.GROUND_TOP_RIGHT,     10],
   [TileName.GROUND_MIDDLE_LEFT,   10],
-  [TileName.GROUND_MIDDLE_MIDDLE, 100],
+  [TileName.GROUND_MIDDLE_MIDDLE, 10],
   [TileName.GROUND_MIDDLE_RIGHT,  10],
   [TileName.GROUND_BOTTOM_LEFT,   10],
   [TileName.GROUND_BOTTOM_MIDDLE, 10],
   [TileName.GROUND_BOTTOM_RIGHT,  10],
-  [TileName.BRIDGE_LEFT,          20],
-  [TileName.BRIDGE_MIDDLE,        20],
-  [TileName.BRIDGE_RIGHT,         20],
+  [TileName.BRIDGE_LEFT,          40],
+  [TileName.BRIDGE_MIDDLE,        40],
+  [TileName.BRIDGE_RIGHT,         40],
+];
+
+export const TILE_DECO_WEIGHT = [
+  [TileName.DECO_MUSHROOM_S, 10],
+  [TileName.DECO_MUSHROOM_M, 5],
+  [TileName.DECO_MUSHROOM_L, 1],
+  [TileName.DECO_STONE_S,    10],
+  [TileName.DECO_STONE_M,    5],
+  [TileName.DECO_STONE_L,    1],
+  [TileName.DECO_BUSH_S,     10],
+  [TileName.DECO_BUSH_M,     5],
+  [TileName.DECO_BUSH_L,     1],
+  [TileName.DECO_PUMPKIN_S,  5],
+  [TileName.DECO_PUMPKIN_M,  1],
+  [TileName.DECO_WEED_S,     10],
+  [TileName.DECO_WEED_M,     5],
 ];
 
 // export const RULES = {
