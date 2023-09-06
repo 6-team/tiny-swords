@@ -204,8 +204,8 @@
     });
 
     const mushroom = new DecoTile() // Для примера будем управлять грибом
-      .addAbility("movable", new Movable({ initialX: 2, initialY: 8, initialHeight: 2 }));
-    const movableAbility = mushroom.abilities.get("movable");
+      .addAbility("movable", new Movable({ initialX: 2, initialY: 8, initialHeight: 2 }))
+    const movableAbility = mushroom.getAbility<Movable>("movable");
 
     interactiveScene.addInteractiveElement(mushroom);
     interactiveScene.renderInteractiveLayer();
@@ -214,22 +214,22 @@
       switch (event.key) {
         case "ArrowLeft":
         case "a":
-          movableAbility.setCoords(([prevX, prevY]: [number, number]) => [prevX - 1, prevY]);
+          movableAbility.setCoords(([prevX, prevY]) => [prevX - 1, prevY]);
 
           break;
         case "ArrowRight":
         case "d":
-          movableAbility.setCoords(([prevX, prevY]: [number, number]) => [prevX + 1, prevY]);
+          movableAbility.setCoords(([prevX, prevY]) => [prevX + 1, prevY]);
 
           break;
         case "ArrowUp":
         case "w":
-          movableAbility.setCoords(([prevX, prevY]: [number, number]) => [prevX, prevY - 1]);
+          movableAbility.setCoords(([prevX, prevY]) => [prevX, prevY - 1]);
 
           break;
         case "ArrowDown":
         case "d":
-          movableAbility.setCoords(([prevX, prevY]: [number, number]) => [prevX, prevY + 1]);
+          movableAbility.setCoords(([prevX, prevY]) => [prevX, prevY + 1]);
 
           break;
         default:

@@ -21,13 +21,14 @@ export abstract class Tile<Types extends string | number | symbol> {
 
   protected abstract _getCoordsMap(): Record<Types, CoordsTuple>;
 
-  addAbility<TName extends string | symbol, TAbility>(
-    name: TName,
-    ability: TAbility,
-  ): this & { abilities: Map<TName, TAbility> } {
+  addAbility<N extends string | symbol, A>(name: N, ability: A): this & { abilities: Map<N, A> } {
     this._abilities.set(name, ability);
 
     return this;
+  }
+
+  getAbility<A, N extends string | symbol = string | symbol>(name: N): A {
+    return this._abilities.get(name);
   }
 
   get abilities() {
