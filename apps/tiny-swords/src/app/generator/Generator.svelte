@@ -196,7 +196,7 @@
     /**
      * Рендер интерактивных элементов, которые будут в движении
      */
-    const interactiveSystem = new CoordinateSystem({ tileSize: 32, maxX: 40, maxY: 40 });
+    const interactiveSystem = new CoordinateSystem({ tileSize: TILE_SIZE / 2, maxX: 40, maxY: 40 });
     const interactiveScene = new Renderer({
       canvas: document.getElementById('canvas_interactive') as HTMLCanvasElement,
       scale: SCALE,
@@ -228,7 +228,7 @@
 
           break;
         case "ArrowDown":
-        case "d":
+        case "s":
           movableAbility.setCoords(([prevX, prevY]) => [prevX, prevY + 1]);
 
           break;
@@ -256,6 +256,5 @@
 
 <div>
   <canvas id="canvas" width="960" height="720" style="position: absolute; left: 0; top: 0;"></canvas>
-  <canvas id="canvas_bounds" width="960" height="720" style="position: absolute; left: 0; top: 0;"></canvas>
   <canvas id="canvas_interactive" width="960" height="720" style="position: absolute; left: 0; top: 0;"></canvas>
 </div>
