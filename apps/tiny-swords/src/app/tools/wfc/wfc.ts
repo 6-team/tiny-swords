@@ -248,17 +248,26 @@ export class WFC {
         }
   
         // Добавляем полоску земли
-        const middleRow = width * Math.floor((height - 2) / 2);
+        // const middleRow = width * Math.floor((height - 2) / 2);
   
-        if (
-          (middleRow + 4) < i && i < (middleRow + width - 4)                    // середина
-            // || (middleRow + width + 4) < i && i < (middleRow + width * 2 - 4)   // ряд вперед
-            // || (middleRow - width + 4) < i && i < (middleRow - 4)               // ряд назад 
-        ) {
+        // if (
+        //   (middleRow + 4) < i && i < (middleRow + width - 4)                    // середина
+        //     // || (middleRow + width + 4) < i && i < (middleRow + width * 2 - 4)   // ряд вперед
+        //     // || (middleRow - width + 4) < i && i < (middleRow - 4)               // ряд назад 
+        // ) {
+        //   tile = {
+        //     ...tile,
+        //     collapsed: true,
+        //     options: [TileName.GROUND_MIDDLE_MIDDLE],
+        //   }
+        // }
+
+        // мост по середине
+        if (i === width * height / 2  + width) {
           tile = {
             ...tile,
             collapsed: true,
-            options: [TileName.GROUND_MIDDLE_MIDDLE],
+            options: [TileName.BRIDGE_MIDDLE],
           }
         }
 
