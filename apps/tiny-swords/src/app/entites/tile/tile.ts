@@ -1,13 +1,14 @@
+import { ITile } from '../../common/common.types';
 import { ErrorEnum } from './tile.const';
-import { CoordsTuple } from './tile.types';
+import { CoordsTuple, WithAbility, WithSetPersonageContext } from './tile.types';
 
-export abstract class Tile<Types extends string | number | symbol> {
+export abstract class Tile<Types extends string | number | symbol> implements ITile {
   protected abstract _sprite: string;
   protected abstract _type: Types;
 
   protected _size = 64;
   protected _image?: HTMLImageElement;
-  protected _abilities = new Map();
+  protected _abilities = new Map<unknown, unknown>();
 
   protected _load() {
     return new Promise<HTMLImageElement>((resolve, reject) => {
@@ -21,14 +22,22 @@ export abstract class Tile<Types extends string | number | symbol> {
 
   protected abstract _getCoordsMap(): Record<Types, CoordsTuple>;
 
-  addAbility<N extends string | symbol, A>(name: N, ability: A): this & { abilities: Map<N, A> } {
+  abstract setType(type: string | number): void;
+
+  addAbility<Name extends string | symbol, Ability extends WithSetPersonageContext>(
+    name: Name,
+    ability: Ability,
+  ): this & WithAbility<Name, Ability> {
+    ability.setContext(this);
     this._abilities.set(name, ability);
 
-    return this;
+    return this as this & WithAbility<Name, Ability>;
   }
 
-  getAbility<A, N extends string | symbol = string | symbol>(name: N): A {
-    return this._abilities.get(name);
+  getAbility<Ability extends WithSetPersonageContext, Name extends string | symbol = string | symbol>(
+    name: Name,
+  ): Ability {
+    return this._abilities.get(name) as Ability;
   }
 
   get abilities() {
@@ -36,7 +45,7 @@ export abstract class Tile<Types extends string | number | symbol> {
   }
 
   async getData() {
-    if (!this._image) {
+    if (!this._image || this._image.src !== this._sprite) {
       this._image = await this._load();
     }
 

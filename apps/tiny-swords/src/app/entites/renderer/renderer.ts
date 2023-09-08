@@ -1,6 +1,5 @@
-import { ICoordinateSystem, ITile } from '../../common/common.types';
+import { ICoordinateSystem, ITile, IWithAbilityToMove } from '../../common/common.types';
 import { Maybe } from '../../tools/monads/maybe';
-import { IWithCoordsMethods } from '../coordinate-system/coordinate-system.types';
 import { TileName, mapTileNameToClass } from './renderer.const';
 import { RendererConfig } from './renderer.types';
 
@@ -21,7 +20,6 @@ export class Renderer {
   #context: CanvasRenderingContext2D;
   #system: ICoordinateSystem;
   #scale: number;
-  #interactives = new Set<ITile & { abilities: Map<'movable', IWithCoordsMethods> }>();
 
   constructor({ canvas, coordinateSystem, scale }: RendererConfig) {
     this.#canvas = canvas;
@@ -54,6 +52,12 @@ export class Renderer {
     return this;
   }
 
+  async renderMovable(tile: ITile & IWithAbilityToMove) {
+    const { coords, sizes } = tile.getAbility('movable');
+
+    this.render(this.#system.transformToPixels(coords[0], coords[1], sizes[0], sizes[1]), tile);
+  }
+
   async renderStaticLayer(map: Array<Array<TileName | null>>) {
     for (const [rowIndex, row] of enumerate(map)) {
       for (const [tileNameIndex, tileName] of enumerate(row)) {
@@ -69,21 +73,11 @@ export class Renderer {
     }
   }
 
-  addInteractiveElement(element: ITile & { abilities: Map<'movable', IWithCoordsMethods> }) {
-    this.#interactives.add(element);
-  }
-
-  async renderInteractiveLayer() {
+  async renderMovableLayer(movables: Array<ITile & IWithAbilityToMove>) {
     this._clear();
 
-    for (const interactive of this.#interactives) {
-      const { coords, sizes } = interactive.abilities.get('movable');
-
-      this.render(this.#system.transformToPixels(coords[0], coords[1], sizes[0], sizes[1]), interactive);
+    for (const movable of movables) {
+      new Maybe(movable).map((tile) => this.renderMovable(tile));
     }
-  }
-
-  get interactives() {
-    return this.#interactives;
   }
 }

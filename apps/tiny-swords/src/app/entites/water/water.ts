@@ -1,17 +1,21 @@
-import { Tile } from "../tile/tile";
-import { WaterType, mapWaterToCoords } from "./water.const";
+import { Tile } from '../tile/tile';
+import { WaterType, mapWaterToCoords } from './water.const';
 
 export class WaterTile extends Tile<WaterType> {
-    protected _type: WaterType;
-    protected _sprite = '/img/Terrain/Water/Water.png';
+  protected _type: WaterType;
+  protected _sprite = '/img/Terrain/Water/Water.png';
 
-    constructor(type: WaterType = WaterType.MIDDLE_MIDDLE) {
-        super();
+  constructor(type: WaterType = WaterType.MIDDLE_MIDDLE) {
+    super();
 
-        this._type = type;
-    }
+    this.setType(type);
+  }
 
-    protected _getCoordsMap() {
-        return mapWaterToCoords;
-    }
+  setType(type: WaterType = WaterType.MIDDLE_MIDDLE): void {
+    this._type = type;
+  }
+
+  protected _getCoordsMap() {
+    return mapWaterToCoords;
+  }
 }

@@ -1,17 +1,21 @@
-import { Tile } from "../tile/tile";
-import { SandType, mapTerrainToCoords } from "./sand.const";
+import { Tile } from '../tile/tile';
+import { SandType, mapTerrainToCoords } from './sand.const';
 
 export class SandTile extends Tile<SandType> {
-    protected _type: SandType;
-    protected _sprite = '/img/Terrain/Ground/Tilemap_Flat.png';
+  protected _type: SandType;
+  protected _sprite = '/img/Terrain/Ground/Tilemap_Flat.png';
 
-    constructor(type: SandType = SandType.MIDDLE_MIDDLE) {
-        super();
+  constructor(type: SandType = SandType.MIDDLE_MIDDLE) {
+    super();
 
-        this._type = type;
-    }
+    this.setType(type);
+  }
 
-    protected _getCoordsMap() {
-        return mapTerrainToCoords;
-    }
+  setType(type: SandType = SandType.MIDDLE_MIDDLE): void {
+    this._type = type;
+  }
+
+  protected _getCoordsMap() {
+    return mapTerrainToCoords;
+  }
 }

@@ -1,16 +1,16 @@
-import { ElevationTile } from "../elevation/elevation";
-import { ElevationType } from "../elevation/elevation.const";
-import { GroundTile } from "../ground/ground";
-import { GroundType } from "../ground/ground.const";
-import { SandTile } from "../sand/sand";
-import { SandType } from "../sand/sand.const";
-import { FoamTile } from "../foam/foam";
-import { FoamType } from "../foam/foam.const";
-import { WaterTile } from "../water/water";
-import { BridgeTile } from "../bridge/bridge";
-import { BridgeType } from "../bridge/bridge.const";
-import { DecoTile } from "../deco/deco";
-import { DecoType } from "../deco/deco.const";
+import { ElevationTile } from '../elevation/elevation';
+import { ElevationType } from '../elevation/elevation.const';
+import { GroundTile } from '../ground/ground';
+import { GroundType } from '../ground/ground.const';
+import { SandTile } from '../sand/sand';
+import { SandType } from '../sand/sand.const';
+import { FoamTile } from '../foam/foam';
+import { FoamType } from '../foam/foam.const';
+import { WaterTile } from '../water/water';
+import { BridgeTile } from '../bridge/bridge';
+import { BridgeType } from '../bridge/bridge.const';
+import { DecoTile } from '../deco/deco';
+import { DecoType } from '../deco/deco.const';
 
 export const enum TileName {
   SAND_TOP_LEFT,
@@ -96,9 +96,11 @@ export const enum TileName {
   DECO_SIGN_STOP,
   DECO_SIGH_RIGHT,
   DECO_SCARECROW,
-};
 
-export const mapTileNameToClass: Partial<Record<TileName, { constructor: any, args: Array<any> }>> = {
+  BOUNDARY,
+}
+
+export const mapTileNameToClass: Partial<Record<TileName, { constructor: any; args: Array<any> }>> = {
   [TileName.SAND_TOP_LEFT]: { constructor: SandTile, args: [SandType.TOP_LEFT] },
   [TileName.SAND_TOP_MIDDLE]: { constructor: SandTile, args: [SandType.TOP_MIDDLE] },
   [TileName.SAND_TOP_RIGHT]: { constructor: SandTile, args: [SandType.TOP_RIGHT] },

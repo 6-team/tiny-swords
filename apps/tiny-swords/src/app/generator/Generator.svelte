@@ -4,7 +4,10 @@
   import { TileName } from "../entites/renderer/renderer.const";
   import { CoordinateSystem } from '../entites/coordinate-system/coordinate-system';
   import { DecoTile } from "../entites/deco/deco";
-  import { Movable } from '../entites/movable/movable';
+  import { Movable } from '../entites/abilities/movable/movable';
+  import { Attacking } from '../entites/abilities/attacking/attacking';
+  import { AttackingForce } from "../entites/abilities/attacking/attacking.types";
+  import { DecoAnimation, DecoType } from "../entites/deco/deco.const";
 
   const waterMap = [
     new Array(20).fill(TileName.WATER_MIDDLE_MIDDLE),
@@ -171,9 +174,14 @@
     [17, 10],
   ];
 
+  const nextLevelArea = [
+    [18, 7],
+    [19, 7]
+  ];
+
   onMount(async () => {
     const TILE_SIZE = 64;
-    const SCALE = 0.75;
+    const SCALE = 1;
 
     /**
      * Рендер статичной карты
@@ -204,56 +212,79 @@
 
     const mushroom = new DecoTile() // Для примера будем управлять грибом
       .addAbility("movable", new Movable({ initialX: 1, initialY: 4, initialHeight: 1 }))
-    const movableAbility = mushroom.getAbility<Movable>("movable");
+      .addAbility("attacking", new Attacking());
+    const movable = mushroom.getAbility<Movable>("movable");
+    const attacking = mushroom.getAbility<Attacking>("attacking");
 
-    interactiveScene.addInteractiveElement(mushroom);
-    interactiveScene.renderInteractiveLayer();
+    // Дальше проверка: если перс повернут к врагу и они в соседних клетках, то удар засчитан
+    // ...
+
+    interactiveScene.renderMovableLayer([mushroom]);
 
     document.addEventListener('keydown', (event) => {
       switch (event.key) {
         case "ArrowLeft":
         case "a":
-          movableAbility.setCoords(([prevX, prevY]) => [prevX - 1, prevY]);
+          movable.setMovement(([prevX, prevY]) => [prevX - 1, prevY], DecoAnimation.BACKWARD);
 
           break;
         case "ArrowRight":
         case "d":
-          movableAbility.setCoords(([prevX, prevY]) => [prevX + 1, prevY]);
+          movable.setMovement(([prevX, prevY]) => [prevX + 1, prevY], DecoAnimation.FORWARD);
 
           break;
         case "ArrowUp":
         case "w":
-          movableAbility.setCoords(([prevX, prevY]) => [prevX, prevY - 1]);
+          movable.setMovement(([prevX, prevY]) => [prevX, prevY - 1]);
 
           break;
         case "ArrowDown":
         case "s":
-          movableAbility.setCoords(([prevX, prevY]) => [prevX, prevY + 1]);
+          movable.setMovement(([prevX, prevY]) => [prevX, prevY + 1]);
+
+          break;
+        case "f":
+          attacking.attack();
+
+          break;
+        case "g":
+          attacking.attack(AttackingForce.STRONG);
 
           break;
         default:
           return;
       }
 
+      for (const area of nextLevelArea) {
+        const hasCollisionWithNextLevelArea = CoordinateSystem.checkCollision(
+          system.transformToPixels(movable.coords[0], movable.coords[1], movable.sizes[0], movable.sizes[1]),
+          system.transformToPixels(area[0], area[1], 1, 1),
+        );
+
+        if (hasCollisionWithNextLevelArea) {
+          alert('You won!');
+        }
+      }
+
       for (const bound of boundaries) {
         const hasCollision = CoordinateSystem.checkCollision(
-          system.transformToPixels(movableAbility.coords[0], movableAbility.coords[1], movableAbility.sizes[0], movableAbility.sizes[1]),
+          system.transformToPixels(movable.coords[0], movable.coords[1], movable.sizes[0], movable.sizes[1]),
           system.transformToPixels(bound[0], bound[1], 1, 1),
         );
 
         if (hasCollision) {
-          movableAbility.back();
+          movable.back();
 
           break;
         }
       }
 
-      requestAnimationFrame(() => interactiveScene.renderInteractiveLayer());
+      requestAnimationFrame(() => interactiveScene.renderMovableLayer([mushroom]));
     });
   });
 </script>
 
 <div>
-  <canvas id="canvas" width="960" height="720" style="position: absolute; left: 0; top: 0;"></canvas>
-  <canvas id="canvas_interactive" width="960" height="720" style="position: absolute; left: 0; top: 0;"></canvas>
+  <canvas id="canvas" width="1300" height="900" style="position: absolute; left: 0; top: 0;"></canvas>
+  <canvas id="canvas_interactive" width="1300" height="900" style="position: absolute; left: 0; top: 0;"></canvas>
 </div>

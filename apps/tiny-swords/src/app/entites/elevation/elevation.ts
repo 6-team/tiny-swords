@@ -1,17 +1,21 @@
-import { Tile } from "../tile/tile";
-import { ElevationType, mapTerrainToCoords } from "./elevation.const";
+import { Tile } from '../tile/tile';
+import { ElevationType, mapTerrainToCoords } from './elevation.const';
 
 export class ElevationTile extends Tile<ElevationType> {
-    protected _type: ElevationType;
-    protected _sprite = '/img/Terrain/Ground/Tilemap_Elevation.png';
+  protected _type: ElevationType;
+  protected _sprite = '/img/Terrain/Ground/Tilemap_Elevation.png';
 
-    constructor(type: ElevationType = ElevationType.MIDDLE_MIDDLE) {
-        super();
+  constructor(type: ElevationType = ElevationType.MIDDLE_MIDDLE) {
+    super();
 
-        this._type = type;
-    }
+    this.setType(type);
+  }
 
-    protected _getCoordsMap() {
-        return mapTerrainToCoords;
-    }
+  setType(type: ElevationType = ElevationType.MIDDLE_MIDDLE): void {
+    this._type = type;
+  }
+
+  protected _getCoordsMap() {
+    return mapTerrainToCoords;
+  }
 }

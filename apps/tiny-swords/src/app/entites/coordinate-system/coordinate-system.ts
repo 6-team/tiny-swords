@@ -1,5 +1,4 @@
-import { ICoordinateSystem } from '../../common/common.types';
-import { IWithCoordsMethods, TNumberOfTiles, TTilePosition } from './coordinate-system.types';
+import { ICoordinateSystem, TNumberOfTiles, TTilePosition } from '../../common/common.types';
 
 export class CoordinateSystem implements ICoordinateSystem {
   #tileSize: number;
@@ -18,7 +17,6 @@ export class CoordinateSystem implements ICoordinateSystem {
     rect1Coords: [pxX: number, pxY: number, pxHeight: number, pxWidth: number],
     rect2Coords: [pxX: number, pxY: number, pxHeight: number, pxWidth: number],
   ) {
-    console.log(rect1Coords, rect2Coords);
     const [rect1Left, rect1Top, rect1Height, rect1Width] = rect1Coords;
     const [rect2Left, rect2Top, rect2Height, rect2Width] = rect2Coords;
 
