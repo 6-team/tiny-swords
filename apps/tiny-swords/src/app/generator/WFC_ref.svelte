@@ -7,17 +7,11 @@
   import { Movable } from "../entites/movable/movable";
 
   import { Grid } from "../entites/grid/grid";
-  import {
-    LEVEL_ADD_TILE_BRIDGE,
-    LEVEL_ADD_TILE_TREE,
-    LEVEL_DECO_CONDITION,
-    LEVEL_SURFACE_TILE_RULES,
-    LEVEL_SURFACE_TILE_WEIGHT,
-    LEVEL_TEMPLATE_BRIDGE_CENTER,
-    LEVEL_TEMPLATE_GROUND_PLAYER,
-    LEVEL_TEMPLATE_WATER_BORDER_2,
-    LEVEL_TEMPLATE_WATER_BORDER_3
-  } from "../entites/levels-data/levels-data.const";
+  import { LAYER_MAIN_TEMPLATE_BRIDGE_CENTER, LAYER_MAIN_TEMPLATE_GROUND_PLAYER, LAYER_MAIN_TEMPLATE_WATER_BORDER_2 } from "../entites/layers/main/templates.const";
+  import { LAYER_MAIN_RULES, LAYER_MAIN_WEIGHT } from "../entites/layers/main/rules.const";
+  import { LAYER_ADDITIONAL_EMPTY_CONDITIONS, LAYER_ADDITIONAL_TREE_BOTTOM_CONDITIONS } from "../entites/layers/additional/conditions.const";
+  import { LAYER_DECO_CONDITIONS } from "../entites/layers/deco/conditions.const";
+  import { LAYER_FOREGROUND_TREE_TOP_CONDITIONS } from "../entites/layers/foreground/conditions.const";
 
   const waterMap = [
     new Array(20).fill(TileName.WATER_MIDDLE_MIDDLE),
@@ -35,45 +29,64 @@
     new Array(20).fill(TileName.WATER_MIDDLE_MIDDLE),
   ];
 
-  // const bridgeMap = wfc.map(bridgeGrid.array, 20, 13);
-
-  // Создаем сетку для генерации поверхности
+  /**
+   * Создаем основной слой карты
+   */
   const grid = new Grid(20, 13);
 
-  // ставим в ячейки тайлы по шаблону или все возможные
   grid.init([
-    LEVEL_TEMPLATE_BRIDGE_CENTER,
-    LEVEL_TEMPLATE_WATER_BORDER_2,
-    LEVEL_TEMPLATE_GROUND_PLAYER,
-  ], LEVEL_SURFACE_TILE_WEIGHT);
-  grid.wfc(LEVEL_SURFACE_TILE_RULES); 
+    LAYER_MAIN_TEMPLATE_BRIDGE_CENTER,
+    LAYER_MAIN_TEMPLATE_WATER_BORDER_2,
+    LAYER_MAIN_TEMPLATE_GROUND_PLAYER,
+  ], LAYER_MAIN_WEIGHT);
+  grid.wfc(LAYER_MAIN_RULES); 
 
-  // создаем карту для рендера поверхности
-  const map = grid.map();
+  const mainMap = grid.map();
 
-  // Создаем сетку для доп тайлов, например мостов
-  const bridgeGrid = new Grid(20, 13);
-  bridgeGrid.mask(grid, LEVEL_ADD_TILE_BRIDGE);
+  /**
+   * На основе основного слоя создаем дополнительный слой
+   * Например чтобы добавить тень под мостами или траву под елками
+   * Используем точные условия
+   */
+  const additionalGrid = new Grid(20, 13);
+  additionalGrid.mask(grid, LAYER_ADDITIONAL_EMPTY_CONDITIONS);
 
-  const bridgeMap = bridgeGrid.map();
+  const additionalMap = additionalGrid.map();
 
-  // Генерируем декорации
+  /**
+   * На основе основного слоя создаем слой c декорациями
+   * Используем условия с рандомом
+   */
   const decorationsGrid = new Grid(20, 13);
-  decorationsGrid.mask(grid, LEVEL_DECO_CONDITION);
+  decorationsGrid.mask(grid, LAYER_DECO_CONDITIONS);
 
   const decorationsMap = decorationsGrid.map();
 
-  // рисуем деревья
-  const treeGrid = new Grid(20, 13);
-  treeGrid.mask(decorationsGrid, LEVEL_ADD_TILE_TREE);
+  /**
+   * На основе основного слоя создаем слой с нижней частью деревьев
+   * Используем точные условия
+   */
+  const treeBottomGrid = new Grid(20, 13);
+  treeBottomGrid.mask(grid, LAYER_ADDITIONAL_TREE_BOTTOM_CONDITIONS);
 
-  const treeMap = treeGrid.map();
+  const treeBottomMap = treeBottomGrid.map();
 
-  // генерируем границы
+  /**
+   * На основе основного слоя создаем слой с верхней частью деревьев
+   * Используем точные условия
+   */
+  const treeTopGrid = new Grid(20, 13);
+  treeTopGrid.mask(grid, LAYER_FOREGROUND_TREE_TOP_CONDITIONS);
+
+  const treeTopMap = treeTopGrid.map();
+
+  /**
+   * Создаем границы
+   */
   const boundaries: number[][] = [];
 
   grid.array.forEach(({ coords, options }) => {
-    if (options[0] === TileName.WATER_MIDDLE_MIDDLE) {
+    if (options[0] === TileName.WATER_MIDDLE_MIDDLE || options[0] === TileName.TREE_STRUMP) {
       boundaries.push([coords[0], coords[1]]);
     }
   });
@@ -83,7 +96,7 @@
     const SCALE = 0.75;
 
     /**
-     * Рендер статичной карты
+     * Рендер карты по слоям
      */
     const system = new CoordinateSystem({ tileSize: TILE_SIZE, maxX: 20, maxY: 13 });
     const staticScene = new Renderer({
@@ -93,15 +106,27 @@
     });
 
     await staticScene.renderStaticLayer(waterMap);
-    await staticScene.renderStaticLayer(bridgeMap);
-    await staticScene.renderStaticLayer(map);
+    await staticScene.renderStaticLayer(additionalMap);
+    await staticScene.renderStaticLayer(mainMap);
     await staticScene.renderStaticLayer(decorationsMap);
-    await staticScene.renderStaticLayer(treeMap);
+    await staticScene.renderStaticLayer(treeBottomMap);
+
+    /**
+     * Рендер слоя с объектами переднего плана
+     */
+    const systemForeground = new CoordinateSystem({ tileSize: TILE_SIZE, maxX: 20, maxY: 13 });
+    const foregroundScene = new Renderer({
+      canvas: document.getElementById('canvas_foreground') as HTMLCanvasElement,
+      scale: SCALE,
+      coordinateSystem: systemForeground,
+    });
+
+    await foregroundScene.renderStaticLayer(treeTopMap);
 
     /**
      * Рендер интерактивных элементов, которые будут в движении
      */
-    const interactiveSystem = new CoordinateSystem({ tileSize: TILE_SIZE / 2, maxX: 40, maxY: 40 });
+    // const interactiveSystem = new CoordinateSystem({ tileSize: TILE_SIZE / 2, maxX: 40, maxY: 40 });
     const interactiveScene = new Renderer({
       canvas: document.getElementById('canvas_interactive') as HTMLCanvasElement,
       scale: SCALE,
@@ -162,4 +187,5 @@
 <div style='position: relative'>
   <canvas id="canvas" width="960" height="720" style="position: absolute; left: 0; top: 0;"></canvas>
   <canvas id="canvas_interactive" width="960" height="720" style="position: absolute; left: 0; top: 0;"></canvas>
+  <canvas id="canvas_foreground" width="960" height="720" style="position: absolute; left: 0; top: 0;"></canvas>
 </div>

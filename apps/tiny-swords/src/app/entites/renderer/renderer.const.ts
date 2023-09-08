@@ -17,6 +17,8 @@ import { TreeType } from "../tree/tree.const";
 import { TreeTile } from "../tree/tree";
 
 export const enum TileName {
+  WATER_MIDDLE_MIDDLE,
+
   SAND_TOP_LEFT,
   SAND_TOP_MIDDLE,
   SAND_TOP_RIGHT,
@@ -75,8 +77,6 @@ export const enum TileName {
   FOAM_BOTTOM,
   FOAM_MIDDLE,
 
-  WATER_MIDDLE_MIDDLE,
-
   BRIDGE_LEFT,
   BRIDGE_MIDDLE,
   BRIDGE_RIGHT,
@@ -118,6 +118,8 @@ export const enum TileName {
 };
 
 export const mapTileNameToClass: Partial<Record<TileName, { constructor: any, args: Array<any> }>> = {
+  [TileName.WATER_MIDDLE_MIDDLE]: { constructor: WaterTile, args: [] },
+
   [TileName.SAND_TOP_LEFT]: { constructor: SandTile, args: [SandType.TOP_LEFT] },
   [TileName.SAND_TOP_MIDDLE]: { constructor: SandTile, args: [SandType.TOP_MIDDLE] },
   [TileName.SAND_TOP_RIGHT]: { constructor: SandTile, args: [SandType.TOP_RIGHT] },
@@ -150,6 +152,11 @@ export const mapTileNameToClass: Partial<Record<TileName, { constructor: any, ar
   [TileName.GROUND_VERTICAL_MIDDLE]: { constructor: GroundTile, args: [GroundType.VERTICAL_MIDDLE] },
   [TileName.GROUND_VERTICAL_BOTTOM]: { constructor: GroundTile, args: [GroundType.VERTICAL_BOTTOM] },
 
+  [TileName.BRIDGE_LEFT]: { constructor: BridgeTile, args: [BridgeType.LEFT] },
+  [TileName.BRIDGE_MIDDLE]: { constructor: BridgeTile, args: [BridgeType.MIDDLE] },
+  [TileName.BRIDGE_RIGHT]: { constructor: BridgeTile, args: [BridgeType.RIGHT] },
+  [TileName.BRIDGE_SHADOW]: { constructor: BridgeTile, args: [BridgeType.SHADOW] },
+
   [TileName.ELEVATION_TOP_LEFT]: { constructor: ElevationTile, args: [ElevationType.TOP_LEFT] },
   [TileName.ELEVATION_TOP_MIDDLE]: { constructor: ElevationTile, args: [ElevationType.TOP_MIDDLE] },
   [TileName.ELEVATION_TOP_RIGHT]: { constructor: ElevationTile, args: [ElevationType.TOP_RIGHT] },
@@ -175,13 +182,6 @@ export const mapTileNameToClass: Partial<Record<TileName, { constructor: any, ar
   [TileName.FOAM_RIGHT]: { constructor: FoamTile, args: [FoamType.RIGHT] },
   [TileName.FOAM_BOTTOM]: { constructor: FoamTile, args: [FoamType.BOTTOM] },
   [TileName.FOAM_MIDDLE]: { constructor: FoamTile, args: [FoamType.MIDDLE] },
-
-  [TileName.WATER_MIDDLE_MIDDLE]: { constructor: WaterTile, args: [] },
-
-  [TileName.BRIDGE_LEFT]: { constructor: BridgeTile, args: [BridgeType.LEFT] },
-  [TileName.BRIDGE_MIDDLE]: { constructor: BridgeTile, args: [BridgeType.MIDDLE] },
-  [TileName.BRIDGE_RIGHT]: { constructor: BridgeTile, args: [BridgeType.RIGHT] },
-  [TileName.BRIDGE_SHADOW]: { constructor: BridgeTile, args: [BridgeType.SHADOW] },
 
   [TileName.DECO_MUSHROOM_S]: { constructor: DecoTile, args: [DecoType.MUSHROOM_S] },
   [TileName.DECO_MUSHROOM_M]: { constructor: DecoTile, args: [DecoType.MUSHROOM_M] },
