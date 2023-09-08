@@ -9,6 +9,10 @@ export class Matrix<T> {
 		this.#xLength = xLength;
 	}
 
+	get array() {
+		return this.#array;
+	}
+
 	#getElementIndex({ x, y }: IPosition) {
 		return y * this.#xLength + x;
 	}

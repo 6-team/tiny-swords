@@ -1,4 +1,4 @@
-import { TileName } from "../../entites/renderer/renderer.const";
+import { TileName } from "../renderer/renderer.const";
 
 export const TILE_TYPES = [
   TileName.WATER_MIDDLE_MIDDLE,

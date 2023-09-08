@@ -11,6 +11,10 @@ import { BridgeTile } from "../bridge/bridge";
 import { BridgeType } from "../bridge/bridge.const";
 import { DecoTile } from "../deco/deco";
 import { DecoType } from "../deco/deco.const";
+import { RocksTile } from "../rocks/rocks";
+import { RocksType } from "../rocks/rocks.const";
+import { TreeType } from "../tree/tree.const";
+import { TreeTile } from "../tree/tree";
 
 export const enum TileName {
   SAND_TOP_LEFT,
@@ -96,6 +100,21 @@ export const enum TileName {
   DECO_SIGN_STOP,
   DECO_SIGH_RIGHT,
   DECO_SCARECROW,
+
+  ROCKS_S,
+  ROCKS_M,
+  ROCKS_L,
+
+  TREE_TOP_LEFT,
+  TREE_TOP_MIDDLE,
+  TREE_TOP_RIGHT,
+  TREE_MIDDLE_LEFT,
+  TREE_MIDDLE_MIDDLE,
+  TREE_MIDDLE_RIGHT,
+  TREE_BOTTOM_LEFT,
+  TREE_BOTTOM_MIDDLE,
+  TREE_BOTTOM_RIGHT,
+  TREE_STRUMP,
 };
 
 export const mapTileNameToClass: Partial<Record<TileName, { constructor: any, args: Array<any> }>> = {
@@ -182,4 +201,19 @@ export const mapTileNameToClass: Partial<Record<TileName, { constructor: any, ar
   [TileName.DECO_SIGN_STOP]: { constructor: DecoTile, args: [DecoType.SIGN_STOP] },
   [TileName.DECO_SIGH_RIGHT]: { constructor: DecoTile, args: [DecoType.SIGH_RIGHT] },
   [TileName.DECO_SCARECROW]: { constructor: DecoTile, args: [DecoType.SCARECROW] },
+
+  [TileName.ROCKS_S]: { constructor: RocksTile, args: [RocksType.ROCKS_S] },
+  [TileName.ROCKS_M]: { constructor: RocksTile, args: [RocksType.ROCKS_M] },
+  [TileName.ROCKS_L]: { constructor: RocksTile, args: [RocksType.ROCKS_L] },
+
+  [TileName.TREE_TOP_LEFT]: { constructor: TreeTile, args: [TreeType.TOP_LEFT] },
+  [TileName.TREE_TOP_MIDDLE]: { constructor: TreeTile, args: [TreeType.TOP_MIDDLE] },
+  [TileName.TREE_TOP_RIGHT]: { constructor: TreeTile, args: [TreeType.TOP_RIGHT] },
+  [TileName.TREE_MIDDLE_LEFT]: { constructor: TreeTile, args: [TreeType.MIDDLE_LEFT] },
+  [TileName.TREE_MIDDLE_MIDDLE]: { constructor: TreeTile, args: [TreeType.MIDDLE_MIDDLE] },
+  [TileName.TREE_MIDDLE_RIGHT]: { constructor: TreeTile, args: [TreeType.MIDDLE_RIGHT] },
+  [TileName.TREE_BOTTOM_LEFT]: { constructor: TreeTile, args: [TreeType.BOTTOM_LEFT] },
+  [TileName.TREE_BOTTOM_MIDDLE]: { constructor: TreeTile, args: [TreeType.BOTTOM_MIDDLE] },
+  [TileName.TREE_BOTTOM_RIGHT]: { constructor: TreeTile, args: [TreeType.BOTTOM_RIGHT] },
+  [TileName.TREE_STRUMP]: { constructor: TreeTile, args: [TreeType.STRUMP] },
 };

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { TileName } from "../../entites/scene/scene.const";
+import { TileName } from "../../entites/renderer/renderer.const";
 import { TILE_WEIGHT } from "./wfc.const";
 
 
