@@ -4,5 +4,6 @@ export interface IMovableProps {
   initialX: TTilePosition;
   initialY: TTilePosition;
   initialHeight: number;
+  tileSize: number;
   initialWidth?: number;
 }

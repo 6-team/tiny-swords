@@ -1,98 +1,96 @@
-import { Sprite } from '../sprite';
-import { CharacterAction } from './character.const';
-import { Directions } from './character.types';
-
-export default class Character extends Sprite {
-  readonly #pushedKeys: Record<string, Directions>;
-  readonly #directionStep: Record<Directions, number>;
-  #pushedButtons: (Directions)[] = [];
+import { Tile } from '../entites/tile/tile';
+import { CoordsTuple } from '../entites/tile/tile.types';
+import { Directions, KeyboardController } from '../entites/controllers/keyboard';
+import { Movable } from '../entites/movable/movable';
+import { CharacterAction, animationByDirection, coordinatesSetters } from './character.const';
+export default class Character extends Tile<string> {
+  protected _sprite = '/img/Factions/Knights/Troops/Warrior/Blue/Warrior_Blue.png';
+  protected _type = 'character';
+  protected _size = 192;
+  protected _row = 0;
+  protected _col = 0;
+  #x = 0;
+  #y = 0;
+  #coordinatesInPixels: [number, number, number, number];
   #movingProgressRemaining: number;
-  #isRightDirection = true;
-  direction: Directions;
+  #direction: Directions;
 
-  constructor(ctx: CanvasRenderingContext2D | null) {
-    super({
-      ctx,
-      spriteSrc: '/img/Factions/Knights/Troops/Warrior/Blue/Warrior_Blue.png',
-      x: 48,
-      y: 168,
-    });
-    this.#movingProgressRemaining = 0
-    this.#pushedKeys = {
-      'ArrowUp': 'up',
-      'KeyW': 'up',
-      'ArrowDown': 'down',
-      'KeyS': 'down',
-      'ArrowLeft': 'left',
-      'KeyA': 'left',
-      'ArrowRight': 'right',
-      'KeyD': 'right',
-    }
-    this.#directionStep = {
-      up: -1,
-      down: 1,
-      left: -1,
-      right: 1
-    }
+  constructor() {
+    super();
+    this.#movingProgressRemaining = 0;
   }
 
-  get #direction(): Directions {
-    return this.#pushedButtons[0]
+  get coordinatesInPixels() {
+    return this.#coordinatesInPixels;
   }
 
-  move(code: string): void {
-    const direction = this.#pushedKeys[code];
-    if(direction && this.#pushedButtons.indexOf(direction) === -1) {
-      this.#pushedButtons.unshift(direction);
+  #movingAnimation(direction: Directions, isRightDirection: boolean) {
+    const movingDirection = animationByDirection[direction];
 
-      if(direction === 'left') {
-        this.#isRightDirection = false;
-      }
-
-      if(direction === 'right') {
-        this.#isRightDirection = true
-      }
-    }
-
-  }
-
-  stop(code: string): void {
-    const direction = this.#pushedKeys[code];
-    const directionIdx = this.#pushedButtons.indexOf(direction);
-    if(directionIdx > -1) {
-      this.#pushedButtons.splice(directionIdx, 1)
-    }
-  }
-
-  init(deltaTime: number): void {
-    this.draw(deltaTime);
-    this.updatePosition();
-  }
-
-  private updatePosition(): void {
-    if(this.#movingProgressRemaining > 0) {
-      const isVerticalDirection = this.direction === 'up' || this.direction === 'down'
-      const isHorizontalDirection = this.direction === 'left' || this.direction === 'right';
-
-      if(isHorizontalDirection) {
-        this.changeXCoordinate(this.#directionStep[this.direction]);
-        this.changeAnimation(this.direction === 'left' ? CharacterAction.RUN_LEFT : CharacterAction.RUN);
-      }
-
-      if(isVerticalDirection) {
-        this.changeYCoordinate(this.#directionStep[this.direction]);
-        this.changeAnimation(this.#isRightDirection ? CharacterAction.RUN : CharacterAction.RUN_LEFT);
-      }
-
-      this.#movingProgressRemaining -= 1
+    if (direction === Directions.UP || direction === Directions.DOWN) {
+      const verticalDirection = isRightDirection ? CharacterAction.RUN : CharacterAction.RUN_LEFT;
+      this.changeAnimation(verticalDirection);
     } else {
-      const animation = this.#isRightDirection ? CharacterAction.STANDS_STILL : CharacterAction.STANDS_STILL_LEFT
-      this.changeAnimation(animation);
+      const horizontalMoving = isRightDirection ? CharacterAction.STANDS_STILL : CharacterAction.STANDS_STILL_LEFT;
+      this.changeAnimation(movingDirection ?? horizontalMoving);
+    }
+  }
+
+  moving(keyboardController: KeyboardController, movable: Movable, tileSize: number) {
+    const { direction, isRightDirection } = keyboardController;
+    const {
+      coords: [x, y],
+      sizes,
+    } = movable;
+
+    const [height, width] = [sizes[0] * tileSize, sizes[1] * tileSize];
+
+    if (!this.#x && !this.#y) {
+      this.#x = x * tileSize;
+      this.#y = y * tileSize;
     }
 
-    if(this.#movingProgressRemaining === 0 && this.#direction) {
-      this.#movingProgressRemaining = this.step * this.scale;
-      this.direction = this.#direction;
+    if (!this.#coordinatesInPixels) {
+      this.#coordinatesInPixels = [x * tileSize, y * tileSize, height, width];
     }
+
+    if (this.#movingProgressRemaining > 0) {
+      switch (this.#direction) {
+        case Directions.UP:
+          this.#coordinatesInPixels = [this.#x, (this.#y -= 1), height, width];
+          break;
+        case Directions.DOWN:
+          this.#coordinatesInPixels = [this.#x, (this.#y += 1), height, width];
+          break;
+        case Directions.LEFT:
+          this.#coordinatesInPixels = [(this.#x -= 1), this.#y, height, width];
+          break;
+        case Directions.RIGHT:
+          this.#coordinatesInPixels = [(this.#x += 1), this.#y, height, width];
+      }
+
+      this.#movingAnimation(this.#direction, isRightDirection);
+      this.#movingProgressRemaining -= 1;
+    }
+
+    if (this.#movingProgressRemaining === 0 && direction) {
+      this.#movingProgressRemaining = tileSize;
+      movable.setCoords(coordinatesSetters[direction]);
+      this.#direction = direction;
+    }
+
+    if (this.#movingProgressRemaining === 0 && !direction) {
+      this.changeAnimation(isRightDirection ? CharacterAction.STANDS_STILL : CharacterAction.STANDS_STILL_LEFT);
+    }
+  }
+
+  stop(coords: [number, number, number, number]) {
+    this.#coordinatesInPixels = coords;
+  }
+
+  protected _getCoordsMap(): Record<string, CoordsTuple> {
+    return {
+      character: [this._size, this._size],
+    };
   }
 }

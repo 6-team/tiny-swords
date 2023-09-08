@@ -36,4 +36,8 @@ export class Movable implements IWithCoordsMethods {
   get sizes() {
     return this.#sizes;
   }
+
+  get prevCoords() {
+    return this.#prevCoords;
+  }
 }

@@ -1,6 +1,4 @@
-import { IWithCoordsMethods } from '../entites/coordinate-system/coordinate-system.types';
-
-export type TTilePosition = number;
+ export type TTilePosition = number;
 
 export interface ICoordinateSystem {
   tileSize: number;
@@ -17,5 +15,8 @@ export interface ITile {
     image: HTMLImageElement;
     coords: [number, number];
     size: number;
+    col: number;
+    row: number;
   }>;
+  initAnimation(deltaTime: number): void;
 }

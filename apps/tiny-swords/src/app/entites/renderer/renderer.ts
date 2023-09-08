@@ -21,7 +21,9 @@ export class Renderer {
   #context: CanvasRenderingContext2D;
   #system: ICoordinateSystem;
   #scale: number;
-  #interactives = new Set<ITile & { abilities: Map<'movable', IWithCoordsMethods> }>();
+  #interactives = new Set<
+    ITile & { abilities: Map<'movable', IWithCoordsMethods>; coordinatesInPixels: [number, number, number, number] }
+  >();
 
   constructor({ canvas, coordinateSystem, scale }: RendererConfig) {
     this.#canvas = canvas;
@@ -54,6 +56,27 @@ export class Renderer {
     return this;
   }
 
+  async renderWithAnimation(elementPxCoords: [number, number, number, number], tile: ITile, deltaTime: number) {
+    const [elementPxX, elementPxY, elementPxHeight, elementPxWidth] = elementPxCoords;
+    const { image, size, col, row } = await tile.getData();
+
+    this.#context.drawImage(
+      image,
+      (elementPxHeight + this.#system.tileSize) * col,
+      (elementPxHeight + this.#system.tileSize) * row,
+      size,
+      size,
+      elementPxX * this.#scale,
+      elementPxY * this.#scale,
+      elementPxHeight * this.#scale,
+      elementPxWidth * this.#scale,
+    );
+
+    tile.initAnimation(deltaTime);
+
+    return this;
+  }
+
   async renderStaticLayer(map: Array<Array<TileName | null>>) {
     for (const [rowIndex, row] of enumerate(map)) {
       for (const [tileNameIndex, tileName] of enumerate(row)) {
@@ -69,17 +92,20 @@ export class Renderer {
     }
   }
 
-  addInteractiveElement(element: ITile & { abilities: Map<'movable', IWithCoordsMethods> }) {
+  addInteractiveElement(
+    element: ITile & {
+      abilities: Map<'movable', IWithCoordsMethods>;
+      coordinatesInPixels: [number, number, number, number];
+    },
+  ) {
     this.#interactives.add(element);
   }
 
-  async renderInteractiveLayer() {
+  renderInteractiveLayer(deltaTime: number) {
     this._clear();
 
     for (const interactive of this.#interactives) {
-      const { coords, sizes } = interactive.abilities.get('movable');
-
-      this.render(this.#system.transformToPixels(coords[0], coords[1], sizes[0], sizes[1]), interactive);
+      this.renderWithAnimation(interactive.coordinatesInPixels, interactive, deltaTime);
     }
   }
 

@@ -3,8 +3,9 @@
   import { Renderer } from '../entites/renderer/renderer';
   import { TileName } from "../entites/renderer/renderer.const";
   import { CoordinateSystem } from '../entites/coordinate-system/coordinate-system';
-  import { DecoTile } from "../entites/deco/deco";
   import { Movable } from '../entites/movable/movable';
+  import { KeyboardController } from '../entites/controllers/keyboard'
+  import { Character } from '../character'
 
   const waterMap = [
     new Array(20).fill(TileName.WATER_MIDDLE_MIDDLE),
@@ -37,7 +38,7 @@
     [TileName.FOAM_LEFT, ...new Array(18).fill(TileName.FOAM_MIDDLE), TileName.FOAM_RIGHT],
     [null,               ...new Array(18).fill(TileName.FOAM_BOTTOM)],
   ];
-  
+
   const sandMap = [
     [],
     [],
@@ -129,7 +130,7 @@
 
     [0, 3],
     [1, 3],
-    
+
     [0, 5],
     [1, 5],
 
@@ -196,45 +197,28 @@
     /**
      * Рендер интерактивных элементов, которые будут в движении
      */
-    const interactiveSystem = new CoordinateSystem({ tileSize: TILE_SIZE / 2, maxX: 40, maxY: 40 });
+    const interactiveSystem = new CoordinateSystem({ tileSize: TILE_SIZE * SCALE, maxX: 40, maxY: 40 });
     const interactiveScene = new Renderer({
       canvas: document.getElementById('canvas_interactive') as HTMLCanvasElement,
       scale: SCALE,
       coordinateSystem: interactiveSystem,
     });
 
-    const mushroom = new DecoTile() // Для примера будем управлять грибом
-      .addAbility("movable", new Movable({ initialX: 2, initialY: 8, initialHeight: 2 }))
-    const movableAbility = mushroom.getAbility<Movable>("movable");
+    const movable = new Movable({ initialX: 1, initialY: 4, initialHeight: 3, tileSize: TILE_SIZE * SCALE });
+    const character = new Character().addAbility('movable', movable);
+    const movableAbility = character.getAbility<Movable>("movable");
 
-    interactiveScene.addInteractiveElement(mushroom);
-    interactiveScene.renderInteractiveLayer();
+    const keyboardController = new KeyboardController();
 
-    document.addEventListener('keydown', (event) => {
-      switch (event.key) {
-        case "ArrowLeft":
-        case "a":
-          movableAbility.setCoords(([prevX, prevY]) => [prevX - 1, prevY]);
+    interactiveScene.addInteractiveElement(character);
 
-          break;
-        case "ArrowRight":
-        case "d":
-          movableAbility.setCoords(([prevX, prevY]) => [prevX + 1, prevY]);
+    let lastTime = 0
 
-          break;
-        case "ArrowUp":
-        case "w":
-          movableAbility.setCoords(([prevX, prevY]) => [prevX, prevY - 1]);
-
-          break;
-        case "ArrowDown":
-        case "s":
-          movableAbility.setCoords(([prevX, prevY]) => [prevX, prevY + 1]);
-
-          break;
-        default:
-          return;
-      }
+    function animate(timeStamp = 0) {
+      requestAnimationFrame(animate);
+      const deltaTime = timeStamp - lastTime;
+      interactiveScene.renderInteractiveLayer(deltaTime);
+      character.moving(keyboardController, movableAbility, TILE_SIZE * SCALE)
 
       for (const bound of boundaries) {
         const hasCollision = CoordinateSystem.checkCollision(
@@ -244,13 +228,14 @@
 
         if (hasCollision) {
           movableAbility.back();
-
           break;
         }
       }
 
-      requestAnimationFrame(() => interactiveScene.renderInteractiveLayer());
-    });
+      lastTime = timeStamp
+      }
+
+    animate();
   });
 </script>
 

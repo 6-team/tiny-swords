@@ -58,7 +58,7 @@ export default abstract class Sprite {
     }
 
     if (this.#framePerTime > 1000 / this.#fps) {
-      this.#col < this.#spriteFramesCount - 1 ? this.#col += 1 : (this.#col = 0);
+      this.#col < this.#spriteFramesCount - 1 ? (this.#col += 1) : (this.#col = 0);
       this.#framePerTime = 0;
     } else {
       this.#framePerTime += deltaTime;
