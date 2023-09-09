@@ -3,11 +3,11 @@
   import { Renderer } from '../entites/renderer/renderer';
   import { TileName } from "../entites/renderer/renderer.const";
   import { CoordinateSystem } from '../entites/coordinate-system/coordinate-system';
-  import { DecoTile } from "../entites/deco/deco";
   import { Movable } from '../entites/abilities/movable/movable';
   import { Attacking } from '../entites/abilities/attacking/attacking';
   import { AttackingForce } from "../entites/abilities/attacking/attacking.const";
-  import { DecoAnimation } from "../entites/deco/deco.const";
+  import { Character } from '../character'
+  import { KeyboardController } from "../entites/controllers/keyboard";
 
   const waterMap = [
     new Array(20).fill(TileName.WATER_MIDDLE_MIDDLE),
@@ -40,7 +40,7 @@
     [TileName.FOAM_LEFT, ...new Array(18).fill(TileName.FOAM_MIDDLE), TileName.FOAM_RIGHT],
     [null,               ...new Array(18).fill(TileName.FOAM_BOTTOM)],
   ];
-  
+
   const sandMap = [
     [],
     [],
@@ -132,7 +132,7 @@
 
     [0, 3],
     [1, 3],
-    
+
     [0, 5],
     [1, 5],
 
@@ -210,65 +210,35 @@
       coordinateSystem: system,
     });
 
-    const mushroom = new DecoTile() // Для примера будем управлять грибом
-      .addAbility("movable", new Movable({ initialX: 1, initialY: 4, initialHeight: 1 }))
+    const [initialX, initialY, initialHeight] = system.transformToPixels(2, 4, 3, 3)
+
+    const character = new Character()
+      .addAbility("movable", new Movable({ initialX, initialY, initialHeight}))
       .addAbility("attacking", new Attacking());
-    const movable = mushroom.getAbility<Movable>("movable");
-    const attacking = mushroom.getAbility<Attacking>("attacking");
+      const movable = character.getAbility<Movable>('movable')
+
+    const keyboardController = new KeyboardController(character, system);
 
     // Дальше проверка: если перс повернут к врагу и они в соседних клетках, то удар засчитан
     // ...
 
-    interactiveScene.renderMovableLayer([mushroom]);
-
-    document.addEventListener('keydown', (event) => {
-      switch (event.key) {
-        case "ArrowLeft":
-        case "a":
-          movable.setMovement(([prevX, prevY]) => [prevX - 1, prevY], DecoAnimation.BACKWARD);
-
-          break;
-        case "ArrowRight":
-        case "d":
-          movable.setMovement(([prevX, prevY]) => [prevX + 1, prevY], DecoAnimation.FORWARD);
-
-          break;
-        case "ArrowUp":
-        case "w":
-          movable.setMovement(([prevX, prevY]) => [prevX, prevY - 1]);
-
-          break;
-        case "ArrowDown":
-        case "s":
-          movable.setMovement(([prevX, prevY]) => [prevX, prevY + 1]);
-
-          break;
-        case "f":
-          attacking.attack();
-
-          break;
-        case "g":
-          attacking.attack(AttackingForce.STRONG);
-
-          break;
-        default:
-          return;
-      }
-
+    // Это надо будет наверное вынести куда то
+    function checkCollisions(): void {
       for (const area of nextLevelArea) {
         const hasCollisionWithNextLevelArea = CoordinateSystem.checkCollision(
-          system.transformToPixels(movable.coords[0], movable.coords[1], movable.sizes[0], movable.sizes[1]),
+          [movable.coords[0], movable.coords[1], movable.sizes[0], movable.sizes[1]],
           system.transformToPixels(area[0], area[1], 1, 1),
         );
 
         if (hasCollisionWithNextLevelArea) {
           alert('You won!');
+          break;
         }
       }
 
       for (const bound of boundaries) {
         const hasCollision = CoordinateSystem.checkCollision(
-          system.transformToPixels(movable.coords[0], movable.coords[1], movable.sizes[0], movable.sizes[1]),
+          [movable.coords[0], movable.coords[1], movable.sizes[0], movable.sizes[1]],
           system.transformToPixels(bound[0], bound[1], 1, 1),
         );
 
@@ -278,9 +248,27 @@
           break;
         }
       }
+    }
 
-      requestAnimationFrame(() => interactiveScene.renderMovableLayer([mushroom]));
-    });
+    let lastTime = 0;
+
+    const animate = (timeStamp = 0) => {
+      requestAnimationFrame(animate);
+      const deltaTime = timeStamp - lastTime;
+      keyboardController.init()
+
+      interactiveScene.renderMovableLayer([character], deltaTime);
+
+      if(keyboardController.isCharacterMoving) {
+        checkCollisions();
+      }
+
+
+      lastTime = timeStamp
+    }
+
+
+    animate()
   });
 </script>
 

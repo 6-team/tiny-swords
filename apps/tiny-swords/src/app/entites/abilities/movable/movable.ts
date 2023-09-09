@@ -40,22 +40,16 @@ export class Movable implements IMovable {
    * @param direction Направление, в котором будет повернут персонаж.
    * @returns Объект способности
    */
-  setMovement(
-    updater: (prev: [TTilePosition, TTilePosition]) => [TTilePosition, TTilePosition],
-    animation?: 'BACKWARD' | 'FORWARD',
-    direction?: 'RIGHT' | 'LEFT',
-  ) {
+  setMovement(updater: (prev: [TTilePosition, TTilePosition]) => [TTilePosition, TTilePosition]) {
     if (!this.#context) {
       throw new Error(MovingError.PERSONAGE_NOT_SET);
     }
 
     const prevCoords: [number, number] = [...this.#coords];
+    console.log(prevCoords);
 
     this.#coords = [...updater(this.#coords)];
     this.#prevCoords = prevCoords;
-    this.#context.setAnimation(animation);
-    // @TODO Раскомментировать, когда будет класс, умеющий добавлять анимацию для нужного типа
-    // this.#context.setType(direction);
 
     return this;
   }
