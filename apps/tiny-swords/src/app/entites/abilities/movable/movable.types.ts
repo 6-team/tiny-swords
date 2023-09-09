@@ -6,8 +6,3 @@ export interface MovableProps {
   initialHeight: TNumberOfTiles;
   initialWidth?: TNumberOfTiles;
 }
-
-export interface WithMovableMethods {
-  setAnimation(next: 'FORWARD' | 'BACKWARD'): void;
-  setType(next: 'RIGHT' | 'LEFT'): void;
-}

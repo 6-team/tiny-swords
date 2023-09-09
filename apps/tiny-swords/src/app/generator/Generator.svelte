@@ -6,8 +6,8 @@
   import { DecoTile } from "../entites/deco/deco";
   import { Movable } from '../entites/abilities/movable/movable';
   import { Attacking } from '../entites/abilities/attacking/attacking';
-  import { AttackingForce } from "../entites/abilities/attacking/attacking.types";
-  import { DecoAnimation, DecoType } from "../entites/deco/deco.const";
+  import { AttackingForce } from "../entites/abilities/attacking/attacking.const";
+  import { DecoAnimation } from "../entites/deco/deco.const";
 
   const waterMap = [
     new Array(20).fill(TileName.WATER_MIDDLE_MIDDLE),

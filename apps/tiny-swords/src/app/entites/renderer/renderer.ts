@@ -1,4 +1,5 @@
-import { ICoordinateSystem, ITile, IWithAbilityToMove } from '../../common/common.types';
+import { IWithAbilityToMove } from '../../common/abilities/abilities.types';
+import { ICoordinateSystem, ITile } from '../../common/common.types';
 import { Maybe } from '../../tools/monads/maybe';
 import { TileName, mapTileNameToClass } from './renderer.const';
 import { RendererConfig } from './renderer.types';

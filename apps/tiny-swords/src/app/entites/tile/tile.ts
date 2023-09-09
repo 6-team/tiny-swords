@@ -1,6 +1,7 @@
+import { WithSetPersonageContext } from '../../common/abilities/abilities.types';
 import { ITile } from '../../common/common.types';
 import { ErrorEnum } from './tile.const';
-import { CoordsTuple, WithAbility, WithSetPersonageContext } from './tile.types';
+import { CoordsTuple, WithAbility } from './tile.types';
 
 export abstract class Tile<Types extends string | number | symbol> implements ITile {
   protected abstract _sprite: string;
