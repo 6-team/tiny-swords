@@ -26,6 +26,12 @@ export const LAYER_DECO_TILE_WEIGHT: Record<number, [TileName, number][]> = {
     [TileName.DECO_WEED_S,     2],
     [TileName.DECO_WEED_M,     1],
   ],
+  4: [
+    [TileName.DECO_BONE_S_RIGHT, 1],
+    [TileName.DECO_BONE_S_LEFT,  1],
+    [TileName.DECO_BONE_M_RIGHT, 1],
+    [TileName.DECO_BONE_M_LEFT,  1],
+  ],
 };
 
 /**

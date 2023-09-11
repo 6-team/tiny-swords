@@ -55,10 +55,12 @@ export class DecoTile extends Tile<DecoType> {
         this._sprite = '/img/Deco/13.png';
         break;
 
-      case DecoType.BONE_S:
+      case DecoType.BONE_S_RIGHT:
+      case DecoType.BONE_S_LEFT:
         this._sprite = '/img/Deco/15.png';
         break;
-      case DecoType.BONE_M:
+      case DecoType.BONE_M_RIGHT:
+      case DecoType.BONE_M_LEFT:
         this._sprite = '/img/Deco/14.png';
         break;
 
