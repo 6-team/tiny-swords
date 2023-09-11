@@ -1,15 +1,15 @@
 import { WithSetPersonageContext } from '../../abilities/abilities.types';
 import { Tile } from '../tile/tile';
-import { CoordsTuple } from '../tile/tile.types';
+import { CharacterType, mapCharacterTypeToCoords } from './character.const';
 import { CharacterConfig } from './character.types';
 
 export default class Character<
   Abilities extends Record<string | symbol | number, WithSetPersonageContext>,
-> extends Tile<string> {
+> extends Tile<CharacterType> {
   protected _sprite = '/img/Factions/Knights/Troops/Warrior/Blue/Warrior_Blue.png';
-  protected _type = 'character';
+  protected _type = CharacterType.WARRIOR_BLUE;
   protected _abilities: Abilities;
-  protected _scale = 0.75;
+  protected _scale = 1;
   protected _size = 192;
   protected _row = 0;
   protected _col = 0;
@@ -45,13 +45,11 @@ export default class Character<
    *
    * @param type Тип персонажа
    */
-  setType(type: string): void {
+  setType(type: CharacterType): void {
     this._type = type;
   }
 
-  protected _getCoordsMap(): Record<string, CoordsTuple> {
-    return {
-      character: [this._size, this._size],
-    };
+  protected _getCoordsMap() {
+    return mapCharacterTypeToCoords;
   }
 }
