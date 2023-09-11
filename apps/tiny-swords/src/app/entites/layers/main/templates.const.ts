@@ -1,4 +1,5 @@
 import { TileName } from "../../renderer/renderer.const";
+import { RoleType } from "../layers.types";
 import { randomInteger } from "../utils/layers.utils";
 
 export const LAYER_MAIN_TEMPLATE_BRIDGE_CENTER = {
@@ -34,24 +35,40 @@ export const LAYER_MAIN_TEMPLATE_WATER_BORDER_1 = {
   }
 }
 
-export const LAYER_MAIN_TEMPLATE_HOUSE = {
+export const LAYER_MAIN_TEMPLATE_LEFT_HOUSE = {
   create: ({ gridX, gridY }) => {
     const firstPart = Math.floor(gridX / 5);
     const x = randomInteger(1, firstPart - 1);
-    const y = randomInteger(2, gridY - 3);
+    const y = randomInteger(2, gridY - 4);
 
     return [
+      // Нижняя часть земли под остров
       {
-        tile: TileName.HOUSE_BOTTOM_LEFT,
+        tile: TileName.GROUND_MIDDLE_LEFT,
         coords: [x, y],
       },
       {
-        tile: TileName.HOUSE_BOTTOM_RIGHT,
+        tile: TileName.GROUND_MIDDLE_RIGHT,
         coords: [x + 1, y],
       },
+      // Верхняя часть земли под остров
       {
-        tile: TileName.GROUND_BOTTOM_LEFT,
+        tile: TileName.GROUND_TOP_LEFT,
+        coords: [x, y - 1],
+      },
+      {
+        tile: TileName.GROUND_TOP_RIGHT,
+        coords: [x + 1, y - 1],
+      },
+      // Под домом у нас мост и угол земли чтобы замкнуть остров
+      {
+        tile: TileName.GROUND_MIDDLE_LEFT,
         coords: [x, y + 1],
+      },
+      {
+        tile: TileName.BRIDGE_LEFT,
+        coords: [x + 1, y + 1],
+        role: RoleType.ENTER,
       }
     ];
   },

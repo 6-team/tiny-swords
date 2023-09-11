@@ -85,3 +85,18 @@ export const LAYER_ADDITIONAL_WATER_CONDITIONS = {
     return conditions;
   }
 }
+
+/**
+ * Шаблон для дорисовки дома
+ */
+export const LAYER_ADDITIONAL_HOUSE_CONDITIONS = {
+  create: () => { // enter
+    const enter = [5, 5];
+    return [
+      { tile: TileName.HOUSE_BOTTOM_LEFT, coords: [enter[0] - 1, enter[1] - 1] },
+      { tile: TileName.HOUSE_BOTTOM_RIGHT, coords: [enter[0], enter[1] - 1] },
+      { tile: TileName.HOUSE_MIDDLE_LEFT, coords: [enter[0] - 1, enter[1] - 2] },
+      { tile: TileName.HOUSE_MIDDLE_RIGHT, coords: [enter[0], enter[1] - 2 ]},
+    ];
+  }
+}

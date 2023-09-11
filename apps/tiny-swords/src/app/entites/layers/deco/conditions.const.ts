@@ -17,22 +17,6 @@ export const LAYER_DECO_TILE_WEIGHT = [
   [TileName.DECO_WEED_M,     5],
 ];
 
-// const availableCells = grid.#grid.array.filter(({ coords, options }) => {
-//   return conditionFn({ x: coords[0], y: coords[1], options });
-// });
-
-// if (availableCells.length) {
-//   for (let i = 0; i < random; i++) {
-//     const { coords } = availableCells[Math.floor(Math.random() * availableCells.length)];
-
-//     this.#grid.set({ x: coords[0], y: coords[1] }, { 
-//       collapsed: true,
-//       coords: [coords[0], coords[1]],
-//       options: [this.weightedRandom(data)],
-//     });
-//   }
-// }
-
 export const LAYER_DECO_WATER_CONDITIONS = {
   create: ({ grid }) => {
     const random = 8;
