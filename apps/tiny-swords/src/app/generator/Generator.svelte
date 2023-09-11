@@ -181,7 +181,7 @@
 
   onMount(async () => {
     const TILE_SIZE = 64;
-    const SCALE = 1;
+    const SCALE = 0.75;
 
     /**
      * Рендер статичной карты
@@ -210,7 +210,7 @@
       coordinateSystem: system,
     });
 
-    const [initialX, initialY, initialHeight] = system.transformToPixels(2, 4, 3, 3)
+    const [initialX, initialY, initialHeight] = system.transformToPixels(2, 3, 3, 3)
 
     const character = new Character()
       .addAbility("movable", new Movable({ initialX, initialY, initialHeight}))
@@ -219,6 +219,11 @@
 
     const keyboardController = new KeyboardController(character, system);
 
+
+    // Переменные для определения положения персонажа относительно середины поля
+    // Предполагается, что значения поля будут захардкожены
+    const middleX = (Math.max(...boundaries.map(([x]) => x)) * TILE_SIZE * SCALE) / 2
+    const middleY = (Math.max(...boundaries.map(([_, y]) => y)) * TILE_SIZE * SCALE) / 2
     // Дальше проверка: если перс повернут к врагу и они в соседних клетках, то удар засчитан
     // ...
 
@@ -226,7 +231,7 @@
     function checkCollisions(): void {
       for (const area of nextLevelArea) {
         const hasCollisionWithNextLevelArea = CoordinateSystem.checkCollision(
-          [movable.coords[0], movable.coords[1], movable.sizes[0], movable.sizes[1]],
+          [movable.coords[0] - TILE_SIZE * SCALE, movable.coords[1], movable.sizes[0], movable.sizes[1]],
           system.transformToPixels(area[0], area[1], 1, 1),
         );
 
@@ -237,8 +242,10 @@
       }
 
       for (const bound of boundaries) {
+        const horizontalOffset = movable.coords[0] > middleX ? -TILE_SIZE * SCALE : TILE_SIZE * SCALE;
+        const verticalOffset = movable.coords[1] > middleY ? -TILE_SIZE * SCALE : TILE_SIZE * SCALE;
         const hasCollision = CoordinateSystem.checkCollision(
-          [movable.coords[0], movable.coords[1], movable.sizes[0], movable.sizes[1]],
+          [movable.coords[0] + horizontalOffset, movable.coords[1] + verticalOffset, movable.sizes[0], movable.sizes[1]],
           system.transformToPixels(bound[0], bound[1], 1, 1),
         );
 
@@ -274,5 +281,5 @@
 
 <div>
   <canvas id="canvas" width="1300" height="900" style="position: absolute; left: 0; top: 0;"></canvas>
-  <canvas id="canvas_interactive" width="1300" height="900" style="position: absolute; left: 0; top: 0;"></canvas>
+  <canvas id="canvas_interactive" width="1280" height="832" style="position: absolute; left: 0; top: 0;"></canvas>
 </div>

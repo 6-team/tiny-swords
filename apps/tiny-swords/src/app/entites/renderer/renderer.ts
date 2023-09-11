@@ -57,6 +57,9 @@ export class Renderer {
     const [elementPxX, elementPxY, elementPxHeight, elementPxWidth] = elementPxCoords;
     const { image, size, col, row, coords, scale } = await tile.getData();
 
+    const dx = this.#scale > scale ? elementPxX * this.#scale + (this.#system.tileSize * scale) / 2 : elementPxX * this.#scale;
+    const dy = this.#scale > scale ? elementPxY * this.#scale + (this.#system.tileSize * scale) / 2 : elementPxY * this.#scale;
+
     this._clear();
     this.#context.drawImage(
       image,
@@ -64,11 +67,25 @@ export class Renderer {
       coords[1] * row,
       size,
       size,
-      elementPxX * scale,
-      elementPxY * scale,
+      dx,
+      dy,
       elementPxHeight * scale,
       elementPxWidth * scale,
     );
+
+
+    // FOR_TEST_PURPOSES:
+    // Данный функционал закоментирован для проверки движения персонажа (просто накладывается сетка 3х3 для понимания коллизий персонажа)
+
+    // for(let i = 0; i < 3; i++) {
+    //   for(let j = 0; j < 3; j++) {
+    //     this.#context.strokeRect(
+    //       elementPxX * this.#scale + this.#system.tileSize * this.#scale * i,
+    //       elementPxY * this.#scale + this.#system.tileSize * this.#scale * j,
+    //       this.#system.tileSize * this.#scale,
+    //       this.#system.tileSize * this.#scale)
+    //   }
+    // }
 
     tile.initAnimation(deltaTime);
 
