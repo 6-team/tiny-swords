@@ -1,4 +1,4 @@
-import { TNumberOfTiles, TTilePosition } from '../../../common/common.types';
+import { TNumberOfTiles, TTilePosition } from '../../common/common.types';
 
 export interface MovableProps {
   initialX: TTilePosition;

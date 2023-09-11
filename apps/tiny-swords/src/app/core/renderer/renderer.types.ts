@@ -1,7 +1,7 @@
 import { ICoordinateSystem } from '../../common/common.types';
 
-export type RendererConfig = {
+export interface RendererConfig {
   canvas: HTMLCanvasElement;
   coordinateSystem: ICoordinateSystem;
   scale: number;
-};
+}

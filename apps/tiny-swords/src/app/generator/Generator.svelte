@@ -1,13 +1,12 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { Renderer } from '../entites/renderer/renderer';
-  import { TileName } from "../entites/renderer/renderer.const";
-  import { CoordinateSystem } from '../entites/coordinate-system/coordinate-system';
-  import { Movable } from '../entites/abilities/movable/movable';
-  import { Attacking } from '../entites/abilities/attacking/attacking';
-  import { AttackingForce } from "../entites/abilities/attacking/attacking.const";
-  import { Character } from '../character'
-  import { KeyboardController } from "../entites/controllers/keyboard";
+  import { Renderer } from '../core/renderer/renderer';
+  import { TileName } from "../core/renderer/renderer.const";
+  import { CoordinateSystem } from '../core/coordinate-system';
+  import { Movable } from '../abilities/movable';
+  import { Attacking } from '../abilities/attacking';
+  import { Character } from '../entities/character'
+  import { KeyboardController } from "../controllers/keyboard";
   import { TILE_SIZE, SCALE } from '../common/common.const'
 
   const waterMap = [
@@ -210,11 +209,14 @@
 
     const [initialX, initialY, initialHeight] = system.transformToPixels(2, 3, 3, 3)
 
-    const character = new Character()
-      .addAbility("movable", new Movable({ initialX, initialY, initialHeight}))
-      .addAbility("attacking", new Attacking());
-      const movable = character.getAbility<Movable>('movable')
+    const character = new Character({
+      abilities: {
+        movable: new Movable({ initialX, initialY, initialHeight}),
+        attacking: new Attacking()
+      }
+    });
 
+    const movable = character.getAbility('movable')
     const keyboardController = new KeyboardController(character, system);
 
 

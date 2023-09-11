@@ -1,4 +1,4 @@
-import { WithSetPersonageContext } from './abilities/abilities.types';
+import { WithSetPersonageContext } from '../abilities/abilities.types';
 
 export type TNumberOfTiles = number;
 
@@ -15,7 +15,6 @@ export interface ICoordinateSystem {
 }
 
 export interface ITile {
-  getAbility<Name extends string | symbol, Ability extends WithSetPersonageContext>(name: Name): Ability;
   getData(): Promise<{
     image: HTMLImageElement;
     coords: [number, number];
@@ -24,5 +23,10 @@ export interface ITile {
     col: number;
     scale: number;
   }>;
+  setAnimation(row: number): void;
   initAnimation(deltaTime: number): void;
+}
+
+export interface ICharacter<Abilities extends Record<string | symbol | number, WithSetPersonageContext>> extends ITile {
+  getAbility<Name extends keyof Abilities>(name: Name): Abilities[Name];
 }

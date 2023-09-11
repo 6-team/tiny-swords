@@ -1,5 +1,5 @@
-import { CharacterActionAnimation } from '../../character';
-import { ITile, TTilePosition } from '../common.types';
+import { CharacterActionAnimation } from '../entities/character';
+import { ITile, TTilePosition } from '../common/common.types';
 
 export interface WithAttackMethods {
   setAnimation(next: 'WEAK_ATTACK' | 'STRONG_ATTACK'): void;
@@ -8,6 +8,10 @@ export interface WithAttackMethods {
 export interface IAttacking {
   setContext(context: ITile & WithAttackMethods): IAttacking;
   attack(type?: 'STRONG' | 'WEAK'): IAttacking;
+}
+
+export interface IWithAbilityToAttack {
+  getAbility(name: 'attacking'): IAttacking;
 }
 
 export interface WithMovableMethods {

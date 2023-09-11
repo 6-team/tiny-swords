@@ -1,4 +1,4 @@
-import { IWithAbilityToMove } from '../../common/abilities/abilities.types';
+import { IWithAbilityToMove } from '../../abilities/abilities.types';
 import { ICoordinateSystem, ITile } from '../../common/common.types';
 import { Maybe } from '../../tools/monads/maybe';
 import { TileName, mapTileNameToClass } from './renderer.const';
@@ -57,8 +57,10 @@ export class Renderer {
     const [elementPxX, elementPxY, elementPxHeight, elementPxWidth] = elementPxCoords;
     const { image, size, col, row, coords, scale } = await tile.getData();
 
-    const dx = this.#scale > scale ? elementPxX * this.#scale + (this.#system.tileSize * scale) / 2 : elementPxX * this.#scale;
-    const dy = this.#scale > scale ? elementPxY * this.#scale + (this.#system.tileSize * scale) / 2 : elementPxY * this.#scale;
+    const dx =
+      this.#scale > scale ? elementPxX * this.#scale + (this.#system.tileSize * scale) / 2 : elementPxX * this.#scale;
+    const dy =
+      this.#scale > scale ? elementPxY * this.#scale + (this.#system.tileSize * scale) / 2 : elementPxY * this.#scale;
 
     this._clear();
     this.#context.drawImage(
@@ -72,7 +74,6 @@ export class Renderer {
       elementPxHeight * scale,
       elementPxWidth * scale,
     );
-
 
     // FOR_TEST_PURPOSES:
     // Данный функционал закоментирован для проверки движения персонажа (просто накладывается сетка 3х3 для понимания коллизий персонажа)

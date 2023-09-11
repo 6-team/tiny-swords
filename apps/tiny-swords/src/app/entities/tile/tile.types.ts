@@ -1,4 +1,4 @@
-import { WithSetPersonageContext } from '../../common/abilities/abilities.types';
+import { WithSetPersonageContext } from '../../abilities/abilities.types';
 
 export type TileXCoord = number;
 

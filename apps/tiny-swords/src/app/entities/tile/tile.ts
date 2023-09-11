@@ -1,4 +1,3 @@
-import { WithSetPersonageContext } from '../../common/abilities/abilities.types';
 import { ITile } from '../../common/common.types';
 import { ErrorEnum } from './tile.const';
 import { CoordsTuple, WithAbility } from './tile.types';
@@ -9,13 +8,15 @@ export abstract class Tile<Types extends string | number | symbol> implements IT
 
   protected _size = 64;
   protected _image?: HTMLImageElement;
-  protected _abilities = new Map<unknown, unknown>();
   protected _row = 0;
   protected _col = 0;
-  protected _scale = 1
+  protected _scale = 1;
   protected _spriteFramesCount = 6;
+
   readonly #_fps = 10;
   #_framePerTime = 0;
+
+  protected abstract _getCoordsMap(): Record<Types, CoordsTuple>;
 
   protected _load() {
     return new Promise<HTMLImageElement>((resolve, reject) => {
@@ -27,25 +28,7 @@ export abstract class Tile<Types extends string | number | symbol> implements IT
     });
   }
 
-  protected abstract _getCoordsMap(): Record<Types, CoordsTuple>;
-
   abstract setType(type: string | number): void;
-
-  addAbility<Name extends string | symbol, Ability extends WithSetPersonageContext>(
-    name: Name,
-    ability: Ability,
-  ): this & WithAbility<Name, Ability> {
-    ability.setContext(this);
-    this._abilities.set(name, ability);
-
-    return this as this & WithAbility<Name, Ability>;
-  }
-
-  getAbility<Ability extends WithSetPersonageContext, Name extends string | symbol = string | symbol>(
-    name: Name,
-  ): Ability {
-    return this._abilities.get(name) as Ability;
-  }
 
   setAnimation(row: number) {
     this._row = row;
@@ -58,10 +41,6 @@ export abstract class Tile<Types extends string | number | symbol> implements IT
     } else {
       this.#_framePerTime += deltaTime;
     }
-  }
-
-  get abilities() {
-    return this._abilities;
   }
 
   async getData() {

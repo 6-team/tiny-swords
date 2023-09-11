@@ -1,23 +1,26 @@
-import { Character, CharacterActionAnimation } from '../../../character';
-import { Attacking } from '../../abilities/attacking/attacking';
+import { CharacterActionAnimation } from '../../entities/character';
 import { AttackingForce } from '../../abilities/attacking/attacking.const';
-import { Movable } from '../../abilities/movable/movable';
-import { CoordinateSystem } from '../../coordinate-system/coordinate-system';
 import { Directions, movementSetters, pushedKeys } from './keyboard.conts';
-import { SCALE } from '../../../common/common.const'
+import { SCALE } from '../../common/common.const';
+import { IAttacking, IMovable, IWithAbilityToAttack, IWithAbilityToMove } from '../../abilities/abilities.types';
+import { ICoordinateSystem, ITile } from '../../common/common.types';
+import { IController } from '../controllers.types';
 
-export default class KeyboardController {
+export default class KeyboardController implements IController {
   #pushedButtons: Directions[] = [];
   #isRightDirection = true;
   #movingProgressRemaining: number;
-  #movable: Movable;
-  #attacking: Attacking;
+  #movable: IMovable;
+  #attacking: IAttacking;
   #direction: Directions;
   #isCharacterMoving = false;
 
-  constructor(protected readonly character: Character, protected readonly system: CoordinateSystem) {
-    this.#movable = character.getAbility<Movable>('movable');
-    this.#attacking = character.getAbility<Attacking>('attacking');
+  constructor(
+    protected readonly character: ITile & IWithAbilityToAttack & IWithAbilityToMove,
+    protected readonly system: ICoordinateSystem,
+  ) {
+    this.#movable = character.getAbility('movable');
+    this.#attacking = character.getAbility('attacking');
     this.#movingProgressRemaining = 0;
     this.#addListeners();
   }
@@ -27,7 +30,7 @@ export default class KeyboardController {
   }
 
   get isCharacterMoving(): boolean {
-    return this.#isCharacterMoving
+    return this.#isCharacterMoving;
   }
 
   get isRightDirection(): boolean {
@@ -36,6 +39,7 @@ export default class KeyboardController {
 
   #move(code: string): void {
     const direction = pushedKeys[code];
+
     if (direction && this.#pushedButtons.indexOf(direction) === -1) {
       this.#pushedButtons.unshift(direction);
 
@@ -52,6 +56,7 @@ export default class KeyboardController {
   #stop(code: string): void {
     const direction = pushedKeys[code];
     const directionIdx = this.#pushedButtons.indexOf(direction);
+
     if (directionIdx > -1) {
       this.#pushedButtons.splice(directionIdx, 1);
     }
@@ -83,29 +88,35 @@ export default class KeyboardController {
   #addListeners(): void {
     document.addEventListener('keydown', (event) => {
       this.#move(event.code);
+
       switch (event.key) {
         case 'ArrowLeft':
         case 'a':
           this.character.setAnimation(CharacterActionAnimation.RUN_LEFT);
+
           break;
         case 'ArrowRight':
         case 'd':
           this.character.setAnimation(CharacterActionAnimation.RUN);
+
           break;
         case 'ArrowUp':
         case 'w':
           this.character.setAnimation(
             this.isRightDirection ? CharacterActionAnimation.RUN : CharacterActionAnimation.RUN_LEFT,
           );
+
           break;
         case 'ArrowDown':
         case 's':
           this.character.setAnimation(
             this.isRightDirection ? CharacterActionAnimation.RUN : CharacterActionAnimation.RUN_LEFT,
           );
+
           break;
         case 'f':
           this.#attacking.attack();
+
           break;
         case 'g':
           this.#attacking.attack(AttackingForce.STRONG);

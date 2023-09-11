@@ -1,5 +1,5 @@
-import { IAttacking, WithAttackMethods } from '../../../common/abilities/abilities.types';
-import { ITile } from '../../../common/common.types';
+import { IAttacking, WithAttackMethods } from '../abilities.types';
+import { ITile } from '../../common/common.types';
 import { AttackingAnimation, AttackingError, AttackingForce } from './attacking.const';
 
 /**

@@ -1,5 +1,5 @@
-import { IMovable, WithMovableMethods } from '../../../common/abilities/abilities.types';
-import { ITile, TTilePosition } from '../../../common/common.types';
+import { IMovable, WithMovableMethods } from '../abilities.types';
+import { ITile, TTilePosition } from '../../common/common.types';
 import { MovingError } from './movable.const';
 import { MovableProps } from './movable.types';
 
@@ -46,7 +46,6 @@ export class Movable implements IMovable {
     }
 
     const prevCoords: [number, number] = [...this.#coords];
-    console.log(prevCoords);
 
     this.#coords = [...updater(this.#coords)];
     this.#prevCoords = prevCoords;

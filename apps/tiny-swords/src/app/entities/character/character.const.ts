@@ -1,4 +1,4 @@
-import { Directions } from '../entites/controllers/keyboard';
+import { Directions } from '../../controllers/keyboard';
 
 export enum CharacterActionAnimation {
   STANDS_STILL,
