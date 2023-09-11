@@ -62,10 +62,12 @@ export class DecoTile extends Tile<DecoType> {
         this._sprite = '/img/Deco/14.png';
         break;
 
-      case DecoType.SIGN_STOP:
+      case DecoType.SIGN_STOP_TOP:
+      case DecoType.SIGN_STOP_BOTTOM:
         this._sprite = '/img/Deco/16.png';
         break;
-      case DecoType.SIGH_RIGHT:
+      case DecoType.SIGH_RIGHT_TOP:
+      case DecoType.SIGH_RIGHT_BOTTOM:
         this._sprite = '/img/Deco/17.png';
         break;
 

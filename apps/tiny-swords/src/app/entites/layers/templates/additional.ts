@@ -1,4 +1,5 @@
 import { TileName } from "../../renderer/renderer.const";
+import { ILayersGridTemplate } from "../grid/grid.types";
 
 /**
  * Шаблон для дополнительных слоев:
@@ -6,7 +7,7 @@ import { TileName } from "../../renderer/renderer.const";
  * - трава по мостами
  * - трава под домом
  */
-export const LAYER_ADDITIONAL_EMPTY_CONDITIONS = {
+export const LAYER_ADDITIONAL_EMPTY_CONDITIONS: ILayersGridTemplate = {
   create: ({ grid }) => {
     const conditions = [];
 
@@ -50,7 +51,7 @@ export const LAYER_ADDITIONAL_EMPTY_CONDITIONS = {
 /**
  * Шаблон для дорисовки нижней части дерева
  */
-export const LAYER_ADDITIONAL_TREE_BOTTOM_CONDITIONS = {
+export const LAYER_ADDITIONAL_TREE_BOTTOM_CONDITIONS: ILayersGridTemplate = {
   create: ({ grid }) => {
     let conditions = [];
 
@@ -74,7 +75,7 @@ export const LAYER_ADDITIONAL_TREE_BOTTOM_CONDITIONS = {
 /**
  * Шаблон для заливки всего слоя водой
  */
-export const LAYER_ADDITIONAL_WATER_CONDITIONS = {
+export const LAYER_ADDITIONAL_WATER_CONDITIONS: ILayersGridTemplate = {
   create: ({ grid }) => {
     const conditions = [];
 
@@ -89,14 +90,35 @@ export const LAYER_ADDITIONAL_WATER_CONDITIONS = {
 /**
  * Шаблон для дорисовки дома
  */
-export const LAYER_ADDITIONAL_HOUSE_CONDITIONS = {
-  create: () => { // enter
-    const enter = [5, 5];
+export const LAYER_ADDITIONAL_HOUSE_CONDITIONS: ILayersGridTemplate = {
+  create: ({ enter, exit }) => {
     return [
+      // левый дом
       { tile: TileName.HOUSE_BOTTOM_LEFT, coords: [enter[0] - 1, enter[1] - 1] },
       { tile: TileName.HOUSE_BOTTOM_RIGHT, coords: [enter[0], enter[1] - 1] },
       { tile: TileName.HOUSE_MIDDLE_LEFT, coords: [enter[0] - 1, enter[1] - 2] },
       { tile: TileName.HOUSE_MIDDLE_RIGHT, coords: [enter[0], enter[1] - 2 ]},
+      // правый дом
+      { tile: TileName.HOUSE_BOTTOM_LEFT, coords: [exit[0], exit[1] - 1] },
+      { tile: TileName.HOUSE_BOTTOM_RIGHT, coords: [exit[0] + 1, exit[1] - 1] },
+      { tile: TileName.HOUSE_MIDDLE_LEFT, coords: [exit[0], exit[1] - 2] },
+      { tile: TileName.HOUSE_MIDDLE_RIGHT, coords: [exit[0] + 1, exit[1] - 2 ]},
+    ];
+  }
+}
+
+/**
+ * Шаблон для дорисовки знаков
+ */
+export const LAYER_ADDITIONAL_SIGN_CONDITIONS: ILayersGridTemplate = {
+  create: ({ enter, exit }) => {
+    return [
+      // левый знак
+      { tile: TileName.DECO_SIGN_STOP_BOTTOM, coords: [enter[0] - 1, enter[1]] },
+      { tile: TileName.DECO_SIGN_STOP_TOP, coords: [enter[0] - 1, enter[1] - 1] },
+      // правый знак
+      { tile: TileName.DECO_SIGH_RIGHT_BOTTOM, coords: [exit[0] + 1, exit[1]] },
+      { tile: TileName.DECO_SIGH_RIGHT_TOP, coords: [exit[0] + 1, exit[1] - 1] },
     ];
   }
 }

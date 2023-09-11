@@ -1,23 +1,8 @@
-import { TileName } from "../renderer/renderer.const";
+import { TileName } from "../../renderer/renderer.const";
 
-export const TILE_TYPES = [
-  TileName.WATER_MIDDLE_MIDDLE,
-  TileName.GROUND_TOP_LEFT,
-  TileName.GROUND_TOP_MIDDLE,
-  TileName.GROUND_TOP_RIGHT,
-  TileName.GROUND_MIDDLE_LEFT,
-  TileName.GROUND_MIDDLE_MIDDLE,
-  TileName.GROUND_MIDDLE_RIGHT,
-  TileName.GROUND_BOTTOM_LEFT,
-  TileName.GROUND_BOTTOM_MIDDLE,
-  TileName.GROUND_BOTTOM_RIGHT,
-  TileName.BRIDGE_LEFT,
-  TileName.BRIDGE_MIDDLE,
-  TileName.BRIDGE_RIGHT,
-];
-
-export const TILE_WEIGHT = [
+export const LAYER_MAIN_WEIGHT: [TileName, number][] = [
   [TileName.WATER_MIDDLE_MIDDLE,  1],
+
   [TileName.GROUND_TOP_LEFT,      10],
   [TileName.GROUND_TOP_MIDDLE,    10],
   [TileName.GROUND_TOP_RIGHT,     10],
@@ -27,152 +12,15 @@ export const TILE_WEIGHT = [
   [TileName.GROUND_BOTTOM_LEFT,   10],
   [TileName.GROUND_BOTTOM_MIDDLE, 10],
   [TileName.GROUND_BOTTOM_RIGHT,  10],
+
   [TileName.BRIDGE_LEFT,          20],
   [TileName.BRIDGE_MIDDLE,        20],
   [TileName.BRIDGE_RIGHT,         20],
+
+  [TileName.TREE_STRUMP,          0],
 ];
 
-export const TILE_DECO_WEIGHT = [
-  [TileName.DECO_MUSHROOM_S, 10],
-  [TileName.DECO_MUSHROOM_M, 5],
-  [TileName.DECO_MUSHROOM_L, 1],
-  [TileName.DECO_STONE_S,    10],
-  [TileName.DECO_STONE_M,    5],
-  [TileName.DECO_STONE_L,    1],
-  [TileName.DECO_BUSH_S,     10],
-  [TileName.DECO_BUSH_M,     5],
-  [TileName.DECO_BUSH_L,     1],
-  [TileName.DECO_PUMPKIN_S,  5],
-  [TileName.DECO_PUMPKIN_M,  1],
-  [TileName.DECO_WEED_S,     10],
-  [TileName.DECO_WEED_M,     5],
-];
-
-// export const RULES = {
-//   [TileName.WATER_MIDDLE_MIDDLE]: [
-//     [
-//       TileName.WATER_MIDDLE_MIDDLE,
-//       TileName.GROUND_BOTTOM_LEFT,
-//       TileName.GROUND_BOTTOM_MIDDLE,
-//       TileName.GROUND_BOTTOM_RIGHT,
-//     ],
-//     [
-//       TileName.WATER_MIDDLE_MIDDLE,
-//       TileName.GROUND_TOP_LEFT,
-//       TileName.GROUND_MIDDLE_LEFT,
-//       TileName.GROUND_BOTTOM_LEFT,
-//     ],
-//     [
-//       TileName.WATER_MIDDLE_MIDDLE,
-//       TileName.GROUND_TOP_LEFT,
-//       TileName.GROUND_TOP_MIDDLE,
-//       TileName.GROUND_TOP_RIGHT,
-//     ],
-//     [
-//       TileName.WATER_MIDDLE_MIDDLE,
-//       TileName.GROUND_TOP_RIGHT,
-//       TileName.GROUND_MIDDLE_RIGHT,
-//       TileName.GROUND_BOTTOM_RIGHT,
-//     ],
-//   ],
-//   [TileName.GROUND_TOP_LEFT]: [
-//     [TileName.WATER_MIDDLE_MIDDLE],
-//     [TileName.GROUND_TOP_MIDDLE, TileName.GROUND_TOP_RIGHT, TileName.GROUND_MIDDLE_MIDDLE],
-//     [TileName.GROUND_MIDDLE_LEFT, TileName.GROUND_BOTTOM_LEFT, TileName.GROUND_MIDDLE_MIDDLE],
-//     [TileName.WATER_MIDDLE_MIDDLE],
-//   ],
-//   [TileName.GROUND_TOP_MIDDLE]: [
-//     [TileName.WATER_MIDDLE_MIDDLE],
-//     [TileName.GROUND_TOP_MIDDLE, TileName.GROUND_TOP_RIGHT, TileName.GROUND_MIDDLE_MIDDLE],
-//     [TileName.GROUND_MIDDLE_MIDDLE],
-//     [TileName.GROUND_TOP_MIDDLE, TileName.GROUND_TOP_LEFT, TileName.GROUND_MIDDLE_MIDDLE],
-//   ],
-//   [TileName.GROUND_TOP_RIGHT]: [
-//     [TileName.WATER_MIDDLE_MIDDLE],
-//     [TileName.WATER_MIDDLE_MIDDLE],
-//     [TileName.GROUND_MIDDLE_RIGHT, TileName.GROUND_BOTTOM_RIGHT, TileName.GROUND_MIDDLE_MIDDLE],
-//     [TileName.GROUND_TOP_MIDDLE, TileName.GROUND_TOP_LEFT, TileName.GROUND_MIDDLE_MIDDLE],
-//   ],
-//   [TileName.GROUND_MIDDLE_LEFT]: [
-//     [TileName.GROUND_MIDDLE_LEFT, TileName.GROUND_TOP_LEFT, TileName.GROUND_MIDDLE_MIDDLE],
-//     [TileName.GROUND_MIDDLE_MIDDLE],
-//     [TileName.GROUND_MIDDLE_LEFT, TileName.GROUND_BOTTOM_LEFT, TileName.GROUND_MIDDLE_MIDDLE],
-//     [TileName.WATER_MIDDLE_MIDDLE],
-//   ],
-//   [TileName.GROUND_MIDDLE_MIDDLE]: [
-//     [TileName.GROUND_MIDDLE_MIDDLE, TileName.GROUND_TOP_MIDDLE, TileName.GROUND_TOP_LEFT, TileName.GROUND_TOP_RIGHT, TileName.GROUND_MIDDLE_LEFT, TileName.GROUND_MIDDLE_RIGHT],
-//     [TileName.GROUND_MIDDLE_MIDDLE, TileName.GROUND_MIDDLE_RIGHT, TileName.GROUND_TOP_RIGHT, TileName.GROUND_TOP_MIDDLE, TileName.GROUND_BOTTOM_RIGHT, TileName.GROUND_BOTTOM_MIDDLE],
-//     [TileName.GROUND_MIDDLE_MIDDLE, TileName.GROUND_BOTTOM_MIDDLE, TileName.GROUND_MIDDLE_LEFT, TileName.GROUND_MIDDLE_RIGHT, TileName.GROUND_BOTTOM_LEFT, TileName.GROUND_BOTTOM_RIGHT],
-//     [TileName.GROUND_MIDDLE_MIDDLE, TileName.GROUND_MIDDLE_LEFT, TileName.GROUND_TOP_LEFT, TileName.GROUND_TOP_MIDDLE, TileName.GROUND_BOTTOM_LEFT, TileName.GROUND_BOTTOM_MIDDLE],
-//   ],
-//   [TileName.GROUND_MIDDLE_RIGHT]: [
-//     [TileName.GROUND_MIDDLE_RIGHT, TileName.GROUND_TOP_RIGHT, TileName.GROUND_MIDDLE_MIDDLE],
-//     [TileName.WATER_MIDDLE_MIDDLE],
-//     [TileName.GROUND_MIDDLE_RIGHT, TileName.GROUND_BOTTOM_RIGHT, TileName.GROUND_MIDDLE_MIDDLE],
-//     [TileName.GROUND_MIDDLE_MIDDLE],
-//   ],
-//   [TileName.GROUND_BOTTOM_LEFT]: [
-//     [TileName.GROUND_TOP_LEFT, TileName.GROUND_MIDDLE_LEFT, TileName.GROUND_MIDDLE_MIDDLE],
-//     [TileName.GROUND_BOTTOM_MIDDLE, TileName.GROUND_BOTTOM_RIGHT, TileName.GROUND_MIDDLE_MIDDLE],
-//     [TileName.WATER_MIDDLE_MIDDLE],
-//     [TileName.WATER_MIDDLE_MIDDLE],
-//   ],
-//   [TileName.GROUND_BOTTOM_MIDDLE]: [
-//     [TileName.GROUND_MIDDLE_MIDDLE],
-//     [TileName.GROUND_BOTTOM_MIDDLE, TileName.GROUND_BOTTOM_RIGHT, TileName.GROUND_MIDDLE_MIDDLE],
-//     [TileName.WATER_MIDDLE_MIDDLE],
-//     [TileName.GROUND_BOTTOM_MIDDLE, TileName.GROUND_BOTTOM_LEFT, TileName.GROUND_MIDDLE_MIDDLE],
-//   ],
-//   [TileName.GROUND_BOTTOM_RIGHT]: [
-//     [TileName.GROUND_MIDDLE_RIGHT, TileName.GROUND_TOP_RIGHT, TileName.GROUND_MIDDLE_MIDDLE],
-//     [TileName.WATER_MIDDLE_MIDDLE],
-//     [TileName.WATER_MIDDLE_MIDDLE],
-//     [TileName.GROUND_BOTTOM_MIDDLE, TileName.GROUND_BOTTOM_LEFT, TileName.GROUND_MIDDLE_MIDDLE],
-//   ],
-// };
-
-export const TILE_TYPES_SIMPLE = [
-  TileName.WATER_MIDDLE_MIDDLE,
-  TileName.GROUND_TOP_LEFT,
-  TileName.GROUND_TOP_RIGHT,
-  TileName.GROUND_BOTTOM_LEFT,
-  TileName.GROUND_BOTTOM_RIGHT,
-];
-
-export const RULES_SIMPLE = {
-  [TileName.WATER_MIDDLE_MIDDLE]: [
-    [TileName.WATER_MIDDLE_MIDDLE, TileName.GROUND_BOTTOM_LEFT, TileName.GROUND_BOTTOM_RIGHT],
-    [TileName.WATER_MIDDLE_MIDDLE, TileName.GROUND_TOP_LEFT, TileName.GROUND_BOTTOM_LEFT],
-    [TileName.WATER_MIDDLE_MIDDLE, TileName.GROUND_TOP_LEFT, TileName.GROUND_TOP_RIGHT],
-    [TileName.WATER_MIDDLE_MIDDLE, TileName.GROUND_TOP_RIGHT, TileName.GROUND_BOTTOM_RIGHT],
-  ],
-  [TileName.GROUND_TOP_LEFT]: [
-    [TileName.WATER_MIDDLE_MIDDLE],
-    [TileName.GROUND_TOP_RIGHT],
-    [TileName.GROUND_BOTTOM_LEFT],
-    [TileName.WATER_MIDDLE_MIDDLE],
-  ],
-  [TileName.GROUND_TOP_RIGHT]: [
-    [TileName.WATER_MIDDLE_MIDDLE],
-    [TileName.WATER_MIDDLE_MIDDLE],
-    [TileName.GROUND_BOTTOM_RIGHT],
-    [TileName.GROUND_TOP_LEFT],
-  ],
-  [TileName.GROUND_BOTTOM_LEFT]: [
-    [TileName.GROUND_TOP_LEFT],
-    [TileName.GROUND_BOTTOM_RIGHT],
-    [TileName.WATER_MIDDLE_MIDDLE],
-    [TileName.WATER_MIDDLE_MIDDLE],
-  ],
-  [TileName.GROUND_BOTTOM_RIGHT]: [
-    [TileName.GROUND_TOP_RIGHT],
-    [TileName.WATER_MIDDLE_MIDDLE],
-    [TileName.WATER_MIDDLE_MIDDLE],
-    [TileName.GROUND_BOTTOM_LEFT],
-  ],
-};
-
-export const RULES = {
+export const LAYER_MAIN_RULES = {
   [TileName.WATER_MIDDLE_MIDDLE]: [
     [
       TileName.WATER_MIDDLE_MIDDLE,
@@ -239,6 +87,7 @@ export const RULES = {
       TileName.GROUND_BOTTOM_LEFT,
       TileName.GROUND_BOTTOM_MIDDLE,
       TileName.GROUND_BOTTOM_RIGHT,
+      TileName.TREE_STRUMP,
     ],
     [
       TileName.GROUND_TOP_LEFT,
@@ -288,6 +137,7 @@ export const RULES = {
       TileName.GROUND_BOTTOM_MIDDLE,
       TileName.GROUND_BOTTOM_RIGHT,
       TileName.BRIDGE_LEFT,
+      TileName.TREE_STRUMP,
     ],
     [
       TileName.GROUND_MIDDLE_LEFT,
@@ -308,6 +158,7 @@ export const RULES = {
       TileName.GROUND_MIDDLE_LEFT,
       TileName.GROUND_MIDDLE_MIDDLE,
       TileName.GROUND_MIDDLE_RIGHT,
+      TileName.TREE_STRUMP,
     ],
     [
       TileName.GROUND_TOP_MIDDLE,
@@ -317,6 +168,7 @@ export const RULES = {
       TileName.GROUND_BOTTOM_MIDDLE,
       TileName.GROUND_BOTTOM_RIGHT,
       TileName.BRIDGE_LEFT,
+      TileName.TREE_STRUMP,
     ],
     [
       TileName.GROUND_MIDDLE_LEFT,
@@ -325,6 +177,7 @@ export const RULES = {
       TileName.GROUND_BOTTOM_LEFT,
       TileName.GROUND_BOTTOM_MIDDLE,
       TileName.GROUND_BOTTOM_RIGHT,
+      TileName.TREE_STRUMP,
     ],
     [
       TileName.GROUND_TOP_LEFT,
@@ -334,6 +187,7 @@ export const RULES = {
       TileName.GROUND_BOTTOM_LEFT,
       TileName.GROUND_BOTTOM_MIDDLE,
       TileName.BRIDGE_RIGHT,
+      TileName.TREE_STRUMP,
     ],
   ],
   [TileName.GROUND_MIDDLE_RIGHT]: [
@@ -364,6 +218,7 @@ export const RULES = {
       TileName.GROUND_BOTTOM_LEFT,
       TileName.GROUND_BOTTOM_MIDDLE,
       TileName.BRIDGE_RIGHT,
+      TileName.TREE_STRUMP,
     ],
   ],
   [TileName.GROUND_BOTTOM_LEFT]: [
@@ -395,6 +250,7 @@ export const RULES = {
       TileName.GROUND_MIDDLE_LEFT,
       TileName.GROUND_MIDDLE_MIDDLE,
       TileName.GROUND_MIDDLE_RIGHT,
+      TileName.TREE_STRUMP,
     ],
     [
       TileName.GROUND_TOP_MIDDLE,
@@ -473,5 +329,11 @@ export const RULES = {
       TileName.BRIDGE_MIDDLE,
       TileName.BRIDGE_LEFT
     ],
-  ]
+  ],
+  [TileName.TREE_STRUMP]: [
+    [TileName.GROUND_TOP_MIDDLE, TileName.GROUND_MIDDLE_MIDDLE],
+    [TileName.GROUND_MIDDLE_RIGHT, TileName.GROUND_MIDDLE_MIDDLE],
+    [TileName.GROUND_BOTTOM_MIDDLE, TileName.GROUND_MIDDLE_MIDDLE],
+    [TileName.GROUND_MIDDLE_LEFT, TileName.GROUND_MIDDLE_MIDDLE],
+  ],
 };
