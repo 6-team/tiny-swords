@@ -1,3 +1,4 @@
+import { CharacterActionAnimation } from '../../character';
 import { ITile, TTilePosition } from '../common.types';
 
 export interface WithAttackMethods {
@@ -10,7 +11,7 @@ export interface IAttacking {
 }
 
 export interface WithMovableMethods {
-  setAnimation(next: 'FORWARD' | 'BACKWARD'): void;
+  setAnimation(next: number): void;
   setType(next: 'RIGHT' | 'LEFT'): void;
 }
 
@@ -20,8 +21,8 @@ export interface IMovable {
   setContext(context: ITile & WithMovableMethods): IMovable;
   setMovement(
     updater: (prev: [TTilePosition, TTilePosition]) => [TTilePosition, TTilePosition],
-    animation?: 'FORWARD' | 'BACKWARD',
-    direction?: 'RIGHT' | 'LEFT',
+    animation?: CharacterActionAnimation,
+    // direction?: 'RIGHT' | 'LEFT',
   ): IMovable;
   back(): IMovable;
 }

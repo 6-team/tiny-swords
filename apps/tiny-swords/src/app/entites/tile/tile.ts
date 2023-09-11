@@ -10,6 +10,12 @@ export abstract class Tile<Types extends string | number | symbol> implements IT
   protected _size = 64;
   protected _image?: HTMLImageElement;
   protected _abilities = new Map<unknown, unknown>();
+  protected _row = 0;
+  protected _col = 0;
+  protected _scale = 1
+  protected _spriteFramesCount = 6;
+  readonly #_fps = 10;
+  #_framePerTime = 0;
 
   protected _load() {
     return new Promise<HTMLImageElement>((resolve, reject) => {
@@ -41,6 +47,19 @@ export abstract class Tile<Types extends string | number | symbol> implements IT
     return this._abilities.get(name) as Ability;
   }
 
+  setAnimation(row: number) {
+    this._row = row;
+  }
+
+  initAnimation(deltaTime: number) {
+    if (this.#_framePerTime > 1000 / this.#_fps) {
+      this._col < this._spriteFramesCount - 1 ? (this._col += 1) : (this._col = 0);
+      this.#_framePerTime = 0;
+    } else {
+      this.#_framePerTime += deltaTime;
+    }
+  }
+
   get abilities() {
     return this._abilities;
   }
@@ -52,6 +71,6 @@ export abstract class Tile<Types extends string | number | symbol> implements IT
 
     const coords = this._getCoordsMap()[this._type];
 
-    return { image: this._image, coords, size: this._size };
+    return { image: this._image, coords, size: this._size, row: this._row, col: this._col, scale: this._scale };
   }
 }

@@ -53,10 +53,49 @@ export class Renderer {
     return this;
   }
 
-  async renderMovable(tile: ITile & IWithAbilityToMove) {
+  async renderWithAnimation(elementPxCoords: [number, number, number, number], tile: ITile, deltaTime?: number) {
+    const [elementPxX, elementPxY, elementPxHeight, elementPxWidth] = elementPxCoords;
+    const { image, size, col, row, coords, scale } = await tile.getData();
+
+    const dx = this.#scale > scale ? elementPxX * this.#scale + (this.#system.tileSize * scale) / 2 : elementPxX * this.#scale;
+    const dy = this.#scale > scale ? elementPxY * this.#scale + (this.#system.tileSize * scale) / 2 : elementPxY * this.#scale;
+
+    this._clear();
+    this.#context.drawImage(
+      image,
+      coords[0] * col,
+      coords[1] * row,
+      size,
+      size,
+      dx,
+      dy,
+      elementPxHeight * scale,
+      elementPxWidth * scale,
+    );
+
+
+    // FOR_TEST_PURPOSES:
+    // Данный функционал закоментирован для проверки движения персонажа (просто накладывается сетка 3х3 для понимания коллизий персонажа)
+
+    // for(let i = 0; i < 3; i++) {
+    //   for(let j = 0; j < 3; j++) {
+    //     this.#context.strokeRect(
+    //       elementPxX * this.#scale + this.#system.tileSize * this.#scale * i,
+    //       elementPxY * this.#scale + this.#system.tileSize * this.#scale * j,
+    //       this.#system.tileSize * this.#scale,
+    //       this.#system.tileSize * this.#scale)
+    //   }
+    // }
+
+    tile.initAnimation(deltaTime);
+
+    return this;
+  }
+
+  async renderMovable(tile: ITile & IWithAbilityToMove, deltaTime: number) {
     const { coords, sizes } = tile.getAbility('movable');
 
-    this.render(this.#system.transformToPixels(coords[0], coords[1], sizes[0], sizes[1]), tile);
+    this.renderWithAnimation([coords[0], coords[1], sizes[0], sizes[1]], tile, deltaTime);
   }
 
   async renderStaticLayer(map: Array<Array<TileName | null>>) {
@@ -74,11 +113,9 @@ export class Renderer {
     }
   }
 
-  async renderMovableLayer(movables: Array<ITile & IWithAbilityToMove>) {
-    this._clear();
-
+  async renderMovableLayer(movables: Array<ITile & IWithAbilityToMove>, deltaTime: number) {
     for (const movable of movables) {
-      new Maybe(movable).map((tile) => this.renderMovable(tile));
+      new Maybe(movable).map((tile) => this.renderMovable(tile, deltaTime));
     }
   }
 }
