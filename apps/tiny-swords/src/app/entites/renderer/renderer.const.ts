@@ -15,6 +15,8 @@ import { RocksTile } from "../rocks/rocks";
 import { RocksType } from "../rocks/rocks.const";
 import { TreeType } from "../tree/tree.const";
 import { TreeTile } from "../tree/tree";
+import { HouseTile } from "../house/house";
+import { HouseType } from "../house/house.const";
 
 export const enum TileName {
   WATER_MIDDLE_MIDDLE,
@@ -115,6 +117,13 @@ export const enum TileName {
   TREE_BOTTOM_MIDDLE,
   TREE_BOTTOM_RIGHT,
   TREE_STRUMP,
+
+  HOUSE_TOP_LEFT,
+  HOUSE_TOP_RIGHT,
+  HOUSE_MIDDLE_LEFT,
+  HOUSE_MIDDLE_RIGHT,
+  HOUSE_BOTTOM_LEFT,
+  HOUSE_BOTTOM_RIGHT,
 };
 
 export const mapTileNameToClass: Partial<Record<TileName, { constructor: any, args: Array<any> }>> = {
@@ -216,4 +225,11 @@ export const mapTileNameToClass: Partial<Record<TileName, { constructor: any, ar
   [TileName.TREE_BOTTOM_MIDDLE]: { constructor: TreeTile, args: [TreeType.BOTTOM_MIDDLE] },
   [TileName.TREE_BOTTOM_RIGHT]: { constructor: TreeTile, args: [TreeType.BOTTOM_RIGHT] },
   [TileName.TREE_STRUMP]: { constructor: TreeTile, args: [TreeType.STRUMP] },
+
+  [TileName.HOUSE_TOP_LEFT]: { constructor: HouseTile, args: [HouseType.TOP_LEFT] },
+  [TileName.HOUSE_TOP_RIGHT]: { constructor: HouseTile, args: [HouseType.TOP_RIGHT] },
+  [TileName.HOUSE_MIDDLE_LEFT]: { constructor: HouseTile, args: [HouseType.MIDDLE_LEFT] },
+  [TileName.HOUSE_MIDDLE_RIGHT]: { constructor: HouseTile, args: [HouseType.MIDDLE_RIGHT] },
+  [TileName.HOUSE_BOTTOM_LEFT]: { constructor: HouseTile, args: [HouseType.BOTTOM_LEFT] },
+  [TileName.HOUSE_BOTTOM_RIGHT]: { constructor: HouseTile, args: [HouseType.BOTTOM_RIGHT] },
 };

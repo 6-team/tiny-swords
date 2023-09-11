@@ -2,6 +2,7 @@ import { TileName } from "../../renderer/renderer.const";
 
 export const LAYER_MAIN_WEIGHT = [
   [TileName.WATER_MIDDLE_MIDDLE,  1],
+
   [TileName.GROUND_TOP_LEFT,      10],
   [TileName.GROUND_TOP_MIDDLE,    10],
   [TileName.GROUND_TOP_RIGHT,     10],
@@ -11,10 +12,19 @@ export const LAYER_MAIN_WEIGHT = [
   [TileName.GROUND_BOTTOM_LEFT,   10],
   [TileName.GROUND_BOTTOM_MIDDLE, 10],
   [TileName.GROUND_BOTTOM_RIGHT,  10],
+
   [TileName.BRIDGE_LEFT,          20],
   [TileName.BRIDGE_MIDDLE,        20],
   [TileName.BRIDGE_RIGHT,         20],
-  [TileName.TREE_STRUMP,          10],
+
+  [TileName.TREE_STRUMP,          0],
+
+  // [TileName.HOUSE_TOP_LEFT,       1],
+  // [TileName.HOUSE_TOP_RIGHT,      1],
+  [TileName.HOUSE_MIDDLE_LEFT,    10],
+  [TileName.HOUSE_MIDDLE_RIGHT,   10],
+  [TileName.HOUSE_BOTTOM_LEFT,    10],
+  [TileName.HOUSE_BOTTOM_RIGHT,   10],
 ];
 
 /*
@@ -42,6 +52,8 @@ export const LAYER_MAIN_RULES = {
       TileName.GROUND_TOP_LEFT,
       TileName.GROUND_MIDDLE_LEFT,
       TileName.GROUND_BOTTOM_LEFT,
+      TileName.HOUSE_MIDDLE_LEFT,
+      TileName.HOUSE_BOTTOM_LEFT,
     ],
     [
       TileName.WATER_MIDDLE_MIDDLE,
@@ -49,12 +61,16 @@ export const LAYER_MAIN_RULES = {
       TileName.GROUND_TOP_MIDDLE,
       TileName.GROUND_TOP_RIGHT,
       TileName.BRIDGE_MIDDLE,
+      TileName.HOUSE_MIDDLE_LEFT,
+      TileName.HOUSE_MIDDLE_RIGHT,
     ],
     [
       TileName.WATER_MIDDLE_MIDDLE,
       TileName.GROUND_TOP_RIGHT,
       TileName.GROUND_MIDDLE_RIGHT,
       TileName.GROUND_BOTTOM_RIGHT,
+      TileName.HOUSE_MIDDLE_RIGHT,
+      TileName.HOUSE_BOTTOM_RIGHT,
     ],
   ],
   [TileName.GROUND_TOP_LEFT]: [
@@ -344,4 +360,29 @@ export const LAYER_MAIN_RULES = {
     [TileName.GROUND_BOTTOM_MIDDLE, TileName.GROUND_MIDDLE_MIDDLE],
     [TileName.GROUND_MIDDLE_LEFT, TileName.GROUND_MIDDLE_MIDDLE],
   ],
+
+  [TileName.HOUSE_MIDDLE_LEFT]: [
+    [TileName.WATER_MIDDLE_MIDDLE],
+    [TileName.HOUSE_MIDDLE_RIGHT],
+    [TileName.HOUSE_BOTTOM_LEFT],
+    [TileName.WATER_MIDDLE_MIDDLE],
+  ],
+  [TileName.HOUSE_MIDDLE_RIGHT]: [
+    [TileName.WATER_MIDDLE_MIDDLE],
+    [TileName.WATER_MIDDLE_MIDDLE],
+    [TileName.HOUSE_BOTTOM_RIGHT],
+    [TileName.HOUSE_MIDDLE_LEFT],
+  ],
+  [TileName.HOUSE_BOTTOM_LEFT]: [
+    [TileName.HOUSE_MIDDLE_LEFT],
+    [TileName.HOUSE_BOTTOM_RIGHT],
+    [TileName.GROUND_BOTTOM_LEFT],
+    [TileName.WATER_MIDDLE_MIDDLE],
+  ],
+  [TileName.HOUSE_BOTTOM_RIGHT]: [
+    [TileName.HOUSE_MIDDLE_RIGHT],
+    [TileName.WATER_MIDDLE_MIDDLE],
+    [TileName.GROUND_BOTTOM_RIGHT],
+    [TileName.HOUSE_BOTTOM_LEFT],
+  ]
 };

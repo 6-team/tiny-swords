@@ -33,31 +33,38 @@ export class Grid {
     return this.#grid.array;
   }
 
-  init(templates, tileMapToWeight) {
+  fill(templates, grid = null) {
+    templates.forEach((template) => {
+      const conditions = template.create({ gridX: this.#gridX, gridY: this.#gridY, grid: grid ? grid : this.#grid });
+
+      conditions.forEach(({ tile, coords }) => {
+        console.log(coords);
+        this.#grid.set({ x: coords[0], y: coords[1] }, {
+          collapsed: true,
+          coords,
+          options: [tile],
+        });
+      });
+    });
+
+    return this; 
+  }
+
+  init(tileMapToWeight) {
     this.#tileMapToWeight = tileMapToWeight;
     this.#tileTypes = tileMapToWeight.reduce((acc, [tile]) => [...acc, tile], []);
 
-    templates.forEach((template) => {
-      template.forEach(({ conditionFn, tile }) => {
-        this.#grid.array.forEach(({ coords, options }) => {
-          const [x, y] = coords;
-          const collapsed = conditionFn({ x, y });
+    this.#grid.array.forEach(({ coords, options, collapsed }) => {
+      if (!collapsed) {
+        const [x, y] = coords;
 
-          if (collapsed) {
-            this.#grid.set({ x, y }, {
-              collapsed,
-              coords,
-              options: [tile],
-            });
-          } else if (!options.length) {
-            this.#grid.set({ x, y }, {
-              collapsed: false,
-              coords,
-              options: [...this.#tileTypes],
-            });
-          }
+        // если ячека пустая - ставим в ячейку все варианты
+        this.#grid.set({ x, y }, {
+          collapsed: false,
+          coords,
+          options: [...this.#tileTypes],
         });
-      });
+      }
     });
   }
 

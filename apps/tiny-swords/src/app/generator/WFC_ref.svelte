@@ -7,39 +7,37 @@
   import { Movable } from "../entites/movable/movable";
 
   import { Grid } from "../entites/grid/grid";
-  import { LAYER_MAIN_TEMPLATE_BRIDGE_CENTER, LAYER_MAIN_TEMPLATE_GROUND_PLAYER, LAYER_MAIN_TEMPLATE_WATER_BORDER_2 } from "../entites/layers/main/templates.const";
+  import { LAYER_MAIN_TEMPLATE_BRIDGE_CENTER, LAYER_MAIN_TEMPLATE_WATER_BORDER_1, LAYER_MAIN_TEMPLATE_HOUSE, LAYER_MAIN_TEMPLATE_TREE } from "../entites/layers/main/templates.const";
   import { LAYER_MAIN_RULES, LAYER_MAIN_WEIGHT } from "../entites/layers/main/rules.const";
-  import { LAYER_ADDITIONAL_EMPTY_CONDITIONS, LAYER_ADDITIONAL_TREE_BOTTOM_CONDITIONS } from "../entites/layers/additional/conditions.const";
-  import { LAYER_DECO_CONDITIONS } from "../entites/layers/deco/conditions.const";
-  import { LAYER_FOREGROUND_TREE_TOP_CONDITIONS } from "../entites/layers/foreground/conditions.const";
+  import { LAYER_ADDITIONAL_EMPTY_CONDITIONS, LAYER_ADDITIONAL_TREE_BOTTOM_CONDITIONS, LAYER_ADDITIONAL_WATER_CONDITIONS } from "../entites/layers/additional/conditions.const";
+  import { LAYER_DECO_GROUND_CONDITIONS, LAYER_DECO_WATER_CONDITIONS } from "../entites/layers/deco/conditions.const";
+  import { LAYER_FOREGROUND_HOUSE_CONDITIONS, LAYER_FOREGROUND_TREE_TOP_CONDITIONS } from "../entites/layers/foreground/conditions.const";
+/*
+  const { layers, boundaries } = new LayersGrid(20, 13, 6)
+    .fill(0, WATER),
+    .init(2, TEMPLATES)
+    .wfc(2, rules)
+    .copy(2, 1)
+    .filter(1)
+    .wfc(1, rules)
 
-  const waterMap = [
-    new Array(20).fill(TileName.WATER_MIDDLE_MIDDLE),
-    new Array(20).fill(TileName.WATER_MIDDLE_MIDDLE),
-    new Array(20).fill(TileName.WATER_MIDDLE_MIDDLE),
-    new Array(20).fill(TileName.WATER_MIDDLE_MIDDLE),
-    new Array(20).fill(TileName.WATER_MIDDLE_MIDDLE),
-    new Array(20).fill(TileName.WATER_MIDDLE_MIDDLE),
-    new Array(20).fill(TileName.WATER_MIDDLE_MIDDLE),
-    new Array(20).fill(TileName.WATER_MIDDLE_MIDDLE),
-    new Array(20).fill(TileName.WATER_MIDDLE_MIDDLE),
-    new Array(20).fill(TileName.WATER_MIDDLE_MIDDLE),
-    new Array(20).fill(TileName.WATER_MIDDLE_MIDDLE),
-    new Array(20).fill(TileName.WATER_MIDDLE_MIDDLE),
-    new Array(20).fill(TileName.WATER_MIDDLE_MIDDLE),
-  ];
+
+*/
 
   /**
    * Создаем основной слой карты
    */
   const grid = new Grid(20, 13);
 
-  grid.init([
+  grid.fill([
     LAYER_MAIN_TEMPLATE_BRIDGE_CENTER,
-    LAYER_MAIN_TEMPLATE_WATER_BORDER_2,
-    LAYER_MAIN_TEMPLATE_GROUND_PLAYER,
-  ], LAYER_MAIN_WEIGHT);
-  grid.wfc(LAYER_MAIN_RULES); 
+    LAYER_MAIN_TEMPLATE_WATER_BORDER_1,
+    LAYER_MAIN_TEMPLATE_TREE,
+    LAYER_MAIN_TEMPLATE_HOUSE,
+  ]);
+
+  grid.init(LAYER_MAIN_WEIGHT);
+  grid.wfc(LAYER_MAIN_RULES);
 
   const mainMap = grid.map();
 
@@ -48,8 +46,19 @@
    * Например чтобы добавить тень под мостами или траву под елками
    * Используем точные условия
    */
+   const waterGrid = new Grid(20, 13);
+   waterGrid.fill([LAYER_ADDITIONAL_WATER_CONDITIONS], grid as any);
+
+  const waterMap = waterGrid.map();
+
+
+  /**
+   * На основе основного слоя создаем дополнительный слой
+   * Например чтобы добавить тень под мостами или траву под елками
+   * Используем точные условия
+   */
   const additionalGrid = new Grid(20, 13);
-  additionalGrid.mask(grid, LAYER_ADDITIONAL_EMPTY_CONDITIONS);
+  additionalGrid.fill([LAYER_ADDITIONAL_EMPTY_CONDITIONS], grid as any);
 
   const additionalMap = additionalGrid.map();
 
@@ -58,7 +67,7 @@
    * Используем условия с рандомом
    */
   const decorationsGrid = new Grid(20, 13);
-  decorationsGrid.mask(grid, LAYER_DECO_CONDITIONS);
+  decorationsGrid.fill([LAYER_DECO_WATER_CONDITIONS, LAYER_DECO_GROUND_CONDITIONS], grid as any);
 
   const decorationsMap = decorationsGrid.map();
 
@@ -67,7 +76,7 @@
    * Используем точные условия
    */
   const treeBottomGrid = new Grid(20, 13);
-  treeBottomGrid.mask(grid, LAYER_ADDITIONAL_TREE_BOTTOM_CONDITIONS);
+  treeBottomGrid.fill([LAYER_ADDITIONAL_TREE_BOTTOM_CONDITIONS], grid as any);
 
   const treeBottomMap = treeBottomGrid.map();
 
@@ -75,10 +84,10 @@
    * На основе основного слоя создаем слой с верхней частью деревьев
    * Используем точные условия
    */
-  const treeTopGrid = new Grid(20, 13);
-  treeTopGrid.mask(grid, LAYER_FOREGROUND_TREE_TOP_CONDITIONS);
+  const foregroundGrid = new Grid(20, 13);
+  foregroundGrid.fill([LAYER_FOREGROUND_TREE_TOP_CONDITIONS, LAYER_FOREGROUND_HOUSE_CONDITIONS], grid as any);
 
-  const treeTopMap = treeTopGrid.map();
+  const foregroundMap = foregroundGrid.map();
 
   /**
    * Создаем границы
@@ -121,7 +130,7 @@
       coordinateSystem: systemForeground,
     });
 
-    await foregroundScene.renderStaticLayer(treeTopMap);
+    await foregroundScene.renderStaticLayer(foregroundMap);
 
     /**
      * Рендер интерактивных элементов, которые будут в движении
@@ -134,7 +143,7 @@
     });
 
     const mushroom = new DecoTile() // Для примера будем управлять грибом
-      .addAbility("movable", new Movable({ initialX: 2, initialY: 4, initialHeight: 1 }))
+      .addAbility("movable", new Movable({ initialX: 3, initialY: 6, initialHeight: 1 }))
     const movableAbility = mushroom.getAbility<Movable>("movable");
 
     interactiveScene.addInteractiveElement(mushroom);
