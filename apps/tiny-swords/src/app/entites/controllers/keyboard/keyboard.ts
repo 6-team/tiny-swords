@@ -4,6 +4,7 @@ import { AttackingForce } from '../../abilities/attacking/attacking.const';
 import { Movable } from '../../abilities/movable/movable';
 import { CoordinateSystem } from '../../coordinate-system/coordinate-system';
 import { Directions, movementSetters, pushedKeys } from './keyboard.conts';
+import { SCALE } from '../../../common/common.const'
 
 export default class KeyboardController {
   #pushedButtons: Directions[] = [];
@@ -67,7 +68,7 @@ export default class KeyboardController {
 
     if (this.#movingProgressRemaining === 0 && this.pushedButton) {
       this.#isCharacterMoving = true;
-      this.#movingProgressRemaining = this.system.tileSize;
+      this.#movingProgressRemaining = this.system.tileSize * SCALE;
       this.#direction = this.pushedButton;
     }
 

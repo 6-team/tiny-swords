@@ -8,6 +8,7 @@
   import { AttackingForce } from "../entites/abilities/attacking/attacking.const";
   import { Character } from '../character'
   import { KeyboardController } from "../entites/controllers/keyboard";
+  import { TILE_SIZE, SCALE } from '../common/common.const'
 
   const waterMap = [
     new Array(20).fill(TileName.WATER_MIDDLE_MIDDLE),
@@ -180,9 +181,6 @@
   ];
 
   onMount(async () => {
-    const TILE_SIZE = 64;
-    const SCALE = 0.75;
-
     /**
      * Рендер статичной карты
      */
