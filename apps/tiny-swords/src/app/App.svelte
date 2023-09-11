@@ -7,7 +7,6 @@
 
 <div use:links>
   <Router url="">
-    <!-- <Route path="/" component={Generator} /> -->
     <Route path="/" component={MainMenu} />
     <Route path="/generator" component={Generator} />
   </Router>
@@ -16,7 +15,7 @@
 <style>
   :global(*) {
     font-family: "vinqueregular", serif;
-    cursor: url('images/01.png') 20 20, auto !important;
+    cursor: url('img/UI/01.png') 20 20, auto !important;
   }
   :global(body) {
   background-color: rgba(71, 171, 169, 1);

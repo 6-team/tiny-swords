@@ -1,30 +1,71 @@
-<script>
-    import Modal from '../Modals/Modal.svelte';
-    import { Router, Link, Route } from "svelte-routing";
-      import {isActiveCloseButton} from './store'
-    let showModal = false;
-    let menuLink = [{title: 'Новая игра', value: 'newGame'}, {title: 'Продолжить', value: 'continue'},{title: 'Сетевая игра', value: 'multiPlayer'}]
-    function handleClick(e, item) {
-      if(item === 'multiPlayer') {
-        showModal = true
-      }
+<script lang="ts">
+  import { navigate } from "svelte-routing";
+  import Modal from '../Modals/Modal.svelte';
+  import { isActiveCloseButton } from './store'
+
+  let showModal = false;
+  let menuLink = [
+    {title: 'Новая игра', value: 'generator'}, 
+    {title: 'Продолжить', value: 'continue'},
+    {title: 'Сетевая игра', value: 'multi-player'}
+  ];
+    
+  function handleClick(item: string):void {
+    if(item === 'multi-player') {
+      showModal = true
+    }else{
+      navigate(`/${item}`)
     }
+  }
+
+  const bgTiles = [
+    ["img/UI/cut_layout/1.png","img/UI/cut_layout/2.png","img/UI/cut_layout/3.png"],
+    ["img/UI/cut_layout/4.png","img/UI/cut_layout/5.png","img/UI/cut_layout/6.png"],
+    ["img/UI/cut_layout/7.png","img/UI/cut_layout/8.png","img/UI/cut_layout/9.png"]]
+
+  function expandBg(bgTiles: Array<Array<string>>, count:number):Array<Array<string>> {
+    const createTile = (row:number):Array<string> => ([bgTiles[row][0], bgTiles[row][1], bgTiles[row][1], bgTiles[row][2]]);
+    let result = [];
+
+    if (count === 1) {
+      result.push(createTile(0), createTile(2));
+    } else if (count > 1) {
+      result.push(createTile(0));
+
+    for (let j = 0; j < count - 1; j++) {
+      result.push(createTile(1));
+    }
+
+    result.push(createTile(2));
+  }
+
+  return result;
+}
+  const expandedBg = expandBg(bgTiles, menuLink.length)
+
   </script>
 
 
     <div class="wrapper">
-      <Router>  
-      <div class="menu-wrapper">
-            <div>
-              {#each menuLink as { title, value } }
-               <button class="menu-btn" on:click={(e)=>handleClick(e, value)}>
+      <!-- <Router>   -->
+        <div class="background-substrate">
+          {#each expandedBg as row }
+            <div class="bg-row">
+              {#each row as col }
+                <img src={col} alt='bg-tile'/>
+              {/each}
+            </div>
+          {/each}
+          <div class="menu-wrapper">
+            {#each menuLink as { title, value } }
+              <button class="menu-btn" on:click={()=>handleClick(value)}>
                 <span class="menu-title"> {title}</span>
               </button>
             {/each}
-            </div>
+          </div>
         </div>
         <img src="https://img.itch.zone/aW1nLzEwNDkxNTQ1LmdpZg==/original/k%2BhWls.gif" alt="main-menu"/>
-      </Router>
+      <!-- </Router> -->
     </div>
 
 <Modal bind:showModal isActiveCloseButtonStore={isActiveCloseButton}>
@@ -41,64 +82,69 @@
     min-height: 788px;
     max-width: 1000px;
     margin: 0 auto;
-  }
-  div.wrapper img {
+
+    img {
     max-width: 100%;
   }
-  
-  div.menu-wrapper {
-    position: absolute;
-    top: 75%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: no-repeat url(images/svg.svg);
-    background-size: contain;
-    width: 200px;
-    height: 182px;
-    display: flex;
-    justify-content: center;
-    padding-top: 17px;
-  }
-  button.menu-btn {
-    position: relative;
-    padding: 0;
-    border: none;
-    font: inherit;
-    .menu-title {
+    .menu-wrapper {
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
       position: absolute;
-    top: 15%;
-    left: 50%;
-    font-family: "Vinque", serif;
-    font-size: 16px;
-    transform: translate(-50%, 0);
-    text-wrap: nowrap;
+      top: 51%;
+      left: 50%;
+      transform: translate(-50%,-50%);
+      button {
+      font-size: 16px;
+      background: no-repeat url(img/UI/Button_Blue_3Slides_Pressed.png);
+      background-size: cover;
+      width: fit-content;
+      font-family: "Vinque", serif;
+      background-color: inherit;
+      width: 128px;
+      height: 43px;
+      border: none;
+      position: relative;
+      padding: 0;
+      border: none;
+      font: inherit;
+      color: #000;
+      .menu-title {
+        position: absolute;
+        top: 20%;
+        left: 50%;
+        font-family: "Vinque", serif;
+        font-size: 16px;
+        transform: translate(-50%, 0);
+        text-wrap: nowrap;
+    }
 
+      &:hover {
+        background: no-repeat url(img/UI/Button_Blue_3Slides.png);
+        background-size: cover;
+        width: fit-content;
+        font-family: "Vinque", serif;
+        background-color: inherit;
+        width: 128px;
+        height: 43px;
+        
+        .menu-title {
+          top:15%
+        }
+      }
     }
   }
-  
-  div.menu-wrapper button {
-    font-size: 16px;
-    background: no-repeat url(images/Button_Blue_3Slides.png);
-    background-size: cover;
-    width: fit-content;
-    font-family: "Vinque", serif;
-    background-color: inherit;
-    width: 128px;
-    height: 43px;
-  }
-  div.menu-wrapper button:active {
-    background: no-repeat url(images/Button_Blue_3Slides_Pressed.png);
-    background-size: cover;
-    width: fit-content;
-    font-family: "Vinque", serif;
-    background-color: inherit;
-    width: 128px;
-    height: 43px;
-  }
-  div.menu-wrapper button:active {
-    .menu-title {
-      top:20%
+    .background-substrate {
+      position: absolute;
+      left: 50%;
+      top: 62%;
+      transform: translate(-50%, 0);
+
+      .bg-row {
+        display: flex;
+        justify-content: center;
+      }
     }
-    
   }
+
   </style>

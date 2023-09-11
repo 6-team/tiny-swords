@@ -10,8 +10,8 @@
 	const unsubscribe = isActiveCloseButtonStore.subscribe((value) => {
 		isActiveCloseButton = value;
 	});
-    let closeImageBtnSrc =  'images/Regular_01.png'
-    console.log('closeImageBtnSrc',closeImageBtnSrc)
+    let closeImageBtnSrc =  'img/UI/Regular_01.png'
+	
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
@@ -26,18 +26,17 @@
             <button autofocus on:click={() => {
 
                 isActiveCloseButtonStore.set(true)
-                console.log(isActiveCloseButton,closeImageBtnSrc)
                 dialog.close()
             }}
             on:mousedown={() => {
     
                 isActiveCloseButtonStore.set(true)
-                closeImageBtnSrc = 'images/Pressed_01.png'
+                closeImageBtnSrc = 'img/UI/Pressed_01.png'
             }}
-             on:mouseup={() => {
+            on:mouseup={() => {
     
                 isActiveCloseButtonStore.set(true)
-                closeImageBtnSrc =  'images/Regular_01.png'
+                closeImageBtnSrc =  'img/UI/Regular_01.png'
             }}
             >
         </button>
@@ -53,7 +52,7 @@
 	dialog {
 		border-radius: 0.2em;
 		border: none;
-		background: center / cover no-repeat url(images/free-png.ru-709.png);
+		background: center / cover no-repeat url(img/UI/free-png.ru-709.png);
     	width: 1023px;
     	height: 723px;
 	}
@@ -101,11 +100,9 @@
 		display: block;
         justify-content: end;
         display: flex;
-        background: 50% 20% / auto no-repeat url('images/Regular_01.png');
-	}
-    button:hover {
+        background: 50% 20% / auto no-repeat url('img/UI/Regular_01.png');
 	}
     button:active {
-        background: 50% 30% / auto no-repeat url('images/Pressed_01.png');
+        background: 50% 30% / auto no-repeat url('img/UI/Pressed_01.png');
 	}
 </style>
