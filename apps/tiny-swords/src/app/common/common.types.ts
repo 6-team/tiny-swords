@@ -1,4 +1,6 @@
-import { IWithCoordsMethods } from '../entites/coordinate-system/coordinate-system.types';
+import { WithSetPersonageContext } from '../abilities/abilities.types';
+
+export type TNumberOfTiles = number;
 
 export type TTilePosition = number;
 
@@ -17,5 +19,14 @@ export interface ITile {
     image: HTMLImageElement;
     coords: [number, number];
     size: number;
+    row: number;
+    col: number;
+    scale: number;
   }>;
+  setAnimation(row: number): void;
+  initAnimation(deltaTime: number): void;
+}
+
+export interface ICharacter<Abilities extends Record<string | symbol | number, WithSetPersonageContext>> extends ITile {
+  getAbility<Name extends keyof Abilities>(name: Name): Abilities[Name];
 }

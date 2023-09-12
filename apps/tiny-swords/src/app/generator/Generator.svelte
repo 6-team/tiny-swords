@@ -1,10 +1,13 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { Renderer } from '../entites/renderer/renderer';
-  import { TileName } from "../entites/renderer/renderer.const";
-  import { CoordinateSystem } from '../entites/coordinate-system/coordinate-system';
-  import { DecoTile } from "../entites/deco/deco";
-  import { Movable } from '../entites/movable/movable';
+  import { Renderer } from '../core/renderer/renderer';
+  import { TileName } from "../core/renderer/renderer.const";
+  import { CoordinateSystem } from '../core/coordinate-system';
+  import { Movable } from '../abilities/movable';
+  import { Attacking } from '../abilities/attacking';
+  import { Character } from '../entities/character'
+  import { KeyboardController } from "../controllers/keyboard";
+  import { TILE_SIZE, SCALE } from '../common/common.const'
 
   const waterMap = [
     new Array(20).fill(TileName.WATER_MIDDLE_MIDDLE),
@@ -37,7 +40,7 @@
     [TileName.FOAM_LEFT, ...new Array(18).fill(TileName.FOAM_MIDDLE), TileName.FOAM_RIGHT],
     [null,               ...new Array(18).fill(TileName.FOAM_BOTTOM)],
   ];
-  
+
   const sandMap = [
     [],
     [],
@@ -129,7 +132,7 @@
 
     [0, 3],
     [1, 3],
-    
+
     [0, 5],
     [1, 5],
 
@@ -171,10 +174,12 @@
     [17, 10],
   ];
 
-  onMount(async () => {
-    const TILE_SIZE = 64;
-    const SCALE = 0.75;
+  const nextLevelArea = [
+    [18, 7],
+    [19, 7]
+  ];
 
+  onMount(async () => {
     /**
      * Рендер статичной карты
      */
@@ -202,58 +207,79 @@
       coordinateSystem: system,
     });
 
-    const mushroom = new DecoTile() // Для примера будем управлять грибом
-      .addAbility("movable", new Movable({ initialX: 1, initialY: 4, initialHeight: 1 }))
-    const movableAbility = mushroom.getAbility<Movable>("movable");
+    const [initialX, initialY, initialHeight] = system.transformToPixels(2, 3, 3, 3)
 
-    interactiveScene.addInteractiveElement(mushroom);
-    interactiveScene.renderInteractiveLayer();
-
-    document.addEventListener('keydown', (event) => {
-      switch (event.key) {
-        case "ArrowLeft":
-        case "a":
-          movableAbility.setCoords(([prevX, prevY]) => [prevX - 1, prevY]);
-
-          break;
-        case "ArrowRight":
-        case "d":
-          movableAbility.setCoords(([prevX, prevY]) => [prevX + 1, prevY]);
-
-          break;
-        case "ArrowUp":
-        case "w":
-          movableAbility.setCoords(([prevX, prevY]) => [prevX, prevY - 1]);
-
-          break;
-        case "ArrowDown":
-        case "s":
-          movableAbility.setCoords(([prevX, prevY]) => [prevX, prevY + 1]);
-
-          break;
-        default:
-          return;
+    const character = new Character({
+      abilities: {
+        movable: new Movable({ initialX, initialY, initialHeight}),
+        attacking: new Attacking()
       }
+    });
 
-      for (const bound of boundaries) {
-        const hasCollision = CoordinateSystem.checkCollision(
-          system.transformToPixels(movableAbility.coords[0], movableAbility.coords[1], movableAbility.sizes[0], movableAbility.sizes[1]),
-          system.transformToPixels(bound[0], bound[1], 1, 1),
+    const movable = character.getAbility('movable')
+    const keyboardController = new KeyboardController(character, system);
+
+
+    // Переменные для определения положения персонажа относительно середины поля
+    // Предполагается, что значения поля будут захардкожены
+    const middleX = (Math.max(...boundaries.map(([x]) => x)) * TILE_SIZE * SCALE) / 2
+    const middleY = (Math.max(...boundaries.map(([_, y]) => y)) * TILE_SIZE * SCALE) / 2
+    // Дальше проверка: если перс повернут к врагу и они в соседних клетках, то удар засчитан
+    // ...
+
+    // Это надо будет наверное вынести куда то
+    function checkCollisions(): void {
+      for (const area of nextLevelArea) {
+        const hasCollisionWithNextLevelArea = CoordinateSystem.checkCollision(
+          [movable.coords[0] - TILE_SIZE * SCALE, movable.coords[1], movable.sizes[0], movable.sizes[1]],
+          system.transformToPixels(area[0], area[1], 1, 1),
         );
 
-        if (hasCollision) {
-          movableAbility.back();
-
+        if (hasCollisionWithNextLevelArea) {
+          alert('You won!');
           break;
         }
       }
 
-      requestAnimationFrame(() => interactiveScene.renderInteractiveLayer());
-    });
+      for (const bound of boundaries) {
+        const horizontalOffset = movable.coords[0] > middleX ? -TILE_SIZE * SCALE : TILE_SIZE * SCALE;
+        const verticalOffset = movable.coords[1] > middleY ? -TILE_SIZE * SCALE : TILE_SIZE * SCALE;
+        const hasCollision = CoordinateSystem.checkCollision(
+          [movable.coords[0] + horizontalOffset, movable.coords[1] + verticalOffset, movable.sizes[0], movable.sizes[1]],
+          system.transformToPixels(bound[0], bound[1], 1, 1),
+        );
+
+        if (hasCollision) {
+          movable.back();
+
+          break;
+        }
+      }
+    }
+
+    let lastTime = 0;
+
+    const animate = (timeStamp = 0) => {
+      requestAnimationFrame(animate);
+      const deltaTime = timeStamp - lastTime;
+      keyboardController.init()
+
+      interactiveScene.renderMovableLayer([character], deltaTime);
+
+      if(keyboardController.isCharacterMoving) {
+        checkCollisions();
+      }
+
+
+      lastTime = timeStamp
+    }
+
+
+    animate()
   });
 </script>
 
 <div>
-  <canvas id="canvas" width="960" height="720" style="position: absolute; left: 0; top: 0;"></canvas>
-  <canvas id="canvas_interactive" width="960" height="720" style="position: absolute; left: 0; top: 0;"></canvas>
+  <canvas id="canvas" width="1300" height="900" style="position: absolute; left: 0; top: 0;"></canvas>
+  <canvas id="canvas_interactive" width="1280" height="832" style="position: absolute; left: 0; top: 0;"></canvas>
 </div>
