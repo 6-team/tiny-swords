@@ -1,10 +1,10 @@
 import { TileName } from "../../renderer/renderer.const";
-import { ILayersTemplate } from "../layers.types";
+import { LayersTemplate } from "../layers.types";
 
 /**
  * Шаблон для верхней части дерева
  */
-export const LAYER_FOREGROUND_TREE_TOP_CONDITIONS: ILayersTemplate = {
+export const LAYER_FOREGROUND_TREE_TOP_CONDITIONS: LayersTemplate = {
   create: ({ grid }) => {
     let conditions = [];
 
@@ -29,7 +29,7 @@ export const LAYER_FOREGROUND_TREE_TOP_CONDITIONS: ILayersTemplate = {
 /**
  * Шаблон для верхней части дома
  */
-export const LAYER_FOREGROUND_HOUSE_CONDITIONS: ILayersTemplate = {
+export const LAYER_FOREGROUND_HOUSE_CONDITIONS: LayersTemplate = {
   create: ({ grid }) => {
     let conditions = [];
 

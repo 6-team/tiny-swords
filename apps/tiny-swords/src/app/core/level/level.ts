@@ -15,7 +15,7 @@ export class Level {
   }
 
   init() {
-    console.time();
+    // console.time();
 
     /**
      * Создаем основную структуру карты со слоями
@@ -55,7 +55,7 @@ export class Level {
       .switch(LAYERS.BOUND)
       .fill([LAYER_ADDITIONAL_BOUNDARY_CONDITIONS]);        // заполняем границы
 
-    console.timeEnd();
+    // console.timeEnd();
 
     const {
       options,                           

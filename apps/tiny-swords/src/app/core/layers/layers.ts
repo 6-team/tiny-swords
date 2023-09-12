@@ -1,6 +1,6 @@
 import { Matrix } from "../../tools/matrix/matrix";
 import { TileName } from "../renderer";
-import { ILayersCell, ILayersOptions, ILayersTemplate } from "./layers.types";
+import { LayersCell, LayersOptions, LayersTemplate } from "./layers.types";
 import { randomElement, weightedRandomElement } from "./layers.utils";
 
 export class Layers {
@@ -10,7 +10,7 @@ export class Layers {
   #layerNames: string[];
   #cursor: string;
 
-  options: ILayersOptions;
+  options: LayersOptions;
   boundaries: [number, number][];
 
 	constructor(gridX: number, gridY: number, layerNames: string[]) {
@@ -20,7 +20,7 @@ export class Layers {
 
     this.#cursor = layerNames[0];
     this.#layersGrid = layerNames.reduce((acc, layerName) => {
-      const layerGrid = new Matrix<ILayersCell>(gridX, gridY);
+      const layerGrid = new Matrix<LayersCell>(gridX, gridY);
 
       for (let i = 0; i < layerGrid.array.length; i++) {
         const x = i % this.#gridX;
@@ -53,7 +53,7 @@ export class Layers {
     return this.#layersGrid[this.#cursor];
   }
 
-  set currentLayerGrid(grid: Matrix<ILayersCell>) {
+  set currentLayerGrid(grid: Matrix<LayersCell>) {
     this.#layersGrid[this.#cursor] = grid;
   }
 
@@ -89,7 +89,7 @@ export class Layers {
     return maps;
   }
 
-  fill(templates: ILayersTemplate[], layerName?: string) {
+  fill(templates: LayersTemplate[], layerName?: string) {
     templates.forEach((template) => {
       const conditions = template.create({
         grid: layerName ? this.#layersGrid[layerName] : this.currentLayerGrid,
@@ -158,14 +158,14 @@ export class Layers {
         // Обновляем энтропию
         this.#collapseCellOptions(rules, tileTypes);
       } catch (e) {
-        console.log('Ошибка генерации, итераций: ', j);
+        // console.log('Ошибка генерации, итераций: ', j);
 
         this.currentLayerGrid = initGrid;
       }
 
       // Прерываем цикл
       if (this.currentLayerGrid.array.every(({ collapsed }) => collapsed)) {
-        console.log('Всего итераций: ', j);
+        // console.log('Всего итераций: ', j);
         break;
       }
 
@@ -175,7 +175,7 @@ export class Layers {
     return this;
   }
 
-  #setOption(option: keyof ILayersOptions, value) {
+  #setOption(option: keyof LayersOptions, value) {
     this.options = {...this.options, [option]: value }
   }
 
@@ -184,7 +184,7 @@ export class Layers {
   }
 
   #collapseCellOptions(rules, tileTypes) {
-    const nextGrid = new Matrix<ILayersCell>(this.#gridX, this.#gridY);
+    const nextGrid = new Matrix<LayersCell>(this.#gridX, this.#gridY);
 
     for (let index = 0; index < this.currentLayerGrid.array.length; index++) {
       const cell = this.currentLayerGrid.array[index];
@@ -257,7 +257,7 @@ export class Layers {
     this.currentLayerGrid = nextGrid;
   }
 
-  #setRandomTileByIndex({ coords, options }: ILayersCell, tileOptions) {
+  #setRandomTileByIndex({ coords, options }: LayersCell, tileOptions) {
     const optionsWeight = tileOptions.filter(([tile]) => options.includes(tile));
     let tileName = null;
 
@@ -278,13 +278,13 @@ export class Layers {
     });
   }
 
-  #defineCellToUpdate(): ILayersCell {
+  #defineCellToUpdate(): LayersCell {
     // сортируем массив чтобы найти элементы с наименьшей энтропией
     let gridCopy = this.currentLayerGrid.array.slice();
 
-    gridCopy = gridCopy.filter((el: ILayersCell) => !el.collapsed);
+    gridCopy = gridCopy.filter((el: LayersCell) => !el.collapsed);
 
-    gridCopy.sort((a: ILayersCell, b: ILayersCell) => {
+    gridCopy.sort((a: LayersCell, b: LayersCell) => {
       return a.options.length - b.options.length;
     });
 

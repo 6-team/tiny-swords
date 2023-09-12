@@ -1,26 +1,26 @@
 import { Matrix } from "../../tools/matrix/matrix";
 import { TileName } from "../renderer";
 
-export interface ILayersCell {
+export interface LayersCell {
 	collapsed: boolean,
 	coords: [number, number],
 	options: TileName[],
 }
 
-export interface ILayersOptions {
+export interface LayersOptions {
 	gridX: number,
 	gridY: number,
 	enter: [number, number],
 	exit: [number, number],
 }
 
-type ILayersTemplateProps = ILayersOptions & {
-	grid: Matrix<ILayersCell>;
+type LayersTemplateProps = LayersOptions & {
+	grid: Matrix<LayersCell>;
 	boundaries: [number, number][];
 };
 
-export interface ILayersTemplate {
-  create: (data: ILayersTemplateProps) => ILayersCondition[];
+export interface LayersTemplate {
+  create: (data: LayersTemplateProps) => LayersCondition[];
 }
 
 export const enum RoleType {
@@ -28,7 +28,7 @@ export const enum RoleType {
   EXIT = 'exit',
 }
 
-export interface ILayersCondition {
+export interface LayersCondition {
   tile: TileName;
   coords: [number, number];
 	boundary?: boolean;

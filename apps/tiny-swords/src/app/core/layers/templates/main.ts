@@ -1,11 +1,11 @@
 import { TileName } from "../../renderer/renderer.const";
-import { ILayersTemplate, RoleType } from "../layers.types";
+import { LayersTemplate, RoleType } from "../layers.types";
 import { randomInteger } from "../layers.utils";
 
 /**
  * Шаблон для вертикальной реки по середине карты с мостом
  */
-export const LAYER_MAIN_TEMPLATE_BRIDGE_CENTER: ILayersTemplate = {
+export const LAYER_MAIN_TEMPLATE_BRIDGE_CENTER: LayersTemplate = {
   create: ({ gridX, gridY }) => {
     const centerX = Math.floor(gridX / 2);
     const centerY = Math.floor(gridY / 2);
@@ -36,7 +36,7 @@ export const LAYER_MAIN_TEMPLATE_BRIDGE_CENTER: ILayersTemplate = {
 /**
  * Шаблон рамки из воды
  */
-export const LAYER_MAIN_TEMPLATE_WATER_BORDER_1: ILayersTemplate = {
+export const LAYER_MAIN_TEMPLATE_WATER_BORDER_1: LayersTemplate = {
   create: ({ gridX, gridY }) => {
     const conditions = [];
 
@@ -59,7 +59,7 @@ export const LAYER_MAIN_TEMPLATE_WATER_BORDER_1: ILayersTemplate = {
 /**
  * Шаблон для левого дома
  */
-export const LAYER_MAIN_TEMPLATE_LEFT_HOUSE: ILayersTemplate = {
+export const LAYER_MAIN_TEMPLATE_LEFT_HOUSE: LayersTemplate = {
   create: ({ gridX, gridY }) => {
     const firstPart = Math.floor(gridX / 5);
     const x = randomInteger(1, firstPart - 2);
@@ -101,7 +101,7 @@ export const LAYER_MAIN_TEMPLATE_LEFT_HOUSE: ILayersTemplate = {
 /**
  * Шаблон для правого дома
  */
-export const LAYER_MAIN_TEMPLATE_RIGHT_HOUSE: ILayersTemplate = {
+export const LAYER_MAIN_TEMPLATE_RIGHT_HOUSE: LayersTemplate = {
   create: ({ gridX, gridY }) => {
     const lastPart = gridX - Math.floor(gridX / 5) - 1;
     const x = randomInteger(lastPart, gridX - 3); // [14, 17]
@@ -143,7 +143,7 @@ export const LAYER_MAIN_TEMPLATE_RIGHT_HOUSE: ILayersTemplate = {
 /**
  * Шаблон для дерева
  */
-export const LAYER_MAIN_TEMPLATE_TREE: ILayersTemplate = {
+export const LAYER_MAIN_TEMPLATE_TREE: LayersTemplate = {
   create: ({ gridX }) => {
 
     return [{

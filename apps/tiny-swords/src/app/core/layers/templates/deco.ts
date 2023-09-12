@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { TileName } from "../../renderer/renderer.const";
-import { ILayersTemplate } from "../layers.types";
+import { LayersTemplate } from "../layers.types";
 import { weightedRandomElement, randomElement } from "../layers.utils";
 
 export const LAYER_DECO_TILE_WEIGHT: Record<number, [TileName, number, boolean][]> = {
@@ -38,7 +38,7 @@ export const LAYER_DECO_TILE_WEIGHT: Record<number, [TileName, number, boolean][
 /**
  * Шаблон для декораций в воде
  */
-export const LAYER_DECO_WATER_CONDITIONS: ILayersTemplate = {
+export const LAYER_DECO_WATER_CONDITIONS: LayersTemplate = {
   create: ({ grid }) => {
     const random = 20;
     const conditions = [];
@@ -69,7 +69,7 @@ export const LAYER_DECO_WATER_CONDITIONS: ILayersTemplate = {
 /**
  * Шаблон для декораций на траве
  */
-export const LAYER_DECO_GROUND_CONDITIONS: ILayersTemplate = {
+export const LAYER_DECO_GROUND_CONDITIONS: LayersTemplate = {
   create: ({ grid }) => {
     const conditions = [];
 

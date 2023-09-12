@@ -1,5 +1,5 @@
 import { TileName } from "../../renderer/renderer.const";
-import { ILayersTemplate } from "../layers.types";
+import { LayersTemplate } from "../layers.types";
 
 /**
  * Шаблон для дополнительных слоев:
@@ -7,7 +7,7 @@ import { ILayersTemplate } from "../layers.types";
  * - трава по мостами
  * - трава под домом
  */
-export const LAYER_ADDITIONAL_EMPTY_CONDITIONS: ILayersTemplate = {
+export const LAYER_ADDITIONAL_EMPTY_CONDITIONS: LayersTemplate = {
   create: ({ grid }) => {
     const conditions = [];
 
@@ -51,7 +51,7 @@ export const LAYER_ADDITIONAL_EMPTY_CONDITIONS: ILayersTemplate = {
 /**
  * Шаблон для дорисовки нижней части дерева
  */
-export const LAYER_ADDITIONAL_TREE_BOTTOM_CONDITIONS: ILayersTemplate = {
+export const LAYER_ADDITIONAL_TREE_BOTTOM_CONDITIONS: LayersTemplate = {
   create: ({ grid }) => {
     let conditions = [];
 
@@ -75,7 +75,7 @@ export const LAYER_ADDITIONAL_TREE_BOTTOM_CONDITIONS: ILayersTemplate = {
 /**
  * Шаблон для заливки всего слоя водой
  */
-export const LAYER_ADDITIONAL_WATER_CONDITIONS: ILayersTemplate = {
+export const LAYER_ADDITIONAL_WATER_CONDITIONS: LayersTemplate = {
   create: ({ grid }) => {
     const conditions = [];
 
@@ -90,7 +90,7 @@ export const LAYER_ADDITIONAL_WATER_CONDITIONS: ILayersTemplate = {
 /**
  * Шаблон для дорисовки дома
  */
-export const LAYER_ADDITIONAL_HOUSE_CONDITIONS: ILayersTemplate = {
+export const LAYER_ADDITIONAL_HOUSE_CONDITIONS: LayersTemplate = {
   create: ({ enter, exit }) => {
     return [
       // левый дом
@@ -110,7 +110,7 @@ export const LAYER_ADDITIONAL_HOUSE_CONDITIONS: ILayersTemplate = {
 /**
  * Шаблон для дорисовки знаков
  */
-export const LAYER_ADDITIONAL_SIGN_CONDITIONS: ILayersTemplate = {
+export const LAYER_ADDITIONAL_SIGN_CONDITIONS: LayersTemplate = {
   create: ({ enter, exit }) => {
     return [
       // левый знак
@@ -126,7 +126,7 @@ export const LAYER_ADDITIONAL_SIGN_CONDITIONS: ILayersTemplate = {
 /**
  * Шаблон для границ
  */
-export const LAYER_ADDITIONAL_BOUNDARY_CONDITIONS: ILayersTemplate = {
+export const LAYER_ADDITIONAL_BOUNDARY_CONDITIONS: LayersTemplate = {
   create: ({ boundaries }) => {
     const conditions = [];
 
