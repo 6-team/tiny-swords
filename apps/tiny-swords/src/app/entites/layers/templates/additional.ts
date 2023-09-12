@@ -122,3 +122,18 @@ export const LAYER_ADDITIONAL_SIGN_CONDITIONS: ILayersGridTemplate = {
     ];
   }
 }
+
+/**
+ * Шаблон для границ
+ */
+export const LAYER_ADDITIONAL_BOUNDARY_CONDITIONS: ILayersGridTemplate = {
+  create: ({ grid }) => {
+    const conditions = [];
+
+    grid.array.forEach(({ coords }) => {
+      conditions.push({ tile: TileName.BOUNDARY, coords, })
+    });
+
+    return conditions;
+  }
+}

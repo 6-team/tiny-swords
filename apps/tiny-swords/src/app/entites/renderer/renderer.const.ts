@@ -17,6 +17,8 @@ import { TreeType } from "../tree/tree.const";
 import { TreeTile } from "../tree/tree";
 import { HouseTile } from "../house/house";
 import { HouseType } from "../house/house.const";
+import { BoundaryTile } from "../boundary/boundary";
+import { BoundaryType } from "../boundary/boundary.const";
 
 export const enum TileName {
   WATER_MIDDLE_MIDDLE,
@@ -128,6 +130,8 @@ export const enum TileName {
   HOUSE_MIDDLE_RIGHT,
   HOUSE_BOTTOM_LEFT,
   HOUSE_BOTTOM_RIGHT,
+
+  BOUNDARY,
 };
 
 export const mapTileNameToClass: Partial<Record<TileName, { constructor: any, args: Array<any> }>> = {
@@ -240,4 +244,6 @@ export const mapTileNameToClass: Partial<Record<TileName, { constructor: any, ar
   [TileName.HOUSE_MIDDLE_RIGHT]: { constructor: HouseTile, args: [HouseType.MIDDLE_RIGHT] },
   [TileName.HOUSE_BOTTOM_LEFT]: { constructor: HouseTile, args: [HouseType.BOTTOM_LEFT] },
   [TileName.HOUSE_BOTTOM_RIGHT]: { constructor: HouseTile, args: [HouseType.BOTTOM_RIGHT] },
+
+  [TileName.BOUNDARY]: { constructor: BoundaryTile, args: [BoundaryType.MIDDLE] },
 };
