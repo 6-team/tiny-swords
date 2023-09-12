@@ -1,202 +1,47 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { Renderer } from '../core/renderer/renderer';
-  import { TileName } from "../core/renderer/renderer.const";
   import { CoordinateSystem } from '../core/coordinate-system';
   import { Movable } from '../abilities/movable';
   import { Attacking } from '../abilities/attacking';
   import { Character } from '../entities/character'
   import { KeyboardController } from "../controllers/keyboard";
   import { TILE_SIZE, SCALE } from '../common/common.const'
+  import { Level } from "../core/level/level";
 
-  const waterMap = [
-    new Array(20).fill(TileName.WATER_MIDDLE_MIDDLE),
-    new Array(20).fill(TileName.WATER_MIDDLE_MIDDLE),
-    new Array(20).fill(TileName.WATER_MIDDLE_MIDDLE),
-    [...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE), ...new Array(16).fill(null), ...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE)],
-    [...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE), ...new Array(16).fill(null), ...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE)],
-    [...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE), ...new Array(16).fill(null), ...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE)],
-    [...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE), ...new Array(16).fill(null), ...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE)],
-    [...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE), ...new Array(16).fill(null), ...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE)],
-    [...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE), ...new Array(16).fill(null), ...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE)],
-    [...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE), ...new Array(16).fill(null), ...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE)],
-    [...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE), ...new Array(16).fill(null), ...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE)],
-    new Array(20).fill(TileName.WATER_MIDDLE_MIDDLE),
-    new Array(20).fill(TileName.WATER_MIDDLE_MIDDLE),
-  ];
-
-  const foamMap = [
-    [],
-    [],
-    [null,               TileName.FOAM_TOP,                           ...new Array(16).fill(null), TileName.FOAM_TOP],
-    [TileName.FOAM_LEFT, TileName.FOAM_MIDDLE,                        ...new Array(16).fill(null), TileName.FOAM_MIDDLE, TileName.FOAM_RIGHT],
-    [TileName.FOAM_LEFT, TileName.FOAM_MIDDLE,                        ...new Array(16).fill(null), TileName.FOAM_MIDDLE, TileName.FOAM_RIGHT],
-    [TileName.FOAM_LEFT, TileName.FOAM_MIDDLE,                        ...new Array(16).fill(null), TileName.FOAM_MIDDLE, TileName.FOAM_RIGHT],
-    [TileName.FOAM_LEFT, TileName.FOAM_MIDDLE,                        ...new Array(16).fill(null), TileName.FOAM_MIDDLE, TileName.FOAM_RIGHT],
-    [TileName.FOAM_LEFT, TileName.FOAM_MIDDLE,                        ...new Array(16).fill(null), TileName.FOAM_MIDDLE, TileName.FOAM_RIGHT],
-    [TileName.FOAM_LEFT, TileName.FOAM_MIDDLE,                        ...new Array(16).fill(null), TileName.FOAM_MIDDLE, TileName.FOAM_RIGHT],
-    [TileName.FOAM_LEFT, TileName.FOAM_MIDDLE,                        ...new Array(16).fill(null), TileName.FOAM_MIDDLE, TileName.FOAM_RIGHT],
-    [TileName.FOAM_LEFT, TileName.FOAM_MIDDLE,                        ...new Array(16).fill(null), TileName.FOAM_MIDDLE, TileName.FOAM_RIGHT],
-    [TileName.FOAM_LEFT, ...new Array(18).fill(TileName.FOAM_MIDDLE), TileName.FOAM_RIGHT],
-    [null,               ...new Array(18).fill(TileName.FOAM_BOTTOM)],
-  ];
-
-  const sandMap = [
-    [],
-    [],
-    [],
-    [null, TileName.SAND_TOP_LEFT,    TileName.SAND_TOP_MIDDLE,    ...new Array(14).fill(null), TileName.SAND_TOP_MIDDLE,    TileName.SAND_TOP_RIGHT],
-    [null, TileName.SAND_MIDDLE_LEFT, TileName.SAND_MIDDLE_MIDDLE, ...new Array(14).fill(null), TileName.SAND_MIDDLE_MIDDLE, TileName.SAND_MIDDLE_RIGHT],
-    [null, TileName.SAND_MIDDLE_LEFT, TileName.SAND_MIDDLE_MIDDLE, ...new Array(14).fill(null), TileName.SAND_MIDDLE_MIDDLE, TileName.SAND_MIDDLE_RIGHT],
-    [null, TileName.SAND_MIDDLE_LEFT, TileName.SAND_MIDDLE_MIDDLE, ...new Array(14).fill(null), TileName.SAND_MIDDLE_MIDDLE, TileName.SAND_MIDDLE_RIGHT],
-    [null, TileName.SAND_MIDDLE_LEFT, TileName.SAND_MIDDLE_MIDDLE, ...new Array(14).fill(null), TileName.SAND_MIDDLE_MIDDLE, TileName.SAND_MIDDLE_RIGHT],
-    [null, TileName.SAND_MIDDLE_LEFT, TileName.SAND_MIDDLE_MIDDLE, ...new Array(14).fill(null), TileName.SAND_MIDDLE_MIDDLE, TileName.SAND_MIDDLE_RIGHT],
-    [null, TileName.SAND_MIDDLE_LEFT, TileName.SAND_MIDDLE_MIDDLE, ...new Array(14).fill(null), TileName.SAND_MIDDLE_MIDDLE, TileName.SAND_MIDDLE_RIGHT],
-    [null, TileName.SAND_MIDDLE_LEFT, ...new Array(16).fill(TileName.SAND_MIDDLE_MIDDLE), TileName.SAND_MIDDLE_RIGHT],
-    [null, TileName.SAND_BOTTOM_LEFT, ...new Array(16).fill(TileName.SAND_BOTTOM_MIDDLE), TileName.SAND_BOTTOM_RIGHT],
-  ]
-
-  const elevationMap = [
-    [],
-    [],
-    [],
-    [],
-    [],
-    [],
-    [],
-    [],
-    [],
-    [null, null, TileName.ELEVATION_BOTTOM_LEFT, ...new Array(14).fill(TileName.ELEVATION_BOTTOM_MIDDLE), TileName.ELEVATION_BOTTOM_RIGHT],
-    [null, null, TileName.ELEVATION_EDGE_LEFT,   ...new Array(14).fill(TileName.ELEVATION_EDGE_MIDDLE),   TileName.ELEVATION_EDGE_RIGHT],
-  ];
-
-  const groundMap = [
-    [],
-    [],
-    [null, null, TileName.GROUND_TOP_LEFT,    ...new Array(14).fill(TileName.GROUND_TOP_MIDDLE),    TileName.GROUND_TOP_RIGHT],
-    [null, null, TileName.GROUND_MIDDLE_LEFT, ...new Array(14).fill(TileName.GROUND_MIDDLE_MIDDLE), TileName.GROUND_MIDDLE_RIGHT],
-    [null, null, TileName.GROUND_MIDDLE_LEFT, ...new Array(14).fill(TileName.GROUND_MIDDLE_MIDDLE), TileName.GROUND_MIDDLE_RIGHT],
-    [null, null, TileName.GROUND_MIDDLE_LEFT, ...new Array(14).fill(TileName.GROUND_MIDDLE_MIDDLE), TileName.GROUND_MIDDLE_RIGHT],
-    [null, null, TileName.GROUND_MIDDLE_LEFT, ...new Array(14).fill(TileName.GROUND_MIDDLE_MIDDLE), TileName.GROUND_MIDDLE_RIGHT],
-    [null, null, TileName.GROUND_MIDDLE_LEFT, ...new Array(14).fill(TileName.GROUND_MIDDLE_MIDDLE), TileName.GROUND_MIDDLE_RIGHT],
-    [null, null, TileName.GROUND_MIDDLE_LEFT, ...new Array(14).fill(TileName.GROUND_MIDDLE_MIDDLE), TileName.GROUND_MIDDLE_RIGHT],
-    [null, null, TileName.GROUND_BOTTOM_LEFT, ...new Array(14).fill(TileName.GROUND_BOTTOM_MIDDLE), TileName.GROUND_BOTTOM_RIGHT],
-  ];
-
-  const bridgeMap = [
-    [],
-    [],
-    [],
-    [],
-    [TileName.BRIDGE_MIDDLE, TileName.BRIDGE_MIDDLE, TileName.BRIDGE_RIGHT],
-    [TileName.BRIDGE_SHADOW, TileName.BRIDGE_SHADOW],
-    [],
-    [...new Array(17).fill(null), TileName.BRIDGE_LEFT, TileName.BRIDGE_MIDDLE, TileName.BRIDGE_MIDDLE],
-    [...new Array(18).fill(null), TileName.BRIDGE_SHADOW, TileName.BRIDGE_SHADOW],
-  ];
-
-  const decoMap = [
-    [],
-    [],
-    [...new Array(9).fill(null), TileName.DECO_MUSHROOM_L, TileName.DECO_MUSHROOM_M],
-    [...new Array(10).fill(null), TileName.DECO_MUSHROOM_S, TileName.DECO_MUSHROOM_S],
-    [...new Array(7).fill(null), TileName.DECO_STONE_S],
-    [...new Array(4).fill(null), TileName.DECO_BUSH_M],
-    [...new Array(5).fill(null), TileName.DECO_PUMPKIN_S, TileName.DECO_BUSH_L],
-    [...new Array(5).fill(null), TileName.DECO_STONE_L, ...new Array(4).fill(null), TileName.DECO_WEED_M],
-    [...new Array(9).fill(null), TileName.DECO_WEED_S, ...new Array(7).fill(null), TileName.DECO_BONE_S],
-    [...new Array(7).fill(null), TileName.DECO_STONE_M, ...new Array(7).fill(null),  TileName.DECO_BONE_M],
-  ];
-
-  const boundaries = [
-    [1, 1],
-    [2, 1],
-    [3, 1],
-    [4, 1],
-    [5, 1],
-    [6, 1],
-    [7, 1],
-    [8, 1],
-    [9, 1],
-    [10, 1],
-    [11, 1],
-    [12, 1],
-    [13, 1],
-    [14, 1],
-    [15, 1],
-    [16, 1],
-    [17, 1],
-    [18, 1],
-
-    [1, 2],
-
-    [0, 3],
-    [1, 3],
-
-    [0, 5],
-    [1, 5],
-
-    [1, 6],
-    [1, 7],
-    [1, 8],
-    [1, 9],
-    [1, 10],
-
-    [18, 2],
-    [18, 3],
-    [18, 4],
-    [18, 5],
-
-    [18, 6],
-    [19, 6],
-
-    [18, 8],
-    [19, 8],
-
-    [18, 9],
-    [18, 10],
-
-    [2, 10],
-    [3, 10],
-    [4, 10],
-    [5, 10],
-    [6, 10],
-    [7, 10],
-    [8, 10],
-    [9, 10],
-    [10, 10],
-    [11, 10],
-    [12, 10],
-    [13, 10],
-    [14, 10],
-    [15, 10],
-    [16, 10],
-    [17, 10],
-  ];
-
-  const nextLevelArea = [
-    [18, 7],
-    [19, 7]
-  ];
+  const level = new Level();
+  const { enter, exit, maps, boundaries, layers: LAYERS, gridX, gridY } = level.init();
 
   onMount(async () => {
     /**
      * Рендер статичной карты
      */
-    const system = new CoordinateSystem({ tileSize: TILE_SIZE, maxX: 20, maxY: 20 });
+    const system = new CoordinateSystem({ tileSize: TILE_SIZE, maxX: gridX, maxY: gridY });
     const staticScene = new Renderer({
       canvas: document.getElementById('canvas') as HTMLCanvasElement,
       scale: SCALE,
       coordinateSystem: system,
     });
 
-    await staticScene.renderStaticLayer(waterMap);
-    await staticScene.renderStaticLayer(foamMap);
-    await staticScene.renderStaticLayer(sandMap);
-    await staticScene.renderStaticLayer(elevationMap);
-    await staticScene.renderStaticLayer(groundMap);
-    await staticScene.renderStaticLayer(bridgeMap);
-    await staticScene.renderStaticLayer(decoMap);
+    await staticScene.renderStaticLayer(maps[LAYERS.WATER]);
+    await staticScene.renderStaticLayer(maps[LAYERS.SHADOW]);
+    await staticScene.renderStaticLayer(maps[LAYERS.MAIN]);
+    await staticScene.renderStaticLayer(maps[LAYERS.DECO]);
+    await staticScene.renderStaticLayer(maps[LAYERS.ADD]);
+    await staticScene.renderStaticLayer(maps[LAYERS.SIGN]);
+    await staticScene.renderStaticLayer(maps[LAYERS.BOUND]);
+
+    /**
+     * Рендер слоя с объектами переднего плана
+     */
+    const systemForeground = new CoordinateSystem({ tileSize: TILE_SIZE, maxX: gridX, maxY: gridY });
+    const foregroundScene = new Renderer({
+      canvas: document.getElementById('canvas_foreground') as HTMLCanvasElement,
+      scale: SCALE,
+      coordinateSystem: systemForeground,
+    });
+
+    await foregroundScene.renderStaticLayer(maps[LAYERS.FOREG]);
 
     /**
      * Рендер интерактивных элементов, которые будут в движении
@@ -207,7 +52,7 @@
       coordinateSystem: system,
     });
 
-    const [initialX, initialY, initialHeight] = system.transformToPixels(2, 3, 3, 3)
+    const [initialX, initialY, initialHeight] = system.transformToPixels(enter[0], enter[1], 3, 3);
 
     const character = new Character({
       abilities: {
@@ -229,7 +74,7 @@
 
     // Это надо будет наверное вынести куда то
     function checkCollisions(): void {
-      for (const area of nextLevelArea) {
+      for (const area of [exit]) {
         const hasCollisionWithNextLevelArea = CoordinateSystem.checkCollision(
           [movable.coords[0] - TILE_SIZE * SCALE, movable.coords[1], movable.sizes[0], movable.sizes[1]],
           system.transformToPixels(area[0], area[1], 1, 1),
@@ -266,7 +111,7 @@
 
       interactiveScene.renderMovableLayer([character], deltaTime);
 
-      if(keyboardController.isCharacterMoving) {
+      if (keyboardController.isCharacterMoving) {
         checkCollisions();
       }
 
@@ -282,4 +127,5 @@
 <div>
   <canvas id="canvas" width="1300" height="900" style="position: absolute; left: 0; top: 0;"></canvas>
   <canvas id="canvas_interactive" width="1280" height="832" style="position: absolute; left: 0; top: 0;"></canvas>
+  <canvas id="canvas_foreground" width="1280" height="832" style="position: absolute; left: 0; top: 0;"></canvas>
 </div>
