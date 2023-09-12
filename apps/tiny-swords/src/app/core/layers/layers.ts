@@ -82,7 +82,7 @@ export class Layers {
 
       maps = {
         ...maps,
-        [layerName] :map,
+        [layerName]: map,
       };
     });
 
@@ -104,7 +104,6 @@ export class Layers {
         if (boundary) {
           this.#setBoundary(coords);
         }
-
 
         this.currentLayerGrid.set({ x: coords[0], y: coords[1] }, {
           collapsed: true,
@@ -164,7 +163,7 @@ export class Layers {
         this.currentLayerGrid = initGrid;
       }
 
-      // 6. Прерываем цикл
+      // Прерываем цикл
       if (this.currentLayerGrid.array.every(({ collapsed }) => collapsed)) {
         console.log('Всего итераций: ', j);
         break;
