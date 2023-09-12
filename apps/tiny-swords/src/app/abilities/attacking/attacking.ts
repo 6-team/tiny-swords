@@ -1,12 +1,13 @@
-import { IAttacking, WithAttackMethods } from '../abilities.types';
+import { IAttacking, WithMethodsForAttacking } from '../abilities.types';
 import { ITile } from '../../common/common.types';
-import { AttackingAnimation, AttackingError, AttackingForce } from './attacking.const';
+import { AttackingError } from './attacking.const';
+import { AttackingAnimation, AttackingForce } from '../abilities.const';
 
 /**
  * Класс способности атаковать
  */
 export class Attacking implements IAttacking {
-  #context?: ITile & WithAttackMethods;
+  #context?: ITile & WithMethodsForAttacking;
 
   /**
    * Устанавливает контекст/носителя данной способности.
@@ -15,7 +16,7 @@ export class Attacking implements IAttacking {
    * @param context Контекст
    * @returns Объект способности
    */
-  setContext(context: ITile & WithAttackMethods) {
+  setContext(context: ITile & WithMethodsForAttacking) {
     this.#context = context;
 
     return this;

@@ -1,4 +1,4 @@
-import { IWithAbilityToMove } from '../../abilities/abilities.types';
+import { WithAbilityToMove } from '../../abilities/abilities.types';
 import { ICoordinateSystem, ITile } from '../../common/common.types';
 import { Maybe } from '../../tools/monads/maybe';
 import { TileName, mapTileNameToClass } from './renderer.const';
@@ -93,7 +93,7 @@ export class Renderer {
     return this;
   }
 
-  async renderMovable(tile: ITile & IWithAbilityToMove, deltaTime: number) {
+  async renderMovable(tile: ITile & WithAbilityToMove, deltaTime: number) {
     const { coords, sizes } = tile.getAbility('movable');
 
     this.renderWithAnimation([coords[0], coords[1], sizes[0], sizes[1]], tile, deltaTime);
@@ -114,7 +114,7 @@ export class Renderer {
     }
   }
 
-  async renderMovableLayer(movables: Array<ITile & IWithAbilityToMove>, deltaTime: number) {
+  async renderMovableLayer(movables: Array<ITile & WithAbilityToMove>, deltaTime: number) {
     for (const movable of movables) {
       new Maybe(movable).map((tile) => this.renderMovable(tile, deltaTime));
     }

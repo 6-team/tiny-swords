@@ -1,37 +1,32 @@
-import { CharacterActionAnimation } from '../entities/character';
 import { ITile, TTilePosition } from '../common/common.types';
+import { AttackingAnimation, AttackingForce } from './abilities.const';
 
-export interface WithAttackMethods {
-  setAnimation(next: 'WEAK_ATTACK' | 'STRONG_ATTACK'): void;
+export interface WithMethodsForAttacking {
+  setAnimation(next: AttackingAnimation): void;
 }
 
 export interface IAttacking {
-  setContext(context: ITile & WithAttackMethods): IAttacking;
-  attack(type?: 'STRONG' | 'WEAK'): IAttacking;
+  setContext(context: ITile & WithMethodsForAttacking): IAttacking;
+  attack(type?: AttackingForce): IAttacking;
 }
 
-export interface IWithAbilityToAttack {
+export interface WithAbilityToAttack {
   getAbility(name: 'attacking'): IAttacking;
 }
 
-export interface WithMovableMethods {
+export interface WithMethodsForMovable {
   setAnimation(next: number): void;
-  setType(next: 'RIGHT' | 'LEFT'): void;
 }
 
 export interface IMovable {
   sizes: [height: number, width: number];
   coords: [x: TTilePosition, y: TTilePosition];
-  setContext(context: ITile & WithMovableMethods): IMovable;
-  setMovement(
-    updater: (prev: [TTilePosition, TTilePosition]) => [TTilePosition, TTilePosition],
-    animation?: CharacterActionAnimation,
-    // direction?: 'RIGHT' | 'LEFT',
-  ): IMovable;
+  setContext(context: ITile & WithMethodsForMovable): IMovable;
+  setMovement(updater: (prev: [TTilePosition, TTilePosition]) => [TTilePosition, TTilePosition]): IMovable;
   back(): IMovable;
 }
 
-export interface IWithAbilityToMove {
+export interface WithAbilityToMove {
   getAbility(name: 'movable'): IMovable;
 }
 

@@ -1,10 +1,10 @@
 import { CharacterActionAnimation } from '../../entities/character';
-import { AttackingForce } from '../../abilities/attacking/attacking.const';
 import { Directions, movementSetters, pushedKeys } from './keyboard.conts';
 import { SCALE } from '../../common/common.const';
-import { IAttacking, IMovable, IWithAbilityToAttack, IWithAbilityToMove } from '../../abilities/abilities.types';
+import { IAttacking, IMovable, WithAbilityToAttack, WithAbilityToMove } from '../../abilities/abilities.types';
 import { ICoordinateSystem, ITile } from '../../common/common.types';
 import { IController } from '../controllers.types';
+import { AttackingForce } from '../../abilities/abilities.const';
 
 export default class KeyboardController implements IController {
   #pushedButtons: Directions[] = [];
@@ -16,7 +16,7 @@ export default class KeyboardController implements IController {
   #isCharacterMoving = false;
 
   constructor(
-    protected readonly character: ITile & IWithAbilityToAttack & IWithAbilityToMove,
+    protected readonly character: ITile & WithAbilityToAttack & WithAbilityToMove,
     protected readonly system: ICoordinateSystem,
   ) {
     this.#movable = character.getAbility('movable');

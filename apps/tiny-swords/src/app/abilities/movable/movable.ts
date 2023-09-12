@@ -1,4 +1,4 @@
-import { IMovable, WithMovableMethods } from '../abilities.types';
+import { IMovable, WithMethodsForMovable } from '../abilities.types';
 import { ITile, TTilePosition } from '../../common/common.types';
 import { MovingError } from './movable.const';
 import { MovableProps } from './movable.types';
@@ -11,7 +11,7 @@ export class Movable implements IMovable {
   #coords: [TTilePosition, TTilePosition];
   #prevCoords: [TTilePosition, TTilePosition];
   #sizes: [number, number];
-  #context?: ITile & WithMovableMethods;
+  #context?: ITile & WithMethodsForMovable;
 
   constructor({ initialX, initialY, initialHeight, initialWidth }: MovableProps) {
     this.#coords = [initialX, initialY];
@@ -26,7 +26,7 @@ export class Movable implements IMovable {
    * @param context Контекст
    * @returns Объект способности
    */
-  setContext(context: ITile & WithMovableMethods) {
+  setContext(context: ITile & WithMethodsForMovable) {
     this.#context = context;
 
     return this;
