@@ -94,15 +94,15 @@ export const LAYER_ADDITIONAL_HOUSE_CONDITIONS: ILayersGridTemplate = {
   create: ({ enter, exit }) => {
     return [
       // левый дом
-      { tile: TileName.HOUSE_BOTTOM_LEFT, coords: [enter[0] - 1, enter[1] - 1] },
-      { tile: TileName.HOUSE_BOTTOM_RIGHT, coords: [enter[0], enter[1] - 1] },
-      { tile: TileName.HOUSE_MIDDLE_LEFT, coords: [enter[0] - 1, enter[1] - 2] },
-      { tile: TileName.HOUSE_MIDDLE_RIGHT, coords: [enter[0], enter[1] - 2 ]},
+      { tile: TileName.HOUSE_BOTTOM_LEFT, coords: [enter[0] - 1, enter[1] - 1], boundary: true },
+      { tile: TileName.HOUSE_BOTTOM_RIGHT, coords: [enter[0], enter[1] - 1], boundary: true },
+      { tile: TileName.HOUSE_MIDDLE_LEFT, coords: [enter[0] - 1, enter[1] - 2], boundary: true },
+      { tile: TileName.HOUSE_MIDDLE_RIGHT, coords: [enter[0], enter[1] - 2 ], boundary: true },
       // правый дом
-      { tile: TileName.HOUSE_BOTTOM_LEFT, coords: [exit[0], exit[1] - 1] },
-      { tile: TileName.HOUSE_BOTTOM_RIGHT, coords: [exit[0] + 1, exit[1] - 1] },
-      { tile: TileName.HOUSE_MIDDLE_LEFT, coords: [exit[0], exit[1] - 2] },
-      { tile: TileName.HOUSE_MIDDLE_RIGHT, coords: [exit[0] + 1, exit[1] - 2 ]},
+      { tile: TileName.HOUSE_BOTTOM_LEFT, coords: [exit[0], exit[1] - 1], boundary: true },
+      { tile: TileName.HOUSE_BOTTOM_RIGHT, coords: [exit[0] + 1, exit[1] - 1], boundary: true },
+      { tile: TileName.HOUSE_MIDDLE_LEFT, coords: [exit[0], exit[1] - 2], boundary: true },
+      { tile: TileName.HOUSE_MIDDLE_RIGHT, coords: [exit[0] + 1, exit[1] - 2 ], boundary: true },
     ];
   }
 }
@@ -114,10 +114,10 @@ export const LAYER_ADDITIONAL_SIGN_CONDITIONS: ILayersGridTemplate = {
   create: ({ enter, exit }) => {
     return [
       // левый знак
-      { tile: TileName.DECO_SIGN_STOP_BOTTOM, coords: [enter[0] - 1, enter[1]] },
+      { tile: TileName.DECO_SIGN_STOP_BOTTOM, coords: [enter[0] - 1, enter[1]], boundary: true },
       { tile: TileName.DECO_SIGN_STOP_TOP, coords: [enter[0] - 1, enter[1] - 1] },
       // правый знак
-      { tile: TileName.DECO_SIGH_RIGHT_BOTTOM, coords: [exit[0] + 1, exit[1]] },
+      { tile: TileName.DECO_SIGH_RIGHT_BOTTOM, coords: [exit[0] + 1, exit[1]], boundary: true },
       { tile: TileName.DECO_SIGH_RIGHT_TOP, coords: [exit[0] + 1, exit[1] - 1] },
     ];
   }
@@ -127,10 +127,10 @@ export const LAYER_ADDITIONAL_SIGN_CONDITIONS: ILayersGridTemplate = {
  * Шаблон для границ
  */
 export const LAYER_ADDITIONAL_BOUNDARY_CONDITIONS: ILayersGridTemplate = {
-  create: ({ grid }) => {
+  create: ({ boundaries }) => {
     const conditions = [];
 
-    grid.array.forEach(({ coords }) => {
+    boundaries.forEach((coords) => {
       conditions.push({ tile: TileName.BOUNDARY, coords, })
     });
 

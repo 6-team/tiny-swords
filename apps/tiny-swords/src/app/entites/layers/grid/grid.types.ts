@@ -16,6 +16,7 @@ export interface ILayersGridOptions {
 
 type ILayersGridTemplateProps = ILayersGridOptions & {
 	grid: Matrix<ILayersGridCell>;
+	boundaries: [number, number][];
 };
 
 export interface ILayersGridTemplate {
@@ -30,5 +31,6 @@ export const enum RoleType {
 export interface ILayersGridCondition {
   tile: TileName;
   coords: [number, number];
+	boundary?: boolean;
   role?: RoleType,
 }

@@ -24,6 +24,7 @@ export const LAYER_MAIN_TEMPLATE_BRIDGE_CENTER: ILayersGridTemplate = {
         conditions.push({
           tile: TileName.WATER_MIDDLE_MIDDLE,
           coords: [x, i],
+          boundary: true,
         });
       }
     }
@@ -45,6 +46,7 @@ export const LAYER_MAIN_TEMPLATE_WATER_BORDER_1: ILayersGridTemplate = {
           conditions.push({
             tile: TileName.WATER_MIDDLE_MIDDLE,
             coords: [x, y],
+            boundary: true,
           });
         }
       }

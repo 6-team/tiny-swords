@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Matrix } from "../../../tools/matrix/matrix";
 import { randomElement, weightedRandomElement } from "../utils/layers.utils";
 import { TileName } from "../../renderer/renderer.const";
@@ -9,7 +10,9 @@ export class LayersGrid {
   #gridY: number;
   #layerNames: string[];
   #cursor: string;
+
   options: ILayersGridOptions;
+  boundaries: [number, number][];
 
 	constructor(gridX: number, gridY: number, layerNames: string[]) {
 		this.#gridX = gridX;
@@ -43,6 +46,8 @@ export class LayersGrid {
       enter: [0, 0],
       exit: [0, 0],
     };
+
+    this.boundaries = [];
   }
 
   get currentLayerGrid() {
@@ -85,29 +90,22 @@ export class LayersGrid {
     return maps;
   }
 
-  get boundaries() {
-    const boundaries = [];
-
-    this.#layersGrid['main'].array.forEach(({ coords, options }) => {
-      if (options[0] === TileName.WATER_MIDDLE_MIDDLE || options[0] === TileName.TREE_STRUMP) {
-        boundaries.push([coords[0], coords[1]]);
-      }
-    });
-
-    return boundaries;
-  }
-
   fill(templates: ILayersGridTemplate[], layerName?: string) {
     templates.forEach((template) => {
       const conditions = template.create({
         grid: layerName ? this.#layersGrid[layerName] : this.currentLayerGrid,
+        boundaries: this.boundaries,
         ...this.options
       });
 
-      conditions.forEach(({ tile, coords, role }) => {
+      conditions.forEach(({ tile, coords, role, boundary }) => {
         if (role) {
           this.#setOption(role, coords);
         }
+        if (boundary) {
+          this.#setBoundary(coords);
+        }
+
 
         this.currentLayerGrid.set({ x: coords[0], y: coords[1] }, {
           collapsed: true,
@@ -126,10 +124,8 @@ export class LayersGrid {
     return this;
   }
 
-  wfc(rules, tileMapToWeight) {
-    console.time();
-
-    const tileTypes = tileMapToWeight.reduce((acc, [tile]) => [...acc, tile], []);
+  wfc(rules, tileOptions) {
+    const tileTypes = tileOptions.reduce((acc, [tile]) => [...acc, tile], []);
 
     // заполняем все пустые ячейки
     this.currentLayerGrid.array.forEach(({ coords, collapsed }) => {
@@ -158,7 +154,7 @@ export class LayersGrid {
       const cell = this.#defineCellToUpdate();
 
       // Устанавливаем ячейке рандомный тайл из доступных
-      this.#setRandomTileByIndex(cell, tileMapToWeight);
+      this.#setRandomTileByIndex(cell, tileOptions);
 
       try {
         // Обновляем энтропию
@@ -178,13 +174,15 @@ export class LayersGrid {
       j++;
     }
 
-    console.timeEnd();
-
     return this;
   }
 
   #setOption(option: keyof ILayersGridOptions, value) {
     this.options = {...this.options, [option]: value }
+  }
+
+  #setBoundary(coords) {
+    this.boundaries.push(coords);
   }
 
   #collapseCellOptions(rules, tileTypes) {
@@ -261,14 +259,23 @@ export class LayersGrid {
     this.currentLayerGrid = nextGrid;
   }
 
-  #setRandomTileByIndex({ coords, options }: ILayersGridCell, tileMapToWeight) {
-    const optionsWeight = tileMapToWeight.filter(([tile]) => options.includes(tile));
-    const pick = weightedRandomElement(optionsWeight);
+  #setRandomTileByIndex({ coords, options }: ILayersGridCell, tileOptions) {
+    const optionsWeight = tileOptions.filter(([tile]) => options.includes(tile));
+    let tileName = null;
+
+    if (optionsWeight.length) {
+      tileName = weightedRandomElement(optionsWeight);
+      const [_, __, boundary] = optionsWeight.find(([tile]) => tileName === tile);
+
+      if (boundary) {
+        this.#setBoundary(coords);
+      }
+    }
 
     this.currentLayerGrid.set({ x: coords[0], y: coords[1] }, {
       coords,
       collapsed: true,
-      options: [pick],
+      options: [tileName],
     });
   }
 

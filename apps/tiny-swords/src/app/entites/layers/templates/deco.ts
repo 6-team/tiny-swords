@@ -1,36 +1,37 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { TileName } from "../../renderer/renderer.const";
 import { ILayersGridTemplate } from "../grid/grid.types";
 import { weightedRandomElement, randomElement } from "../utils/layers.utils";
 
-export const LAYER_DECO_TILE_WEIGHT: Record<number, [TileName, number][]> = {
+export const LAYER_DECO_TILE_WEIGHT: Record<number, [TileName, number, boolean][]> = {
   10: [
-    [TileName.DECO_MUSHROOM_S, 3],
-    [TileName.DECO_MUSHROOM_M, 2],
-    [TileName.DECO_MUSHROOM_L, 1],
+    [TileName.DECO_MUSHROOM_S, 3, false],
+    [TileName.DECO_MUSHROOM_M, 2, false],
+    [TileName.DECO_MUSHROOM_L, 1, false],
   ],
   5: [
-    [TileName.DECO_STONE_S,    3],
-    [TileName.DECO_STONE_M,    2],
-    [TileName.DECO_STONE_L,    1],
+    [TileName.DECO_STONE_S,    3, false],
+    [TileName.DECO_STONE_M,    2, false],
+    [TileName.DECO_STONE_L,    1, false],
   ],
   15: [
-    [TileName.DECO_BUSH_S,     3],
-    [TileName.DECO_BUSH_M,     2],
-    [TileName.DECO_BUSH_L,     1],
+    [TileName.DECO_BUSH_S,     3, false],
+    [TileName.DECO_BUSH_M,     2, false],
+    [TileName.DECO_BUSH_L,     1, false],
   ],
   6: [
-    [TileName.DECO_PUMPKIN_S,  2],
-    [TileName.DECO_PUMPKIN_M,  1],
+    [TileName.DECO_PUMPKIN_S,  2, false],
+    [TileName.DECO_PUMPKIN_M,  1, false],
   ],
   11: [
-    [TileName.DECO_WEED_S,     2],
-    [TileName.DECO_WEED_M,     1],
+    [TileName.DECO_WEED_S,     2, false],
+    [TileName.DECO_WEED_M,     1, false],
   ],
   4: [
-    [TileName.DECO_BONE_S_RIGHT, 1],
-    [TileName.DECO_BONE_S_LEFT,  1],
-    [TileName.DECO_BONE_M_RIGHT, 1],
-    [TileName.DECO_BONE_M_LEFT,  1],
+    [TileName.DECO_BONE_S_RIGHT, 1, false],
+    [TileName.DECO_BONE_S_LEFT,  1, false],
+    [TileName.DECO_BONE_M_RIGHT, 1, false],
+    [TileName.DECO_BONE_M_LEFT,  1, false],
   ],
 };
 
@@ -80,10 +81,14 @@ export const LAYER_DECO_GROUND_CONDITIONS: ILayersGridTemplate = {
       Object.keys(LAYER_DECO_TILE_WEIGHT).forEach((key: string) => {
         for (let i = 0; i < +key; i++) {
           const { coords } = randomElement(availableCells);
+
+          const tile = weightedRandomElement(LAYER_DECO_TILE_WEIGHT[key]);
+          const [_, __, boundary] = LAYER_DECO_TILE_WEIGHT[key].find(([tileName]) => tileName === tile);
       
           conditions.push({
-            tile: weightedRandomElement(LAYER_DECO_TILE_WEIGHT[key]),
+            tile,
             coords,
+            boundary,
           });
         }
       });

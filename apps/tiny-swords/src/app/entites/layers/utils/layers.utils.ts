@@ -10,7 +10,7 @@ export const randomInteger = (min: number, max: number): number => {
   return Math.floor(rand);
 }
 
-export const weightedRandomElement = (items: [TileName, number][]) => {
+export const weightedRandomElement = (items: [TileName, number][]): TileName => {
   const table = items
     .flatMap(([item, weight]) => Array(weight).fill(item));
   

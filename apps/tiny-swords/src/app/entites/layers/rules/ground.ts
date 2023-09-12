@@ -1,23 +1,23 @@
 import { TileName } from "../../renderer/renderer.const";
 
-export const LAYER_MAIN_WEIGHT: [TileName, number][] = [
-  [TileName.WATER_MIDDLE_MIDDLE,  1],
+export const LAYER_MAIN_WEIGHT: [TileName, number, boolean][] = [
+  [TileName.WATER_MIDDLE_MIDDLE,  1, true],
 
-  [TileName.GROUND_TOP_LEFT,      10],
-  [TileName.GROUND_TOP_MIDDLE,    10],
-  [TileName.GROUND_TOP_RIGHT,     10],
-  [TileName.GROUND_MIDDLE_LEFT,   10],
-  [TileName.GROUND_MIDDLE_MIDDLE, 100],
-  [TileName.GROUND_MIDDLE_RIGHT,  10],
-  [TileName.GROUND_BOTTOM_LEFT,   10],
-  [TileName.GROUND_BOTTOM_MIDDLE, 10],
-  [TileName.GROUND_BOTTOM_RIGHT,  10],
+  [TileName.GROUND_TOP_LEFT,      10, false],
+  [TileName.GROUND_TOP_MIDDLE,    10, false],
+  [TileName.GROUND_TOP_RIGHT,     10, false],
+  [TileName.GROUND_MIDDLE_LEFT,   10, false],
+  [TileName.GROUND_MIDDLE_MIDDLE, 100, false],
+  [TileName.GROUND_MIDDLE_RIGHT,  10, false],
+  [TileName.GROUND_BOTTOM_LEFT,   10, false],
+  [TileName.GROUND_BOTTOM_MIDDLE, 10, false],
+  [TileName.GROUND_BOTTOM_RIGHT,  10, false],
 
-  [TileName.BRIDGE_LEFT,          20],
-  [TileName.BRIDGE_MIDDLE,        20],
-  [TileName.BRIDGE_RIGHT,         20],
+  [TileName.BRIDGE_LEFT,          10, false],
+  [TileName.BRIDGE_MIDDLE,        10, false],
+  [TileName.BRIDGE_RIGHT,         10, false],
 
-  [TileName.TREE_STRUMP,          0],
+  [TileName.TREE_STRUMP,          2, true],
 ];
 
 export const LAYER_MAIN_RULES = {

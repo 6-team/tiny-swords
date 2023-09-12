@@ -13,6 +13,8 @@
   import { LAYER_FOREGROUND_HOUSE_CONDITIONS, LAYER_FOREGROUND_TREE_TOP_CONDITIONS } from "../entites/layers/templates/foreground";
   import { LayersGrid } from "../entites/layers/grid/grid";
 
+  console.time();
+
   /**
    * Создаем основную структуру карты со слоями
    */
@@ -73,14 +75,16 @@
     .switch(LAYERS.BOUND)
     .fill([LAYER_ADDITIONAL_BOUNDARY_CONDITIONS]);        // заполняем границы
 
-    const {
-      options: {
-        enter,                                            // получаем координаты старта игрока
-        exit,                                             // получаем координаты выхода
-      },                            
-      maps,                                               // карты для рендера
-      boundaries,                                         // границы
-    } = layersGrid;
+  const {
+    options: {
+      enter,                                              // получаем координаты старта игрока
+      exit,                                               // получаем координаты выхода
+    },                            
+    maps,                                                 // карты для рендера
+    boundaries,                                           // границы
+  } = layersGrid;
+
+  console.timeEnd();
 
   onMount(async () => {
     const TILE_SIZE = 64;
