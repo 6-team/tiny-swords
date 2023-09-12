@@ -280,7 +280,7 @@ export class LayersGrid {
   }
 
   #defineCellToUpdate(): ILayersGridCell {
-    // сортируем нассив чтобы найти элементы с наименьшей энтропией
+    // сортируем массив чтобы найти элементы с наименьшей энтропией
     let gridCopy = this.currentLayerGrid.array.slice();
 
     gridCopy = gridCopy.filter((el: ILayersGridCell) => !el.collapsed);
