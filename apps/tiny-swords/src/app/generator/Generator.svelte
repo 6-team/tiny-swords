@@ -193,6 +193,15 @@
     await staticScene.renderStaticLayer(bridgeMap);
     await staticScene.renderStaticLayer(decoMap);
 
+    await staticScene.renderResourcesBar([
+              { type: 'gold', image: 'img/Resources/G_Idle.png', count: 9999 },
+              { type: 'wood', image: 'img/Resources/W_Idle.png', count: 0 },
+            ])
+    await staticScene.renderHealthBar({
+      totalLives: 3,
+      availableLives: 1,
+      blockedLives: 1,
+    })
     /**
      * Рендер интерактивных элементов, которые будут в движении
      */
@@ -207,7 +216,6 @@
     const movableAbility = mushroom.getAbility<Movable>("movable");
 
     interactiveScene.addInteractiveElement(mushroom);
-    interactiveScene.renderInteractiveLayer();
 
     document.addEventListener('keydown', (event) => {
       switch (event.key) {
