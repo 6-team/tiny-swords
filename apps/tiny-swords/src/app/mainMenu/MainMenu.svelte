@@ -1,7 +1,7 @@
 <script lang="ts">
   import { navigate } from "svelte-routing";
   import Modal from '../Modals/Modal.svelte';
-  import { isActiveCloseButton } from './store'
+  import { isActiveCloseButton, isActiveMenuItem } from './store'
 
   let showModal = false;
   let menuLink = [
@@ -9,6 +9,9 @@
     {title: 'Продолжить', value: 'continue'},
     {title: 'Сетевая игра', value: 'multi-player'}
   ];
+
+  let menuIndex = 0
+  let activeItem = ''
     
   function handleClick(item: string):void {
     if(item === 'multi-player') {
@@ -21,7 +24,8 @@
   const bgTiles = [
     ["img/UI/cut_layout/1.png","img/UI/cut_layout/2.png","img/UI/cut_layout/3.png"],
     ["img/UI/cut_layout/4.png","img/UI/cut_layout/5.png","img/UI/cut_layout/6.png"],
-    ["img/UI/cut_layout/7.png","img/UI/cut_layout/8.png","img/UI/cut_layout/9.png"]]
+    ["img/UI/cut_layout/7.png","img/UI/cut_layout/8.png","img/UI/cut_layout/9.png"]
+  ]
 
   function expandBg(bgTiles: Array<Array<string>>, count:number):Array<Array<string>> {
     const createTile = (row:number):Array<string> => ([bgTiles[row][0], bgTiles[row][1], bgTiles[row][1], bgTiles[row][2]]);
@@ -43,6 +47,32 @@
 }
   const expandedBg = expandBg(bgTiles, menuLink.length)
 
+  function keyboardHandler(e: KeyboardEvent): void {
+  const menuLinkLength = menuLink.length;
+  
+  switch (e.code) {
+    case 'ArrowDown':
+      menuIndex = (menuIndex + 1) % menuLinkLength;
+      break;
+
+    case 'ArrowUp':
+      menuIndex = (menuIndex - 1 + menuLinkLength) % menuLinkLength;
+      break;
+
+    case 'Escape':
+      isActiveMenuItem.set('');
+      return;
+
+    case 'Enter':
+      handleClick(activeItem);
+      break;
+  }
+
+  isActiveMenuItem.set(menuLink[menuIndex].value);
+}
+ 
+  isActiveMenuItem.subscribe( value => activeItem = value)
+
   </script>
 
 
@@ -58,7 +88,7 @@
           {/each}
           <div class="menu-wrapper">
             {#each menuLink as { title, value } }
-              <button class="menu-btn" on:click={()=>handleClick(value)}>
+              <button class={`menu-btn ${activeItem === value ? 'active': ''}`} on:click={()=>handleClick(value)}>
                 <span class="menu-title"> {title}</span>
               </button>
             {/each}
@@ -119,7 +149,7 @@
         text-wrap: nowrap;
     }
 
-      &:hover {
+   &.active, &:hover {
         background: no-repeat url(img/UI/Button_Blue_3Slides.png);
         background-size: cover;
         width: fit-content;
@@ -148,3 +178,4 @@
   }
 
   </style>
+<svelte:window on:keydown|preventDefault={keyboardHandler} />
