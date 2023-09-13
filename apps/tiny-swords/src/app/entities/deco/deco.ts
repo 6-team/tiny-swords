@@ -1,5 +1,5 @@
 import { Tile } from '../tile/tile';
-import { DecoAnimation, DecoType, mapTerrainToCoords } from './deco.const';
+import { DecoType, mapTerrainToCoords } from './deco.const';
 
 export class DecoTile extends Tile<DecoType> {
   protected _type: DecoType;
@@ -7,23 +7,9 @@ export class DecoTile extends Tile<DecoType> {
 
   constructor(type: DecoType = DecoType.MUSHROOM_M) {
     super();
+
     this.setType(type);
   }
-
-  /**
-   * Метод временно здесь, пока не появился отдельный класс персонажа
-   */
-  // setAnimation(next: DecoAnimation) {
-  //   if (next === DecoAnimation.WEAK_ATTACK) {
-  //     alert(`ATTACK! ${DecoAnimation.WEAK_ATTACK}`);
-  //   } else if (next === DecoAnimation.STRONG_ATTACK) {
-  //     alert(`ATTACK! ${DecoAnimation.STRONG_ATTACK}`);
-  //   } else if (next === DecoAnimation.FORWARD) {
-  //     this.setType(DecoType.PUMPKIN_M);
-  //   } else {
-  //     this.setType(DecoType.BONE_M);
-  //   }
-  // }
 
   setType(type: DecoType = DecoType.MUSHROOM_M) {
     this._type = type;

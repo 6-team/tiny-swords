@@ -1,5 +1,5 @@
 import { WithAbilityToMove } from '../../abilities/abilities.types';
-import { ICoordinateSystem, ITile } from '../../common/common.types';
+import { IGrid, ITile } from '../../common/common.types';
 import { Maybe } from '../../tools/monads/maybe';
 import { TileName, mapTileNameToClass } from './renderer.const';
 import { RendererConfig } from './renderer.types';
@@ -19,13 +19,13 @@ function* enumerate<T>(iterable: Iterable<T>): Iterable<[number, T]> {
 export class Renderer {
   #canvas: HTMLCanvasElement;
   #context: CanvasRenderingContext2D;
-  #system: ICoordinateSystem;
+  #system: IGrid;
   #scale: number;
 
-  constructor({ canvas, coordinateSystem, scale }: RendererConfig) {
+  constructor({ canvas, Grid, scale }: RendererConfig) {
     this.#canvas = canvas;
     this.#context = this.#canvas.getContext('2d');
-    this.#system = coordinateSystem;
+    this.#system = Grid;
     this.#scale = scale;
     this.#context.imageSmoothingEnabled = false; // Отключаю сглаживание
   }

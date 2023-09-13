@@ -1,6 +1,6 @@
-import { ICoordinateSystem, TNumberOfTiles, TTilePosition } from '../../common/common.types';
+import { IGrid, TNumberOfTiles, TTilePosition } from '../../common/common.types';
 
-export class CoordinateSystem implements ICoordinateSystem {
+export class Grid implements IGrid {
   #tileSize: number;
   #maxX: TNumberOfTiles;
   #maxY: TNumberOfTiles;

@@ -1,5 +1,5 @@
 import { IMovable, WithMethodsForMovable } from '../abilities.types';
-import { ITile, TTilePosition } from '../../common/common.types';
+import { ITile, TPixelsPosition } from '../../common/common.types';
 import { MovingError } from './movable.const';
 import { MovableProps } from './movable.types';
 
@@ -8,9 +8,9 @@ import { MovableProps } from './movable.types';
  * Координаты задаются в тайлах, а выбранная система координат уже переводит значения в пиксели
  */
 export class Movable implements IMovable {
-  #coords: [TTilePosition, TTilePosition];
-  #prevCoords: [TTilePosition, TTilePosition];
-  #sizes: [number, number];
+  #coords: [TPixelsPosition, TPixelsPosition];
+  #prevCoords: [TPixelsPosition, TPixelsPosition];
+  #sizes: [TPixelsPosition, TPixelsPosition];
   #context?: ITile & WithMethodsForMovable;
 
   constructor({ initialX, initialY, initialHeight, initialWidth }: MovableProps) {
@@ -40,12 +40,12 @@ export class Movable implements IMovable {
    * @param direction Направление, в котором будет повернут персонаж.
    * @returns Объект способности
    */
-  setMovement(updater: (prev: [TTilePosition, TTilePosition]) => [TTilePosition, TTilePosition]) {
+  setMovement(updater: (prev: [TPixelsPosition, TPixelsPosition]) => [TPixelsPosition, TPixelsPosition]) {
     if (!this.#context) {
       throw new Error(MovingError.PERSONAGE_NOT_SET);
     }
 
-    const prevCoords: [number, number] = [...this.#coords];
+    const prevCoords: [TPixelsPosition, TPixelsPosition] = [...this.#coords];
 
     this.#coords = [...updater(this.#coords)];
     this.#prevCoords = prevCoords;

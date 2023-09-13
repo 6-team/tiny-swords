@@ -4,7 +4,9 @@ export type TNumberOfTiles = number;
 
 export type TTilePosition = number;
 
-export interface ICoordinateSystem {
+export type TPixelsPosition = number;
+
+export interface IGrid {
   tileSize: number;
   transformToPixels(
     x: number,

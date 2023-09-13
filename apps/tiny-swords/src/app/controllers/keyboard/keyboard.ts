@@ -2,7 +2,7 @@ import { CharacterActionAnimation } from '../../entities/character';
 import { Directions, movementSetters, pushedKeys } from './keyboard.conts';
 import { SCALE } from '../../common/common.const';
 import { IAttacking, IMovable, WithAbilityToAttack, WithAbilityToMove } from '../../abilities/abilities.types';
-import { ICoordinateSystem, ITile } from '../../common/common.types';
+import { IGrid, ITile } from '../../common/common.types';
 import { IController } from '../controllers.types';
 import { AttackingForce } from '../../abilities/abilities.const';
 
@@ -17,7 +17,7 @@ export default class KeyboardController implements IController {
 
   constructor(
     protected readonly character: ITile & WithAbilityToAttack & WithAbilityToMove,
-    protected readonly system: ICoordinateSystem,
+    protected readonly system: IGrid,
   ) {
     this.#movable = character.getAbility('movable');
     this.#attacking = character.getAbility('attacking');

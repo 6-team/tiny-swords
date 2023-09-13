@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import { Renderer } from '../core/renderer/renderer';
   import { TileName } from "../core/renderer/renderer.const";
-  import { CoordinateSystem } from '../core/coordinate-system';
+  import { Grid } from '../core/grid';
   import { Movable } from '../abilities/movable';
   import { Attacking } from '../abilities/attacking';
   import { Character } from '../entities/character'
@@ -183,11 +183,11 @@
     /**
      * Рендер статичной карты
      */
-    const system = new CoordinateSystem({ tileSize: TILE_SIZE, maxX: 20, maxY: 20 });
+    const system = new Grid({ tileSize: TILE_SIZE, maxX: 20, maxY: 20 });
     const staticScene = new Renderer({
       canvas: document.getElementById('canvas') as HTMLCanvasElement,
       scale: SCALE,
-      coordinateSystem: system,
+      Grid: system,
     });
 
     await staticScene.renderStaticLayer(waterMap);
@@ -204,7 +204,7 @@
     const interactiveScene = new Renderer({
       canvas: document.getElementById('canvas_interactive') as HTMLCanvasElement,
       scale: SCALE,
-      coordinateSystem: system,
+      Grid: system,
     });
 
     const [initialX, initialY, initialHeight] = system.transformToPixels(2, 3, 3, 3)
@@ -230,13 +230,14 @@
     // Это надо будет наверное вынести куда то
     function checkCollisions(): void {
       for (const area of nextLevelArea) {
-        const hasCollisionWithNextLevelArea = CoordinateSystem.checkCollision(
+        const hasCollisionWithNextLevelArea = Grid.checkCollision(
           [movable.coords[0] - TILE_SIZE * SCALE, movable.coords[1], movable.sizes[0], movable.sizes[1]],
           system.transformToPixels(area[0], area[1], 1, 1),
         );
 
         if (hasCollisionWithNextLevelArea) {
-          alert('You won!');
+          console.log('You won!');
+
           break;
         }
       }
@@ -244,7 +245,7 @@
       for (const bound of boundaries) {
         const horizontalOffset = movable.coords[0] > middleX ? -TILE_SIZE * SCALE : TILE_SIZE * SCALE;
         const verticalOffset = movable.coords[1] > middleY ? -TILE_SIZE * SCALE : TILE_SIZE * SCALE;
-        const hasCollision = CoordinateSystem.checkCollision(
+        const hasCollision = Grid.checkCollision(
           [movable.coords[0] + horizontalOffset, movable.coords[1] + verticalOffset, movable.sizes[0], movable.sizes[1]],
           system.transformToPixels(bound[0], bound[1], 1, 1),
         );
