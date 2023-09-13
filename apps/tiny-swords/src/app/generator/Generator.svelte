@@ -108,6 +108,12 @@
     [...new Array(7).fill(null), TileName.DECO_STONE_M, ...new Array(7).fill(null),  TileName.DECO_BONE_M],
   ];
 
+  const resourcesMap = [
+    [],
+    [],
+    [null, null, TileName.RESOURCES_GOLD, TileName.RESOURCES_WOOD, TileName.RESOURCES_MEAL],
+  ];
+
   const boundaries = [
     [1, 1],
     [2, 1],
@@ -197,6 +203,7 @@
     await staticScene.renderStaticLayer(groundMap);
     await staticScene.renderStaticLayer(bridgeMap);
     await staticScene.renderStaticLayer(decoMap);
+    await staticScene.renderStaticLayer(resourcesMap);
 
     /**
      * Рендер интерактивных элементов, которые будут в движении
