@@ -5,6 +5,7 @@
   import { Grid } from '../core/grid';
   import { Hero } from '../entities/hero'
   import { KeyboardController } from "../controllers/keyboard";
+  import { ServerController } from '../controllers/server';
   import { TILE_SIZE, SCALE } from '../common/common.const'
   import { grid64 } from "../core/grid";
   import type { IMovable } from "../abilities";
@@ -208,6 +209,7 @@
 
     const [initialX, initialY, height, width] = grid64.transformToPixels(7, 4, 3, 3);
     const keyboardController = new KeyboardController();
+    // const serverController = new ServerController(); // Прокинь serverController, чтобы увидеть, как сервер будет управлять персонажем
     const hero = new Hero({ controller: keyboardController, initialX, initialY, height, width });
     const movable = hero.getAbility('movable');
 
@@ -263,7 +265,10 @@
     animate();
 
     movable.movement$.subscribe((direction) => {
-      console.log(direction);
+      // console.log(direction);
+
+      // Отправить команду на сервер. Дальше сервер передаёт её другим игрокам.
+      // У этих игроков твой персонаж начинает управляться через ServerController.
     })
 
     movable.coords$.subscribe((coords) => {
