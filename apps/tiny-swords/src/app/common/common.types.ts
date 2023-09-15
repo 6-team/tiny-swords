@@ -1,8 +1,10 @@
-import { WithSetPersonageContext } from '../abilities/abilities.types';
+import { IAttacking, IMovable, WithSetPersonageContext } from '../abilities/abilities.types';
 
 export type TNumberOfTiles = number;
 
 export type TTilePosition = number;
+
+export type TNumberOfPixels = number;
 
 export type TPixelsPosition = number;
 
@@ -32,3 +34,7 @@ export interface ITile {
 export interface ICharacter<Abilities extends Record<string | symbol | number, WithSetPersonageContext>> extends ITile {
   getAbility<Name extends keyof Abilities>(name: Name): Abilities[Name];
 }
+
+export interface IMovableCharacter extends ICharacter<{ movable: IMovable }> {}
+
+export interface IAttackingCharacter extends ICharacter<{ attacking: IAttacking }> {}

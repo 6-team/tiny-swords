@@ -3,11 +3,11 @@
   import { Renderer } from '../core/renderer/renderer';
   import { TileName } from "../core/renderer/renderer.const";
   import { Grid } from '../core/grid';
-  import { Movable } from '../abilities/movable';
-  import { Attacking } from '../abilities/attacking';
-  import { Character } from '../entities/character'
+  import { Hero } from '../entities/hero'
   import { KeyboardController } from "../controllers/keyboard";
   import { TILE_SIZE, SCALE } from '../common/common.const'
+  import { grid64 } from "../core/grid";
+  import type { IMovable } from "../abilities";
 
   const waterMap = [
     new Array(20).fill(TileName.WATER_MIDDLE_MIDDLE),
@@ -183,11 +183,10 @@
     /**
      * Рендер статичной карты
      */
-    const system = new Grid({ tileSize: TILE_SIZE, maxX: 20, maxY: 20 });
     const staticScene = new Renderer({
       canvas: document.getElementById('canvas') as HTMLCanvasElement,
       scale: SCALE,
-      Grid: system,
+      grid: grid64,
     });
 
     await staticScene.renderStaticLayer(waterMap);
@@ -204,21 +203,13 @@
     const interactiveScene = new Renderer({
       canvas: document.getElementById('canvas_interactive') as HTMLCanvasElement,
       scale: SCALE,
-      Grid: system,
+      grid: grid64,
     });
 
-    const [initialX, initialY, initialHeight] = system.transformToPixels(2, 3, 3, 3)
-
-    const character = new Character({
-      abilities: {
-        movable: new Movable({ initialX, initialY, initialHeight}),
-        attacking: new Attacking()
-      }
-    });
-
-    const movable = character.getAbility('movable')
-    const keyboardController = new KeyboardController(character, system);
-
+    const [initialX, initialY, height, width] = grid64.transformToPixels(7, 4, 3, 3);
+    const keyboardController = new KeyboardController();
+    const hero = new Hero({ controller: keyboardController, initialX, initialY, height, width });
+    const movable = hero.getAbility('movable');
 
     // Переменные для определения положения персонажа относительно середины поля
     // Предполагается, что значения поля будут захардкожены
@@ -228,11 +219,11 @@
     // ...
 
     // Это надо будет наверное вынести куда то
-    function checkCollisions(): void {
+    function checkCollisions(coords: [number, number], movable: IMovable): void {
       for (const area of nextLevelArea) {
         const hasCollisionWithNextLevelArea = Grid.checkCollision(
-          [movable.coords[0] - TILE_SIZE * SCALE, movable.coords[1], movable.sizes[0], movable.sizes[1]],
-          system.transformToPixels(area[0], area[1], 1, 1),
+          [coords[0] - TILE_SIZE * SCALE, coords[1], movable.sizes[0], movable.sizes[1]],
+          grid64.transformToPixels(area[0], area[1], 1, 1),
         );
 
         if (hasCollisionWithNextLevelArea) {
@@ -243,15 +234,15 @@
       }
 
       for (const bound of boundaries) {
-        const horizontalOffset = movable.coords[0] > middleX ? -TILE_SIZE * SCALE : TILE_SIZE * SCALE;
-        const verticalOffset = movable.coords[1] > middleY ? -TILE_SIZE * SCALE : TILE_SIZE * SCALE;
+        const horizontalOffset = coords[0] > middleX ? -TILE_SIZE * SCALE : TILE_SIZE * SCALE;
+        const verticalOffset = coords[1] > middleY ? -TILE_SIZE * SCALE : TILE_SIZE * SCALE;
         const hasCollision = Grid.checkCollision(
-          [movable.coords[0] + horizontalOffset, movable.coords[1] + verticalOffset, movable.sizes[0], movable.sizes[1]],
-          system.transformToPixels(bound[0], bound[1], 1, 1),
+          [coords[0] + horizontalOffset, coords[1] + verticalOffset, movable.sizes[0], movable.sizes[1]],
+          grid64.transformToPixels(bound[0], bound[1], 1, 1),
         );
 
         if (hasCollision) {
-          movable.back();
+          movable.stopMovement();
 
           break;
         }
@@ -263,20 +254,21 @@
     const animate = (timeStamp = 0) => {
       requestAnimationFrame(animate);
       const deltaTime = timeStamp - lastTime;
-      keyboardController.init()
 
-      interactiveScene.renderMovableLayer([character], deltaTime);
-
-      if(keyboardController.isCharacterMoving) {
-        checkCollisions();
-      }
-
+      interactiveScene.renderMovableLayer([hero], deltaTime);
 
       lastTime = timeStamp
     }
 
+    animate();
 
-    animate()
+    movable.movement$.subscribe((direction) => {
+      console.log(direction);
+    })
+
+    movable.coords$.subscribe((coords) => {
+      checkCollisions(coords, movable);
+    })
   });
 </script>
 

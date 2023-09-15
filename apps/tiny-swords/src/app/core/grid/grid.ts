@@ -1,3 +1,4 @@
+import { TILE_SIZE } from '../../common/common.const';
 import { IGrid, TNumberOfTiles, TTilePosition } from '../../common/common.types';
 
 export class Grid implements IGrid {
@@ -51,3 +52,5 @@ export class Grid implements IGrid {
     return [x, y, height, width].map((dimention) => dimention * this.#tileSize) as [number, number, number, number];
   }
 }
+
+export const grid64 = new Grid({ tileSize: TILE_SIZE, maxX: 20, maxY: 20 });

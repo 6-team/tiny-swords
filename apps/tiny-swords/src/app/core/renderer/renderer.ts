@@ -1,5 +1,4 @@
-import { WithAbilityToMove } from '../../abilities/abilities.types';
-import { IGrid, ITile } from '../../common/common.types';
+import { IGrid, IMovableCharacter, ITile } from '../../common/common.types';
 import { Maybe } from '../../tools/monads/maybe';
 import { TileName, mapTileNameToClass } from './renderer.const';
 import { RendererConfig } from './renderer.types';
@@ -19,13 +18,13 @@ function* enumerate<T>(iterable: Iterable<T>): Iterable<[number, T]> {
 export class Renderer {
   #canvas: HTMLCanvasElement;
   #context: CanvasRenderingContext2D;
-  #system: IGrid;
+  #grid: IGrid;
   #scale: number;
 
-  constructor({ canvas, Grid, scale }: RendererConfig) {
+  constructor({ canvas, grid, scale }: RendererConfig) {
     this.#canvas = canvas;
     this.#context = this.#canvas.getContext('2d');
-    this.#system = Grid;
+    this.#grid = grid;
     this.#scale = scale;
     this.#context.imageSmoothingEnabled = false; // Отключаю сглаживание
   }
@@ -58,9 +57,9 @@ export class Renderer {
     const { image, size, col, row, coords, scale } = await tile.getData();
 
     const dx =
-      this.#scale > scale ? elementPxX * this.#scale + (this.#system.tileSize * scale) / 2 : elementPxX * this.#scale;
+      this.#scale > scale ? elementPxX * this.#scale + (this.#grid.tileSize * scale) / 2 : elementPxX * this.#scale;
     const dy =
-      this.#scale > scale ? elementPxY * this.#scale + (this.#system.tileSize * scale) / 2 : elementPxY * this.#scale;
+      this.#scale > scale ? elementPxY * this.#scale + (this.#grid.tileSize * scale) / 2 : elementPxY * this.#scale;
 
     this._clear();
     this.#context.drawImage(
@@ -81,10 +80,10 @@ export class Renderer {
     // for(let i = 0; i < 3; i++) {
     //   for(let j = 0; j < 3; j++) {
     //     this.#context.strokeRect(
-    //       elementPxX * this.#scale + this.#system.tileSize * this.#scale * i,
-    //       elementPxY * this.#scale + this.#system.tileSize * this.#scale * j,
-    //       this.#system.tileSize * this.#scale,
-    //       this.#system.tileSize * this.#scale)
+    //       elementPxX * this.#scale + this.#grid.tileSize * this.#scale * i,
+    //       elementPxY * this.#scale + this.#grid.tileSize * this.#scale * j,
+    //       this.#grid.tileSize * this.#scale,
+    //       this.#grid.tileSize * this.#scale)
     //   }
     // }
 
@@ -93,7 +92,7 @@ export class Renderer {
     return this;
   }
 
-  async renderMovable(tile: ITile & WithAbilityToMove, deltaTime: number) {
+  async renderMovable(tile: IMovableCharacter, deltaTime: number) {
     const { coords, sizes } = tile.getAbility('movable');
 
     this.renderWithAnimation([coords[0], coords[1], sizes[0], sizes[1]], tile, deltaTime);
@@ -107,14 +106,14 @@ export class Renderer {
           .map((data) => {
             const { constructor: Constructor, args } = data;
 
-            return this.render(this.#system.transformToPixels(tileNameIndex, rowIndex, 1, 1), new Constructor(...args));
+            return this.render(this.#grid.transformToPixels(tileNameIndex, rowIndex, 1, 1), new Constructor(...args));
           })
           .extract();
       }
     }
   }
 
-  async renderMovableLayer(movables: Array<ITile & WithAbilityToMove>, deltaTime: number) {
+  async renderMovableLayer(movables: Array<IMovableCharacter>, deltaTime: number) {
     for (const movable of movables) {
       new Maybe(movable).map((tile) => this.renderMovable(tile, deltaTime));
     }
