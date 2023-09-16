@@ -1,6 +1,7 @@
-import { ICoordinateSystem, TNumberOfTiles, TTilePosition } from '../../common/common.types';
+import { TILE_SIZE } from '../../common/common.const';
+import { IGrid, TNumberOfTiles, TTilePosition } from '../../common/common.types';
 
-export class CoordinateSystem implements ICoordinateSystem {
+export class Grid implements IGrid {
   #tileSize: number;
   #maxX: TNumberOfTiles;
   #maxY: TNumberOfTiles;
@@ -51,3 +52,5 @@ export class CoordinateSystem implements ICoordinateSystem {
     return [x, y, height, width].map((dimention) => dimention * this.#tileSize) as [number, number, number, number];
   }
 }
+
+export const grid64 = new Grid({ tileSize: TILE_SIZE, maxX: 20, maxY: 20 });
