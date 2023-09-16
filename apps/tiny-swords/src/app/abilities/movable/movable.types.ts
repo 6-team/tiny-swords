@@ -1,8 +1,11 @@
-import { TNumberOfTiles, TTilePosition } from '../../common/common.types';
+import { Observable } from 'rxjs';
+import { TNumberOfPixels } from '../../common/common.types';
+import { MovingDirection } from '../abilities.const';
 
 export interface MovableProps {
-  initialX: TTilePosition;
-  initialY: TTilePosition;
-  initialHeight: TNumberOfTiles;
-  initialWidth?: TNumberOfTiles;
+  stream$: Observable<MovingDirection>;
+  initialX: TNumberOfPixels;
+  initialY: TNumberOfPixels;
+  height: TNumberOfPixels;
+  width?: TNumberOfPixels;
 }

@@ -1,4 +1,1 @@
-import Character from './character';
-
-export { CharacterActionAnimation, animationByDirection } from './character.const';
-export { Character };
+export { default as Character } from './character';
