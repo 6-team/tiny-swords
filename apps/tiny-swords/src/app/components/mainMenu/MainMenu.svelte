@@ -1,4 +1,5 @@
 <script lang="ts">
+  // получить экшены кнопок и передать в handleClick
   import Modal from '../../modals/Modal.svelte';
   import { isActiveCloseButton, isActiveMenuItem, isMainMenu } from '../../store/store';
 
