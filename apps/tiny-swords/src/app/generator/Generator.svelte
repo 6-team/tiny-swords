@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { Renderer } from '../core/renderer/renderer';
-  import { TileName } from "../core/renderer/renderer.const";
   import { Grid } from '../core/grid';
   import { Hero } from '../entities/hero'
   import { KeyboardController } from "../controllers/keyboard";
