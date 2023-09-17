@@ -1,9 +1,8 @@
-import { Observable } from 'rxjs';
 import { TNumberOfPixels } from '../../common/common.types';
-import { MovingDirection } from '../abilities.const';
+import { IController } from '../../controllers';
 
 export interface MovableProps {
-  stream$: Observable<MovingDirection>;
+  controller: IController;
   initialX: TNumberOfPixels;
   initialY: TNumberOfPixels;
   height: TNumberOfPixels;

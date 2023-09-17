@@ -3,10 +3,11 @@ import { IMovableCharacter, TPixelsPosition } from '../../common/common.types';
 import { MovingError, movementSetters } from './movable.const';
 import { MovableProps } from './movable.types';
 import { BehaviorSubject, Observable, distinctUntilChanged, filter, withLatestFrom } from 'rxjs';
-import { MovingDirection } from '../abilities.const';
 import { HeroActionAnimation } from '../../entities/hero/hero.const';
 import { frames$ } from '../../tools/observables';
 import { grid64 } from '../../core/grid';
+import { IController } from '../../controllers';
+import { MovingDirection } from '@shared';
 
 /**
  * Класс для передвигающихся элементов.
@@ -18,6 +19,7 @@ export class Movable implements IMovable {
   #movingProgressRemaining = 0;
   #isStoppedManually = false;
   #context?: IMovableCharacter;
+  #controller: IController;
 
   #prevCoords$: BehaviorSubject<[TPixelsPosition, TPixelsPosition]>;
   #coords$: BehaviorSubject<[TPixelsPosition, TPixelsPosition]>;
@@ -27,8 +29,9 @@ export class Movable implements IMovable {
   readonly coords$: Observable<[TPixelsPosition, TPixelsPosition]>;
   readonly movement$ = this.#movement$.pipe(filter(() => Boolean(this.#context))).pipe(distinctUntilChanged());
 
-  constructor({ height, width, initialX, initialY, stream$ }: MovableProps) {
+  constructor({ height, width, initialX, initialY, controller }: MovableProps) {
     this.#sizes = [height, width || height];
+    this.#controller = controller;
 
     this.#prevCoords$ = new BehaviorSubject<[TPixelsPosition, TPixelsPosition]>([initialX, initialY]);
     this.#coords$ = new BehaviorSubject<[TPixelsPosition, TPixelsPosition]>([initialX, initialY]);
@@ -38,7 +41,7 @@ export class Movable implements IMovable {
     this.movement$.subscribe(this.#handleMovementChange);
 
     frames$
-      .pipe(withLatestFrom(stream$, this.#movement$, this.#coords$, this.#prevCoords$))
+      .pipe(withLatestFrom(controller.movement$, this.#movement$, this.#coords$, this.#prevCoords$))
       .subscribe(this.#handleFrameChange);
   }
 
@@ -53,6 +56,10 @@ export class Movable implements IMovable {
     this.#context = context;
 
     return this;
+  }
+
+  setDirection(direction: MovingDirection): void {
+    this.#controller.setDirection(direction);
   }
 
   /**
@@ -125,7 +132,7 @@ export class Movable implements IMovable {
    * @param direction Направление движения персонажа
    * @returns Объект способности
    */
-  #setIsRightDirection(direction: MovingDirection) {
+  #setIsRightDirection(direction: MovingDirection): this {
     if (direction === MovingDirection.LEFT) {
       this.#isRightDirection = false;
     }
@@ -144,7 +151,7 @@ export class Movable implements IMovable {
    * @param direction Направление движения персонажа
    * @returns Объект способности
    */
-  #setAnimation(direction: MovingDirection) {
+  #setAnimation(direction: MovingDirection): this {
     if (!this.#context) {
       throw new Error(MovingError.PERSONAGE_NOT_SET);
     }
@@ -182,7 +189,7 @@ export class Movable implements IMovable {
    *
    * @returns Объект способности
    */
-  stopMovement() {
+  stopMovement(): this {
     this.#isStoppedManually = true;
 
     return this;

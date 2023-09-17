@@ -1,14 +1,17 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { Renderer } from '../core/renderer/renderer';
-  import { TileName } from "../core/renderer/renderer.const";
-  import { Grid } from '../core/grid';
+  import { onDestroy, onMount } from "svelte";
   import { Hero } from '../entities/hero'
-  import { KeyboardController } from "../controllers/keyboard";
-  import { ServerController } from '../controllers/server';
   import { TILE_SIZE, SCALE } from '../common/common.const'
-  import { grid64 } from "../core/grid";
+  import { Actions, grid64, Heroes, Grid, Renderer, TileName } from "../core";
+
   import type { IMovable } from "../abilities";
+  import { Observable, filter, map, switchMap, tap } from "rxjs";
+  import type { IPlayer } from "@shared";
+
+  const actions = new Actions();
+  const heroes = new Heroes();
+
+  let interactiveScene: Renderer;
 
   const waterMap = [
     new Array(20).fill(TileName.WATER_MIDDLE_MIDDLE),
@@ -180,7 +183,44 @@
     [19, 7]
   ];
 
+  function initGame(): void {
+    const action$ = actions.initGame().pipe(filter(Boolean), tap(() => console.log('The game was created')));
+
+    handleHeroMovement(action$);
+  }
+
+  function connectToMultipleGame(): void {
+    const action$ = actions.connectToMultipleGame().pipe(tap(() => console.log('You connected to multiple game')));
+
+    handleHeroMovement(action$);
+  }
+
+  function handleHeroMovement(action$: Observable<IPlayer>): void {
+    action$.pipe(map(heroes.initHero.bind(heroes)), switchMap((hero: Hero) => {
+      const movable = hero.getAbility('movable');
+
+      return movable.movement$.pipe(switchMap((direction) => actions.updatePlayer({ id: hero.id, direction })));
+    })).subscribe();
+  }
+
+  function handleUpdatedPlayers(): void {
+    actions.updatePlayerListener().pipe(tap((player) => console.log('Update player', player))).subscribe((player) => {
+      const existingPlayer = heroes.getHero(player);
+
+      if (existingPlayer) {
+        const movable = existingPlayer.getAbility('movable')
+
+        movable.setDirection(player.direction!);
+
+        return;
+      }
+
+      heroes.initConnectedHero(player);
+    });
+  }
+
   onMount(async () => {
+    handleUpdatedPlayers();
     /**
      * Рендер статичной карты
      */
@@ -201,17 +241,11 @@
     /**
      * Рендер интерактивных элементов, которые будут в движении
      */
-    const interactiveScene = new Renderer({
+    interactiveScene = new Renderer({
       canvas: document.getElementById('canvas_interactive') as HTMLCanvasElement,
       scale: SCALE,
       grid: grid64,
     });
-
-    const [initialX, initialY, height, width] = grid64.transformToPixels(7, 4, 3, 3);
-    const keyboardController = new KeyboardController();
-    // const serverController = new ServerController(); // Прокинь serverController, чтобы увидеть, как сервер будет управлять персонажем
-    const hero = new Hero({ controller: keyboardController, initialX, initialY, height, width });
-    const movable = hero.getAbility('movable');
 
     // Переменные для определения положения персонажа относительно середины поля
     // Предполагается, что значения поля будут захардкожены
@@ -257,27 +291,46 @@
       requestAnimationFrame(animate);
       const deltaTime = timeStamp - lastTime;
 
-      interactiveScene.renderMovableLayer([hero], deltaTime);
+      interactiveScene.renderMovableLayer(heroes.heroes, deltaTime);
 
       lastTime = timeStamp
     }
 
     animate();
-
-    movable.movement$.subscribe((direction) => {
-      // console.log(direction);
-
-      // Отправить команду на сервер. Дальше сервер передаёт её другим игрокам.
-      // У этих игроков твой персонаж начинает управляться через ServerController.
-    })
-
-    movable.coords$.subscribe((coords) => {
-      checkCollisions(coords, movable);
-    })
   });
+
+  onDestroy(() => {
+    actions.closeGame();
+  })
 </script>
 
-<div>
-  <canvas id="canvas" width="1300" height="900" style="position: absolute; left: 0; top: 0;"></canvas>
-  <canvas id="canvas_interactive" width="1280" height="832" style="position: absolute; left: 0; top: 0;"></canvas>
+<div class="container">
+  <div class="content">
+    <canvas id="canvas" width="1300" height="900" style="position: absolute; left: 0; top: 0;"></canvas>
+    <canvas id="canvas_interactive" width="1280" height="832" style="position: absolute; left: 0; top: 0;"></canvas>
+  </div>
+
+  <div class="actions">
+    <button on:click={initGame}>Новая Игра</button>
+    <button on:click={connectToMultipleGame}>Сетевая Игра</button>
+  </div>
 </div>
+
+<style lang="scss">
+  .container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  };
+
+  .content {
+    height: 900px;
+  };
+
+  .actions {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+  }
+</style>
+

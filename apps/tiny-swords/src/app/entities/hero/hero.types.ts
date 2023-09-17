@@ -13,4 +13,5 @@ export interface HeroConfig {
   width: TNumberOfPixels;
   initialX: TTilePosition;
   initialY: TTilePosition;
+  id: string;
 }
