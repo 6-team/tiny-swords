@@ -1,6 +1,6 @@
 import { ITile } from '../../common/common.types';
 import { ErrorEnum } from './tile.const';
-import { CoordsTuple, WithAbility } from './tile.types';
+import { CoordsTuple } from './tile.types';
 
 export abstract class Tile<Types extends string | number | symbol> implements ITile {
   protected abstract _sprite: string;
@@ -18,6 +18,11 @@ export abstract class Tile<Types extends string | number | symbol> implements IT
 
   protected abstract _getCoordsMap(): Record<Types, CoordsTuple>;
 
+  /**
+   * Инициирует загрузку изображения и возвращает промис
+   *
+   * @returns Промис для загрузки изображения
+   */
   protected _load() {
     return new Promise<HTMLImageElement>((resolve, reject) => {
       const image = new Image();
@@ -28,10 +33,22 @@ export abstract class Tile<Types extends string | number | symbol> implements IT
     });
   }
 
-  abstract setType(type: string | number): void;
-
+  /**
+   * Устанавливает кадр анимации
+   *
+   * @param row Номер кадра анимации
+   */
   setAnimation(row: number) {
     this._row = row;
+  }
+
+  /**
+   * Устанавливает тип персонажа, что определяет его внешний вид
+   *
+   * @param type Тип персонажа
+   */
+  setType(type: Types): void {
+    this._type = type;
   }
 
   initAnimation(deltaTime: number) {
@@ -43,6 +60,11 @@ export abstract class Tile<Types extends string | number | symbol> implements IT
     }
   }
 
+  /**
+   * Загружает изображение элемента и возвращает его вместе с доп. данными.
+   *
+   * @returns Промис с изображением и мета-данными к нему
+   */
   async getData() {
     if (!this._image || this._image.src !== this._sprite) {
       this._image = await this._load();

@@ -1,134 +1,52 @@
-import { CharacterActionAnimation } from '../../entities/character';
-import { Directions, movementSetters, pushedKeys } from './keyboard.conts';
-import { SCALE } from '../../common/common.const';
-import { IAttacking, IMovable, WithAbilityToAttack, WithAbilityToMove } from '../../abilities/abilities.types';
-import { ICoordinateSystem, ITile } from '../../common/common.types';
+import { pushedKeys } from './keyboard.conts';
 import { IController } from '../controllers.types';
-import { AttackingForce } from '../../abilities/abilities.const';
+import { AttackingForce, MovingDirection } from '../../abilities/abilities.const';
+import { BehaviorSubject, Subject, map } from 'rxjs';
 
 export default class KeyboardController implements IController {
-  #pushedButtons: Directions[] = [];
-  #isRightDirection = true;
-  #movingProgressRemaining: number;
-  #movable: IMovable;
-  #attacking: IAttacking;
-  #direction: Directions;
-  #isCharacterMoving = false;
+  private _pushedKeys$ = new BehaviorSubject<MovingDirection[]>([]);
+  private _movement$ = new Subject<MovingDirection>();
+  private _attack$ = new Subject<AttackingForce>();
 
-  constructor(
-    protected readonly character: ITile & WithAbilityToAttack & WithAbilityToMove,
-    protected readonly system: ICoordinateSystem,
-  ) {
-    this.#movable = character.getAbility('movable');
-    this.#attacking = character.getAbility('attacking');
-    this.#movingProgressRemaining = 0;
-    this.#addListeners();
+  readonly movement$ = this._movement$.asObservable();
+  readonly attack$ = this._attack$.asObservable();
+
+  constructor() {
+    this._addListeners();
+
+    this._pushedKeys$
+      .pipe(map((directions) => directions.at(-1)))
+      .subscribe((direction) => this._movement$.next(direction ?? MovingDirection.IDLE));
   }
 
-  get pushedButton(): Directions {
-    return this.#pushedButtons[0];
-  }
-
-  get isCharacterMoving(): boolean {
-    return this.#isCharacterMoving;
-  }
-
-  get isRightDirection(): boolean {
-    return this.#isRightDirection;
-  }
-
-  #move(code: string): void {
+  private _addPushedKey(code: string): void {
     const direction = pushedKeys[code];
+    const keys = [...this._pushedKeys$.getValue()];
 
-    if (direction && this.#pushedButtons.indexOf(direction) === -1) {
-      this.#pushedButtons.unshift(direction);
-
-      if (direction === Directions.LEFT) {
-        this.#isRightDirection = false;
-      }
-
-      if (direction === Directions.RIGHT) {
-        this.#isRightDirection = true;
-      }
+    if (direction && keys.indexOf(direction) === -1) {
+      keys.push(direction);
+      this._pushedKeys$.next(keys);
     }
   }
 
-  #stop(code: string): void {
+  private _removePushedKey(code: string): void {
     const direction = pushedKeys[code];
-    const directionIdx = this.#pushedButtons.indexOf(direction);
+    const keys = [...this._pushedKeys$.getValue()];
+    const directionIdx = keys.indexOf(direction);
 
     if (directionIdx > -1) {
-      this.#pushedButtons.splice(directionIdx, 1);
+      keys.splice(directionIdx, 1);
+      this._pushedKeys$.next(keys);
     }
   }
 
-  /**
-   * Данный метод необходим для того, чтобы логика движения зависела от смены кадров для плавности
-   */
-  init(): void {
-    if (this.#movingProgressRemaining > 0) {
-      this.#movable.setMovement(movementSetters[this.#direction]);
-      this.#movingProgressRemaining -= 1;
-    }
-
-    if (this.#movingProgressRemaining === 0 && this.pushedButton) {
-      this.#isCharacterMoving = true;
-      this.#movingProgressRemaining = this.system.tileSize * SCALE;
-      this.#direction = this.pushedButton;
-    }
-
-    if (this.#movingProgressRemaining === 0 && !this.pushedButton) {
-      this.#isCharacterMoving = false;
-      this.character.setAnimation(
-        this.isRightDirection ? CharacterActionAnimation.STANDS_STILL : CharacterActionAnimation.STANDS_STILL_LEFT,
-      );
-    }
-  }
-
-  #addListeners(): void {
+  private _addListeners(): void {
     document.addEventListener('keydown', (event) => {
-      this.#move(event.code);
-
-      switch (event.key) {
-        case 'ArrowLeft':
-        case 'a':
-          this.character.setAnimation(CharacterActionAnimation.RUN_LEFT);
-
-          break;
-        case 'ArrowRight':
-        case 'd':
-          this.character.setAnimation(CharacterActionAnimation.RUN);
-
-          break;
-        case 'ArrowUp':
-        case 'w':
-          this.character.setAnimation(
-            this.isRightDirection ? CharacterActionAnimation.RUN : CharacterActionAnimation.RUN_LEFT,
-          );
-
-          break;
-        case 'ArrowDown':
-        case 's':
-          this.character.setAnimation(
-            this.isRightDirection ? CharacterActionAnimation.RUN : CharacterActionAnimation.RUN_LEFT,
-          );
-
-          break;
-        case 'f':
-          this.#attacking.attack();
-
-          break;
-        case 'g':
-          this.#attacking.attack(AttackingForce.STRONG);
-
-          break;
-        default:
-          return;
-      }
+      this._addPushedKey(event.code);
     });
 
     document.addEventListener('keyup', (event) => {
-      this.#stop(event.code);
+      this._removePushedKey(event.code);
     });
   }
 }

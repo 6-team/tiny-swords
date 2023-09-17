@@ -1,33 +1,53 @@
-import { ITile, TTilePosition } from '../common/common.types';
-import { AttackingAnimation, AttackingForce } from './abilities.const';
-
-export interface WithMethodsForAttacking {
-  setAnimation(next: AttackingAnimation): void;
-}
+import { Observable } from 'rxjs';
+import { IAttackingCharacter, IMovableCharacter, ITile, TTilePosition } from '../common/common.types';
+import { AttackingForce, MovingDirection } from './abilities.const';
 
 export interface IAttacking {
-  setContext(context: ITile & WithMethodsForAttacking): IAttacking;
+  setContext(context: IAttackingCharacter): IAttacking;
   attack(type?: AttackingForce): IAttacking;
 }
 
-export interface WithAbilityToAttack {
-  getAbility(name: 'attacking'): IAttacking;
-}
-
-export interface WithMethodsForMovable {
-  setAnimation(next: number): void;
-}
-
 export interface IMovable {
+  /**
+   * Размеры персонажа
+   */
   sizes: [height: number, width: number];
-  coords: [x: TTilePosition, y: TTilePosition];
-  setContext(context: ITile & WithMethodsForMovable): IMovable;
-  setMovement(updater: (prev: [TTilePosition, TTilePosition]) => [TTilePosition, TTilePosition]): IMovable;
-  back(): IMovable;
-}
 
-export interface WithAbilityToMove {
-  getAbility(name: 'movable'): IMovable;
+  /**
+   * @deprecated Для обратной совместимости, пока не научились рендерить реактивно
+   */
+  coords: [x: TTilePosition, y: TTilePosition];
+
+  /**
+   * Устанавливает контекст/носителя данной способности.
+   * Нужно, чтобы вызывать его методы, такие как показ анимации, изменение изображения и т.п.
+   *
+   * @param context Контекст
+   * @returns Объект способности
+   */
+  setContext(context: IMovableCharacter): IMovable;
+
+  /**
+   * Останавливает движение персонажа.
+   *
+   * @returns Объект способности
+   */
+  stopMovement(): IMovable;
+
+  /**
+   * Поток координат персонажа
+   */
+  coords$: Observable<[x: TTilePosition, y: TTilePosition]>;
+
+  /**
+   * Поток предыдущих координат персонажа, которые были до начала последнего перехода
+   */
+  prevCoords$: Observable<[x: TTilePosition, y: TTilePosition]>;
+
+  /**
+   * Поток команд для движения
+   */
+  movement$: Observable<MovingDirection>;
 }
 
 export interface WithSetPersonageContext {

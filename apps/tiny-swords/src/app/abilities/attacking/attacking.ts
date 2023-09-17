@@ -1,13 +1,21 @@
-import { IAttacking, WithMethodsForAttacking } from '../abilities.types';
-import { ITile } from '../../common/common.types';
+import { IAttacking } from '../abilities.types';
+import { IAttackingCharacter, ITile } from '../../common/common.types';
 import { AttackingError } from './attacking.const';
 import { AttackingAnimation, AttackingForce } from '../abilities.const';
+import { AttackingProps } from './attacking.types';
+import { filter } from 'rxjs';
 
 /**
  * Класс способности атаковать
  */
 export class Attacking implements IAttacking {
-  #context?: ITile & WithMethodsForAttacking;
+  #context?: IAttackingCharacter;
+
+  constructor({ stream$ }: AttackingProps) {
+    stream$.pipe(filter(() => Boolean(this.#context))).subscribe((force) => {
+      this.attack(force);
+    });
+  }
 
   /**
    * Устанавливает контекст/носителя данной способности.
@@ -16,7 +24,7 @@ export class Attacking implements IAttacking {
    * @param context Контекст
    * @returns Объект способности
    */
-  setContext(context: ITile & WithMethodsForAttacking) {
+  setContext(context: IAttackingCharacter) {
     this.#context = context;
 
     return this;
@@ -28,13 +36,13 @@ export class Attacking implements IAttacking {
    * @param type Сила удара
    * @returns Объект способности
    */
-  attack(type: AttackingForce = AttackingForce.WEAK): this {
+  attack(force: AttackingForce = AttackingForce.WEAK): this {
     if (!this.#context) {
       throw new Error(AttackingError.PERSONAGE_NOT_SET);
     }
 
     this.#context.setAnimation(
-      type === AttackingForce.WEAK ? AttackingAnimation.WEAK_ATTACK : AttackingAnimation.STRONG_ATTACK,
+      force === AttackingForce.WEAK ? AttackingAnimation.WEAK_ATTACK : AttackingAnimation.STRONG_ATTACK,
     );
 
     return this;
