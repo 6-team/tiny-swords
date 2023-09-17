@@ -134,7 +134,7 @@ export class Renderer {
     const heartgPadding = 10;
     const backgroundWidth = 128;
     const backgroundHeight = 42;
-    const barPositionX = 800;
+    const barPositionX = 1080;
     const barPositionY = 20;
 
     const [backgroundImage, heartImage, wastedHeartImage, lockedHeartImage] = await Promise.all([

@@ -48,7 +48,7 @@
 	</div>
 </dialog>
 
-<style>
+<style lang="scss">
 	dialog {
 		border-radius: 0.2em;
 		border: none;

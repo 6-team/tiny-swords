@@ -7,8 +7,12 @@
   import { KeyboardController } from "../controllers/keyboard";
   import { ServerController } from '../controllers/server';
   import { TILE_SIZE, SCALE } from '../common/common.const'
+  import { nextLevelMenu, isMainMenu } from "../store/store";
   import { grid64 } from "../core/grid";
   import type { IMovable } from "../abilities";
+  import MainMenu from "../components/mainMenu/MainMenu.svelte";
+  import NextLevelMenu from "../components/nextLevelMenu/NextLevelMenu.svelte";
+  
 
   const waterMap = [
     new Array(20).fill(TileName.WATER_MIDDLE_MIDDLE),
@@ -180,6 +184,11 @@
     [19, 7]
   ];
 
+  let isNextLevelMenu = false;
+  let isMainMenuShow = true
+  nextLevelMenu.subscribe( value => isNextLevelMenu = value)
+  isMainMenu.subscribe( value => isMainMenuShow = value)
+
   onMount(async () => {
     /**
      * Рендер статичной карты
@@ -198,15 +207,6 @@
     await staticScene.renderStaticLayer(bridgeMap);
     await staticScene.renderStaticLayer(decoMap);
 
-    await staticScene.renderResourcesBar([
-              { type: 'gold', image: 'img/Resources/G_Idle.png', count: 9999 },
-              { type: 'wood', image: 'img/Resources/W_Idle.png', count: 0 },
-            ])
-    await staticScene.renderHealthBar({
-      totalLives: 3,
-      availableLives: 1,
-      blockedLives: 1,
-    })
     /**
      * Рендер интерактивных элементов, которые будут в движении
      */
@@ -214,6 +214,23 @@
       canvas: document.getElementById('canvas_interactive') as HTMLCanvasElement,
       scale: SCALE,
       grid: grid64,
+    });
+
+    const heroBarsScene = new Renderer({
+      canvas: document.getElementById('canvas_hero_bar') as HTMLCanvasElement,
+      scale: SCALE,
+      grid: grid64,
+    });
+
+    await heroBarsScene.renderResourcesBar([
+              { type: 'gold', image: 'img/Resources/G_Idle.png', count: 9999 },
+              { type: 'wood', image: 'img/Resources/W_Idle.png', count: 0 },
+            ]);
+
+    await heroBarsScene.renderHealthBar({
+      totalLives: 3,
+      availableLives: 1,
+      blockedLives: 1,
     });
 
     const [initialX, initialY, height, width] = grid64.transformToPixels(7, 4, 3, 3);
@@ -238,8 +255,8 @@
         );
 
         if (hasCollisionWithNextLevelArea) {
-          console.log('You won!');
-
+          // alert('You won!');
+          nextLevelMenu.set(true)
           break;
         }
       }
@@ -287,6 +304,13 @@
 </script>
 
 <div>
-  <canvas id="canvas" width="1300" height="900" style="position: absolute; left: 0; top: 0;"></canvas>
-  <canvas id="canvas_interactive" width="1280" height="832" style="position: absolute; left: 0; top: 0;"></canvas>
+  <canvas id="canvas" width="1300" height="900" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%);"></canvas>
+  <canvas id="canvas_interactive" width="1280" height="832" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%);"></canvas>
+  <canvas id="canvas_hero_bar" width="1280" height="120px" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%);"></canvas>
+  {#if isMainMenuShow}
+    <MainMenu/>
+  {/if}
+  {#if isNextLevelMenu}
+    <NextLevelMenu/>
+  {/if}
 </div>
