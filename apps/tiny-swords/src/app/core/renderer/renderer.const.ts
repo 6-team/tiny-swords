@@ -11,6 +11,8 @@ import { BridgeTile } from '../../entities/bridge/bridge';
 import { BridgeType } from '../../entities/bridge/bridge.const';
 import { DecoTile } from '../../entities/deco/deco';
 import { DecoType } from '../../entities/deco/deco.const';
+import { ResourcesTile } from '../../entities/resources/resources';
+import { ResourcesType } from '../../entities/resources/resources.const';
 
 export const enum TileName {
   SAND_TOP_LEFT,
@@ -98,6 +100,10 @@ export const enum TileName {
   DECO_SCARECROW,
 
   BOUNDARY,
+
+  RESOURCES_GOLD,
+  RESOURCES_WOOD,
+  RESOURCES_MEAL,
 }
 
 export const mapTileNameToClass: Partial<Record<TileName, { constructor: any; args: Array<any> }>> = {
@@ -184,4 +190,8 @@ export const mapTileNameToClass: Partial<Record<TileName, { constructor: any; ar
   [TileName.DECO_SIGN_STOP]: { constructor: DecoTile, args: [DecoType.SIGN_STOP] },
   [TileName.DECO_SIGH_RIGHT]: { constructor: DecoTile, args: [DecoType.SIGH_RIGHT] },
   [TileName.DECO_SCARECROW]: { constructor: DecoTile, args: [DecoType.SCARECROW] },
+
+  [TileName.RESOURCES_GOLD]: { constructor: ResourcesTile, args: [ResourcesType.GOLD] },
+  [TileName.RESOURCES_WOOD]: { constructor: ResourcesTile, args: [ResourcesType.WOOD] },
+  [TileName.RESOURCES_MEAL]: { constructor: ResourcesTile, args: [ResourcesType.MEAT] },
 };
