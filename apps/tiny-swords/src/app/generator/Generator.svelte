@@ -8,11 +8,20 @@
   import { TILE_SIZE, SCALE } from '../common/common.const'
   import type { IMovable } from "../abilities";
   import { Level } from "../core/level/level";
+  import { nextLevelMenu, isMainMenu } from "../store/store";
+  import MainMenu from "../components/mainMenu/MainMenu.svelte";
+  import NextLevelMenu from "../components/nextLevelMenu/NextLevelMenu.svelte";
+  
 
   const level = new Level();
   const { enter, exit, maps, boundaries, layers: LAYERS, gridX, gridY } = level.init();
 
   const nextLevelArea = [exit];
+
+  let isNextLevelMenu = false;
+  let isMainMenuShow = true
+  nextLevelMenu.subscribe( value => isNextLevelMenu = value)
+  isMainMenu.subscribe( value => isMainMenuShow = value)
 
   onMount(async () => {
     /**
@@ -54,6 +63,23 @@
       grid: grid64,
     });
 
+    const heroBarsScene = new Renderer({
+      canvas: document.getElementById('canvas_hero_bar') as HTMLCanvasElement,
+      scale: SCALE,
+      grid: grid64,
+    });
+
+    await heroBarsScene.renderResourcesBar([
+              { type: 'gold', image: 'img/Resources/G_Idle.png', count: 9999 },
+              { type: 'wood', image: 'img/Resources/W_Idle.png', count: 0 },
+            ]);
+
+    await heroBarsScene.renderHealthBar({
+      totalLives: 3,
+      availableLives: 1,
+      blockedLives: 1,
+    });
+
     const [initialX, initialY, height, width] = grid64.transformToPixels(enter[0], enter[1], 3, 3);
     const keyboardController = new KeyboardController();
     // const serverController = new ServerController(); // Прокинь serverController, чтобы увидеть, как сервер будет управлять персонажем
@@ -76,8 +102,8 @@
         );
 
         if (hasCollisionWithNextLevelArea) {
-          console.log('You won!');
-
+          // alert('You won!');
+          nextLevelMenu.set(true)
           break;
         }
       }
@@ -125,7 +151,15 @@
 </script>
 
 <div>
-  <canvas id="canvas" width="1300" height="900" style="position: absolute; left: 0; top: 0;"></canvas>
-  <canvas id="canvas_interactive" width="1280" height="832" style="position: absolute; left: 0; top: 0;"></canvas>
-  <canvas id="canvas_foreground" width="1280" height="832" style="position: absolute; left: 0; top: 0;"></canvas>
+  <canvas id="canvas" width="1280" height="832" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%);"></canvas>
+  <canvas id="canvas_interactive" width="1280" height="832" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%);"></canvas>
+  <canvas id="canvas_foreground" width="1280" height="832" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%);"></canvas>
+  <canvas id="canvas_hero_bar" width="1280" height="120px" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%);"></canvas>
+  {#if isMainMenuShow}
+  <!-- Передать экшены для кнопок -->
+    <MainMenu/>
+  {/if}
+  {#if isNextLevelMenu}
+    <NextLevelMenu/>
+  {/if}
 </div>
