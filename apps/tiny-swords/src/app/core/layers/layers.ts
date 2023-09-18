@@ -1,7 +1,7 @@
 import { GroundLayer } from "./kinds/common/ground-layer/ground-layer";
 import { LayersMap, LayersRenderType } from "./layers.types";
 import { WaterLayer } from "./kinds/common/water-layer/water-layer";
-import { getStartEndCoords, randomElement } from "./layers.utils";
+import { getStartEndCoords } from "./layers.utils";
 import { ShadowLayer } from "./kinds/common/shadow-layer/shadow-layer";
 import { DecoLayer } from "./kinds/common/decorations-layer/decorations-layer";
 import { BuildingsLayer } from "./kinds/common/buildings-layer/buildings-layer";
@@ -26,11 +26,11 @@ export class Layers {
     this.startCoords = startCoords;
     this.endCoords = endCoords;
 
-    const groundLayer = level === LevelType.Ground
+    const terrainLayer = level === LevelType.Ground
       ? new GroundLayer(gridX, gridY, border, startCoords, endCoords)
       : new SandLayer(gridX, gridY, border, startCoords, endCoords);
 
-    const buildingsLayer =  new BuildingsLayer(gridX, gridY, level, nextLevel, startCoords, endCoords, groundLayer);
+    const buildingsLayer =  new BuildingsLayer(gridX, gridY, level, nextLevel, startCoords, endCoords, terrainLayer);
     const signLayer = new SignLayer(gridX, gridY, startCoords, endCoords);
 
     this.#layers = [
@@ -40,17 +40,17 @@ export class Layers {
         renderOrder: 0,
       },
       {
-        layer: groundLayer,
+        layer: terrainLayer,
         type: LayersRenderType.Background,
         renderOrder: 2,
       },
       {
-        layer: new ShadowLayer(gridX, gridY, level, groundLayer),
+        layer: new ShadowLayer(gridX, gridY, level, terrainLayer),
         type: LayersRenderType.Background,
         renderOrder: 1,
       },
       {
-        layer: new DecoLayer(gridX, gridY, level, groundLayer),
+        layer: new DecoLayer(gridX, gridY, level, terrainLayer),
         type: LayersRenderType.Background,
         renderOrder: 3,
       },
@@ -65,12 +65,12 @@ export class Layers {
         renderOrder: 5,
       },
       {
-        layer: new BoundaryLayer(gridX, gridY, [groundLayer, buildingsLayer, signLayer]),
+        layer: new BoundaryLayer(gridX, gridY, [terrainLayer, buildingsLayer, signLayer]),
         type: LayersRenderType.Background,
         renderOrder: 6,
       },
       {
-        layer: new ForegroundLayer(gridX, gridY, level, nextLevel, startCoords, endCoords, groundLayer),
+        layer: new ForegroundLayer(gridX, gridY, level, nextLevel, startCoords, endCoords, terrainLayer),
         type: LayersRenderType.Foreground,
         renderOrder: 7,
       },
