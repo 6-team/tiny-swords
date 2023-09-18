@@ -1,6 +1,7 @@
-import { TileName } from "../../renderer/renderer.const";
+import { LayerRules, LayerWight } from "../../../../layer/layer.types";
+import { TileName } from "../../../../renderer";
 
-export const LAYER_MAIN_WEIGHT: [TileName, number, boolean][] = [
+export const GROUND_WEIGHT: LayerWight = [
   [TileName.WATER_MIDDLE_MIDDLE,  1, true],
 
   [TileName.GROUND_TOP_LEFT,      10, false],
@@ -20,7 +21,7 @@ export const LAYER_MAIN_WEIGHT: [TileName, number, boolean][] = [
   [TileName.TREE_STRUMP,          2, true],
 ];
 
-export const LAYER_MAIN_RULES = {
+export const GROUND_RULES: LayerRules = {
   [TileName.WATER_MIDDLE_MIDDLE]: [
     [
       TileName.WATER_MIDDLE_MIDDLE,

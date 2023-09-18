@@ -16,3 +16,19 @@ export const weightedRandomElement = (items: [TileName, number][]): TileName => 
 
   return randomElement(table);
 }
+
+/**
+ * Создаем рандомно координаты для входа и выхода карты
+ */
+export const getStartEndCoords = (gridX, gridY, border, leftSize, rightSize): [number, number][] => {
+  // const startX = randomInteger(border, leftSize[0]);
+  const startY = randomInteger(border + leftSize[1], gridY - border - leftSize[1]);
+
+  // const endX = randomInteger(gridX - rightSize[0] - border - 1, gridX - border - 1);
+  const endY = randomInteger(border + rightSize[1] + 1, gridY - border - rightSize[1]);
+
+  return [
+    [border + 1, startY],
+    [gridX - border - 2, endY],
+  ];
+}

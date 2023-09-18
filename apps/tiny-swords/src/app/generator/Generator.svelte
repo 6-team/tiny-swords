@@ -12,12 +12,12 @@
   import MainMenu from "../components/mainMenu/MainMenu.svelte";
   import NextLevelMenu from "../components/nextLevelMenu/NextLevelMenu.svelte";
   import { TileName } from "../core/renderer";
+  import { LayersRenderType } from "../core/layers/layers.types";
   
 
   const level = new Level();
-  const { enter, exit, maps, boundaries, layers: LAYERS, gridX, gridY } = level.init();
-
-  const nextLevelArea = [exit];
+  const { startCoords, endCoords, boundaries, maps, gridX, gridY } = level.next();
+  const nextLevelArea = [endCoords];
 
   const resourcesMap = [
     [],
@@ -42,16 +42,6 @@
       grid: grid64,
     });
 
-    await staticScene.renderStaticLayer(maps[LAYERS.WATER]);
-    await staticScene.renderStaticLayer(maps[LAYERS.SHADOW]);
-    await staticScene.renderStaticLayer(maps[LAYERS.MAIN]);
-    await staticScene.renderStaticLayer(maps[LAYERS.DECO]);
-    await staticScene.renderStaticLayer(maps[LAYERS.ADD]);
-    await staticScene.renderStaticLayer(maps[LAYERS.SIGN]);
-    await staticScene.renderStaticLayer(maps[LAYERS.BOUND]);
-
-    await staticScene.renderStaticLayer(resourcesMap);
-
     /**
      * Рендер слоя с объектами переднего плана
      */
@@ -61,7 +51,21 @@
       grid: grid64,
     });
 
-    await foregroundScene.renderStaticLayer(maps[LAYERS.FOREG]);
+    async function renderAsync() {
+      for (const { map, type } of maps) {
+        if (type === LayersRenderType.Background) {
+          await staticScene.renderStaticLayer(map);  
+        }
+        if (type === LayersRenderType.Foreground) {
+          await foregroundScene.renderStaticLayer(map);  
+        }
+      }
+    }
+
+    renderAsync();
+
+    await staticScene.renderStaticLayer(resourcesMap);
+
 
     /**
      * Рендер интерактивных элементов, которые будут в движении
@@ -89,7 +93,7 @@
       blockedLives: 1,
     });
 
-    const [initialX, initialY, height, width] = grid64.transformToPixels(enter[0], enter[1], 3, 3);
+    const [initialX, initialY, height, width] = grid64.transformToPixels(startCoords[0], startCoords[1], 3, 3);
     const keyboardController = new KeyboardController();
     // const serverController = new ServerController(); // Прокинь serverController, чтобы увидеть, как сервер будет управлять персонажем
     const hero = new Hero({ controller: keyboardController, initialX, initialY, height, width });

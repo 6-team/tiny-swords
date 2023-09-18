@@ -21,6 +21,8 @@ import { BoundaryTile } from '../../entities/boundary/boundary';
 import { BoundaryType } from '../../entities/boundary/boundary.const';
 import { ResourcesTile } from '../../entities/resources/resources';
 import { ResourcesType } from '../../entities/resources/resources.const';
+import { GoldMineTile } from '../../entities/gold-mine/gold-mine';
+import { GoldMineType } from '../../entities/gold-mine/gold-mine.const';
 
 export const enum TileName {
   WATER_MIDDLE_MIDDLE,
@@ -133,6 +135,13 @@ export const enum TileName {
   HOUSE_MIDDLE_RIGHT,
   HOUSE_BOTTOM_LEFT,
   HOUSE_BOTTOM_RIGHT,
+
+  GOLDMINE_TOP_LEFT,
+  GOLDMINE_TOP_MIDDLE,
+  GOLDMINE_TOP_RIGHT,
+  GOLDMINE_BOTTOM_LEFT,
+  GOLDMINE_BOTTOM_MIDDLE,
+  GOLDMINE_BOTTOM_RIGHT,
 
   BOUNDARY,
 
@@ -251,6 +260,13 @@ export const mapTileNameToClass: Partial<Record<TileName, { constructor: any; ar
   [TileName.HOUSE_MIDDLE_RIGHT]: { constructor: HouseTile, args: [HouseType.MIDDLE_RIGHT] },
   [TileName.HOUSE_BOTTOM_LEFT]: { constructor: HouseTile, args: [HouseType.BOTTOM_LEFT] },
   [TileName.HOUSE_BOTTOM_RIGHT]: { constructor: HouseTile, args: [HouseType.BOTTOM_RIGHT] },
+
+  [TileName.GOLDMINE_TOP_LEFT]: { constructor: GoldMineTile, args: [GoldMineType.TOP_LEFT] },
+  [TileName.GOLDMINE_TOP_MIDDLE]: { constructor: GoldMineTile, args: [GoldMineType.TOP_MIDDLE] },
+  [TileName.GOLDMINE_TOP_RIGHT]: { constructor: GoldMineTile, args: [GoldMineType.TOP_RIGHT] },
+  [TileName.GOLDMINE_BOTTOM_LEFT]: { constructor: GoldMineTile, args: [GoldMineType.BOTTOM_LEFT] },
+  [TileName.GOLDMINE_BOTTOM_MIDDLE]: { constructor: GoldMineTile, args: [GoldMineType.BOTTOM_MIDDLE] },
+  [TileName.GOLDMINE_BOTTOM_RIGHT]: { constructor: GoldMineTile, args: [GoldMineType.BOTTOM_RIGHT] },
 
   [TileName.BOUNDARY]: { constructor: BoundaryTile, args: [BoundaryType.MIDDLE] },
 
