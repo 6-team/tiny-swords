@@ -11,12 +11,19 @@
   import { nextLevelMenu, isMainMenu } from "../store/store";
   import MainMenu from "../components/mainMenu/MainMenu.svelte";
   import NextLevelMenu from "../components/nextLevelMenu/NextLevelMenu.svelte";
+  import { TileName } from "../core/renderer";
   
 
   const level = new Level();
   const { enter, exit, maps, boundaries, layers: LAYERS, gridX, gridY } = level.init();
 
   const nextLevelArea = [exit];
+
+  const resourcesMap = [
+    [],
+    [],
+    [null, null, TileName.RESOURCES_GOLD, TileName.RESOURCES_WOOD, TileName.RESOURCES_MEAL],
+  ];
 
   let isNextLevelMenu = false;
   let isMainMenuShow = true
@@ -42,6 +49,8 @@
     await staticScene.renderStaticLayer(maps[LAYERS.ADD]);
     await staticScene.renderStaticLayer(maps[LAYERS.SIGN]);
     await staticScene.renderStaticLayer(maps[LAYERS.BOUND]);
+
+    await staticScene.renderStaticLayer(resourcesMap);
 
     /**
      * Рендер слоя с объектами переднего плана
