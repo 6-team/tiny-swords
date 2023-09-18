@@ -11,10 +11,20 @@ import { BridgeTile } from '../../entities/bridge/bridge';
 import { BridgeType } from '../../entities/bridge/bridge.const';
 import { DecoTile } from '../../entities/deco/deco';
 import { DecoType } from '../../entities/deco/deco.const';
+import { RocksTile } from '../../entities/rocks/rocks';
+import { TreeTile } from '../../entities/tree/tree';
+import { HouseTile } from '../../entities/house/house';
+import { TreeType } from '../../entities/tree/tree.const';
+import { RocksType } from '../../entities/rocks/rocks.const';
+import { HouseType } from '../../entities/house/house.const';
+import { BoundaryTile } from '../../entities/boundary/boundary';
+import { BoundaryType } from '../../entities/boundary/boundary.const';
 import { ResourcesTile } from '../../entities/resources/resources';
 import { ResourcesType } from '../../entities/resources/resources.const';
 
 export const enum TileName {
+  WATER_MIDDLE_MIDDLE,
+
   SAND_TOP_LEFT,
   SAND_TOP_MIDDLE,
   SAND_TOP_RIGHT,
@@ -73,8 +83,6 @@ export const enum TileName {
   FOAM_BOTTOM,
   FOAM_MIDDLE,
 
-  WATER_MIDDLE_MIDDLE,
-
   BRIDGE_LEFT,
   BRIDGE_MIDDLE,
   BRIDGE_RIGHT,
@@ -93,11 +101,38 @@ export const enum TileName {
   DECO_WEED_M,
   DECO_PUMPKIN_S,
   DECO_PUMPKIN_M,
-  DECO_BONE_S,
-  DECO_BONE_M,
-  DECO_SIGN_STOP,
-  DECO_SIGH_RIGHT,
+  
+  DECO_BONE_S_RIGHT,
+  DECO_BONE_S_LEFT,
+  DECO_BONE_M_RIGHT,
+  DECO_BONE_M_LEFT,
+  DECO_SIGN_STOP_TOP,
+  DECO_SIGN_STOP_BOTTOM,
+  DECO_SIGH_RIGHT_TOP,
+  DECO_SIGH_RIGHT_BOTTOM,
   DECO_SCARECROW,
+
+  ROCKS_S,
+  ROCKS_M,
+  ROCKS_L,
+
+  TREE_TOP_LEFT,
+  TREE_TOP_MIDDLE,
+  TREE_TOP_RIGHT,
+  TREE_MIDDLE_LEFT,
+  TREE_MIDDLE_MIDDLE,
+  TREE_MIDDLE_RIGHT,
+  TREE_BOTTOM_LEFT,
+  TREE_BOTTOM_MIDDLE,
+  TREE_BOTTOM_RIGHT,
+  TREE_STRUMP,
+
+  HOUSE_TOP_LEFT,
+  HOUSE_TOP_RIGHT,
+  HOUSE_MIDDLE_LEFT,
+  HOUSE_MIDDLE_RIGHT,
+  HOUSE_BOTTOM_LEFT,
+  HOUSE_BOTTOM_RIGHT,
 
   BOUNDARY,
 
@@ -107,6 +142,8 @@ export const enum TileName {
 }
 
 export const mapTileNameToClass: Partial<Record<TileName, { constructor: any; args: Array<any> }>> = {
+  [TileName.WATER_MIDDLE_MIDDLE]: { constructor: WaterTile, args: [] },
+
   [TileName.SAND_TOP_LEFT]: { constructor: SandTile, args: [SandType.TOP_LEFT] },
   [TileName.SAND_TOP_MIDDLE]: { constructor: SandTile, args: [SandType.TOP_MIDDLE] },
   [TileName.SAND_TOP_RIGHT]: { constructor: SandTile, args: [SandType.TOP_RIGHT] },
@@ -139,6 +176,11 @@ export const mapTileNameToClass: Partial<Record<TileName, { constructor: any; ar
   [TileName.GROUND_VERTICAL_MIDDLE]: { constructor: GroundTile, args: [GroundType.VERTICAL_MIDDLE] },
   [TileName.GROUND_VERTICAL_BOTTOM]: { constructor: GroundTile, args: [GroundType.VERTICAL_BOTTOM] },
 
+  [TileName.BRIDGE_LEFT]: { constructor: BridgeTile, args: [BridgeType.LEFT] },
+  [TileName.BRIDGE_MIDDLE]: { constructor: BridgeTile, args: [BridgeType.MIDDLE] },
+  [TileName.BRIDGE_RIGHT]: { constructor: BridgeTile, args: [BridgeType.RIGHT] },
+  [TileName.BRIDGE_SHADOW]: { constructor: BridgeTile, args: [BridgeType.SHADOW] },
+
   [TileName.ELEVATION_TOP_LEFT]: { constructor: ElevationTile, args: [ElevationType.TOP_LEFT] },
   [TileName.ELEVATION_TOP_MIDDLE]: { constructor: ElevationTile, args: [ElevationType.TOP_MIDDLE] },
   [TileName.ELEVATION_TOP_RIGHT]: { constructor: ElevationTile, args: [ElevationType.TOP_RIGHT] },
@@ -165,13 +207,6 @@ export const mapTileNameToClass: Partial<Record<TileName, { constructor: any; ar
   [TileName.FOAM_BOTTOM]: { constructor: FoamTile, args: [FoamType.BOTTOM] },
   [TileName.FOAM_MIDDLE]: { constructor: FoamTile, args: [FoamType.MIDDLE] },
 
-  [TileName.WATER_MIDDLE_MIDDLE]: { constructor: WaterTile, args: [] },
-
-  [TileName.BRIDGE_LEFT]: { constructor: BridgeTile, args: [BridgeType.LEFT] },
-  [TileName.BRIDGE_MIDDLE]: { constructor: BridgeTile, args: [BridgeType.MIDDLE] },
-  [TileName.BRIDGE_RIGHT]: { constructor: BridgeTile, args: [BridgeType.RIGHT] },
-  [TileName.BRIDGE_SHADOW]: { constructor: BridgeTile, args: [BridgeType.SHADOW] },
-
   [TileName.DECO_MUSHROOM_S]: { constructor: DecoTile, args: [DecoType.MUSHROOM_S] },
   [TileName.DECO_MUSHROOM_M]: { constructor: DecoTile, args: [DecoType.MUSHROOM_M] },
   [TileName.DECO_MUSHROOM_L]: { constructor: DecoTile, args: [DecoType.MUSHROOM_L] },
@@ -185,11 +220,39 @@ export const mapTileNameToClass: Partial<Record<TileName, { constructor: any; ar
   [TileName.DECO_WEED_M]: { constructor: DecoTile, args: [DecoType.WEED_M] },
   [TileName.DECO_PUMPKIN_S]: { constructor: DecoTile, args: [DecoType.PUMPKIN_S] },
   [TileName.DECO_PUMPKIN_M]: { constructor: DecoTile, args: [DecoType.PUMPKIN_M] },
-  [TileName.DECO_BONE_S]: { constructor: DecoTile, args: [DecoType.BONE_S] },
-  [TileName.DECO_BONE_M]: { constructor: DecoTile, args: [DecoType.BONE_M] },
-  [TileName.DECO_SIGN_STOP]: { constructor: DecoTile, args: [DecoType.SIGN_STOP] },
-  [TileName.DECO_SIGH_RIGHT]: { constructor: DecoTile, args: [DecoType.SIGH_RIGHT] },
+  [TileName.DECO_BONE_S_RIGHT]: { constructor: DecoTile, args: [DecoType.BONE_S_RIGHT] },
+  [TileName.DECO_BONE_S_LEFT]: { constructor: DecoTile, args: [DecoType.BONE_S_LEFT] },
+  [TileName.DECO_BONE_M_RIGHT]: { constructor: DecoTile, args: [DecoType.BONE_M_RIGHT] },
+  [TileName.DECO_BONE_M_LEFT]: { constructor: DecoTile, args: [DecoType.BONE_M_LEFT] },
+  [TileName.DECO_SIGN_STOP_TOP]: { constructor: DecoTile, args: [DecoType.SIGN_STOP_TOP] },
+  [TileName.DECO_SIGN_STOP_BOTTOM]: { constructor: DecoTile, args: [DecoType.SIGN_STOP_BOTTOM] },
+  [TileName.DECO_SIGH_RIGHT_TOP]: { constructor: DecoTile, args: [DecoType.SIGH_RIGHT_TOP] },
+  [TileName.DECO_SIGH_RIGHT_BOTTOM]: { constructor: DecoTile, args: [DecoType.SIGH_RIGHT_BOTTOM] },
   [TileName.DECO_SCARECROW]: { constructor: DecoTile, args: [DecoType.SCARECROW] },
+
+  [TileName.ROCKS_S]: { constructor: RocksTile, args: [RocksType.ROCKS_S] },
+  [TileName.ROCKS_M]: { constructor: RocksTile, args: [RocksType.ROCKS_M] },
+  [TileName.ROCKS_L]: { constructor: RocksTile, args: [RocksType.ROCKS_L] },
+
+  [TileName.TREE_TOP_LEFT]: { constructor: TreeTile, args: [TreeType.TOP_LEFT] },
+  [TileName.TREE_TOP_MIDDLE]: { constructor: TreeTile, args: [TreeType.TOP_MIDDLE] },
+  [TileName.TREE_TOP_RIGHT]: { constructor: TreeTile, args: [TreeType.TOP_RIGHT] },
+  [TileName.TREE_MIDDLE_LEFT]: { constructor: TreeTile, args: [TreeType.MIDDLE_LEFT] },
+  [TileName.TREE_MIDDLE_MIDDLE]: { constructor: TreeTile, args: [TreeType.MIDDLE_MIDDLE] },
+  [TileName.TREE_MIDDLE_RIGHT]: { constructor: TreeTile, args: [TreeType.MIDDLE_RIGHT] },
+  [TileName.TREE_BOTTOM_LEFT]: { constructor: TreeTile, args: [TreeType.BOTTOM_LEFT] },
+  [TileName.TREE_BOTTOM_MIDDLE]: { constructor: TreeTile, args: [TreeType.BOTTOM_MIDDLE] },
+  [TileName.TREE_BOTTOM_RIGHT]: { constructor: TreeTile, args: [TreeType.BOTTOM_RIGHT] },
+  [TileName.TREE_STRUMP]: { constructor: TreeTile, args: [TreeType.STRUMP] },
+
+  [TileName.HOUSE_TOP_LEFT]: { constructor: HouseTile, args: [HouseType.TOP_LEFT] },
+  [TileName.HOUSE_TOP_RIGHT]: { constructor: HouseTile, args: [HouseType.TOP_RIGHT] },
+  [TileName.HOUSE_MIDDLE_LEFT]: { constructor: HouseTile, args: [HouseType.MIDDLE_LEFT] },
+  [TileName.HOUSE_MIDDLE_RIGHT]: { constructor: HouseTile, args: [HouseType.MIDDLE_RIGHT] },
+  [TileName.HOUSE_BOTTOM_LEFT]: { constructor: HouseTile, args: [HouseType.BOTTOM_LEFT] },
+  [TileName.HOUSE_BOTTOM_RIGHT]: { constructor: HouseTile, args: [HouseType.BOTTOM_RIGHT] },
+
+  [TileName.BOUNDARY]: { constructor: BoundaryTile, args: [BoundaryType.MIDDLE] },
 
   [TileName.RESOURCES_GOLD]: { constructor: ResourcesTile, args: [ResourcesType.GOLD] },
   [TileName.RESOURCES_WOOD]: { constructor: ResourcesTile, args: [ResourcesType.WOOD] },
