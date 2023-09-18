@@ -1,13 +1,15 @@
-import { GroundLayer } from "./kinds/ground/ground-layer/ground-layer";
+import { GroundLayer } from "./kinds/common/ground-layer/ground-layer";
 import { LayersMap, LayersRenderType } from "./layers.types";
 import { WaterLayer } from "./kinds/common/water-layer/water-layer";
-import { getStartEndCoords } from "./layers.utils";
-import { ShadowLayer } from "./kinds/ground/shadow-layer/shadow-layer";
+import { getStartEndCoords, randomElement } from "./layers.utils";
+import { ShadowLayer } from "./kinds/common/shadow-layer/shadow-layer";
 import { DecoLayer } from "./kinds/common/decorations-layer/decorations-layer";
-import { BuildingsLayer } from "./kinds/ground/buildings-layer/buildings-layer";
+import { BuildingsLayer } from "./kinds/common/buildings-layer/buildings-layer";
 import { SignLayer } from "./kinds/common/sign-layer/sign-layer";
 import { BoundaryLayer } from "./kinds/common/boundary-layer/boundary-layer";
-import { ForegroundLayer } from "./kinds/ground/foreground-layer/foreground-layer";
+import { ForegroundLayer } from "./kinds/common/foreground-layer/foreground-layer";
+import { LevelType } from "../level/level";
+import { SandLayer } from "./kinds/common/sand-layer/sand-layer";
 
 export class Layers {
   #layers;
@@ -16,17 +18,19 @@ export class Layers {
   startCoords;
   endCoords;
 
-  constructor(currentLevelType, nextLevelType, gridX, gridY) {
-    const border = 1;
-    const [startCoords, endCoords] = getStartEndCoords(gridX, gridY, border, [2, 2], [2, 2]);
+  constructor(level, nextLevel, gridX, gridY, border) {
+    const [startCoords, endCoords] = getStartEndCoords(gridX, gridY, border);
       
     this.gridX = gridX;
     this.gridY = gridY;
     this.startCoords = startCoords;
     this.endCoords = endCoords;
 
-    const groundLayer = new GroundLayer(gridX, gridY, border, startCoords, endCoords, nextLevelType);
-    const buildingsLayer =  new BuildingsLayer(gridX, gridY, nextLevelType, startCoords, endCoords, groundLayer);
+    const groundLayer = level === LevelType.Ground
+      ? new GroundLayer(gridX, gridY, border, startCoords, endCoords)
+      : new SandLayer(gridX, gridY, border, startCoords, endCoords);
+
+    const buildingsLayer =  new BuildingsLayer(gridX, gridY, level, nextLevel, startCoords, endCoords, groundLayer);
     const signLayer = new SignLayer(gridX, gridY, startCoords, endCoords);
 
     this.#layers = [
@@ -41,12 +45,12 @@ export class Layers {
         renderOrder: 2,
       },
       {
-        layer: new ShadowLayer(gridX, gridY, groundLayer),
+        layer: new ShadowLayer(gridX, gridY, level, groundLayer),
         type: LayersRenderType.Background,
         renderOrder: 1,
       },
       {
-        layer: new DecoLayer(gridX, gridY, currentLevelType, groundLayer),
+        layer: new DecoLayer(gridX, gridY, level, groundLayer),
         type: LayersRenderType.Background,
         renderOrder: 3,
       },
@@ -66,7 +70,7 @@ export class Layers {
         renderOrder: 6,
       },
       {
-        layer: new ForegroundLayer(gridX, gridY, nextLevelType, startCoords, endCoords, groundLayer),
+        layer: new ForegroundLayer(gridX, gridY, level, nextLevel, startCoords, endCoords, groundLayer),
         type: LayersRenderType.Foreground,
         renderOrder: 7,
       },

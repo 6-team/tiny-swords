@@ -46,3 +46,17 @@ export const treeBottomConditions = (layer): LayerCondition[] => {
 
   return conditions;
 }
+
+/**
+ * Шаблон для дорисовки здания
+ */
+export const goldMineConditions = (exit: [number, number]): LayerCondition[] => {
+  return [
+    { tile: TileName.GOLDMINE_BOTTOM_LEFT, coords: [exit[0] - 1, exit[1] - 1], boundary: true },
+    { tile: TileName.GOLDMINE_BOTTOM_MIDDLE, coords: [exit[0], exit[1] - 1], boundary: true },
+    { tile: TileName.GOLDMINE_BOTTOM_RIGHT, coords: [exit[0] + 1, exit[1] - 1], boundary: true },
+    { tile: TileName.GOLDMINE_TOP_LEFT, coords: [exit[0] - 1, exit[1] - 2], boundary: true },
+    { tile: TileName.GOLDMINE_TOP_MIDDLE, coords: [exit[0], exit[1] - 2], boundary: true },
+    { tile: TileName.GOLDMINE_TOP_RIGHT, coords: [exit[0] + 1, exit[1] - 2 ], boundary: true },
+  ];
+}

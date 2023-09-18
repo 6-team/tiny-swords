@@ -1,4 +1,5 @@
 import { Layers } from "../layers/layers";
+import { randomElement } from "../layers/layers.utils";
 import { SIZE_X, SIZE_Y } from "./level.const";
 
 export const enum LevelType {
@@ -12,9 +13,10 @@ export class Level {
   next() {
     console.time();
 
-    const currentLevelType = LevelType.Ground;
-    const nextLevelType = LevelType.Sand;
-
+    const currentLevelType = randomElement([LevelType.Ground, LevelType.Sand]);
+    const nextLevelType = randomElement([LevelType.Ground, LevelType.Sand]);
+    const border = randomElement([1, 2]);
+    
     const {
       gridX,
       gridY,
@@ -22,7 +24,7 @@ export class Level {
       endCoords,
       maps,
       boundaries,
-    } = new Layers(currentLevelType, nextLevelType, SIZE_X, SIZE_Y);
+    } = new Layers(currentLevelType, nextLevelType, SIZE_X, SIZE_Y, border);
 
     console.timeEnd();
 

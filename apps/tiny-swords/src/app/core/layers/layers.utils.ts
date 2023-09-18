@@ -19,16 +19,35 @@ export const weightedRandomElement = (items: [TileName, number][]): TileName => 
 
 /**
  * Создаем рандомно координаты для входа и выхода карты
+ * Надо переписать!
  */
-export const getStartEndCoords = (gridX, gridY, border, leftSize, rightSize): [number, number][] => {
-  // const startX = randomInteger(border, leftSize[0]);
-  const startY = randomInteger(border + leftSize[1], gridY - border - leftSize[1]);
-
-  // const endX = randomInteger(gridX - rightSize[0] - border - 1, gridX - border - 1);
-  const endY = randomInteger(border + rightSize[1] + 1, gridY - border - rightSize[1]);
+export const getStartEndCoords = (gridX, gridY, border): [number, number][] => {
+  const TERRAIN_SIZE = 3;
+  const startY = randomInteger(border + TERRAIN_SIZE, gridY - border - TERRAIN_SIZE + 1);
+  const endY = randomInteger(border + TERRAIN_SIZE, gridY - border - TERRAIN_SIZE);
 
   return [
     [border + 1, startY],
     [gridX - border - 2, endY],
   ];
+}
+
+/**
+ * Перемешивание массива
+ */
+export const shuffleArray = <T>(array: Array<T>): Array<T> => {
+  let currentIndex = array.length;
+  let temporaryValue;
+  let randomIndex;
+
+  while (0 !== currentIndex) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
 }

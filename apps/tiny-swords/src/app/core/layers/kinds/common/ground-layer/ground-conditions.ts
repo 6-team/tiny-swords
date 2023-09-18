@@ -18,6 +18,10 @@ export const leftGroundConditions = (startCoords: [number, number]): LayerCondit
       tile: TileName.GROUND_MIDDLE_MIDDLE,
       coords: [x, y],
     },
+    {
+      tile: TileName.GROUND_MIDDLE_MIDDLE,
+      coords: [x + 1, y],
+    },
     // Нижняя часть земли под остров
     {
       tile: TileName.GROUND_MIDDLE_LEFT,
@@ -27,6 +31,10 @@ export const leftGroundConditions = (startCoords: [number, number]): LayerCondit
       tile: TileName.GROUND_MIDDLE_MIDDLE,
       coords: [x, y - 1],
     },
+    {
+      tile: TileName.GROUND_MIDDLE_MIDDLE,
+      coords: [x + 1, y - 1],
+    },
     // Верхняя часть земли под остров
     {
       tile: TileName.GROUND_MIDDLE_LEFT,
@@ -35,6 +43,10 @@ export const leftGroundConditions = (startCoords: [number, number]): LayerCondit
     {
       tile: TileName.GROUND_MIDDLE_MIDDLE,
       coords: [x, y - 2],
+    },
+    {
+      tile: TileName.GROUND_MIDDLE_MIDDLE,
+      coords: [x + 1, y - 2],
     },
   ];
 }
@@ -52,8 +64,12 @@ export const leftGroundBridgeConditions = (startCoords: [number, number]): Layer
       coords: [x - 1, y],
     },
     {
-      tile: TileName.BRIDGE_LEFT,
+      tile: TileName.GROUND_MIDDLE_MIDDLE,
       coords: [x, y],
+    },
+    {
+      tile: TileName.BRIDGE_LEFT,
+      coords: [x + 1, y],
     },
     // Нижняя часть земли под остров
     {
@@ -61,77 +77,7 @@ export const leftGroundBridgeConditions = (startCoords: [number, number]): Layer
       coords: [x - 1, y - 1],
     },
     {
-      tile: TileName.GROUND_MIDDLE_RIGHT,
-      coords: [x, y - 1],
-    },
-    // Верхняя часть земли под остров
-    {
-      tile: TileName.GROUND_TOP_LEFT,
-      coords: [x - 1, y - 2],
-    },
-    {
-      tile: TileName.GROUND_TOP_RIGHT,
-      coords: [x, y - 2],
-    },
-  ];
-}
-
-/**
- * Шаблон поверхности для правого здания
- */
-export const rightGroundConditions3x2 = (endCoords: [number, number]): LayerCondition[] => {
-  const [x, y] = endCoords;
-
-  return [
-    // Под домом у нас мост и угол земли чтобы замкнуть остров
-    {
       tile: TileName.GROUND_MIDDLE_MIDDLE,
-      coords: [x, y],
-    },
-    {
-      tile: TileName.GROUND_MIDDLE_RIGHT,
-      coords: [x + 1, y],
-    },
-    // Нижняя часть земли под зданием
-    {
-      tile: TileName.GROUND_MIDDLE_MIDDLE,
-      coords: [x, y - 1],
-    },
-    {
-      tile: TileName.GROUND_MIDDLE_RIGHT,
-      coords: [x + 1, y - 1],
-    },
-    // Верхняя часть земли под зданием
-    {
-      tile: TileName.GROUND_MIDDLE_MIDDLE,
-      coords: [x, y - 2],
-    },
-    {
-      tile: TileName.GROUND_MIDDLE_RIGHT,
-      coords: [x + 1, y - 2],
-    },
-  ];
-}
-
-/**
- * Шаблон поверхности для правого здания с мостом
- */
-export const rightGroundBridgeConditions3x2 = (endCoords: [number, number]): LayerCondition[] => {
-  const [x, y] = endCoords;
-
-  return [
-    // Под домом у нас мост и угол земли чтобы замкнуть остров
-    {
-      tile: TileName.BRIDGE_RIGHT,
-      coords: [x, y],
-    },
-    {
-      tile: TileName.GROUND_MIDDLE_RIGHT,
-      coords: [x + 1, y],
-    },
-    // Нижняя часть земли под остров
-    {
-      tile: TileName.GROUND_MIDDLE_LEFT,
       coords: [x, y - 1],
     },
     {
@@ -141,6 +87,10 @@ export const rightGroundBridgeConditions3x2 = (endCoords: [number, number]): Lay
     // Верхняя часть земли под остров
     {
       tile: TileName.GROUND_TOP_LEFT,
+      coords: [x - 1, y - 2],
+    },
+    {
+      tile: TileName.GROUND_TOP_MIDDLE,
       coords: [x, y - 2],
     },
     {
@@ -153,7 +103,7 @@ export const rightGroundBridgeConditions3x2 = (endCoords: [number, number]): Lay
 /**
  * Шаблон поверхности для правого здания 3x3
  */
-export const rightGroundConditions3x3 = (endCoords: [number, number]): LayerCondition[] => {
+export const rightGroundConditions = (endCoords: [number, number]): LayerCondition[] => {
   const [x, y] = endCoords;
 
   return [
@@ -202,7 +152,7 @@ export const rightGroundConditions3x3 = (endCoords: [number, number]): LayerCond
 /**
  * Шаблон поверхности для правого здания 3x3 с мостом
  */
-export const rightGroundBridgeConditions3x3 = (endCoords: [number, number]): LayerCondition[] => {
+export const rightGroundBridgeConditions = (endCoords: [number, number]): LayerCondition[] => {
   const [x, y] = endCoords;
 
   return [

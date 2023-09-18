@@ -2,10 +2,10 @@ import { decorationsTerrainConditions, decorationsWaterConditions } from "./deco
 import { Layer } from "../../../../layer/layer";
 
 export class DecoLayer {
-  constructor(gridX: number, gridY: number, currentLevelType, layer) {
+  constructor(gridX: number, gridY: number, level, layer) {
     return new Layer(gridX, gridY).fill([
       decorationsWaterConditions(layer),
-      decorationsTerrainConditions(currentLevelType, layer),
+      decorationsTerrainConditions(level, layer),
     ]);
   }
 }
