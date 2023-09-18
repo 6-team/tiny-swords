@@ -103,27 +103,24 @@
     // ...
 
     // Это надо будет наверное вынести куда то
-    function checkCollisions(coords: [number, number], movable: IMovable): void {
+    function checkCollisions(collisionArea: [x1: number, y1: number, height: number, width: number]): void {
       for (const area of nextLevelArea) {
         const hasCollisionWithNextLevelArea = Grid.checkCollision(
-          [coords[0] - TILE_SIZE * SCALE, coords[1], movable.sizes[0], movable.sizes[1]],
+          collisionArea,
           grid64.transformToPixels(area[0], area[1], 1, 1),
         );
 
         if (hasCollisionWithNextLevelArea) {
-          // alert('You won!');
           nextLevelMenu.set(true)
           break;
         }
       }
 
       for (const bound of boundaries) {
-        const horizontalOffset = coords[0] > middleX ? -TILE_SIZE * SCALE : TILE_SIZE * SCALE;
-        const verticalOffset = coords[1] > middleY ? -TILE_SIZE * SCALE : TILE_SIZE * SCALE;
         const hasCollision = Grid.checkCollision(
-          [coords[0] + horizontalOffset, coords[1] + verticalOffset, movable.sizes[0], movable.sizes[1]],
+          collisionArea,
           grid64.transformToPixels(bound[0], bound[1], 1, 1),
-        );
+          );
 
         if (hasCollision) {
           movable.stopMovement();
@@ -154,7 +151,7 @@
     })
 
     movable.coords$.subscribe((coords) => {
-      checkCollisions(coords, movable);
+      checkCollisions(movable.collisionArea);
     })
   });
 </script>

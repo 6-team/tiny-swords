@@ -85,15 +85,16 @@ export class Renderer {
     // FOR_TEST_PURPOSES:
     // Данный функционал закоментирован для проверки движения персонажа (просто накладывается сетка 3х3 для понимания коллизий персонажа)
 
-    // for(let i = 0; i < 3; i++) {
-    //   for(let j = 0; j < 3; j++) {
-    //     this.#context.strokeRect(
-    //       elementPxX * this.#scale + this.#grid.tileSize * this.#scale * i,
-    //       elementPxY * this.#scale + this.#grid.tileSize * this.#scale * j,
-    //       this.#grid.tileSize * this.#scale,
-    //       this.#grid.tileSize * this.#scale)
-    //   }
-    // }
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        this.#context.strokeRect(
+          elementPxX * this.#scale + this.#grid.tileSize * this.#scale * i,
+          elementPxY * this.#scale + this.#grid.tileSize * this.#scale * j,
+          this.#grid.tileSize * this.#scale,
+          this.#grid.tileSize * this.#scale,
+        );
+      }
+    }
 
     tile.initAnimation(deltaTime);
 

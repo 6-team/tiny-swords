@@ -1,5 +1,5 @@
 import { IMovable } from '../abilities.types';
-import { IMovableCharacter, TPixelsPosition } from '../../common/common.types';
+import { IMovableCharacter, TNumberOfPixels, TPixelsPosition } from '../../common/common.types';
 import { MovingError, movementSetters } from './movable.const';
 import { MovableProps } from './movable.types';
 import { BehaviorSubject, Observable, distinctUntilChanged, filter, withLatestFrom } from 'rxjs';
@@ -13,10 +13,11 @@ import { grid64 } from '../../core/grid';
  * Координаты задаются в тайлах, а выбранная система координат уже переводит значения в пиксели
  */
 export class Movable implements IMovable {
-  #sizes: [TPixelsPosition, TPixelsPosition];
+  #sizes: [height: TNumberOfPixels, width: TNumberOfPixels];
   #isRightDirection = true;
   #movingProgressRemaining = 0;
   #isStoppedManually = false;
+  #getCollisionAreaFunc?: MovableProps['getCollisionArea'];
   #context?: IMovableCharacter;
 
   #prevCoords$: BehaviorSubject<[TPixelsPosition, TPixelsPosition]>;
@@ -27,8 +28,9 @@ export class Movable implements IMovable {
   readonly coords$: Observable<[TPixelsPosition, TPixelsPosition]>;
   readonly movement$ = this.#movement$.pipe(filter(() => Boolean(this.#context))).pipe(distinctUntilChanged());
 
-  constructor({ height, width, initialX, initialY, stream$ }: MovableProps) {
+  constructor({ height, width, initialX, initialY, getCollisionArea, stream$ }: MovableProps) {
     this.#sizes = [height, width || height];
+    this.#getCollisionAreaFunc = getCollisionArea;
 
     this.#prevCoords$ = new BehaviorSubject<[TPixelsPosition, TPixelsPosition]>([initialX, initialY]);
     this.#coords$ = new BehaviorSubject<[TPixelsPosition, TPixelsPosition]>([initialX, initialY]);
@@ -186,6 +188,13 @@ export class Movable implements IMovable {
     this.#isStoppedManually = true;
 
     return this;
+  }
+
+  /**
+   * Возвращает зону персонажа, которая участвует в сравнении коллизий.
+   */
+  get collisionArea(): [x: TPixelsPosition, y: TPixelsPosition, height: TNumberOfPixels, width: TNumberOfPixels] {
+    return this.#getCollisionAreaFunc(this) ?? [0, 0, this.#sizes[0], this.#sizes[1]];
   }
 
   /**

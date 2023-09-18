@@ -1,5 +1,11 @@
 import { Observable } from 'rxjs';
-import { IAttackingCharacter, IMovableCharacter, ITile, TTilePosition } from '../common/common.types';
+import {
+  IAttackingCharacter,
+  IMovableCharacter,
+  ITile,
+  TNumberOfPixels,
+  TPixelsPosition,
+} from '../common/common.types';
 import { AttackingForce, MovingDirection } from './abilities.const';
 
 export interface IAttacking {
@@ -9,6 +15,11 @@ export interface IAttacking {
 
 export interface IMovable {
   /**
+   * Зона персонажа, которая участвует в сравнении коллизий.
+   */
+  collisionArea: [x: TPixelsPosition, y: TPixelsPosition, height: TNumberOfPixels, width: TNumberOfPixels];
+
+  /**
    * Размеры персонажа
    */
   sizes: [height: number, width: number];
@@ -16,7 +27,7 @@ export interface IMovable {
   /**
    * @deprecated Для обратной совместимости, пока не научились рендерить реактивно
    */
-  coords: [x: TTilePosition, y: TTilePosition];
+  coords: [x: TNumberOfPixels, y: TNumberOfPixels];
 
   /**
    * Устанавливает контекст/носителя данной способности.
@@ -37,12 +48,12 @@ export interface IMovable {
   /**
    * Поток координат персонажа
    */
-  coords$: Observable<[x: TTilePosition, y: TTilePosition]>;
+  coords$: Observable<[x: TNumberOfPixels, y: TNumberOfPixels]>;
 
   /**
    * Поток предыдущих координат персонажа, которые были до начала последнего перехода
    */
-  prevCoords$: Observable<[x: TTilePosition, y: TTilePosition]>;
+  prevCoords$: Observable<[x: TNumberOfPixels, y: TNumberOfPixels]>;
 
   /**
    * Поток команд для движения

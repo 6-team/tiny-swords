@@ -15,7 +15,19 @@ export default class Hero extends Character<HeroType, HeroAbilities> implements 
   constructor({ controller, height, width, initialX, initialY }: HeroConfig) {
     super({
       abilities: {
-        movable: new Movable({ height, width, initialX, initialY, stream$: controller.movement$ }),
+        movable: new Movable({
+          height,
+          width,
+          initialX,
+          initialY,
+          getCollisionArea: (movable) => {
+            const [x1, y1] = movable.coords;
+            const [height, width] = movable.sizes;
+
+            return [x1 + 64, y1 + 64, height / 3, width / 3];
+          },
+          stream$: controller.movement$,
+        }),
         attacking: new Attacking({ stream$: controller.attack$ }),
       },
     });
