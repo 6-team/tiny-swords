@@ -2,8 +2,11 @@
   import { onDestroy, onMount } from "svelte";
   import { Hero } from '../entities/hero'
   import { TILE_SIZE, SCALE } from '../common/common.const'
-  import { Actions, grid64, Heroes, Grid, Renderer, TileName } from "../core";
-
+  import { Actions, Heroes, Grid, Renderer, TileName } from "../core";
+  import { Level } from "../core/level/level";
+  import { nextLevelMenu, isMainMenu } from "../store/store";
+  import MainMenu from "../components/mainMenu/MainMenu.svelte";
+  import NextLevelMenu from "../components/nextLevelMenu/NextLevelMenu.svelte";
   import type { IMovable } from "../abilities";
   import { Observable, filter, map, switchMap, tap } from "rxjs";
   import type { IPlayer } from "@shared";
@@ -13,183 +16,29 @@
 
   let interactiveScene: Renderer;
 
-  const waterMap = [
-    new Array(20).fill(TileName.WATER_MIDDLE_MIDDLE),
-    new Array(20).fill(TileName.WATER_MIDDLE_MIDDLE),
-    new Array(20).fill(TileName.WATER_MIDDLE_MIDDLE),
-    [...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE), ...new Array(16).fill(null), ...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE)],
-    [...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE), ...new Array(16).fill(null), ...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE)],
-    [...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE), ...new Array(16).fill(null), ...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE)],
-    [...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE), ...new Array(16).fill(null), ...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE)],
-    [...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE), ...new Array(16).fill(null), ...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE)],
-    [...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE), ...new Array(16).fill(null), ...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE)],
-    [...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE), ...new Array(16).fill(null), ...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE)],
-    [...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE), ...new Array(16).fill(null), ...new Array(2).fill(TileName.WATER_MIDDLE_MIDDLE)],
-    new Array(20).fill(TileName.WATER_MIDDLE_MIDDLE),
-    new Array(20).fill(TileName.WATER_MIDDLE_MIDDLE),
+  const level = new Level();
+  const { enter, exit, maps, boundaries, layers: LAYERS, gridX, gridY } = level.init();
+
+  const nextLevelArea = [exit];
+
+  const resourcesMap = [
+    [],
+    [],
+    [null, null, TileName.RESOURCES_GOLD, TileName.RESOURCES_WOOD, TileName.RESOURCES_MEAL],
   ];
 
-  const foamMap = [
-    [],
-    [],
-    [null,               TileName.FOAM_TOP,                           ...new Array(16).fill(null), TileName.FOAM_TOP],
-    [TileName.FOAM_LEFT, TileName.FOAM_MIDDLE,                        ...new Array(16).fill(null), TileName.FOAM_MIDDLE, TileName.FOAM_RIGHT],
-    [TileName.FOAM_LEFT, TileName.FOAM_MIDDLE,                        ...new Array(16).fill(null), TileName.FOAM_MIDDLE, TileName.FOAM_RIGHT],
-    [TileName.FOAM_LEFT, TileName.FOAM_MIDDLE,                        ...new Array(16).fill(null), TileName.FOAM_MIDDLE, TileName.FOAM_RIGHT],
-    [TileName.FOAM_LEFT, TileName.FOAM_MIDDLE,                        ...new Array(16).fill(null), TileName.FOAM_MIDDLE, TileName.FOAM_RIGHT],
-    [TileName.FOAM_LEFT, TileName.FOAM_MIDDLE,                        ...new Array(16).fill(null), TileName.FOAM_MIDDLE, TileName.FOAM_RIGHT],
-    [TileName.FOAM_LEFT, TileName.FOAM_MIDDLE,                        ...new Array(16).fill(null), TileName.FOAM_MIDDLE, TileName.FOAM_RIGHT],
-    [TileName.FOAM_LEFT, TileName.FOAM_MIDDLE,                        ...new Array(16).fill(null), TileName.FOAM_MIDDLE, TileName.FOAM_RIGHT],
-    [TileName.FOAM_LEFT, TileName.FOAM_MIDDLE,                        ...new Array(16).fill(null), TileName.FOAM_MIDDLE, TileName.FOAM_RIGHT],
-    [TileName.FOAM_LEFT, ...new Array(18).fill(TileName.FOAM_MIDDLE), TileName.FOAM_RIGHT],
-    [null,               ...new Array(18).fill(TileName.FOAM_BOTTOM)],
-  ];
+  let isNextLevelMenu = false;
+  let isMainMenuShow = true
+  nextLevelMenu.subscribe( value => isNextLevelMenu = value)
+  isMainMenu.subscribe( value => isMainMenuShow = value)
 
-  const sandMap = [
-    [],
-    [],
-    [],
-    [null, TileName.SAND_TOP_LEFT,    TileName.SAND_TOP_MIDDLE,    ...new Array(14).fill(null), TileName.SAND_TOP_MIDDLE,    TileName.SAND_TOP_RIGHT],
-    [null, TileName.SAND_MIDDLE_LEFT, TileName.SAND_MIDDLE_MIDDLE, ...new Array(14).fill(null), TileName.SAND_MIDDLE_MIDDLE, TileName.SAND_MIDDLE_RIGHT],
-    [null, TileName.SAND_MIDDLE_LEFT, TileName.SAND_MIDDLE_MIDDLE, ...new Array(14).fill(null), TileName.SAND_MIDDLE_MIDDLE, TileName.SAND_MIDDLE_RIGHT],
-    [null, TileName.SAND_MIDDLE_LEFT, TileName.SAND_MIDDLE_MIDDLE, ...new Array(14).fill(null), TileName.SAND_MIDDLE_MIDDLE, TileName.SAND_MIDDLE_RIGHT],
-    [null, TileName.SAND_MIDDLE_LEFT, TileName.SAND_MIDDLE_MIDDLE, ...new Array(14).fill(null), TileName.SAND_MIDDLE_MIDDLE, TileName.SAND_MIDDLE_RIGHT],
-    [null, TileName.SAND_MIDDLE_LEFT, TileName.SAND_MIDDLE_MIDDLE, ...new Array(14).fill(null), TileName.SAND_MIDDLE_MIDDLE, TileName.SAND_MIDDLE_RIGHT],
-    [null, TileName.SAND_MIDDLE_LEFT, TileName.SAND_MIDDLE_MIDDLE, ...new Array(14).fill(null), TileName.SAND_MIDDLE_MIDDLE, TileName.SAND_MIDDLE_RIGHT],
-    [null, TileName.SAND_MIDDLE_LEFT, ...new Array(16).fill(TileName.SAND_MIDDLE_MIDDLE), TileName.SAND_MIDDLE_RIGHT],
-    [null, TileName.SAND_BOTTOM_LEFT, ...new Array(16).fill(TileName.SAND_BOTTOM_MIDDLE), TileName.SAND_BOTTOM_RIGHT],
-  ]
-
-  const elevationMap = [
-    [],
-    [],
-    [],
-    [],
-    [],
-    [],
-    [],
-    [],
-    [],
-    [null, null, TileName.ELEVATION_BOTTOM_LEFT, ...new Array(14).fill(TileName.ELEVATION_BOTTOM_MIDDLE), TileName.ELEVATION_BOTTOM_RIGHT],
-    [null, null, TileName.ELEVATION_EDGE_LEFT,   ...new Array(14).fill(TileName.ELEVATION_EDGE_MIDDLE),   TileName.ELEVATION_EDGE_RIGHT],
-  ];
-
-  const groundMap = [
-    [],
-    [],
-    [null, null, TileName.GROUND_TOP_LEFT,    ...new Array(14).fill(TileName.GROUND_TOP_MIDDLE),    TileName.GROUND_TOP_RIGHT],
-    [null, null, TileName.GROUND_MIDDLE_LEFT, ...new Array(14).fill(TileName.GROUND_MIDDLE_MIDDLE), TileName.GROUND_MIDDLE_RIGHT],
-    [null, null, TileName.GROUND_MIDDLE_LEFT, ...new Array(14).fill(TileName.GROUND_MIDDLE_MIDDLE), TileName.GROUND_MIDDLE_RIGHT],
-    [null, null, TileName.GROUND_MIDDLE_LEFT, ...new Array(14).fill(TileName.GROUND_MIDDLE_MIDDLE), TileName.GROUND_MIDDLE_RIGHT],
-    [null, null, TileName.GROUND_MIDDLE_LEFT, ...new Array(14).fill(TileName.GROUND_MIDDLE_MIDDLE), TileName.GROUND_MIDDLE_RIGHT],
-    [null, null, TileName.GROUND_MIDDLE_LEFT, ...new Array(14).fill(TileName.GROUND_MIDDLE_MIDDLE), TileName.GROUND_MIDDLE_RIGHT],
-    [null, null, TileName.GROUND_MIDDLE_LEFT, ...new Array(14).fill(TileName.GROUND_MIDDLE_MIDDLE), TileName.GROUND_MIDDLE_RIGHT],
-    [null, null, TileName.GROUND_BOTTOM_LEFT, ...new Array(14).fill(TileName.GROUND_BOTTOM_MIDDLE), TileName.GROUND_BOTTOM_RIGHT],
-  ];
-
-  const bridgeMap = [
-    [],
-    [],
-    [],
-    [],
-    [TileName.BRIDGE_MIDDLE, TileName.BRIDGE_MIDDLE, TileName.BRIDGE_RIGHT],
-    [TileName.BRIDGE_SHADOW, TileName.BRIDGE_SHADOW],
-    [],
-    [...new Array(17).fill(null), TileName.BRIDGE_LEFT, TileName.BRIDGE_MIDDLE, TileName.BRIDGE_MIDDLE],
-    [...new Array(18).fill(null), TileName.BRIDGE_SHADOW, TileName.BRIDGE_SHADOW],
-  ];
-
-  const decoMap = [
-    [],
-    [],
-    [...new Array(9).fill(null), TileName.DECO_MUSHROOM_L, TileName.DECO_MUSHROOM_M],
-    [...new Array(10).fill(null), TileName.DECO_MUSHROOM_S, TileName.DECO_MUSHROOM_S],
-    [...new Array(7).fill(null), TileName.DECO_STONE_S],
-    [...new Array(4).fill(null), TileName.DECO_BUSH_M],
-    [...new Array(5).fill(null), TileName.DECO_PUMPKIN_S, TileName.DECO_BUSH_L],
-    [...new Array(5).fill(null), TileName.DECO_STONE_L, ...new Array(4).fill(null), TileName.DECO_WEED_M],
-    [...new Array(9).fill(null), TileName.DECO_WEED_S, ...new Array(7).fill(null), TileName.DECO_BONE_S],
-    [...new Array(7).fill(null), TileName.DECO_STONE_M, ...new Array(7).fill(null),  TileName.DECO_BONE_M],
-  ];
-
-  const boundaries = [
-    [1, 1],
-    [2, 1],
-    [3, 1],
-    [4, 1],
-    [5, 1],
-    [6, 1],
-    [7, 1],
-    [8, 1],
-    [9, 1],
-    [10, 1],
-    [11, 1],
-    [12, 1],
-    [13, 1],
-    [14, 1],
-    [15, 1],
-    [16, 1],
-    [17, 1],
-    [18, 1],
-
-    [1, 2],
-
-    [0, 3],
-    [1, 3],
-
-    [0, 5],
-    [1, 5],
-
-    [1, 6],
-    [1, 7],
-    [1, 8],
-    [1, 9],
-    [1, 10],
-
-    [18, 2],
-    [18, 3],
-    [18, 4],
-    [18, 5],
-
-    [18, 6],
-    [19, 6],
-
-    [18, 8],
-    [19, 8],
-
-    [18, 9],
-    [18, 10],
-
-    [2, 10],
-    [3, 10],
-    [4, 10],
-    [5, 10],
-    [6, 10],
-    [7, 10],
-    [8, 10],
-    [9, 10],
-    [10, 10],
-    [11, 10],
-    [12, 10],
-    [13, 10],
-    [14, 10],
-    [15, 10],
-    [16, 10],
-    [17, 10],
-  ];
-
-  const nextLevelArea = [
-    [18, 7],
-    [19, 7]
-  ];
-
-  function initGame(): void {
+  const initGame = (): void => {
     const action$ = actions.initGame().pipe(filter(Boolean), tap(() => console.log('The game was created')));
 
     handleHeroMovement(action$);
   }
 
-  function connectToMultipleGame(): void {
+  const connectToMultipleGame = (): void => {
     const action$ = actions.connectToMultipleGame().pipe(tap(() => console.log('You connected to multiple game')));
 
     handleHeroMovement(action$);
@@ -224,19 +73,34 @@
     /**
      * Рендер статичной карты
      */
+    const grid64 = new Grid({ tileSize: TILE_SIZE, maxX: gridX, maxY: gridY });
+
     const staticScene = new Renderer({
       canvas: document.getElementById('canvas') as HTMLCanvasElement,
       scale: SCALE,
       grid: grid64,
     });
 
-    await staticScene.renderStaticLayer(waterMap);
-    await staticScene.renderStaticLayer(foamMap);
-    await staticScene.renderStaticLayer(sandMap);
-    await staticScene.renderStaticLayer(elevationMap);
-    await staticScene.renderStaticLayer(groundMap);
-    await staticScene.renderStaticLayer(bridgeMap);
-    await staticScene.renderStaticLayer(decoMap);
+    await staticScene.renderStaticLayer(maps[LAYERS.WATER]);
+    await staticScene.renderStaticLayer(maps[LAYERS.SHADOW]);
+    await staticScene.renderStaticLayer(maps[LAYERS.MAIN]);
+    await staticScene.renderStaticLayer(maps[LAYERS.DECO]);
+    await staticScene.renderStaticLayer(maps[LAYERS.ADD]);
+    await staticScene.renderStaticLayer(maps[LAYERS.SIGN]);
+    await staticScene.renderStaticLayer(maps[LAYERS.BOUND]);
+
+    await staticScene.renderStaticLayer(resourcesMap);
+
+    /**
+     * Рендер слоя с объектами переднего плана
+     */
+    const foregroundScene = new Renderer({
+      canvas: document.getElementById('canvas_foreground') as HTMLCanvasElement,
+      scale: SCALE,
+      grid: grid64,
+    });
+
+    await foregroundScene.renderStaticLayer(maps[LAYERS.FOREG]);
 
     /**
      * Рендер интерактивных элементов, которые будут в движении
@@ -245,6 +109,23 @@
       canvas: document.getElementById('canvas_interactive') as HTMLCanvasElement,
       scale: SCALE,
       grid: grid64,
+    });
+
+    const heroBarsScene = new Renderer({
+      canvas: document.getElementById('canvas_hero_bar') as HTMLCanvasElement,
+      scale: SCALE,
+      grid: grid64,
+    });
+
+    await heroBarsScene.renderResourcesBar([
+              { type: 'gold', image: 'img/Resources/G_Idle.png', count: 9999 },
+              { type: 'wood', image: 'img/Resources/W_Idle.png', count: 0 },
+            ]);
+
+    await heroBarsScene.renderHealthBar({
+      totalLives: 3,
+      availableLives: 1,
+      blockedLives: 1,
     });
 
     // Переменные для определения положения персонажа относительно середины поля
@@ -263,8 +144,8 @@
         );
 
         if (hasCollisionWithNextLevelArea) {
-          console.log('You won!');
-
+          // alert('You won!');
+          nextLevelMenu.set(true)
           break;
         }
       }
@@ -304,33 +185,17 @@
   })
 </script>
 
-<div class="container">
-  <div class="content">
-    <canvas id="canvas" width="1300" height="900" style="position: absolute; left: 0; top: 0;"></canvas>
-    <canvas id="canvas_interactive" width="1280" height="832" style="position: absolute; left: 0; top: 0;"></canvas>
-  </div>
-
-  <div class="actions">
-    <button on:click={initGame}>Новая Игра</button>
-    <button on:click={connectToMultipleGame}>Сетевая Игра</button>
-  </div>
+<div>
+  <canvas id="canvas" width="1280" height="832" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%);"></canvas>
+  <canvas id="canvas_interactive" width="1280" height="832" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%);"></canvas>
+  <canvas id="canvas_foreground" width="1280" height="832" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%);"></canvas>
+  <canvas id="canvas_hero_bar" width="1280" height="120px" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%);"></canvas>
+  {#if isMainMenuShow}
+  <!-- Передать экшены для кнопок -->
+    <MainMenu {initGame} {connectToMultipleGame}/>
+  {/if}
+  {#if isNextLevelMenu}
+    <NextLevelMenu/>
+  {/if}
 </div>
-
-<style lang="scss">
-  .container {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  };
-
-  .content {
-    height: 900px;
-  };
-
-  .actions {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-  }
-</style>
 
