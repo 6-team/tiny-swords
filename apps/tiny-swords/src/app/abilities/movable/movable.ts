@@ -1,6 +1,6 @@
 import { IMovable } from '../abilities.types';
 import { IMovableCharacter, TNumberOfPixels, TPixelsPosition } from '../../common/common.types';
-import { MovingError, movementSetters } from './movable.const';
+import { MovingError, PIXELS_PER_FRAME, movementSetters } from './movable.const';
 import { MovableProps } from './movable.types';
 import { BehaviorSubject, Observable, distinctUntilChanged, filter, withLatestFrom } from 'rxjs';
 import { HeroActionAnimation } from '../../entities/hero/hero.const';
@@ -90,7 +90,7 @@ export class Movable implements IMovable {
      */
     if (this.#movingProgressRemaining > 0 && !this.#isStoppedManually) {
       this.#coords$.next(movementSetters[movement](coords));
-      this.#movingProgressRemaining -= 1;
+      this.#movingProgressRemaining -= PIXELS_PER_FRAME;
     }
 
     /**
