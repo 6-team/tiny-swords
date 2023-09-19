@@ -12,8 +12,11 @@ export default abstract class Character<
 {
   protected _abilities: Abilities;
 
-  constructor({ abilities }: CharacterConfig<Abilities> = {}) {
+  id: string;
+
+  constructor({ abilities, id }: CharacterConfig<Abilities> = {}) {
     super();
+    this.id = id;
 
     if (abilities) {
       this._abilities = abilities;

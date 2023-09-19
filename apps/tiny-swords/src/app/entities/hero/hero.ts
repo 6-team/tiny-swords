@@ -9,11 +9,11 @@ import { HeroAbilities, HeroConfig } from './hero.types';
 const HERO_SIZE = 192;
 
 export default class Hero extends Character<HeroType, HeroAbilities> implements IMovableCharacter {
-  protected _sprite: string = '/img/Factions/Knights/Troops/Warrior/Blue/Warrior_Blue.png';
+  protected _sprite = '/img/Factions/Knights/Troops/Warrior/Blue/Warrior_Blue.png';
   protected _type = HeroType.WARRIOR_BLUE;
   protected _size = HERO_SIZE;
 
-  constructor({ controller, height, width, initialX, initialY }: HeroConfig) {
+  constructor({ controller, height, width, initialX, initialY, id }: HeroConfig) {
     super({
       abilities: {
         movable: new Movable({
@@ -21,15 +21,16 @@ export default class Hero extends Character<HeroType, HeroAbilities> implements 
           width,
           initialX,
           initialY,
+          controller,
           getCollisionArea: (movable) => {
             const [x1, y1] = movable.coords;
 
             return [x1 + grid64.tileSize, y1 + grid64.tileSize, grid64.tileSize, grid64.tileSize];
           },
-          stream$: controller.movement$,
         }),
         attacking: new Attacking({ stream$: controller.attack$ }),
       },
+      id,
     });
   }
 

@@ -1,5 +1,5 @@
-export enum EventType {
+export enum ActionType {
   InitGame = 'initGame',
   ConnectToGame = 'connectToGame',
-  UpdatePlayers = 'updatePlayers',
+  UpdatePlayer = 'updatePlayer',
 }

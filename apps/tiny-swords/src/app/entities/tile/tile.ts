@@ -2,12 +2,13 @@ import { ITile } from '../../common/common.types';
 import { ErrorEnum } from './tile.const';
 import { CoordsTuple } from './tile.types';
 
-export abstract class Tile<Types extends string | number | symbol> implements ITile {
+export abstract class Tile<T extends string | number | symbol> implements ITile {
   protected abstract _sprite: string;
-  protected abstract _type: Types;
+  protected abstract _type: T;
 
   protected _size = 64;
   protected _image?: HTMLImageElement;
+  protected _isLoaded = false;
   protected _row = 0;
   protected _col = 0;
   protected _scale = 1;
@@ -15,7 +16,7 @@ export abstract class Tile<Types extends string | number | symbol> implements IT
   protected _framePerTime = 0;
   protected readonly _fps = 10;
 
-  protected abstract _getCoordsMap(): Record<Types, CoordsTuple>;
+  protected abstract _getCoordsMap(): Record<T, CoordsTuple>;
 
   /**
    * Инициирует загрузку изображения и возвращает промис
@@ -46,7 +47,7 @@ export abstract class Tile<Types extends string | number | symbol> implements IT
    *
    * @param type Тип персонажа
    */
-  setType(type: Types): void {
+  setType(type: T): void {
     this._type = type;
   }
 
@@ -65,14 +66,15 @@ export abstract class Tile<Types extends string | number | symbol> implements IT
    * @returns Промис с изображением и мета-данными к нему
    */
   async getData() {
-    if (!this._image || this._image.src !== this._sprite) {
+    if (!this._isLoaded) {
       this._image = await this._load();
+      this._isLoaded = true;
     }
 
     const coords = this._getCoordsMap()[this._type];
 
     return {
-      image: this._image,
+      image: this._image!,
       coords: [coords[0] + this._size * this._col, coords[1] + this._size * this._row] as CoordsTuple,
       size: this._size,
       scale: this._scale,

@@ -1,7 +1,8 @@
 import { pushedKeys } from './keyboard.conts';
 import { IController } from '../controllers.types';
-import { AttackingForce, MovingDirection } from '../../abilities/abilities.const';
-import { BehaviorSubject, Subject, map } from 'rxjs';
+import { AttackingForce } from '../../abilities/abilities.const';
+import { BehaviorSubject, Subject, fromEvent, map } from 'rxjs';
+import { MovingDirection } from '@shared';
 
 export default class KeyboardController implements IController {
   private _pushedKeys$ = new BehaviorSubject<MovingDirection[]>([]);
@@ -17,6 +18,10 @@ export default class KeyboardController implements IController {
     this._pushedKeys$
       .pipe(map((directions) => directions.at(-1)))
       .subscribe((direction) => this._movement$.next(direction ?? MovingDirection.IDLE));
+  }
+
+  setDirection(direction: MovingDirection): void {
+    this._movement$.next(direction);
   }
 
   private _addPushedKey(code: string): void {
@@ -41,11 +46,11 @@ export default class KeyboardController implements IController {
   }
 
   private _addListeners(): void {
-    document.addEventListener('keydown', (event) => {
+    fromEvent(document, 'keydown').subscribe((event: KeyboardEvent) => {
       this._addPushedKey(event.code);
     });
 
-    document.addEventListener('keyup', (event) => {
+    fromEvent(document, 'keyup').subscribe((event: KeyboardEvent) => {
       this._removePushedKey(event.code);
     });
   }

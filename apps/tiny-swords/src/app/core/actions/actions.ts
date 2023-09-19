@@ -1,13 +1,13 @@
 import { of, fromEvent, Observable, BehaviorSubject } from 'rxjs';
 import { filter, first, map, switchMap, tap } from 'rxjs/operators';
 import io, { Socket as WebSocket } from 'socket.io-client';
-import { Character } from '../../character';
-import { EventType } from '@shared';
+import { ActionType, IPlayer } from '@shared';
+import { MovingDirection } from '@shared';
 
 // TODO: need to move
 const ENDPOINT = 'ws://localhost:3000';
 
-export class DataService<T extends Character> {
+export class Actions<T extends IPlayer<MovingDirection>> {
   #socketSubject = new BehaviorSubject<WebSocket>(null);
   #player: T = null;
 
@@ -23,16 +23,16 @@ export class DataService<T extends Character> {
   }
 
   initGame(): Observable<T> {
-    if (this.#player) return of(this.#player);
+    if (this.#player) return of(null);
 
-    return this.emit(EventType.InitGame).pipe(
-      switchMap(() => this.listen<T>(EventType.InitGame).pipe(tap(this.setPlayer.bind(this)))),
+    return this.emit(ActionType.InitGame).pipe(
+      switchMap(() => this.listen<T>(ActionType.InitGame).pipe(tap(this.setPlayer.bind(this)))),
     );
   }
 
   connectToMultipleGame(): Observable<T> {
-    return this.emit(EventType.ConnectToGame).pipe(
-      switchMap(() => this.listen<T>(EventType.ConnectToGame).pipe(tap(this.setPlayer.bind(this)))),
+    return this.emit(ActionType.ConnectToGame).pipe(
+      switchMap(() => this.listen<T>(ActionType.ConnectToGame).pipe(tap(this.setPlayer.bind(this)))),
     );
   }
 
@@ -40,15 +40,15 @@ export class DataService<T extends Character> {
     const hasCurrentPlayer = () => !!this.#player;
     const isNotCurrentUser = ({ id }: T) => id !== this.#player.id;
 
-    return this.listen<T>(EventType.ConnectToGame).pipe(filter(hasCurrentPlayer), filter(isNotCurrentUser));
+    return this.listen<T>(ActionType.ConnectToGame).pipe(filter(hasCurrentPlayer), filter(isNotCurrentUser));
   }
 
-  updatePlayer(character: Character): Observable<WebSocket> {
-    return this.emit(EventType.UpdatePlayers, character);
+  updatePlayer(character: T): Observable<WebSocket> {
+    return this.emit(ActionType.UpdatePlayer, character);
   }
 
-  updatePlayersListener(): Observable<Character[]> {
-    return this.listen<Character[]>(EventType.UpdatePlayers);
+  updatePlayerListener(): Observable<T> {
+    return this.listen<T>(ActionType.UpdatePlayer);
   }
 
   closeGame(): void {

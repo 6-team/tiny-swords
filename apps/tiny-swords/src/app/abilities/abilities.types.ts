@@ -6,7 +6,8 @@ import {
   TNumberOfPixels,
   TPixelsPosition,
 } from '../common/common.types';
-import { AttackingForce, MovingDirection } from './abilities.const';
+import { AttackingForce } from './abilities.const';
+import { MovingDirection } from '@shared';
 
 export interface IAttacking {
   setContext(context: IAttackingCharacter): IAttacking;
@@ -44,6 +45,8 @@ export interface IMovable {
    * @returns Объект способности
    */
   stopMovement(): IMovable;
+
+  setDirection(direction: MovingDirection): void;
 
   /**
    * Проверяет коллизию между текущим элементом и переданным
