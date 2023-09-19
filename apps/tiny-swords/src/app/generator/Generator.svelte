@@ -173,14 +173,13 @@
     animate();
 
     heroes.heroes$.subscribe((heroes) => {
-      heroes.map((hero) => {
+      for (const hero of heroes) {
         const movable = hero.getAbility('movable');
 
         movable.coords$.subscribe((_) => {
-          console.log(_);
           checkCollisions(movable);
         });
-      })
+      }
     });
   });
 
