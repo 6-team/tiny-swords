@@ -1,5 +1,5 @@
-import { TileName } from "../../renderer/renderer.const";
-import { LayersTemplate } from "../layers.types";
+import { TileName } from '../../renderer/renderer.const';
+import { LayersTemplate } from '../layers.types';
 
 /**
  * Шаблон для дополнительных слоев:
@@ -12,7 +12,7 @@ export const LAYER_ADDITIONAL_EMPTY_CONDITIONS: LayersTemplate = {
     const conditions = [];
 
     const getCondition = (tile, coords) => {
-      switch(tile) {
+      switch (tile) {
         case TileName.BRIDGE_MIDDLE:
           return { tile: TileName.BRIDGE_SHADOW, coords };
         case TileName.BRIDGE_LEFT:
@@ -32,7 +32,7 @@ export const LAYER_ADDITIONAL_EMPTY_CONDITIONS: LayersTemplate = {
         default:
           return null;
       }
-    }
+    };
 
     grid.array.forEach(({ coords, options }) => {
       const condition = getCondition(options[0], coords);
@@ -45,8 +45,8 @@ export const LAYER_ADDITIONAL_EMPTY_CONDITIONS: LayersTemplate = {
     });
 
     return conditions;
-  }
-}
+  },
+};
 
 /**
  * Шаблон для дорисовки нижней части дерева
@@ -62,15 +62,15 @@ export const LAYER_ADDITIONAL_TREE_BOTTOM_CONDITIONS: LayersTemplate = {
           ...[
             { tile: TileName.TREE_BOTTOM_LEFT, coords: [coords[0] - 1, coords[1]] },
             { tile: TileName.TREE_BOTTOM_MIDDLE, coords },
-            { tile: TileName.TREE_BOTTOM_RIGHT, coords: [coords[0] + 1, coords[1]] }
-          ]
+            { tile: TileName.TREE_BOTTOM_RIGHT, coords: [coords[0] + 1, coords[1]] },
+          ],
         ];
       }
     });
 
     return conditions;
-  }
-}
+  },
+};
 
 /**
  * Шаблон для заливки всего слоя водой
@@ -80,12 +80,12 @@ export const LAYER_ADDITIONAL_WATER_CONDITIONS: LayersTemplate = {
     const conditions = [];
 
     grid.array.forEach(({ coords }) => {
-      conditions.push({ tile: TileName.WATER_MIDDLE_MIDDLE, coords, })
+      conditions.push({ tile: TileName.WATER_MIDDLE_MIDDLE, coords });
     });
 
     return conditions;
-  }
-}
+  },
+};
 
 /**
  * Шаблон для дорисовки дома
@@ -97,15 +97,15 @@ export const LAYER_ADDITIONAL_HOUSE_CONDITIONS: LayersTemplate = {
       { tile: TileName.HOUSE_BOTTOM_LEFT, coords: [enter[0] - 1, enter[1] - 1], boundary: true },
       { tile: TileName.HOUSE_BOTTOM_RIGHT, coords: [enter[0], enter[1] - 1], boundary: true },
       { tile: TileName.HOUSE_MIDDLE_LEFT, coords: [enter[0] - 1, enter[1] - 2], boundary: true },
-      { tile: TileName.HOUSE_MIDDLE_RIGHT, coords: [enter[0], enter[1] - 2 ], boundary: true },
+      { tile: TileName.HOUSE_MIDDLE_RIGHT, coords: [enter[0], enter[1] - 2], boundary: true },
       // правый дом
       { tile: TileName.HOUSE_BOTTOM_LEFT, coords: [exit[0], exit[1] - 1], boundary: true },
       { tile: TileName.HOUSE_BOTTOM_RIGHT, coords: [exit[0] + 1, exit[1] - 1], boundary: true },
       { tile: TileName.HOUSE_MIDDLE_LEFT, coords: [exit[0], exit[1] - 2], boundary: true },
-      { tile: TileName.HOUSE_MIDDLE_RIGHT, coords: [exit[0] + 1, exit[1] - 2 ], boundary: true },
+      { tile: TileName.HOUSE_MIDDLE_RIGHT, coords: [exit[0] + 1, exit[1] - 2], boundary: true },
     ];
-  }
-}
+  },
+};
 
 /**
  * Шаблон для дорисовки знаков
@@ -120,8 +120,8 @@ export const LAYER_ADDITIONAL_SIGN_CONDITIONS: LayersTemplate = {
       { tile: TileName.DECO_SIGH_RIGHT_BOTTOM, coords: [exit[0] + 1, exit[1]], boundary: true },
       { tile: TileName.DECO_SIGH_RIGHT_TOP, coords: [exit[0] + 1, exit[1] - 1] },
     ];
-  }
-}
+  },
+};
 
 /**
  * Шаблон для границ
@@ -131,9 +131,9 @@ export const LAYER_ADDITIONAL_BOUNDARY_CONDITIONS: LayersTemplate = {
     const conditions = [];
 
     boundaries.forEach((coords) => {
-      conditions.push({ tile: TileName.BOUNDARY, coords, })
+      conditions.push({ tile: TileName.BOUNDARY, coords });
     });
 
     return conditions;
-  }
-}
+  },
+};

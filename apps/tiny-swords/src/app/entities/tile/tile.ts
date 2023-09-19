@@ -8,14 +8,13 @@ export abstract class Tile<T extends string | number | symbol> implements ITile 
 
   protected _size = 64;
   protected _image?: HTMLImageElement;
+  protected _isLoaded = false;
   protected _row = 0;
   protected _col = 0;
   protected _scale = 1;
   protected _spriteFramesCount = 6;
-  protected _isLoaded = false;
-
-  readonly #_fps = 10;
-  #_framePerTime = 0;
+  protected _framePerTime = 0;
+  protected readonly _fps = 10;
 
   protected abstract _getCoordsMap(): Record<T, CoordsTuple>;
 
@@ -53,11 +52,11 @@ export abstract class Tile<T extends string | number | symbol> implements ITile 
   }
 
   initAnimation(deltaTime: number) {
-    if (this.#_framePerTime > 1000 / this.#_fps) {
-      this._col < this._spriteFramesCount - 1 ? (this._col += 1) : (this._col = 0);
-      this.#_framePerTime = 0;
+    if (this._framePerTime > 1000 / this._fps) {
+      this._col = (this._col + 1) % this._spriteFramesCount;
+      this._framePerTime = 0;
     } else {
-      this.#_framePerTime += deltaTime;
+      this._framePerTime += deltaTime;
     }
   }
 
@@ -74,6 +73,11 @@ export abstract class Tile<T extends string | number | symbol> implements ITile 
 
     const coords = this._getCoordsMap()[this._type];
 
-    return { image: this._image, coords, size: this._size, row: this._row, col: this._col, scale: this._scale };
+    return {
+      image: this._image!,
+      coords: [coords[0] + this._size * this._col, coords[1] + this._size * this._row] as CoordsTuple,
+      size: this._size,
+      scale: this._scale,
+    };
   }
 }

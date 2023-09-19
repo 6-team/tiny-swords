@@ -1,11 +1,15 @@
 import { WithSetPersonageContext } from '../../abilities/abilities.types';
+import { ICharacter } from '../../common/common.types';
 import { Tile } from '../tile/tile';
 import { CharacterConfig } from './character.types';
 
 export default abstract class Character<
-  CharacterType extends string | number | symbol,
-  Abilities extends Record<string | symbol | number, WithSetPersonageContext>,
-> extends Tile<CharacterType> {
+    CharacterType extends string | number | symbol,
+    Abilities extends Record<string | symbol | number, WithSetPersonageContext>,
+  >
+  extends Tile<CharacterType>
+  implements ICharacter<Abilities>
+{
   protected _abilities: Abilities;
 
   id: string;

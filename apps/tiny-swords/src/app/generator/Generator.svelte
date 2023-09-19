@@ -56,6 +56,8 @@
     actions.updatePlayerListener().pipe(tap((player) => console.log('Update player', player))).subscribe((player) => {
       const existingPlayer = heroes.getHero(player);
 
+      console.log(player);
+
       if (existingPlayer) {
         const movable = existingPlayer.getAbility('movable')
 
@@ -118,9 +120,9 @@
     });
 
     await heroBarsScene.renderResourcesBar([
-              { type: 'gold', image: 'img/Resources/G_Idle.png', count: 9999 },
-              { type: 'wood', image: 'img/Resources/W_Idle.png', count: 0 },
-            ]);
+      { type: 'gold', image: 'img/Resources/G_Idle.png', count: 9999 },
+      { type: 'wood', image: 'img/Resources/W_Idle.png', count: 0 },
+    ]);
 
     await heroBarsScene.renderHealthBar({
       totalLives: 3,
@@ -128,33 +130,24 @@
       blockedLives: 1,
     });
 
-    // Переменные для определения положения персонажа относительно середины поля
-    // Предполагается, что значения поля будут захардкожены
-    const middleX = (Math.max(...boundaries.map(([x]) => x)) * TILE_SIZE * SCALE) / 2
-    const middleY = (Math.max(...boundaries.map(([_, y]) => y)) * TILE_SIZE * SCALE) / 2
     // Дальше проверка: если перс повернут к врагу и они в соседних клетках, то удар засчитан
     // ...
 
     // Это надо будет наверное вынести куда то
-    function checkCollisions(coords: [number, number], movable: IMovable): void {
+    function checkCollisions(movable: IMovable): void {
       for (const area of nextLevelArea) {
-        const hasCollisionWithNextLevelArea = Grid.checkCollision(
-          [coords[0] - TILE_SIZE * SCALE, coords[1], movable.sizes[0], movable.sizes[1]],
+        const hasCollisionWithNextLevelArea = movable.checkCollision(
           grid64.transformToPixels(area[0], area[1], 1, 1),
         );
 
         if (hasCollisionWithNextLevelArea) {
-          // alert('You won!');
           nextLevelMenu.set(true)
           break;
         }
       }
 
       for (const bound of boundaries) {
-        const horizontalOffset = coords[0] > middleX ? -TILE_SIZE * SCALE : TILE_SIZE * SCALE;
-        const verticalOffset = coords[1] > middleY ? -TILE_SIZE * SCALE : TILE_SIZE * SCALE;
-        const hasCollision = Grid.checkCollision(
-          [coords[0] + horizontalOffset, coords[1] + verticalOffset, movable.sizes[0], movable.sizes[1]],
+        const hasCollision = movable.checkCollision(
           grid64.transformToPixels(bound[0], bound[1], 1, 1),
         );
 
@@ -178,6 +171,16 @@
     }
 
     animate();
+
+    heroes.heroes$.subscribe((heroes) => {
+      for (const hero of heroes) {
+        const movable = hero.getAbility('movable');
+
+        movable.coords$.subscribe((_) => {
+          checkCollisions(movable);
+        });
+      }
+    });
   });
 
   onDestroy(() => {

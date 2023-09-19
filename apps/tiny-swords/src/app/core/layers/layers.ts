@@ -1,7 +1,7 @@
-import { Matrix } from "../../tools/matrix/matrix";
-import { TileName } from "../renderer";
-import { LayersCell, LayersOptions, LayersTemplate } from "./layers.types";
-import { randomElement, weightedRandomElement } from "./layers.utils";
+import { Matrix } from '../../tools/matrix/matrix';
+import { TileName } from '../renderer';
+import { LayersCell, LayersOptions, LayersTemplate } from './layers.types';
+import { randomElement, weightedRandomElement } from './layers.utils';
 
 export class Layers {
   #layersGrid;
@@ -13,8 +13,8 @@ export class Layers {
   options: LayersOptions;
   boundaries: [number, number][];
 
-	constructor(gridX: number, gridY: number, layerNames: string[]) {
-		this.#gridX = gridX;
+  constructor(gridX: number, gridY: number, layerNames: string[]) {
+    this.#gridX = gridX;
     this.#gridY = gridY;
     this.#layerNames = layerNames;
 
@@ -26,11 +26,14 @@ export class Layers {
         const x = i % this.#gridX;
         const y = Math.floor(i / this.#gridX);
 
-        layerGrid.set({ x, y }, {
-          collapsed: false,
-          coords: [x, y],
-          options: [],
-        });
+        layerGrid.set(
+          { x, y },
+          {
+            collapsed: false,
+            coords: [x, y],
+            options: [],
+          },
+        );
       }
 
       return {
@@ -94,7 +97,7 @@ export class Layers {
       const conditions = template.create({
         grid: layerName ? this.#layersGrid[layerName] : this.currentLayerGrid,
         boundaries: this.boundaries,
-        ...this.options
+        ...this.options,
       });
 
       conditions.forEach(({ tile, coords, role, boundary }) => {
@@ -105,15 +108,18 @@ export class Layers {
           this.#setBoundary(coords);
         }
 
-        this.currentLayerGrid.set({ x: coords[0], y: coords[1] }, {
-          collapsed: true,
-          coords,
-          options: [tile],
-        });
+        this.currentLayerGrid.set(
+          { x: coords[0], y: coords[1] },
+          {
+            collapsed: true,
+            coords,
+            options: [tile],
+          },
+        );
       });
     });
 
-    return this; 
+    return this;
   }
 
   switch(layerName: string) {
@@ -131,11 +137,14 @@ export class Layers {
         const [x, y] = coords;
 
         // если ячека пустая - ставим в ячейку все варианты
-        this.currentLayerGrid.set({ x, y }, {
-          collapsed: false,
-          coords,
-          options: [...tileTypes],
-        });
+        this.currentLayerGrid.set(
+          { x, y },
+          {
+            collapsed: false,
+            coords,
+            options: [...tileTypes],
+          },
+        );
       }
     });
 
@@ -176,7 +185,7 @@ export class Layers {
   }
 
   #setOption(option: keyof LayersOptions, value) {
-    this.options = {...this.options, [option]: value }
+    this.options = { ...this.options, [option]: value };
   }
 
   #setBoundary(coords) {
@@ -199,7 +208,7 @@ export class Layers {
       } else {
         // смотрим на верхнюю клетку
         if (y > 0) {
-          const up = this.currentLayerGrid.get({ x, y: y - 1 });            
+          const up = this.currentLayerGrid.get({ x, y: y - 1 });
           let validOptions = [];
 
           for (const option of up.options) {
@@ -246,13 +255,16 @@ export class Layers {
           options = this.#checkValid(options, validOptions);
         }
 
-        nextGrid.set({ x, y }, {
-          collapsed: false,
-          coords: [x, y],
-          options,
-        });
+        nextGrid.set(
+          { x, y },
+          {
+            collapsed: false,
+            coords: [x, y],
+            options,
+          },
+        );
       }
-    };
+    }
 
     this.currentLayerGrid = nextGrid;
   }
@@ -271,11 +283,14 @@ export class Layers {
       }
     }
 
-    this.currentLayerGrid.set({ x: coords[0], y: coords[1] }, {
-      coords,
-      collapsed: true,
-      options: [tileName],
-    });
+    this.currentLayerGrid.set(
+      { x: coords[0], y: coords[1] },
+      {
+        coords,
+        collapsed: true,
+        options: [tileName],
+      },
+    );
   }
 
   #defineCellToUpdate(): LayersCell {
@@ -306,7 +321,7 @@ export class Layers {
     return randomElement(gridCopy);
   }
 
-  #checkValid(options: TileName[], valid: TileName[]) {  
+  #checkValid(options: TileName[], valid: TileName[]) {
     const filteredOption = options.filter((option: number) => {
       return valid.includes(option);
     });
