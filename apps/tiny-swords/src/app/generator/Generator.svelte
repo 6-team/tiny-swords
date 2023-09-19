@@ -102,12 +102,11 @@
           await foregroundScene.renderStaticLayer(map);  
         }
       }
+
+      await staticScene.renderStaticLayer(resourcesMap);
     }
 
     renderAsync();
-
-    await staticScene.renderStaticLayer(resourcesMap);
-
 
     /**
      * Рендер интерактивных элементов, которые будут в движении
