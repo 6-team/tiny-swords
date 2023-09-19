@@ -46,6 +46,16 @@ export interface IMovable {
   stopMovement(): IMovable;
 
   /**
+   * Проверяет коллизию между текущим элементом и переданным
+   *
+   * @param rect2Coords Координаты в px второго объекта, с которым идёт сравнение
+   * @returns Произошла ли коллизия
+   */
+  checkCollision(
+    rect2Coords: [pxX: TPixelsPosition, pxY: TPixelsPosition, pxHeight: TNumberOfPixels, pxWidth: TNumberOfPixels],
+  ): boolean;
+
+  /**
    * Поток координат персонажа
    */
   coords$: Observable<[x: TNumberOfPixels, y: TNumberOfPixels]>;

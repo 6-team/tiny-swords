@@ -191,6 +191,30 @@ export class Movable implements IMovable {
   }
 
   /**
+   * Проверяет коллизию между текущим элементом и переданным
+   *
+   * @param rect2Coords Координаты в px второго объекта, с которым идёт сравнение
+   * @returns Произошла ли коллизия
+   */
+  checkCollision(
+    rect2Coords: [pxX: TPixelsPosition, pxY: TPixelsPosition, pxHeight: TNumberOfPixels, pxWidth: TNumberOfPixels],
+  ) {
+    const [rect1Left, rect1Top, rect1Height, rect1Width] = this.collisionArea;
+    const [rect2Left, rect2Top, rect2Height, rect2Width] = rect2Coords;
+
+    const rect1Right = rect1Left + rect1Width;
+    const rect1Bottom = rect1Top + rect1Height;
+    const rect2Right = rect2Left + rect2Width;
+    const rect2Bottom = rect2Top + rect2Height;
+
+    if (rect1Bottom <= rect2Top || rect1Top >= rect2Bottom || rect1Right <= rect2Left || rect1Left >= rect2Right) {
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
    * Возвращает зону персонажа, которая участвует в сравнении коллизий.
    */
   get collisionArea(): [x: TPixelsPosition, y: TPixelsPosition, height: TNumberOfPixels, width: TNumberOfPixels] {

@@ -103,10 +103,9 @@
     // ...
 
     // Это надо будет наверное вынести куда то
-    function checkCollisions(collisionArea: [x1: number, y1: number, height: number, width: number]): void {
+    function checkCollisions(movable: IMovable): void {
       for (const area of nextLevelArea) {
-        const hasCollisionWithNextLevelArea = Grid.checkCollision(
-          collisionArea,
+        const hasCollisionWithNextLevelArea = movable.checkCollision(
           grid64.transformToPixels(area[0], area[1], 1, 1),
         );
 
@@ -117,10 +116,9 @@
       }
 
       for (const bound of boundaries) {
-        const hasCollision = Grid.checkCollision(
-          collisionArea,
+        const hasCollision = movable.checkCollision(
           grid64.transformToPixels(bound[0], bound[1], 1, 1),
-          );
+        );
 
         if (hasCollision) {
           movable.stopMovement();
@@ -150,8 +148,8 @@
       // У этих игроков твой персонаж начинает управляться через ServerController.
     })
 
-    movable.coords$.subscribe((coords) => {
-      checkCollisions(movable.collisionArea);
+    movable.coords$.subscribe(() => {
+      checkCollisions(movable);
     })
   });
 </script>
