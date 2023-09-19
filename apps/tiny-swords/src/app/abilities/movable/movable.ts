@@ -1,23 +1,26 @@
 import { IMovable } from '../abilities.types';
-import { IMovableCharacter, TPixelsPosition } from '../../common/common.types';
-import { MovingError, movementSetters } from './movable.const';
+import { IMovableCharacter, TNumberOfPixels, TPixelsPosition } from '../../common/common.types';
+import { MovingError, PIXELS_PER_FRAME, movementSetters } from './movable.const';
 import { MovableProps } from './movable.types';
 import { BehaviorSubject, Observable, distinctUntilChanged, filter, withLatestFrom } from 'rxjs';
-import { MovingDirection } from '../abilities.const';
 import { HeroActionAnimation } from '../../entities/hero/hero.const';
 import { frames$ } from '../../tools/observables';
 import { grid64 } from '../../core/grid';
+import { IController } from '../../controllers';
+import { MovingDirection } from '@shared';
 
 /**
  * Класс для передвигающихся элементов.
  * Координаты задаются в тайлах, а выбранная система координат уже переводит значения в пиксели
  */
 export class Movable implements IMovable {
-  #sizes: [TPixelsPosition, TPixelsPosition];
+  #sizes: [height: TNumberOfPixels, width: TNumberOfPixels];
   #isRightDirection = true;
   #movingProgressRemaining = 0;
   #isStoppedManually = false;
+  #getCollisionAreaFunc?: MovableProps['getCollisionArea'];
   #context?: IMovableCharacter;
+  #controller: IController;
 
   #prevCoords$: BehaviorSubject<[TPixelsPosition, TPixelsPosition]>;
   #coords$: BehaviorSubject<[TPixelsPosition, TPixelsPosition]>;
@@ -27,8 +30,10 @@ export class Movable implements IMovable {
   readonly coords$: Observable<[TPixelsPosition, TPixelsPosition]>;
   readonly movement$ = this.#movement$.pipe(filter(() => Boolean(this.#context))).pipe(distinctUntilChanged());
 
-  constructor({ height, width, initialX, initialY, stream$ }: MovableProps) {
+  constructor({ height, width, initialX, initialY, getCollisionArea, controller }: MovableProps) {
     this.#sizes = [height, width || height];
+    this.#controller = controller;
+    this.#getCollisionAreaFunc = getCollisionArea;
 
     this.#prevCoords$ = new BehaviorSubject<[TPixelsPosition, TPixelsPosition]>([initialX, initialY]);
     this.#coords$ = new BehaviorSubject<[TPixelsPosition, TPixelsPosition]>([initialX, initialY]);
@@ -38,7 +43,7 @@ export class Movable implements IMovable {
     this.movement$.subscribe(this.#handleMovementChange);
 
     frames$
-      .pipe(withLatestFrom(stream$, this.#movement$, this.#coords$, this.#prevCoords$))
+      .pipe(withLatestFrom(controller.movement$, this.#movement$, this.#coords$, this.#prevCoords$))
       .subscribe(this.#handleFrameChange);
   }
 
@@ -53,6 +58,10 @@ export class Movable implements IMovable {
     this.#context = context;
 
     return this;
+  }
+
+  setDirection(direction: MovingDirection): void {
+    this.#controller.setDirection(direction);
   }
 
   /**
@@ -81,7 +90,7 @@ export class Movable implements IMovable {
      */
     if (this.#movingProgressRemaining > 0 && !this.#isStoppedManually) {
       this.#coords$.next(movementSetters[movement](coords));
-      this.#movingProgressRemaining -= 1;
+      this.#movingProgressRemaining -= PIXELS_PER_FRAME;
     }
 
     /**
@@ -125,7 +134,7 @@ export class Movable implements IMovable {
    * @param direction Направление движения персонажа
    * @returns Объект способности
    */
-  #setIsRightDirection(direction: MovingDirection) {
+  #setIsRightDirection(direction: MovingDirection): this {
     if (direction === MovingDirection.LEFT) {
       this.#isRightDirection = false;
     }
@@ -144,7 +153,7 @@ export class Movable implements IMovable {
    * @param direction Направление движения персонажа
    * @returns Объект способности
    */
-  #setAnimation(direction: MovingDirection) {
+  #setAnimation(direction: MovingDirection): this {
     if (!this.#context) {
       throw new Error(MovingError.PERSONAGE_NOT_SET);
     }
@@ -182,10 +191,41 @@ export class Movable implements IMovable {
    *
    * @returns Объект способности
    */
-  stopMovement() {
+  stopMovement(): this {
     this.#isStoppedManually = true;
 
     return this;
+  }
+
+  /**
+   * Проверяет коллизию между текущим элементом и переданным
+   *
+   * @param rect2Coords Координаты в px второго объекта, с которым идёт сравнение
+   * @returns Произошла ли коллизия
+   */
+  checkCollision(
+    rect2Coords: [pxX: TPixelsPosition, pxY: TPixelsPosition, pxHeight: TNumberOfPixels, pxWidth: TNumberOfPixels],
+  ) {
+    const [rect1Left, rect1Top, rect1Height, rect1Width] = this.collisionArea;
+    const [rect2Left, rect2Top, rect2Height, rect2Width] = rect2Coords;
+
+    const rect1Right = rect1Left + rect1Width;
+    const rect1Bottom = rect1Top + rect1Height;
+    const rect2Right = rect2Left + rect2Width;
+    const rect2Bottom = rect2Top + rect2Height;
+
+    if (rect1Bottom <= rect2Top || rect1Top >= rect2Bottom || rect1Right <= rect2Left || rect1Left >= rect2Right) {
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Возвращает зону персонажа, которая участвует в сравнении коллизий.
+   */
+  get collisionArea(): [x: TPixelsPosition, y: TPixelsPosition, height: TNumberOfPixels, width: TNumberOfPixels] {
+    return this.#getCollisionAreaFunc ? this.#getCollisionAreaFunc(this) : [0, 0, this.#sizes[0], this.#sizes[1]];
   }
 
   /**

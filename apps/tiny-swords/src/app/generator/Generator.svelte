@@ -1,19 +1,22 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { Renderer } from '../core/renderer/renderer';
-  import { Grid } from '../core/grid';
+  import { onDestroy, onMount } from "svelte";
   import { Hero } from '../entities/hero'
-  import { KeyboardController } from "../controllers/keyboard";
-  import { ServerController } from '../controllers/server';
   import { TILE_SIZE, SCALE } from '../common/common.const'
-  import type { IMovable } from "../abilities";
+  import { Actions, Heroes, Grid, Renderer, TileName } from "../core";
   import { Level } from "../core/level/level";
   import { nextLevelMenu, isMainMenu } from "../store/store";
   import MainMenu from "../components/mainMenu/MainMenu.svelte";
   import NextLevelMenu from "../components/nextLevelMenu/NextLevelMenu.svelte";
-  import { TileName } from "../core/renderer";
   import { LayersRenderType } from "../core/layers/layers.types";
   
+  import type { IMovable } from "../abilities";
+  import { Observable, filter, map, switchMap, tap } from "rxjs";
+  import type { IPlayer } from "@shared";
+
+  const actions = new Actions();
+  const heroes = new Heroes();
+
+  let interactiveScene: Renderer;
 
   const level = new Level();
   const { startCoords, endCoords, boundaries, maps, gridX, gridY } = level.next();
@@ -30,7 +33,46 @@
   nextLevelMenu.subscribe( value => isNextLevelMenu = value)
   isMainMenu.subscribe( value => isMainMenuShow = value)
 
+  const initGame = (): void => {
+    const action$ = actions.initGame().pipe(filter(Boolean), tap(() => console.log('The game was created')));
+
+    handleHeroMovement(action$);
+  }
+
+  const connectToMultipleGame = (): void => {
+    const action$ = actions.connectToMultipleGame().pipe(tap(() => console.log('You connected to multiple game')));
+
+    handleHeroMovement(action$);
+  }
+
+  function handleHeroMovement(action$: Observable<IPlayer>): void {
+    action$.pipe(map(heroes.initHero.bind(heroes)), switchMap((hero: Hero) => {
+      const movable = hero.getAbility('movable');
+
+      return movable.movement$.pipe(switchMap((direction) => actions.updatePlayer({ id: hero.id, direction })));
+    })).subscribe();
+  }
+
+  function handleUpdatedPlayers(): void {
+    actions.updatePlayerListener().pipe(tap((player) => console.log('Update player', player))).subscribe((player) => {
+      const existingPlayer = heroes.getHero(player);
+
+      console.log(player);
+
+      if (existingPlayer) {
+        const movable = existingPlayer.getAbility('movable')
+
+        movable.setDirection(player.direction!);
+
+        return;
+      }
+
+      heroes.initConnectedHero(player);
+    });
+  }
+
   onMount(async () => {
+    handleUpdatedPlayers();
     /**
      * Рендер статичной карты
      */
@@ -70,7 +112,7 @@
     /**
      * Рендер интерактивных элементов, которые будут в движении
      */
-    const interactiveScene = new Renderer({
+    interactiveScene = new Renderer({
       canvas: document.getElementById('canvas_interactive') as HTMLCanvasElement,
       scale: SCALE,
       grid: grid64,
@@ -83,9 +125,9 @@
     });
 
     await heroBarsScene.renderResourcesBar([
-              { type: 'gold', image: 'img/Resources/G_Idle.png', count: 9999 },
-              { type: 'wood', image: 'img/Resources/W_Idle.png', count: 0 },
-            ]);
+      { type: 'gold', image: 'img/Resources/G_Idle.png', count: 9999 },
+      { type: 'wood', image: 'img/Resources/W_Idle.png', count: 0 },
+    ]);
 
     await heroBarsScene.renderHealthBar({
       totalLives: 3,
@@ -93,39 +135,24 @@
       blockedLives: 1,
     });
 
-    const [initialX, initialY, height, width] = grid64.transformToPixels(startCoords[0], startCoords[1], 3, 3);
-    const keyboardController = new KeyboardController();
-    // const serverController = new ServerController(); // Прокинь serverController, чтобы увидеть, как сервер будет управлять персонажем
-    const hero = new Hero({ controller: keyboardController, initialX, initialY, height, width });
-    const movable = hero.getAbility('movable');
-
-    // Переменные для определения положения персонажа относительно середины поля
-    // Предполагается, что значения поля будут захардкожены
-    const middleX = (Math.max(...boundaries.map(([x]) => x)) * TILE_SIZE * SCALE) / 2
-    const middleY = (Math.max(...boundaries.map(([_, y]) => y)) * TILE_SIZE * SCALE) / 2
     // Дальше проверка: если перс повернут к врагу и они в соседних клетках, то удар засчитан
     // ...
 
     // Это надо будет наверное вынести куда то
-    function checkCollisions(coords: [number, number], movable: IMovable): void {
+    function checkCollisions(movable: IMovable): void {
       for (const area of nextLevelArea) {
-        const hasCollisionWithNextLevelArea = Grid.checkCollision(
-          [coords[0] - TILE_SIZE * SCALE, coords[1], movable.sizes[0], movable.sizes[1]],
+        const hasCollisionWithNextLevelArea = movable.checkCollision(
           grid64.transformToPixels(area[0], area[1], 1, 1),
         );
 
         if (hasCollisionWithNextLevelArea) {
-          // alert('You won!');
           nextLevelMenu.set(true)
           break;
         }
       }
 
       for (const bound of boundaries) {
-        const horizontalOffset = coords[0] > middleX ? -TILE_SIZE * SCALE : TILE_SIZE * SCALE;
-        const verticalOffset = coords[1] > middleY ? -TILE_SIZE * SCALE : TILE_SIZE * SCALE;
-        const hasCollision = Grid.checkCollision(
-          [coords[0] + horizontalOffset, coords[1] + verticalOffset, movable.sizes[0], movable.sizes[1]],
+        const hasCollision = movable.checkCollision(
           grid64.transformToPixels(bound[0], bound[1], 1, 1),
         );
 
@@ -143,24 +170,27 @@
       requestAnimationFrame(animate);
       const deltaTime = timeStamp - lastTime;
 
-      interactiveScene.renderMovableLayer([hero], deltaTime);
+      interactiveScene.renderMovableLayer(heroes.heroes, deltaTime);
 
       lastTime = timeStamp
     }
 
     animate();
 
-    movable.movement$.subscribe((direction) => {
-      // console.log(direction);
+    heroes.heroes$.subscribe((heroes) => {
+      for (const hero of heroes) {
+        const movable = hero.getAbility('movable');
 
-      // Отправить команду на сервер. Дальше сервер передаёт её другим игрокам.
-      // У этих игроков твой персонаж начинает управляться через ServerController.
-    })
-
-    movable.coords$.subscribe((coords) => {
-      checkCollisions(coords, movable);
-    })
+        movable.coords$.subscribe((_) => {
+          checkCollisions(movable);
+        });
+      }
+    });
   });
+
+  onDestroy(() => {
+    actions.closeGame();
+  })
 </script>
 
 <div>
@@ -170,9 +200,10 @@
   <canvas id="canvas_hero_bar" width="1280" height="120px" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%);"></canvas>
   {#if isMainMenuShow}
   <!-- Передать экшены для кнопок -->
-    <MainMenu/>
+    <MainMenu {initGame} {connectToMultipleGame}/>
   {/if}
   {#if isNextLevelMenu}
     <NextLevelMenu/>
   {/if}
 </div>
+

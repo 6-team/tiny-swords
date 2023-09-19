@@ -23,8 +23,6 @@ export interface ITile {
     image: HTMLImageElement;
     coords: [number, number];
     size: number;
-    row: number;
-    col: number;
     scale: number;
   }>;
   setAnimation(row: number): void;
