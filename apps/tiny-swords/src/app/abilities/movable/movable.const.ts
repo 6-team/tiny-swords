@@ -1,4 +1,4 @@
-import { MovingDirection } from '../abilities.const';
+import { MovingDirection } from '@shared';
 
 export const enum MovingError {
   PERSONAGE_NOT_SET = "Can't call Moving methods without personage",

@@ -37,7 +37,7 @@ export class Renderer {
     this.#context.imageSmoothingEnabled = false; // Отключаю сглаживание
   }
 
-  private _clear() {
+  clear(): void {
     this.#context.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
   }
 
@@ -69,7 +69,6 @@ export class Renderer {
     const dy =
       this.#scale > scale ? elementPxY * this.#scale + (this.#grid.tileSize * scale) / 2 : elementPxY * this.#scale;
 
-    this._clear();
     this.#context.drawImage(
       image,
       coords[0] * col,
@@ -122,6 +121,8 @@ export class Renderer {
   }
 
   async renderMovableLayer(movables: Array<IMovableCharacter>, deltaTime: number) {
+    this.clear();
+
     for (const movable of movables) {
       new Maybe(movable).map((tile) => this.renderMovable(tile, deltaTime));
     }

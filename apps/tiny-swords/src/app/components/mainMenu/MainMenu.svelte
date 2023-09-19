@@ -1,5 +1,4 @@
 <script lang="ts">
-  // получить экшены кнопок и передать в handleClick
   import Modal from '../../modals/Modal.svelte';
   import { isActiveCloseButton, isActiveMenuItem, isMainMenu } from '../../store/store';
 
@@ -7,21 +6,25 @@
   let menuIndex = 0;
   let activeItem = '';
 
+  export let initGame: () => void;
+  export let connectToMultipleGame: () => void;
+
   let menuLink = [
-    {title: 'Новая игра', value: 'generator'}, 
+    {title: 'Новая игра', value: 'generator'},
     {title: 'Сетевая игра', value: 'multi-player'}
   ];
 
- 
   function handleClick(item: string):void {
     switch (item) {
       case 'multi-player':
         console.log('start multiplayer game');
         isMainMenu.set(false);
+        connectToMultipleGame();
         break;
       case 'generator':
         console.log('start single game');
         isMainMenu.set(false);
+        initGame();
         break;
       default:
         console.log('other option');
@@ -57,7 +60,7 @@
 
   function keyboardHandler(e: KeyboardEvent): void {
   const menuLinkLength = menuLink.length;
-  
+
   switch (e.code) {
     case 'ArrowDown':
       menuIndex = (menuIndex + 1) % menuLinkLength;
@@ -78,7 +81,7 @@
 
   isActiveMenuItem.set(menuLink[menuIndex].value);
 }
- 
+
   isActiveMenuItem.subscribe( value => activeItem = value);
 
   </script>
@@ -101,7 +104,7 @@
           </div>
         </div>
     </div>
-    
+
 <Modal bind:showModal isActiveCloseButtonStore={isActiveCloseButton}>
 </Modal>
 
@@ -134,14 +137,14 @@
       &.active {
         background: no-repeat url(img/UI/Button_Blue_3Slides.png);
         background-size: cover;
-        
+
         .menu-title {
           top:15%
         }
       }
     }
   }
-  
+
   .background-substrate {
     position: absolute;
     left: 50%;
