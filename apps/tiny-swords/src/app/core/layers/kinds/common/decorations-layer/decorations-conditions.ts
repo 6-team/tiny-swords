@@ -2,9 +2,74 @@
 import { LevelType } from "../../../../level/level";
 import { TileName } from "../../../../renderer";
 import { Layer } from "../../../../layer/layer";
-import { randomElement, shuffleArray, weightedRandomElement } from "../../../layers.utils";
-import { LayerCell, LayerCondition } from "../../../../layer/layer.types";
+import { shuffleArray, weightedRandomElement } from "../../../layers.utils";
+import { LayerCondition } from "../../../../layer/layer.types";
 
+/**
+ * Создание перемешанного и фильтрованного массива координат
+ */
+const getShuffleFilterCoords = (layer, condition) => {
+  return shuffleArray(
+    layer.array
+      .map(({ coords }) => coords)
+      .filter(condition)
+  );
+}
+
+/**
+ * Хелперы для создания декораций в воде
+ */
+const waterDictionaryLayer = (layer) => {
+  return layer.array.reduce((acc, { coords, options }) => {
+    if (options[0] === TileName.WATER_MIDDLE_MIDDLE) {
+      return {
+        ...acc,
+        [`${coords[0]}${coords[1]}`]: true
+      }
+    }
+    return acc;
+  }, {});
+}
+
+const waterDictionaryLayers = (layers) => {
+  return layers.reduce((acc, layer) => {
+    return {
+      ...acc,
+      ...waterDictionaryLayer(layer),
+    }
+  }, {});
+}
+
+/**
+ * Шаблон для декораций в воде
+ */
+export const decorationsWaterConditions = (layers): LayerCondition[] => {
+  const random = 20;
+  const conditions = [];
+
+    // создаем массив координат где нельзя поставить декорации
+    const waterCoords = waterDictionaryLayers(layers);
+
+    // создаем массив координат куда можно размещать декорации
+    const availableCells = getShuffleFilterCoords(layers[0], ([x, y]) => waterCoords[`${x}${y}`]);
+
+  if (availableCells.length) {
+    for (let i = 0; i < random; i++) {
+      const coords = availableCells[i];
+
+      conditions.push({
+        tile: weightedRandomElement([
+          [TileName.ROCKS_S, 3],
+          [TileName.ROCKS_M, 2],
+          [TileName.ROCKS_L, 1],
+        ]),
+        coords,
+      });
+    }
+  }
+
+  return conditions;
+};
 
 export const GROUND_DECO_TILE_WEIGHT: Record<number, [TileName, number, boolean][]> = {
   10: [
@@ -62,56 +127,51 @@ export const SAND_DECO_TILE_WEIGHT: Record<number, [TileName, number, boolean][]
 };
 
 /**
- * Шаблон для декораций в воде
+ * Хелперы для создания декораций на поверхности
  */
-export const decorationsWaterConditions = (layer): LayerCondition[] => {
-  const random = 20;
-  const conditions = [];
+const boundariesDictionaryLayer = (layer) => {
+  return layer.array.reduce((acc, { boundary, coords, options }) => {
+    const isNotTerrain = options[0] >= TileName.BRIDGE_LEFT;
 
-  let availableCells: LayerCell[] = layer.array.filter(({ options }) => {
-    return TileName.WATER_MIDDLE_MIDDLE === options[0];
-  });
-
-  if (availableCells.length) {
-    availableCells = shuffleArray(availableCells);
-
-    for (let i = 0; i < random; i++) {
-      const { coords } = availableCells[i];
-
-      conditions.push({
-        tile: weightedRandomElement([
-          [TileName.ROCKS_S, 3],
-          [TileName.ROCKS_M, 2],
-          [TileName.ROCKS_L, 1],
-        ]),
-        coords,
-      });
+    if (boundary || isNotTerrain) {
+      return {
+        ...acc,
+        [`${coords[0]}${coords[1]}`]: true
+      }
     }
-  }
+    return acc;
+  }, {});
+}
 
-  return conditions;
-};
+const boundariesDictionaryLayers = (layers) => {
+  return layers.reduce((acc, layer) => {
+    return {
+      ...acc,
+      ...boundariesDictionaryLayer(layer),
+    }
+  }, {});
+}
 
 /**
  * Шаблон для декораций на поверхности
  */
-export const decorationsTerrainConditions = (level: LevelType, layer): LayerCondition[] => {
+export const decorationsTerrainConditions = (level: LevelType, layers): LayerCondition[] => {
   const conditions = [];
 
-  let availableCells: LayerCell[] = layer.array.filter(({ options }) => {
-    return TileName.WATER_MIDDLE_MIDDLE < options[0] && options[0] < TileName.BRIDGE_LEFT;
-  });
+  // создаем массив координат где нельзя поставить декорации
+  const boundariesCoords = boundariesDictionaryLayers(layers);
+
+  // создаем перемешанный массив координат куда можно размещать декорации
+  const availableCells = getShuffleFilterCoords(layers[0], ([x, y]) => !boundariesCoords[`${x}${y}`]);
 
   const decoWeight = level === LevelType.Ground
     ? GROUND_DECO_TILE_WEIGHT
     : SAND_DECO_TILE_WEIGHT;
 
   if (availableCells.length) {
-    Object.keys(decoWeight).forEach((key: string) => {
-      availableCells = shuffleArray(availableCells);
-
+    Object.keys(decoWeight).forEach((key: string, j) => {
       for (let i = 0; i < +key; i++) {
-        const { coords } = availableCells[i];
+        const coords = availableCells[i * j];
 
         const tile = weightedRandomElement(decoWeight[key]);
         const [_, __, boundary] = decoWeight[key].find(([tileName]) => tileName === tile);

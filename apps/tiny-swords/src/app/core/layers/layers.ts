@@ -50,7 +50,7 @@ export class Layers {
         renderOrder: 1,
       },
       {
-        layer: new DecoLayer(gridX, gridY, level, terrainLayer),
+        layer: new DecoLayer(gridX, gridY, level, [terrainLayer, buildingsLayer, signLayer]),
         type: LayersRenderType.Background,
         renderOrder: 3,
       },
