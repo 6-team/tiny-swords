@@ -194,7 +194,7 @@ export class Movable implements IMovable {
    * Возвращает зону персонажа, которая участвует в сравнении коллизий.
    */
   get collisionArea(): [x: TPixelsPosition, y: TPixelsPosition, height: TNumberOfPixels, width: TNumberOfPixels] {
-    return this.#getCollisionAreaFunc(this) ?? [0, 0, this.#sizes[0], this.#sizes[1]];
+    return this.#getCollisionAreaFunc ? this.#getCollisionAreaFunc(this) : [0, 0, this.#sizes[0], this.#sizes[1]];
   }
 
   /**
