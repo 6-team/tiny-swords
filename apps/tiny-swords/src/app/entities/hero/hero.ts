@@ -1,6 +1,7 @@
 import { Attacking } from '../../abilities/attacking';
 import { Movable } from '../../abilities/movable';
 import { IMovableCharacter } from '../../common/common.types';
+import { grid64 } from '../../core/grid';
 import { Character } from '../character';
 import { HeroType, mapHeroTypeToCoords } from './hero.const';
 import { HeroAbilities, HeroConfig } from './hero.types';
@@ -22,9 +23,8 @@ export default class Hero extends Character<HeroType, HeroAbilities> implements 
           initialY,
           getCollisionArea: (movable) => {
             const [x1, y1] = movable.coords;
-            const [height, width] = movable.sizes;
 
-            return [x1 + 64, y1 + 64, height / 3, width / 3];
+            return [x1 + grid64.tileSize, y1 + grid64.tileSize, grid64.tileSize, grid64.tileSize];
           },
           stream$: controller.movement$,
         }),

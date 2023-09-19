@@ -18,5 +18,5 @@ export const enum HeroType {
 }
 
 export const mapHeroTypeToCoords: Record<HeroType, CoordsTuple> = {
-  [HeroType.WARRIOR_BLUE]: [192, 192],
+  [HeroType.WARRIOR_BLUE]: [0, 22],
 };

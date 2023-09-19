@@ -62,7 +62,7 @@ export class Renderer {
 
   async renderWithAnimation(elementPxCoords: [number, number, number, number], tile: ITile, deltaTime?: number) {
     const [elementPxX, elementPxY, elementPxHeight, elementPxWidth] = elementPxCoords;
-    const { image, size, col, row, coords, scale } = await tile.getData();
+    const { image, size, coords, scale } = await tile.getData();
 
     const dx =
       this.#scale > scale ? elementPxX * this.#scale + (this.#grid.tileSize * scale) / 2 : elementPxX * this.#scale;
@@ -72,8 +72,8 @@ export class Renderer {
     this._clear();
     this.#context.drawImage(
       image,
-      coords[0] * col,
-      coords[1] * row,
+      coords[0],
+      coords[1],
       size,
       size,
       dx,
@@ -85,16 +85,20 @@ export class Renderer {
     // FOR_TEST_PURPOSES:
     // Данный функционал закоментирован для проверки движения персонажа (просто накладывается сетка 3х3 для понимания коллизий персонажа)
 
-    for (let i = 0; i < 3; i++) {
-      for (let j = 0; j < 3; j++) {
-        this.#context.strokeRect(
-          elementPxX * this.#scale + this.#grid.tileSize * this.#scale * i,
-          elementPxY * this.#scale + this.#grid.tileSize * this.#scale * j,
-          this.#grid.tileSize * this.#scale,
-          this.#grid.tileSize * this.#scale,
-        );
-      }
-    }
+    // const collisionArea = (tile as IMovableCharacter).getAbility('movable').collisionArea;
+
+    // for (let i = 0; i < 3; i++) {
+    //   for (let j = 0; j < 3; j++) {
+    //     this.#context.strokeRect(
+    //       elementPxX * this.#scale + this.#grid.tileSize * this.#scale * i,
+    //       elementPxY * this.#scale + this.#grid.tileSize * this.#scale * j,
+    //       this.#grid.tileSize * this.#scale,
+    //       this.#grid.tileSize * this.#scale,
+    //     );
+    //     this.#context.fillStyle = 'red';
+    //     this.#context.fillRect(collisionArea[0], collisionArea[1], collisionArea[3], collisionArea[2]);
+    //   }
+    // }
 
     tile.initAnimation(deltaTime);
 
