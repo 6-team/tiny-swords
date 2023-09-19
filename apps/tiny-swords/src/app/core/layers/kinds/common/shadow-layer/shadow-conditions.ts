@@ -1,88 +1,62 @@
 import { LayerCondition } from "../../../../layer/layer.types";
+import { LevelType } from "../../../../level/level";
 import { TileName } from "../../../../renderer";
 
-/**
- * Шаблон для дополнительных слоев травы:
- * - тень под мостами
- * - трава по мостами
- * - трава под домом
- */
-export const shadowGroundConditions = (layer): LayerCondition[] => {
-  const conditions = [];
+const getGroundConditions = (tile, coords) => {
+  switch(tile) {
+    // тень под мостом
+    case TileName.BRIDGE_MIDDLE:
+      return [{ tile: TileName.BRIDGE_SHADOW, coords }];
 
-  const getCondition = (tile, coords) => {
-    switch(tile) {
-      case TileName.BRIDGE_MIDDLE:
-        return { tile: TileName.BRIDGE_SHADOW, coords };
-      case TileName.BRIDGE_LEFT:
-        return { tile: TileName.GROUND_MIDDLE_RIGHT, coords };
-      case TileName.BRIDGE_RIGHT:
-        return { tile: TileName.GROUND_MIDDLE_LEFT, coords };
-      case TileName.TREE_STRUMP:
-        return { tile: TileName.GROUND_MIDDLE_MIDDLE, coords };
-      case TileName.HOUSE_BOTTOM_LEFT:
-        return { tile: TileName.GROUND_MIDDLE_LEFT, coords };
-      case TileName.HOUSE_BOTTOM_RIGHT:
-        return { tile: TileName.GROUND_MIDDLE_RIGHT, coords };
-      case TileName.HOUSE_MIDDLE_LEFT:
-        return { tile: TileName.GROUND_TOP_LEFT, coords };
-      case TileName.HOUSE_MIDDLE_RIGHT:
-        return { tile: TileName.GROUND_TOP_RIGHT, coords };
-      default:
-        return null;
-    }
+    // трава под основаниями моста
+    case TileName.BRIDGE_LEFT:
+      return [{ tile: TileName.GROUND_MIDDLE_RIGHT, coords }];
+    case TileName.BRIDGE_RIGHT:
+      return [{ tile: TileName.GROUND_MIDDLE_LEFT, coords }];
+    case TileName.TREE_STRUMP:
+      return [{ tile: TileName.GROUND_MIDDLE_MIDDLE, coords }];
+
+    default:
+      return [];
   }
+}
 
-  layer.array.forEach(({ coords, options }) => {
-    const condition = getCondition(options[0], coords);
+const getSandConditions = (tile, coords) => {
+  switch(tile) {
+    // тень под мостом
+    case TileName.BRIDGE_MIDDLE:
+      return [{ tile: TileName.BRIDGE_SHADOW, coords }];
 
-    if (condition) {
-      conditions.push({
-        ...condition,
-      });
-    }
-  });
+    // песок под основаниями моста
+    case TileName.BRIDGE_LEFT:
+      return [{ tile: TileName.SAND_MIDDLE_RIGHT, coords }];
+    case TileName.BRIDGE_RIGHT:
+      return [{ tile: TileName.SAND_MIDDLE_LEFT, coords }];
 
-  return conditions;
+    default:
+      return [];
+  }
 }
 
 /**
- * Шаблон для дополнительных слоев песка:
+ * Шаблон для дополнительных слоев:
  * - тень под мостами
- * - трава по мостами
- * - трава под домом
+ * - трава или песок по мостами
+ * - пена
  */
-export const shadowSandConditions = (layer): LayerCondition[] => {
-  const conditions = [];
+export const shadowConditions = (level: LevelType, layer): LayerCondition[] => {
+  let conditions = [];
 
-  const getCondition = (tile, coords) => {
-    switch(tile) {
-      case TileName.BRIDGE_MIDDLE:
-        return { tile: TileName.BRIDGE_SHADOW, coords };
-      case TileName.BRIDGE_LEFT:
-        return { tile: TileName.SAND_MIDDLE_RIGHT, coords };
-      case TileName.BRIDGE_RIGHT:
-        return { tile: TileName.SAND_MIDDLE_LEFT, coords };
-      case TileName.HOUSE_BOTTOM_LEFT:
-        return { tile: TileName.SAND_MIDDLE_LEFT, coords };
-      case TileName.HOUSE_BOTTOM_RIGHT:
-        return { tile: TileName.SAND_MIDDLE_RIGHT, coords };
-      case TileName.HOUSE_MIDDLE_LEFT:
-        return { tile: TileName.SAND_TOP_LEFT, coords };
-      case TileName.HOUSE_MIDDLE_RIGHT:
-        return { tile: TileName.SAND_TOP_RIGHT, coords };
-      default:
-        return null;
-    }
-  }
+  const getConditions = level === LevelType.Ground ? getGroundConditions : getSandConditions;
 
   layer.array.forEach(({ coords, options }) => {
-    const condition = getCondition(options[0], coords);
+    const conditionsCell = getConditions(options[0], coords);
 
-    if (condition) {
-      conditions.push({
-        ...condition,
-      });
+    if (conditionsCell.length) {
+      conditions = [
+        ...conditions,
+        ...conditionsCell,
+      ];
     }
   });
 

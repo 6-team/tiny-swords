@@ -96,10 +96,10 @@
     async function renderAsync() {
       for (const { map, type } of maps) {
         if (type === LayersRenderType.Background) {
-          await staticScene.renderStaticLayer(map);  
+          await staticScene.renderStaticLayer(map);
         }
         if (type === LayersRenderType.Foreground) {
-          await foregroundScene.renderStaticLayer(map);  
+          await foregroundScene.renderStaticLayer(map);
         }
       }
 
