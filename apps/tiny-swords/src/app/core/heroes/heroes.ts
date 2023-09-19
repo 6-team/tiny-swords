@@ -12,6 +12,12 @@ export class Heroes {
 
   readonly heroes$ = this.#heroesSubject.asObservable();
 
+  initCoords;
+
+  constructor(coords: [number, number]) {
+    this.initCoords = coords;
+  }
+
   get heroes(): Hero[] {
     return this.#heroesSubject.getValue();
   }
@@ -35,7 +41,7 @@ export class Heroes {
   }
 
   #initDefaultHero({ id }: IPlayer, controller: IController): Hero {
-    const [initialX, initialY, height, width] = grid64.transformToPixels(7, 4, 3, 3);
+    const [initialX, initialY, height, width] = grid64.transformToPixels(this.initCoords[0], this.initCoords[1], 3, 3);
     const hero = new Hero({ controller, initialX, initialY, height, width, id });
 
     this.addHero(hero);

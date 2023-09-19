@@ -13,14 +13,14 @@
   import { Observable, filter, map, switchMap, tap } from "rxjs";
   import type { IPlayer } from "@shared";
 
-  const actions = new Actions();
-  const heroes = new Heroes();
-
   let interactiveScene: Renderer;
 
   const level = new Level();
   const { startCoords, endCoords, boundaries, maps, gridX, gridY } = level.next();
   const nextLevelArea = [endCoords];
+
+  const actions = new Actions();
+  const heroes = new Heroes([startCoords[0] - 1, startCoords[1] - 1]);
 
   const resourcesMap = [
     [],

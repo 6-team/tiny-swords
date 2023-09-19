@@ -5,6 +5,61 @@ import { Layer } from "../../../../layer/layer";
 import { shuffleArray, weightedRandomElement } from "../../../layers.utils";
 import { LayerCondition } from "../../../../layer/layer.types";
 
+export const GROUND_DECO_TILE_WEIGHT: Record<number, [TileName, number, boolean][]> = {
+  10: [
+    [TileName.DECO_MUSHROOM_S, 3, false],
+    [TileName.DECO_MUSHROOM_M, 2, false],
+    [TileName.DECO_MUSHROOM_L, 1, false],
+  ],
+  5: [
+    [TileName.DECO_STONE_S,    3, false],
+    [TileName.DECO_STONE_M,    2, false],
+    [TileName.DECO_STONE_L,    1, false],
+  ],
+  15: [
+    [TileName.DECO_BUSH_S,     3, false],
+    [TileName.DECO_BUSH_M,     2, false],
+    [TileName.DECO_BUSH_L,     1, false],
+  ],
+  6: [
+    [TileName.DECO_PUMPKIN_S,  2, false],
+    [TileName.DECO_PUMPKIN_M,  1, false],
+  ],
+  11: [
+    [TileName.DECO_WEED_S,     2, false],
+    [TileName.DECO_WEED_M,     1, false],
+  ],
+  4: [
+    [TileName.DECO_BONE_S_RIGHT, 1, false],
+    [TileName.DECO_BONE_S_LEFT,  1, false],
+    [TileName.DECO_BONE_M_RIGHT, 1, false],
+    [TileName.DECO_BONE_M_LEFT,  1, false],
+  ],
+};
+
+export const SAND_DECO_TILE_WEIGHT: Record<number, [TileName, number, boolean][]> = {
+  18: [
+    [TileName.DECO_STONE_S,    3, false],
+    [TileName.DECO_STONE_M,    2, false],
+    [TileName.DECO_STONE_L,    1, false],
+  ],
+  5: [
+    [TileName.DECO_BUSH_S,     3, false],
+    [TileName.DECO_BUSH_M,     2, false],
+    [TileName.DECO_BUSH_L,     1, false],
+  ],
+  20: [
+    [TileName.DECO_WEED_S,     2, false],
+    [TileName.DECO_WEED_M,     1, false],
+  ],
+  10: [
+    [TileName.DECO_BONE_S_RIGHT, 1, false],
+    [TileName.DECO_BONE_S_LEFT,  1, false],
+    [TileName.DECO_BONE_M_RIGHT, 1, false],
+    [TileName.DECO_BONE_M_LEFT,  1, false],
+  ],
+};
+
 /**
  * Создание перемешанного и фильтрованного массива координат
  */
@@ -71,61 +126,6 @@ export const decorationsWaterConditions = (layers): LayerCondition[] => {
   return conditions;
 };
 
-export const GROUND_DECO_TILE_WEIGHT: Record<number, [TileName, number, boolean][]> = {
-  10: [
-    [TileName.DECO_MUSHROOM_S, 3, false],
-    [TileName.DECO_MUSHROOM_M, 2, false],
-    [TileName.DECO_MUSHROOM_L, 1, false],
-  ],
-  5: [
-    [TileName.DECO_STONE_S,    3, false],
-    [TileName.DECO_STONE_M,    2, false],
-    [TileName.DECO_STONE_L,    1, false],
-  ],
-  15: [
-    [TileName.DECO_BUSH_S,     3, false],
-    [TileName.DECO_BUSH_M,     2, false],
-    [TileName.DECO_BUSH_L,     1, false],
-  ],
-  6: [
-    [TileName.DECO_PUMPKIN_S,  2, false],
-    [TileName.DECO_PUMPKIN_M,  1, false],
-  ],
-  11: [
-    [TileName.DECO_WEED_S,     2, false],
-    [TileName.DECO_WEED_M,     1, false],
-  ],
-  4: [
-    [TileName.DECO_BONE_S_RIGHT, 1, false],
-    [TileName.DECO_BONE_S_LEFT,  1, false],
-    [TileName.DECO_BONE_M_RIGHT, 1, false],
-    [TileName.DECO_BONE_M_LEFT,  1, false],
-  ],
-};
-
-export const SAND_DECO_TILE_WEIGHT: Record<number, [TileName, number, boolean][]> = {
-  18: [
-    [TileName.DECO_STONE_S,    3, false],
-    [TileName.DECO_STONE_M,    2, false],
-    [TileName.DECO_STONE_L,    1, false],
-  ],
-  5: [
-    [TileName.DECO_BUSH_S,     3, false],
-    [TileName.DECO_BUSH_M,     2, false],
-    [TileName.DECO_BUSH_L,     1, false],
-  ],
-  20: [
-    [TileName.DECO_WEED_S,     2, false],
-    [TileName.DECO_WEED_M,     1, false],
-  ],
-  10: [
-    [TileName.DECO_BONE_S_RIGHT, 1, false],
-    [TileName.DECO_BONE_S_LEFT,  1, false],
-    [TileName.DECO_BONE_M_RIGHT, 1, false],
-    [TileName.DECO_BONE_M_LEFT,  1, false],
-  ],
-};
-
 /**
  * Хелперы для создания декораций на поверхности
  */
@@ -168,10 +168,11 @@ export const decorationsTerrainConditions = (level: LevelType, layers): LayerCon
     ? GROUND_DECO_TILE_WEIGHT
     : SAND_DECO_TILE_WEIGHT;
 
-  if (availableCells.length) {
-    Object.keys(decoWeight).forEach((key: string, j) => {
+    let cursor = 0;
+    
+    Object.keys(decoWeight).forEach((key: string) => {
       for (let i = 0; i < +key; i++) {
-        const coords = availableCells[i * j];
+        const coords = availableCells[cursor];
 
         const tile = weightedRandomElement(decoWeight[key]);
         const [_, __, boundary] = decoWeight[key].find(([tileName]) => tileName === tile);
@@ -181,9 +182,10 @@ export const decorationsTerrainConditions = (level: LevelType, layers): LayerCon
           coords,
           boundary,
         });
+
+        cursor++;
       }
     });
-  }
 
   return conditions;
 };
