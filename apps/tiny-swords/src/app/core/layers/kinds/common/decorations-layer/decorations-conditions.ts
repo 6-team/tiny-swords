@@ -2,7 +2,7 @@
 import { LevelType } from "../../../../level/level";
 import { TileName } from "../../../../renderer";
 import { Layer } from "../../../../layer/layer";
-import { shuffleArray, weightedRandomElement } from "../../../layers.utils";
+import { randomElement, shuffleArray, weightedRandomElement } from "../../../layers.utils";
 import { LayerCondition } from "../../../../layer/layer.types";
 
 export const GROUND_DECO_TILE_WEIGHT: Record<number, [TileName, number, boolean][]> = {
@@ -11,7 +11,7 @@ export const GROUND_DECO_TILE_WEIGHT: Record<number, [TileName, number, boolean]
     [TileName.DECO_MUSHROOM_M, 2, false],
     [TileName.DECO_MUSHROOM_L, 1, false],
   ],
-  5: [
+  6: [
     [TileName.DECO_STONE_S,    3, false],
     [TileName.DECO_STONE_M,    2, false],
     [TileName.DECO_STONE_L,    1, false],
@@ -21,19 +21,23 @@ export const GROUND_DECO_TILE_WEIGHT: Record<number, [TileName, number, boolean]
     [TileName.DECO_BUSH_M,     2, false],
     [TileName.DECO_BUSH_L,     1, false],
   ],
-  6: [
-    [TileName.DECO_PUMPKIN_S,  2, false],
+  3: [
+    [TileName.DECO_PUMPKIN_S,  5, false],
     [TileName.DECO_PUMPKIN_M,  1, false],
   ],
   11: [
     [TileName.DECO_WEED_S,     2, false],
     [TileName.DECO_WEED_M,     1, false],
   ],
-  4: [
+  5: [
     [TileName.DECO_BONE_S_RIGHT, 1, false],
     [TileName.DECO_BONE_S_LEFT,  1, false],
     [TileName.DECO_BONE_M_RIGHT, 1, false],
     [TileName.DECO_BONE_M_LEFT,  1, false],
+  ],
+  [randomElement([2, 4])]: [
+    [TileName.SHEEP_RIGHT, 1, false],
+    [TileName.SHEEP_LEFT,  1, false],
   ],
 };
 
@@ -57,6 +61,10 @@ export const SAND_DECO_TILE_WEIGHT: Record<number, [TileName, number, boolean][]
     [TileName.DECO_BONE_S_LEFT,  1, false],
     [TileName.DECO_BONE_M_RIGHT, 1, false],
     [TileName.DECO_BONE_M_LEFT,  1, false],
+  ],
+  [randomElement([1, 2, 3, 4])]: [
+    [TileName.SHEEP_RIGHT, 1, false],
+    [TileName.SHEEP_LEFT,  1, false],
   ],
 };
 
