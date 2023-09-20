@@ -7,19 +7,20 @@
   import { nextLevelMenu, isMainMenu } from "../store/store";
   import MainMenu from "../components/mainMenu/MainMenu.svelte";
   import NextLevelMenu from "../components/nextLevelMenu/NextLevelMenu.svelte";
+  import { LayersRenderType } from "../core/layers/layers.types";
+  
   import type { IMovable } from "../abilities";
   import { Observable, filter, map, switchMap, tap } from "rxjs";
   import type { IPlayer } from "@shared";
 
-  const actions = new Actions();
-  const heroes = new Heroes();
-
   let interactiveScene: Renderer;
 
   const level = new Level();
-  const { enter, exit, maps, boundaries, layers: LAYERS, gridX, gridY } = level.init();
+  const { startCoords, endCoords, boundaries, maps, gridX, gridY } = level.next();
+  const nextLevelArea = [endCoords];
 
-  const nextLevelArea = [exit];
+  const actions = new Actions();
+  const heroes = new Heroes([startCoords[0] - 1, startCoords[1] - 1]);
 
   const resourcesMap = [
     [],
@@ -83,16 +84,6 @@
       grid: grid64,
     });
 
-    await staticScene.renderStaticLayer(maps[LAYERS.WATER]);
-    await staticScene.renderStaticLayer(maps[LAYERS.SHADOW]);
-    await staticScene.renderStaticLayer(maps[LAYERS.MAIN]);
-    await staticScene.renderStaticLayer(maps[LAYERS.DECO]);
-    await staticScene.renderStaticLayer(maps[LAYERS.ADD]);
-    await staticScene.renderStaticLayer(maps[LAYERS.SIGN]);
-    await staticScene.renderStaticLayer(maps[LAYERS.BOUND]);
-
-    await staticScene.renderStaticLayer(resourcesMap);
-
     /**
      * Рендер слоя с объектами переднего плана
      */
@@ -102,7 +93,20 @@
       grid: grid64,
     });
 
-    await foregroundScene.renderStaticLayer(maps[LAYERS.FOREG]);
+    async function renderAsync() {
+      for (const { map, type } of maps) {
+        if (type === LayersRenderType.Background) {
+          await staticScene.renderStaticLayer(map);
+        }
+        if (type === LayersRenderType.Foreground) {
+          await foregroundScene.renderStaticLayer(map);
+        }
+      }
+
+      await staticScene.renderStaticLayer(resourcesMap);
+    }
+
+    renderAsync();
 
     /**
      * Рендер интерактивных элементов, которые будут в движении
