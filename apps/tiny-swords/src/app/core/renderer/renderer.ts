@@ -137,10 +137,10 @@ export class Renderer {
     const { totalLives, availableLives, blockedLives } = lives;
     const heartWidth = 20;
     const heartHeight = 20;
-    const heartgPadding = 10;
+    const heartPadding = 10;
     const backgroundWidth = 128;
     const backgroundHeight = 42;
-    const barPositionX = 1080;
+    const barPositionX = 1152;
     const barPositionY = 20;
 
     const [backgroundImage, heartImage, wastedHeartImage, lockedHeartImage] = await Promise.all([
@@ -164,7 +164,7 @@ export class Renderer {
 
       this.#context.drawImage(
         heart,
-        i * (heartWidth + heartgPadding) + barPositionX + 22,
+        i * (heartWidth + heartPadding) + barPositionX + 22,
         barPositionY + 5,
         heartWidth,
         heartHeight,
@@ -186,7 +186,7 @@ export class Renderer {
     const maxWidthText = Math.max(...resources.map(({ count }) => this.#context.measureText(String(count)).width));
     this.#context.drawImage(
       backgroundImage,
-      50,
+      0,
       20,
       backgroundWidth + maxWidthText + maxWidthText / 2,
       backgroundHeight,
@@ -195,8 +195,8 @@ export class Renderer {
     await Promise.all(
       resources.map(async (resource, i) => {
         const resourceImage = await loadImage(resource.image);
-        this.#context.fillText(String(resource.count), 135 + maxWidthText / 5, i * hPadding + 55);
-        this.#context.drawImage(resourceImage, vPadding + 70 + maxWidthText / 5, i * hPadding + 23, 45, 45);
+        this.#context.fillText(String(resource.count), 85 + maxWidthText / 5, i * hPadding + 55);
+        this.#context.drawImage(resourceImage, vPadding + 20 + maxWidthText / 5, i * hPadding + 23, 45, 45);
       }),
     );
     return this;
