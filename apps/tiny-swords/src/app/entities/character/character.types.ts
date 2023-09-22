@@ -1,4 +1,3 @@
-export interface CharacterConfig<Abilities> {
-  abilities?: Abilities;
+export interface CharacterConfig {
   id?: string;
 }

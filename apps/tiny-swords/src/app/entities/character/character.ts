@@ -14,16 +14,16 @@ export default abstract class Character<
 
   id: string;
 
-  constructor({ abilities, id }: CharacterConfig<Abilities> = {}) {
+  constructor({ id }: CharacterConfig = {}) {
     super();
     this.id = id;
+  }
 
-    if (abilities) {
-      this._abilities = abilities;
+  protected _setAbilities(abilities: Abilities) {
+    this._abilities = abilities;
 
-      for (const key in abilities) {
-        abilities[key].setContext(this);
-      }
+    for (const key in abilities) {
+      abilities[key].setContext(this);
     }
   }
 

@@ -1,15 +1,19 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
+  import { Observable, filter, map, switchMap, tap } from "rxjs";
   import { Hero } from '../entities/hero'
+  import { Resource, ResourcesType } from '../entities/resource/index';
   import { TILE_SIZE, SCALE } from '../common/common.const'
-  import { Actions, Heroes, Grid, Renderer, TileName } from "../core";
+  import { Actions, Heroes, Grid, Renderer, grid64 } from "../core";
   import { Level } from "../core/level/level";
   import { nextLevelMenu, isMainMenu } from "../store/store";
   import MainMenu from "../components/mainMenu/MainMenu.svelte";
   import NextLevelMenu from "../components/nextLevelMenu/NextLevelMenu.svelte";
+  import type { IController } from '../controllers';
   import type { IMovable } from "../abilities";
-  import { Observable, filter, map, switchMap, tap } from "rxjs";
-  import type { IPlayer } from "@shared";
+  import type { IPlayer, MovingDirection } from "@shared";
+  import type { ICollecting, TMovableDimentions } from "../abilities/abilities.types";
+  import { frames$ } from "../tools/observables";
 
   const actions = new Actions();
   const heroes = new Heroes();
@@ -21,11 +25,20 @@
 
   const nextLevelArea = [exit];
 
-  const resourcesMap = [
-    [],
-    [],
-    [null, null, TileName.RESOURCES_GOLD, TileName.RESOURCES_WOOD, TileName.RESOURCES_MEAL],
-  ];
+  const goldPixels = grid64.transformToPixels(5, 4, 1, 1);
+  const goldController = {
+    movement$: new Observable(),
+    attack$: new Observable(),
+    setDirection: () => void 0
+  } as IController;
+  const gold = new Resource({
+    type: ResourcesType.GOLD,
+    initialX: goldPixels[0],
+    initialY: goldPixels[1],
+    width: goldPixels[3],
+    height: goldPixels[2],
+    controllerCreator: () => goldController
+  });
 
   let isNextLevelMenu = false;
   let isMainMenuShow = true
@@ -45,18 +58,22 @@
   }
 
   function handleHeroMovement(action$: Observable<IPlayer>): void {
-    action$.pipe(map(heroes.initHero.bind(heroes)), switchMap((hero: Hero) => {
-      const movable = hero.getAbility('movable');
+    const boundariesCoords = boundaries.map((bound): TMovableDimentions => grid64.transformToPixels(bound[0], bound[1], 1, 1));
 
-      return movable.movement$.pipe(switchMap((direction) => actions.updatePlayer({ id: hero.id, direction })));
-    })).subscribe();
+    action$
+      .pipe(
+        map((hero) => heroes.initHero(hero, boundariesCoords)),
+        switchMap((hero: Hero) => {
+          const movable = hero.getAbility('movable');
+
+          return movable.movement$.pipe(switchMap((direction) => actions.updatePlayer({ id: hero.id, direction })));
+        })
+      ).subscribe();
   }
 
   function handleUpdatedPlayers(): void {
     actions.updatePlayerListener().pipe(tap((player) => console.log('Update player', player))).subscribe((player) => {
       const existingPlayer = heroes.getHero(player);
-
-      console.log(player);
 
       if (existingPlayer) {
         const movable = existingPlayer.getAbility('movable')
@@ -90,8 +107,6 @@
     await staticScene.renderStaticLayer(maps[LAYERS.ADD]);
     await staticScene.renderStaticLayer(maps[LAYERS.SIGN]);
     await staticScene.renderStaticLayer(maps[LAYERS.BOUND]);
-
-    await staticScene.renderStaticLayer(resourcesMap);
 
     /**
      * Рендер слоя с объектами переднего плана
@@ -134,52 +149,38 @@
     // ...
 
     // Это надо будет наверное вынести куда то
-    function checkCollisions(movable: IMovable): void {
-      for (const area of nextLevelArea) {
-        const hasCollisionWithNextLevelArea = movable.checkCollision(
-          grid64.transformToPixels(area[0], area[1], 1, 1),
-        );
+    function checkCollisions(direction: MovingDirection, movable: IMovable, collecting: ICollecting): void {
+      // for (const area of nextLevelArea) {
+      //   const hasCollisionWithNextLevelArea = movable.checkCollision(
+      //     grid64.transformToPixels(area[0], area[1], 1, 1),
+      //   );
 
-        if (hasCollisionWithNextLevelArea) {
-          nextLevelMenu.set(true)
-          break;
-        }
-      }
+      //   if (hasCollisionWithNextLevelArea) {
+      //     nextLevelMenu.set(true)
+      //     break;
+      //   }
+      // }
 
-      for (const bound of boundaries) {
-        const hasCollision = movable.checkCollision(
-          grid64.transformToPixels(bound[0], bound[1], 1, 1),
-        );
+      // const goldMovable = gold.getAbility("movable");
+      // const hasCollision = movable.checkCollision(
+      //   [goldMovable.coords[0], goldMovable.coords[1], goldMovable.sizes[0], goldMovable.sizes[1]],
+      // );
 
-        if (hasCollision) {
-          movable.stopMovement();
-
-          break;
-        }
-      }
+      // if (hasCollision) {
+      //   // @TODO: Собрать один раз
+      //   collecting.collect(gold);
+      // }
     }
 
     let lastTime = 0;
 
-    const animate = (timeStamp = 0) => {
-      requestAnimationFrame(animate);
+    frames$.subscribe((timeStamp = 0) => {
       const deltaTime = timeStamp - lastTime;
 
       interactiveScene.renderMovableLayer(heroes.heroes, deltaTime);
+      interactiveScene.renderMovableLayer([gold], 0);
 
       lastTime = timeStamp
-    }
-
-    animate();
-
-    heroes.heroes$.subscribe((heroes) => {
-      for (const hero of heroes) {
-        const movable = hero.getAbility('movable');
-
-        movable.coords$.subscribe((_) => {
-          checkCollisions(movable);
-        });
-      }
     });
   });
 

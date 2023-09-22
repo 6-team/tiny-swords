@@ -1,6 +1,6 @@
-import { IMovable } from '../abilities.types';
+import { IMovable, TMovableDimentions } from '../abilities.types';
 import { IMovableCharacter, TNumberOfPixels, TPixelsPosition } from '../../common/common.types';
-import { MovingError, PIXELS_PER_FRAME, movementSetters } from './movable.const';
+import { MovingError, PIXELS_PER_FRAME, movementSetters, nextMoveCoordsGetters } from './movable.const';
 import { MovableProps } from './movable.types';
 import { BehaviorSubject, Observable, distinctUntilChanged, filter, withLatestFrom } from 'rxjs';
 import { HeroActionAnimation } from '../../entities/hero/hero.const';
@@ -30,9 +30,8 @@ export class Movable implements IMovable {
   readonly coords$: Observable<[TPixelsPosition, TPixelsPosition]>;
   readonly movement$ = this.#movement$.pipe(filter(() => Boolean(this.#context))).pipe(distinctUntilChanged());
 
-  constructor({ height, width, initialX, initialY, getCollisionArea, controller }: MovableProps) {
+  constructor({ height, width, initialX, initialY, getCollisionArea }: MovableProps) {
     this.#sizes = [height, width || height];
-    this.#controller = controller;
     this.#getCollisionAreaFunc = getCollisionArea;
 
     this.#prevCoords$ = new BehaviorSubject<[TPixelsPosition, TPixelsPosition]>([initialX, initialY]);
@@ -41,10 +40,23 @@ export class Movable implements IMovable {
     this.coords$ = this.#coords$.asObservable();
 
     this.movement$.subscribe(this.#handleMovementChange);
+  }
+
+  /**
+   * Устанавливает контроллер для управления способностью.
+   * Для установки понадобился отдельный метод, чтобы была возможность использовать декораторы для контроллера с передачей this
+   *
+   * @param controller Контроллер
+   * @returns Объект способности
+   */
+  setController(controller: IController) {
+    this.#controller = controller;
 
     frames$
-      .pipe(withLatestFrom(controller.movement$, this.#movement$, this.#coords$, this.#prevCoords$))
+      .pipe(withLatestFrom(controller.movement$, this.#movement$, this.#coords$))
       .subscribe(this.#handleFrameChange);
+
+    return this;
   }
 
   /**
@@ -73,14 +85,12 @@ export class Movable implements IMovable {
    * @param param0 [time, direction, movement, coords]
    * @returns Объект способности
    */
-  #handleFrameChange = ([_, direction, movement, coords, prevCoords]) => {
+  #handleFrameChange = ([_, direction, movement, coords]) => {
     /**
      * Если остановили вручную, то возвращаем обратно, где и был до коллизии и завершаем анимацию
      */
     if (this.#isStoppedManually) {
-      this.#movingProgressRemaining = 0;
       this.#isStoppedManually = false;
-      this.#coords$.next(prevCoords);
 
       return this;
     }
@@ -99,7 +109,6 @@ export class Movable implements IMovable {
     if (this.#movingProgressRemaining === 0 && direction !== MovingDirection.IDLE) {
       this.#movement$.next(direction);
       this.#movingProgressRemaining = grid64.tileSize;
-      this.#prevCoords$.next(coords);
     }
 
     /**
@@ -107,7 +116,6 @@ export class Movable implements IMovable {
      */
     if (this.#movingProgressRemaining === 0 && direction === MovingDirection.IDLE) {
       this.#movement$.next(direction);
-      this.#prevCoords$.next(coords);
     }
 
     return this;
@@ -187,26 +195,13 @@ export class Movable implements IMovable {
   }
 
   /**
-   * Останавливает движение персонажа.
-   *
-   * @returns Объект способности
-   */
-  stopMovement(): this {
-    this.#isStoppedManually = true;
-
-    return this;
-  }
-
-  /**
    * Проверяет коллизию между текущим элементом и переданным
    *
    * @param rect2Coords Координаты в px второго объекта, с которым идёт сравнение
    * @returns Произошла ли коллизия
    */
-  checkCollision(
-    rect2Coords: [pxX: TPixelsPosition, pxY: TPixelsPosition, pxHeight: TNumberOfPixels, pxWidth: TNumberOfPixels],
-  ) {
-    const [rect1Left, rect1Top, rect1Height, rect1Width] = this.collisionArea;
+  checkCollision(rect2Coords: TMovableDimentions, collisionArea = this.collisionArea) {
+    const [rect1Left, rect1Top, rect1Height, rect1Width] = collisionArea;
     const [rect2Left, rect2Top, rect2Height, rect2Width] = rect2Coords;
 
     const rect1Right = rect1Left + rect1Width;
@@ -221,11 +216,22 @@ export class Movable implements IMovable {
     return true;
   }
 
+  getNextCollisionArea(direction: MovingDirection) {
+    const nextCoordsGetter = nextMoveCoordsGetters[direction];
+    const collisionArea = this.collisionArea;
+    const coords = nextCoordsGetter([collisionArea[0], collisionArea[1]]);
+    const next: TMovableDimentions = [coords[0], coords[1], collisionArea[2], collisionArea[3]];
+
+    return next;
+  }
+
   /**
    * Возвращает зону персонажа, которая участвует в сравнении коллизий.
    */
-  get collisionArea(): [x: TPixelsPosition, y: TPixelsPosition, height: TNumberOfPixels, width: TNumberOfPixels] {
-    return this.#getCollisionAreaFunc ? this.#getCollisionAreaFunc(this) : [0, 0, this.#sizes[0], this.#sizes[1]];
+  get collisionArea() {
+    return this.#getCollisionAreaFunc
+      ? this.#getCollisionAreaFunc(this)
+      : [this.coords[0], this.coords$[1], this.#sizes[0], this.#sizes[1]];
   }
 
   /**

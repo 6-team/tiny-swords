@@ -1,20 +1,43 @@
 import { Observable } from 'rxjs';
 import {
   IAttackingCharacter,
+  ICharacter,
+  ICollectingCharacter,
   IMovableCharacter,
+  IResource,
   ITile,
   TNumberOfPixels,
   TPixelsPosition,
 } from '../common/common.types';
 import { AttackingForce } from './abilities.const';
 import { MovingDirection } from '@shared';
+import { IController } from '../controllers';
 
-export interface IAttacking {
-  setContext(context: IAttackingCharacter): IAttacking;
-  attack(type?: AttackingForce): IAttacking;
+interface IAbility<Context> {
+  /**
+   * Устанавливает контекст/носителя данной способности.
+   * Нужно, чтобы вызывать его методы, такие как показ анимации, изменение изображения и т.п.
+   *
+   * @param context Контекст
+   * @returns Объект способности
+   */
+  setContext(context: Context): this;
 }
 
-export interface IMovable {
+export interface ICollecting extends IAbility<ICollectingCharacter> {
+  /**
+   * Помещает предмет коллекционирования в коллекцию
+   *
+   * @param item Предмет коллекционирования
+   */
+  collect(item: IResource): this;
+}
+
+export interface IAttacking extends IAbility<IAttackingCharacter> {
+  attack(type?: AttackingForce): this;
+}
+
+export interface IMovable extends IAbility<IMovableCharacter> {
   /**
    * Зона персонажа, которая участвует в сравнении коллизий.
    */
@@ -30,6 +53,8 @@ export interface IMovable {
    */
   coords: [x: TNumberOfPixels, y: TNumberOfPixels];
 
+  setDirection(direction: MovingDirection): void;
+
   /**
    * Устанавливает контекст/носителя данной способности.
    * Нужно, чтобы вызывать его методы, такие как показ анимации, изменение изображения и т.п.
@@ -37,16 +62,18 @@ export interface IMovable {
    * @param context Контекст
    * @returns Объект способности
    */
-  setContext(context: IMovableCharacter): IMovable;
+  setContext(context: ICharacter<{ movable: IMovable }>): this;
 
   /**
-   * Останавливает движение персонажа.
+   * Устанавливает контроллер для управления способностью.
+   * Для установки понадобился отдельный метод, чтобы была возможность использовать декораторы для контроллера с передачей this
    *
+   * @param controller Контроллер
    * @returns Объект способности
    */
-  stopMovement(): IMovable;
+  setController(controller: IController): this;
 
-  setDirection(direction: MovingDirection): void;
+  getNextCollisionArea(direction: MovingDirection): TMovableDimentions;
 
   /**
    * Проверяет коллизию между текущим элементом и переданным
@@ -54,9 +81,7 @@ export interface IMovable {
    * @param rect2Coords Координаты в px второго объекта, с которым идёт сравнение
    * @returns Произошла ли коллизия
    */
-  checkCollision(
-    rect2Coords: [pxX: TPixelsPosition, pxY: TPixelsPosition, pxHeight: TNumberOfPixels, pxWidth: TNumberOfPixels],
-  ): boolean;
+  checkCollision(rect2Coords: TMovableDimentions, collisionArea?: TMovableDimentions): boolean;
 
   /**
    * Поток координат персонажа
@@ -77,3 +102,10 @@ export interface IMovable {
 export interface WithSetPersonageContext {
   setContext(context: ITile): void;
 }
+
+export type TMovableDimentions = [
+  pxX: TPixelsPosition,
+  pxY: TPixelsPosition,
+  pxHeight: TNumberOfPixels,
+  pxWidth: TNumberOfPixels,
+];

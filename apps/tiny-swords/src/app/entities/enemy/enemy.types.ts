@@ -1,5 +1,5 @@
 import { IAttacking, IMovable } from '../../abilities';
-import { TNumberOfPixels, TTilePosition } from '../../common/common.types';
+import { IAttackingCharacter, IMovableCharacter, TNumberOfPixels, TTilePosition } from '../../common/common.types';
 import { IController } from '../../controllers';
 
 export type EnemyAbilities = {
@@ -8,7 +8,7 @@ export type EnemyAbilities = {
 };
 
 export interface EnemyConfig {
-  controller: IController;
+  controllerCreator: (enemy: IMovableCharacter & IAttackingCharacter) => IController;
   height: TNumberOfPixels;
   width: TNumberOfPixels;
   initialX: TTilePosition;

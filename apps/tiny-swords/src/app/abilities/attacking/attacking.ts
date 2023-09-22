@@ -1,21 +1,16 @@
 import { IAttacking } from '../abilities.types';
-import { IAttackingCharacter, ITile } from '../../common/common.types';
+import { IAttackingCharacter } from '../../common/common.types';
 import { AttackingError } from './attacking.const';
 import { AttackingAnimation, AttackingForce } from '../abilities.const';
-import { AttackingProps } from './attacking.types';
 import { filter } from 'rxjs';
+import { IController } from '../../controllers';
 
 /**
  * Класс способности атаковать
  */
 export class Attacking implements IAttacking {
   #context?: IAttackingCharacter;
-
-  constructor({ stream$ }: AttackingProps) {
-    stream$.pipe(filter(() => Boolean(this.#context))).subscribe((force) => {
-      this.attack(force);
-    });
-  }
+  #controller?: IController;
 
   /**
    * Устанавливает контекст/носителя данной способности.
@@ -26,6 +21,23 @@ export class Attacking implements IAttacking {
    */
   setContext(context: IAttackingCharacter) {
     this.#context = context;
+
+    return this;
+  }
+
+  /**
+   * Устанавливает контроллер для управления способностью.
+   * Для установки понадобился отдельный метод, чтобы была возможность использовать декораторы для контроллера с передачей this
+   *
+   * @param controller Контроллер
+   * @returns Объект способности
+   */
+  setController(controller: IController) {
+    this.#controller = controller;
+
+    controller.attack$.pipe(filter(() => Boolean(this.#context))).subscribe((force) => {
+      this.attack(force);
+    });
 
     return this;
   }

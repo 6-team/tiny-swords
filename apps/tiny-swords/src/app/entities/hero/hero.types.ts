@@ -1,17 +1,25 @@
 import { IAttacking, IMovable } from '../../abilities';
-import { TNumberOfPixels, TTilePosition } from '../../common/common.types';
+import { ICollecting } from '../../abilities/abilities.types';
+import {
+  IAttackingCharacter,
+  ICharacter,
+  IMovableCharacter,
+  TNumberOfPixels,
+  TPixelsPosition,
+} from '../../common/common.types';
 import { IController } from '../../controllers';
 
 export type HeroAbilities = {
   movable: IMovable;
   attacking: IAttacking;
+  collecting: ICollecting;
 };
 
 export interface HeroConfig {
-  controller: IController;
+  controllerCreator: (hero: IMovableCharacter & IAttackingCharacter) => IController;
   height: TNumberOfPixels;
   width: TNumberOfPixels;
-  initialX: TTilePosition;
-  initialY: TTilePosition;
+  initialX: TPixelsPosition;
+  initialY: TPixelsPosition;
   id: string;
 }
