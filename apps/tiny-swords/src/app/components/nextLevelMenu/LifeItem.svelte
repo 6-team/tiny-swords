@@ -36,8 +36,8 @@
 <style lang="scss">
   .next-btn {
     position: absolute;
-    top: calc(100% - 50px);
-    left: calc(100% - 115px);
+    top: calc(100% - 80px);
+    left: calc(50% + 25px);
     transform: translate(-100%, -100%);
     font-size: 16px;
     background: no-repeat url(img/UI/Button_Blue_3Slides_Pressed.png);
