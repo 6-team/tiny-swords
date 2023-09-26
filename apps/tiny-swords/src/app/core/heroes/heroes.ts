@@ -6,7 +6,7 @@ import { IController } from '../../controllers';
 
 import { IPlayer } from '@shared';
 import { BehaviorSubject } from 'rxjs';
-import { TCollisionArea } from '../../abilities/abilities.types';
+import { TCollisionArea, TPixelsCoords } from '../../abilities/abilities.types';
 import { collisions } from '../collisions';
 
 export class Heroes {
@@ -18,12 +18,38 @@ export class Heroes {
     return this.#heroesSubject.getValue();
   }
 
-  initHero(player: IPlayer, bounds: Array<TCollisionArea>): Hero {
-    return this.#initDefaultHero(player, new KeyboardController(), bounds);
+  initHero({ id }: IPlayer, bounds: Array<TCollisionArea>, position: TPixelsCoords): Hero {
+    const [initialX, initialY, height, width] = position;
+
+    const hero = new Hero({
+      controllerCreator: (hero) => collisions.decorateController(hero, bounds, new KeyboardController()),
+      initialX,
+      initialY,
+      height,
+      width,
+      id,
+    });
+
+    this.addHero(hero);
+
+    return hero;
   }
 
-  initConnectedHero(player: IPlayer): Hero {
-    return this.#initDefaultHero(player, new ServerController());
+  initConnectedHero({ id }: IPlayer, position: TPixelsCoords): Hero {
+    const [initialX, initialY, height, width] = position;
+
+    const hero = new Hero({
+      controllerCreator: () => new ServerController({ id }),
+      initialX,
+      initialY,
+      height,
+      width,
+      id,
+    });
+
+    this.addHero(hero);
+
+    return hero;
   }
 
   addHero(hero: Hero): void {
@@ -36,8 +62,13 @@ export class Heroes {
     return this.heroes.find(({ id }) => player.id === id);
   }
 
-  #initDefaultHero({ id }: IPlayer, controller: IController, bounds: Array<TCollisionArea> = []): Hero {
-    const [initialX, initialY, height, width] = grid64.transformToPixels(0, 1, 3, 3);
+  #initDefaultHero(
+    { id }: IPlayer,
+    controller: IController,
+    bounds: Array<TCollisionArea> = [],
+    position: TPixelsCoords,
+  ): Hero {
+    const [initialX, initialY, height, width] = position;
 
     const hero = new Hero({
       controllerCreator: (hero) => collisions.decorateController(hero, bounds, controller),

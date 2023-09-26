@@ -47,7 +47,7 @@ export class Collisions {
     return {
       ...controller,
       movement$: frames$.pipe(
-        withLatestFrom(movable.tileCoords$, controller.movement$),
+        withLatestFrom(movable.breakpoints$, controller.movement$),
         map(([_f, _s, direction]) => {
           for (const bound of bounds) {
             const nextCollisionArea = movable.getNextCollisionArea(direction);

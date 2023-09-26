@@ -48,8 +48,6 @@ export interface IMovable extends IAbility<IMovableCharacter> {
    */
   coords: [x: TNumberOfPixels, y: TNumberOfPixels];
 
-  setDirection(direction: MovingDirection): void;
-
   /**
    * Устанавливает контекст/носителя данной способности.
    * Нужно, чтобы вызывать его методы, такие как показ анимации, изменение изображения и т.п.
@@ -96,16 +94,18 @@ export interface IMovable extends IAbility<IMovableCharacter> {
   /**
    * Поток координат, когда персонаж оказывается в очередной клетке
    */
-  tileCoords$: Observable<[x: TNumberOfPixels, y: TNumberOfPixels]>;
+  breakpoints$: Observable<[x: TNumberOfPixels, y: TNumberOfPixels]>;
 }
 
 export interface WithSetPersonageContext {
   setContext(context: ITile): void;
 }
 
-export type TCollisionArea = [
+export type TPixelsCoords = [
   pxX: TPixelsPosition,
   pxY: TPixelsPosition,
   pxHeight: TNumberOfPixels,
   pxWidth: TNumberOfPixels,
 ];
+
+export type TCollisionArea = TPixelsCoords;

@@ -11,7 +11,7 @@
   import NextLevelMenu from "../components/nextLevelMenu/NextLevelMenu.svelte";
   import { frames$ } from "../tools/observables";
   import { collisions } from "../core/collisions";
-  import { MovingDirection } from "@shared";
+
   import type { IPlayer } from "@shared";
   import type { TCollisionArea } from "../abilities/abilities.types";
   import type { ICollectingCharacter, IMovableCharacter } from "../common/common.types";
@@ -63,10 +63,11 @@
 
   function handleHeroMovement(action$: Observable<IPlayer>): void {
     const boundariesCoords = boundaries.map((bound): TCollisionArea => grid64.transformToPixels(bound[0], bound[1], 1, 1));
+    const entryCoords = grid64.transformToPixels(...enter, 3, 3);
 
     action$
       .pipe(
-        map((hero) => heroes.initHero(hero, boundariesCoords)),
+        map((hero) => heroes.initHero(hero, boundariesCoords, entryCoords)),
         switchMap((hero: Hero) => {
           const movable = hero.getAbility('movable');
 
@@ -76,19 +77,18 @@
   }
 
   function handleUpdatedPlayers(): void {
-    actions.updatePlayerListener().pipe(tap((player) => console.log('Update player', player))).subscribe((player) => {
-      const existingPlayer = heroes.getHero(player);
+    actions.updatePlayerListener()
+      .pipe(tap((player) => console.log('Update player', player)))
+      .subscribe((player) => {
+        const existingPlayer = heroes.getHero(player);
+        const entryCoords = grid64.transformToPixels(...enter, 3, 3);
 
-      if (existingPlayer) {
-        const movable = existingPlayer.getAbility('movable')
+        if (existingPlayer) {
+          return;
+        }
 
-        movable.setDirection(player.direction!);
-
-        return;
-      }
-
-      heroes.initConnectedHero(player);
-    });
+        heroes.initConnectedHero(player, entryCoords);
+      });
   }
 
   onMount(async () => {
@@ -211,7 +211,7 @@
       for (const hero of heroes) {
         const movable = hero.getAbility('movable');
 
-        movable.tileCoords$.subscribe((_) => {
+        movable.breakpoints$.subscribe((_) => {
           checkCollisions(hero);
         });
       }
