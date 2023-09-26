@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
-  import { Observable, filter, map, switchMap, tap } from "rxjs";
+  import { BehaviorSubject, Observable, filter, map, switchMap, tap } from "rxjs";
   import { Hero } from '../entities/hero'
   import { Resource, ResourcesType } from '../entities/resource/index';
   import { TILE_SIZE, SCALE } from '../common/common.const'
@@ -9,36 +9,40 @@
   import { nextLevelMenu, isMainMenu } from "../store/store";
   import MainMenu from "../components/mainMenu/MainMenu.svelte";
   import NextLevelMenu from "../components/nextLevelMenu/NextLevelMenu.svelte";
-  import type { IController } from '../controllers';
-  import type { IMovable } from "../abilities";
-  import type { IPlayer, MovingDirection } from "@shared";
-  import type { ICollecting, TMovableDimentions } from "../abilities/abilities.types";
   import { frames$ } from "../tools/observables";
+  import { collisions } from "../core/collisions";
+  import { MovingDirection } from "@shared";
+  import type { IPlayer } from "@shared";
+  import type { TCollisionArea } from "../abilities/abilities.types";
+  import type { ICollectingCharacter, IMovableCharacter } from "../common/common.types";
 
   const actions = new Actions();
   const heroes = new Heroes();
-
-  let interactiveScene: Renderer;
-
   const level = new Level();
+
   const { enter, exit, maps, boundaries, layers: LAYERS, gridX, gridY } = level.init();
 
   const nextLevelArea = [exit];
-
-  const goldPixels = grid64.transformToPixels(5, 4, 1, 1);
-  const goldController = {
-    movement$: new Observable(),
-    attack$: new Observable(),
-    setDirection: () => void 0
-  } as IController;
-  const gold = new Resource({
-    type: ResourcesType.GOLD,
-    initialX: goldPixels[0],
-    initialY: goldPixels[1],
-    width: goldPixels[3],
-    height: goldPixels[2],
-    controllerCreator: () => goldController
-  });
+  const resources$ = new BehaviorSubject([
+    {
+      coords: grid64.transformToPixels(3, 4, 1, 1),
+      element: new Resource({
+        type: ResourcesType.GOLD,
+      })
+    },
+    {
+      coords: grid64.transformToPixels(4, 5, 1, 1),
+      element: new Resource({
+        type: ResourcesType.MEAT,
+      })
+    },
+    {
+      coords: grid64.transformToPixels(5, 6, 1, 1),
+      element: new Resource({
+        type: ResourcesType.WOOD,
+      })
+    }
+  ]);
 
   let isNextLevelMenu = false;
   let isMainMenuShow = true
@@ -58,7 +62,7 @@
   }
 
   function handleHeroMovement(action$: Observable<IPlayer>): void {
-    const boundariesCoords = boundaries.map((bound): TMovableDimentions => grid64.transformToPixels(bound[0], bound[1], 1, 1));
+    const boundariesCoords = boundaries.map((bound): TCollisionArea => grid64.transformToPixels(bound[0], bound[1], 1, 1));
 
     action$
       .pipe(
@@ -122,8 +126,14 @@
     /**
      * Рендер интерактивных элементов, которые будут в движении
      */
-    interactiveScene = new Renderer({
+    const interactiveScene = new Renderer({
       canvas: document.getElementById('canvas_interactive') as HTMLCanvasElement,
+      scale: SCALE,
+      grid: grid64,
+    });
+
+    const resourcesScene = new Renderer({
+      canvas: document.getElementById('canvas_resources') as HTMLCanvasElement,
       scale: SCALE,
       grid: grid64,
     });
@@ -149,38 +159,62 @@
     // ...
 
     // Это надо будет наверное вынести куда то
-    function checkCollisions(direction: MovingDirection, movable: IMovable, collecting: ICollecting): void {
-      // for (const area of nextLevelArea) {
-      //   const hasCollisionWithNextLevelArea = movable.checkCollision(
-      //     grid64.transformToPixels(area[0], area[1], 1, 1),
-      //   );
+    function checkCollisions(character: IMovableCharacter & ICollectingCharacter): void {
+      const movable = character.getAbility('movable');
+      const collecting = character.getAbility('collecting');
 
-      //   if (hasCollisionWithNextLevelArea) {
-      //     nextLevelMenu.set(true)
-      //     break;
-      //   }
-      // }
+      for (const area of nextLevelArea) {
+        const hasCollisionWithNextLevelArea = collisions.hasCollision(
+          movable.getCollisionArea(),
+          grid64.transformToPixels(area[0], area[1], 1, 1),
+        );
 
-      // const goldMovable = gold.getAbility("movable");
-      // const hasCollision = movable.checkCollision(
-      //   [goldMovable.coords[0], goldMovable.coords[1], goldMovable.sizes[0], goldMovable.sizes[1]],
-      // );
+        if (hasCollisionWithNextLevelArea) {
+          nextLevelMenu.set(true);
 
-      // if (hasCollision) {
-      //   // @TODO: Собрать один раз
-      //   collecting.collect(gold);
-      // }
+          break;
+        }
+      }
+
+      const resources = resources$.getValue();
+
+      for (const resource of resources) {
+        const hasCollision = collisions.hasCollision(
+          movable.getCollisionArea(),
+          resource.coords
+        );
+
+        if (hasCollision) {
+          collecting.collect(resource.element);
+          resources$.next(resources.filter((original) => original.element !== resource.element));
+        }
+      }
     }
 
     let lastTime = 0;
+
+    resources$.subscribe((resources) => {
+      resourcesScene.clear();
+      resources.forEach(({ coords, element }) => {
+        resourcesScene.render(coords, element);
+      });
+    });
 
     frames$.subscribe((timeStamp = 0) => {
       const deltaTime = timeStamp - lastTime;
 
       interactiveScene.renderMovableLayer(heroes.heroes, deltaTime);
-      interactiveScene.renderMovableLayer([gold], 0);
-
       lastTime = timeStamp
+    });
+
+    heroes.heroes$.subscribe((heroes) => {
+      for (const hero of heroes) {
+        const movable = hero.getAbility('movable');
+
+        movable.tileCoords$.subscribe((_) => {
+          checkCollisions(hero);
+        });
+      }
     });
   });
 
@@ -191,6 +225,7 @@
 
 <div>
   <canvas id="canvas" width="1280" height="832" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%);"></canvas>
+  <canvas id="canvas_resources" width="1280" height="832" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%);"></canvas>
   <canvas id="canvas_interactive" width="1280" height="832" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%);"></canvas>
   <canvas id="canvas_foreground" width="1280" height="832" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%);"></canvas>
   <canvas id="canvas_hero_bar" width="1280" height="120px" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%);"></canvas>

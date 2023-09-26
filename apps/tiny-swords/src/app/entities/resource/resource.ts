@@ -1,29 +1,18 @@
-import { Movable } from '../../abilities/movable';
-import { IMovableCharacter } from '../../common/common.types';
-import { Character } from '../character';
+import { IResource } from '../../common/common.types';
+import { Tile } from '../tile/tile';
 import { ResourcesType, mapResourcesToCoords } from './resource.const';
-import { IResourceConfig, ResourceAbilities } from './resource.types';
+import { IResourceConfig } from './resource.types';
 
-export class Resource extends Character<ResourcesType, ResourceAbilities> implements IMovableCharacter {
+export class Resource extends Tile<ResourcesType> implements IResource {
   protected _type: ResourcesType;
-  protected _sprite;
+  protected _sprite: string;
 
-  constructor({ type, height, width, initialX, initialY, controllerCreator }: IResourceConfig) {
-    super({});
+  powerUps = [];
 
-    const movable = new Movable({
-      height,
-      width,
-      initialX,
-      initialY,
-    });
+  constructor({ type }: IResourceConfig) {
+    super();
 
     this.setType(type);
-    this._setAbilities({
-      movable,
-    });
-
-    movable.setController(controllerCreator(this));
   }
 
   setType(type: ResourcesType = ResourcesType.GOLD) {
@@ -32,12 +21,15 @@ export class Resource extends Character<ResourcesType, ResourceAbilities> implem
     switch (type) {
       case ResourcesType.GOLD:
         this._sprite = '/img/Resources/G_Idle.png';
+
         break;
       case ResourcesType.WOOD:
         this._sprite = '/img/Resources/M_Idle.png';
+
         break;
       case ResourcesType.MEAT:
         this._sprite = '/img/Resources/W_Idle.png';
+
         break;
     }
   }

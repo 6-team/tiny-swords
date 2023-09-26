@@ -33,7 +33,11 @@ export interface ICharacter<Abilities extends Record<string | symbol | number, W
   getAbility<Name extends keyof Abilities>(name: Name): Abilities[Name];
 }
 
-export interface IResource {}
+export interface PowerUp {}
+
+export interface IResource {
+  powerUps: Array<PowerUp>;
+}
 
 export interface IMovableCharacter extends ICharacter<{ movable: IMovable }> {}
 

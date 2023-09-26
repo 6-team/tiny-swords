@@ -39,11 +39,6 @@ export interface IAttacking extends IAbility<IAttackingCharacter> {
 
 export interface IMovable extends IAbility<IMovableCharacter> {
   /**
-   * Зона персонажа, которая участвует в сравнении коллизий.
-   */
-  collisionArea: [x: TPixelsPosition, y: TPixelsPosition, height: TNumberOfPixels, width: TNumberOfPixels];
-
-  /**
    * Размеры персонажа
    */
   sizes: [height: number, width: number];
@@ -73,15 +68,20 @@ export interface IMovable extends IAbility<IMovableCharacter> {
    */
   setController(controller: IController): this;
 
-  getNextCollisionArea(direction: MovingDirection): TMovableDimentions;
+  /**
+   * Возвращает зону персонажа, которая участвует в сравнении коллизий.
+   *
+   * @returns Зона для сравнения коллизий
+   */
+  getCollisionArea(): TCollisionArea;
 
   /**
-   * Проверяет коллизию между текущим элементом и переданным
+   * Возвращает зону коллизии персонажа, которая будет при перемещении в указанном направлении.
    *
-   * @param rect2Coords Координаты в px второго объекта, с которым идёт сравнение
-   * @returns Произошла ли коллизия
+   * @param direction Направление движения
+   * @returns Координаты и размеры
    */
-  checkCollision(rect2Coords: TMovableDimentions, collisionArea?: TMovableDimentions): boolean;
+  getNextCollisionArea(direction: MovingDirection): TCollisionArea;
 
   /**
    * Поток координат персонажа
@@ -89,21 +89,21 @@ export interface IMovable extends IAbility<IMovableCharacter> {
   coords$: Observable<[x: TNumberOfPixels, y: TNumberOfPixels]>;
 
   /**
-   * Поток предыдущих координат персонажа, которые были до начала последнего перехода
-   */
-  prevCoords$: Observable<[x: TNumberOfPixels, y: TNumberOfPixels]>;
-
-  /**
    * Поток команд для движения
    */
   movement$: Observable<MovingDirection>;
+
+  /**
+   * Поток координат, когда персонаж оказывается в очередной клетке
+   */
+  tileCoords$: Observable<[x: TNumberOfPixels, y: TNumberOfPixels]>;
 }
 
 export interface WithSetPersonageContext {
   setContext(context: ITile): void;
 }
 
-export type TMovableDimentions = [
+export type TCollisionArea = [
   pxX: TPixelsPosition,
   pxY: TPixelsPosition,
   pxHeight: TNumberOfPixels,
