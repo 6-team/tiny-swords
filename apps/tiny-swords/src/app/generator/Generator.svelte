@@ -4,13 +4,13 @@
   import { TILE_SIZE, SCALE } from '../common/common.const'
   import { Actions, Heroes, Grid, Renderer, TileName, grid64 } from "../core";
   import { Level } from "../core/level/level";
-  import { nextLevelMenu, isMainMenu, endCoordsStore, startCoordsStore, mapsStore, boundariesStore } from "../store";
+  import { nextLevelMenu, isMainMenu, endCoordsStore, startCoordsStore, mapsStore, boundariesStore, storeToObservable } from "../store";
   import MainMenu from "../components/mainMenu/MainMenu.svelte";
   import NextLevelMenu from "../components/nextLevelMenu/NextLevelMenu.svelte";
   import { LayersRenderType } from "../core/layers/layers.types";
 
   import type { IMovable } from "../abilities";
-  import { Observable, filter, map, switchMap, tap } from "rxjs";
+  import { Observable, filter, map, tap, switchMap, zip, } from "rxjs";
   import type { IPlayer } from "@shared";
 
   const resourcesMap = [
@@ -26,13 +26,17 @@
   const level = new Level();
   const { gridX, gridY, ...levelParts } = level.next();
 
-  let startCoords = levelParts.startCoords;
-  let endCoords = levelParts.endCoords;
-  let boundaries = levelParts.boundaries;
-  let maps = levelParts.maps;
+  const boundaries = storeToObservable(boundariesStore, levelParts.boundaries);
+  const startCoords = storeToObservable(startCoordsStore, levelParts.startCoords);
+  const endCoords = storeToObservable(endCoordsStore, levelParts.endCoords);
+  const maps = storeToObservable(mapsStore, levelParts.maps);
 
-  async function renderAsync() {
-    for (const { map, type } of maps) {
+  const levelStores$ = zip(boundaries, startCoords, endCoords, maps)
+    .pipe(map(([boundaries, startCoords, endCoords, maps]) => ({ boundaries, startCoords, endCoords, maps })),
+);
+
+  async function renderAsync(): Promise<void> {
+    for (const { map, type } of $maps) {
       if (type === LayersRenderType.Background) {
         await staticScene.renderStaticLayer(map);
       }
@@ -44,7 +48,7 @@
     await staticScene.renderStaticLayer(resourcesMap);
   }
 
-  function createNewLevel() {
+  function createNewLevel(): void {
     const { boundaries, endCoords, startCoords, maps } = new Level().next();
       [staticScene, foregroundScene].forEach((scene) => scene.clear())
       boundariesStore.set(boundaries);
@@ -65,18 +69,13 @@
   }
 
   const actions = new Actions();
-  const heroes = new Heroes([startCoords[0] - 1, startCoords[1] - 1]);
+  const heroes = new Heroes([$startCoords[0] - 1, $startCoords[1] - 1]);
 
   let isNextLevelMenu = false;
   let isMainMenuShow = true;
 
   nextLevelMenu.subscribe( value => isNextLevelMenu = value)
   isMainMenu.subscribe( value => isMainMenuShow = value)
-  // Level Stores
-  startCoordsStore.subscribe(value => startCoords = value ?? levelParts.startCoords);
-  endCoordsStore.subscribe(value => endCoords = value ?? levelParts.endCoords);
-  boundariesStore.subscribe(value => boundaries = value ?? levelParts.boundaries);
-  mapsStore.subscribe(value => maps = value ?? levelParts.maps);
 
   const initGame = (): void => {
     const action$ = actions.initGame().pipe(filter(Boolean), tap(() => console.log('The game was created')));
@@ -169,7 +168,7 @@
 
     // Это надо будет наверное вынести куда то
     function checkCollisions(movable: IMovable): void {
-      for (const area of [endCoords]) {
+      for (const area of [$endCoords]) {
         const hasCollisionWithNextLevelArea = movable.checkCollision(
           grid64.transformToPixels(area[0], area[1], 1, 1),
         );
@@ -180,7 +179,7 @@
         }
       }
 
-      for (const bound of boundaries) {
+      for (const bound of $boundaries) {
         const hasCollision = movable.checkCollision(
           grid64.transformToPixels(bound[0], bound[1], 1, 1),
         );
@@ -215,7 +214,11 @@
         });
       }
     });
-
+  
+    levelStores$.subscribe(level => {
+      console.log('new level', level)
+    })
+    
   });
 
   onDestroy(() => {
