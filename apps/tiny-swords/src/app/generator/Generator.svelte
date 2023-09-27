@@ -4,7 +4,7 @@
   import { TILE_SIZE, SCALE } from '../common/common.const'
   import { Actions, Heroes, Grid, Renderer, TileName } from "../core";
   import { Level } from "../core/level/level";
-  import { nextLevelMenu, isMainMenu } from "../store/store";
+  import { isNextLevelMenuStore, isMainMenuStore, isMuttedStore } from "../store/store";
   import MainMenu from "../components/mainMenu/MainMenu.svelte";
   import NextLevelMenu from "../components/nextLevelMenu/NextLevelMenu.svelte";
   import { LayersRenderType } from "../core/layers/layers.types";
@@ -29,9 +29,12 @@
   ];
 
   let isNextLevelMenu = false;
-  let isMainMenuShow = true
-  nextLevelMenu.subscribe( value => isNextLevelMenu = value)
-  isMainMenu.subscribe( value => isMainMenuShow = value)
+  let isMainMenu = true;
+  let isMuttedValue = false;
+  
+  isNextLevelMenuStore.subscribe( value => isNextLevelMenu = value)
+  isMainMenuStore.subscribe( value => isMainMenu = value)
+  isMuttedStore.subscribe( value => isMuttedValue = value)
 
   const initGame = (): void => {
     const action$ = actions.initGame().pipe(filter(Boolean), tap(() => console.log('The game was created')));
@@ -145,7 +148,7 @@
         );
 
         if (hasCollisionWithNextLevelArea) {
-          nextLevelMenu.set(true)
+          isNextLevelMenuStore.set(true)
           break;
         }
       }
@@ -197,12 +200,28 @@
   <canvas id="canvas_interactive" width="1280" height="832" style="position: absolute; left: 50%; top: 120px; transform: translateX(-50%);"></canvas>
   <canvas id="canvas_foreground" width="1280" height="832" style="position: absolute; left: 50%; top: 120px; transform: translateX(-50%);"></canvas>
   <canvas id="canvas_hero_bar" width="1280" height="120px" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%);"></canvas>
-  {#if isMainMenuShow}
+  {#if isMainMenu}
   <!-- Передать экшены для кнопок -->
     <MainMenu {initGame} {connectToMultipleGame}/>
   {/if}
   {#if isNextLevelMenu}
     <NextLevelMenu/>
   {/if}
+  <button class="volume-btn" on:click={()=> {
+    isMuttedStore.set(!isMuttedValue)}}>
+    <img src = {isMuttedValue ? 'img/UI/Disable_03.png' : 'img/UI/Regular_03.png'} alt= 'volume-img'/>
+  </button>
 </div>
 
+<style lang="scss">
+  button.volume-btn {
+    border: none;
+    background: transparent;
+    outline: none;
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    transform: translate(-100%, -50%);
+    img:hover {scale: 1.2}
+  }
+</style>

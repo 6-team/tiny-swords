@@ -1,7 +1,9 @@
 import { writable } from 'svelte/store';
 
-const isActiveCloseButton = writable(false);
-const isActiveMenuItem = writable('');
-const nextLevelMenu = writable(false);
-const isMainMenu = writable(true);
-export { isActiveCloseButton, isActiveMenuItem, nextLevelMenu, isMainMenu };
+const isActiveCloseButtonStore = writable(false);
+const isActiveMenuItemStore = writable('');
+const isNextLevelMenuStore = writable(false);
+const isMainMenuStore = writable(true);
+const isMuttedStore = writable(false);
+
+export { isActiveCloseButtonStore, isActiveMenuItemStore, isNextLevelMenuStore, isMainMenuStore, isMuttedStore };

@@ -1,5 +1,5 @@
 <script>
-  import { nextLevelMenu } from "../../store/store";
+  import { isNextLevelMenuStore } from "../../store/store";
 </script>
 
 <div>
@@ -20,7 +20,7 @@
       </div>
     </div>
   </div>
-  <button class="next-btn" on:click={()=>nextLevelMenu.set(false)}>
+  <button class="next-btn" on:click={()=>isNextLevelMenuStore.set(false)}>
     <span class="text-btn">Далее</span>
   </button>
 </div>
