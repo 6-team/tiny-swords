@@ -41,6 +41,15 @@ export class Collisions {
     return true;
   }
 
+  /**
+   * Декоратор контроллера: фильтрует поток движений, не пропуская движения в сторону элементов, на которые нельзя зайти
+   *
+   * @param character Персонаж
+   * @param bounds Границы, на которые персонажу заступать нельзя
+   * @param controller Контроллер, предоставляющий поток движений, который нужно фильтровать
+   *
+   * @returns Новый контроллер
+   */
   decorateController(character: IMovableCharacter, bounds: Array<TCollisionArea>, controller: IController) {
     const movable = character.getAbility('movable');
 
