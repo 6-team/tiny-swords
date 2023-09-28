@@ -1,4 +1,4 @@
-import { IResource } from '../../common/common.types';
+import { IResource, PowerUp } from '../../common/common.types';
 import { Tile } from '../tile/tile';
 import { ResourcesType, mapResourcesToCoords } from './resource.const';
 import { IResourceConfig } from './resource.types';
@@ -7,7 +7,7 @@ export class Resource extends Tile<ResourcesType> implements IResource {
   protected _type: ResourcesType;
   protected _sprite: string;
 
-  powerUps = [];
+  powerUps: Array<PowerUp> = [];
 
   constructor({ type }: IResourceConfig) {
     super();

@@ -11,18 +11,20 @@
   import NextLevelMenu from "../components/nextLevelMenu/NextLevelMenu.svelte";
   import { frames$ } from "../tools/observables";
   import { collisions } from "../core/collisions";
+  import { LayersRenderType } from "../core/layers/layers.types";
 
   import type { IPlayer } from "@shared";
   import type { TCollisionArea } from "../abilities/abilities.types";
   import type { ICollectingCharacter, IMovableCharacter } from "../common/common.types";
 
-  const actions = new Actions();
-  const heroes = new Heroes();
   const level = new Level();
+  const { startCoords, endCoords, boundaries, maps, gridX, gridY } = level.next();
+  const nextLevelArea = [grid64.transformToPixels(endCoords[0], endCoords[1], 1, 1)];
+  const startPosition = grid64.transformToPixels(startCoords[0] - 1, startCoords[1] - 1, 3, 3);
 
-  const { enter, exit, maps, boundaries, layers: LAYERS, gridX, gridY } = level.init();
+  const actions = new Actions();
+  const heroes = new Heroes(startPosition);
 
-  const nextLevelArea = [exit];
   const resources$ = new BehaviorSubject([
     {
       coords: grid64.transformToPixels(3, 4, 1, 1),
@@ -63,11 +65,10 @@
 
   function handleHeroMovement(action$: Observable<IPlayer>): void {
     const boundariesCoords = boundaries.map((bound): TCollisionArea => grid64.transformToPixels(bound[0], bound[1], 1, 1));
-    const entryCoords = grid64.transformToPixels(...enter, 3, 3);
 
     action$
       .pipe(
-        map((hero) => heroes.initHero(hero, boundariesCoords, entryCoords)),
+        map((hero) => heroes.initHero(hero, boundariesCoords)),
         switchMap((hero: Hero) => {
           const movable = hero.getAbility('movable');
 
@@ -81,13 +82,12 @@
       .pipe(tap((player) => console.log('Update player', player)))
       .subscribe((player) => {
         const existingPlayer = heroes.getHero(player);
-        const entryCoords = grid64.transformToPixels(...enter, 3, 3);
 
         if (existingPlayer) {
           return;
         }
 
-        heroes.initConnectedHero(player, entryCoords);
+        heroes.initConnectedHero(player);
       });
   }
 
@@ -104,14 +104,6 @@
       grid: grid64,
     });
 
-    await staticScene.renderStaticLayer(maps[LAYERS.WATER]);
-    await staticScene.renderStaticLayer(maps[LAYERS.SHADOW]);
-    await staticScene.renderStaticLayer(maps[LAYERS.MAIN]);
-    await staticScene.renderStaticLayer(maps[LAYERS.DECO]);
-    await staticScene.renderStaticLayer(maps[LAYERS.ADD]);
-    await staticScene.renderStaticLayer(maps[LAYERS.SIGN]);
-    // await staticScene.renderStaticLayer(maps[LAYERS.BOUND]);
-
     /**
      * Рендер слоя с объектами переднего плана
      */
@@ -121,7 +113,18 @@
       grid: grid64,
     });
 
-    await foregroundScene.renderStaticLayer(maps[LAYERS.FOREG]);
+    async function renderAsync() {
+      for (const { map, type } of maps) {
+        if (type === LayersRenderType.Background) {
+          await staticScene.renderStaticLayer(map);
+        }
+        if (type === LayersRenderType.Foreground) {
+          await foregroundScene.renderStaticLayer(map);
+        }
+      }
+    }
+
+    renderAsync();
 
     /**
      * Рендер интерактивных элементов, которые будут в движении
@@ -166,7 +169,7 @@
       for (const area of nextLevelArea) {
         const hasCollisionWithNextLevelArea = collisions.hasCollision(
           movable.getCollisionArea(),
-          grid64.transformToPixels(area[0], area[1], 1, 1),
+          area
         );
 
         if (hasCollisionWithNextLevelArea) {
@@ -224,10 +227,10 @@
 </script>
 
 <div>
-  <canvas id="canvas" width="1280" height="832" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%);"></canvas>
+  <canvas id="canvas" width="1280" height="832" style="position: absolute; left: 50%; top: 120px; transform: translateX(-50%);"></canvas>
   <canvas id="canvas_resources" width="1280" height="832" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%);"></canvas>
-  <canvas id="canvas_interactive" width="1280" height="832" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%);"></canvas>
-  <canvas id="canvas_foreground" width="1280" height="832" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%);"></canvas>
+  <canvas id="canvas_interactive" width="1280" height="832" style="position: absolute; left: 50%; top: 120px; transform: translateX(-50%);"></canvas>
+  <canvas id="canvas_foreground" width="1280" height="832" style="position: absolute; left: 50%; top: 120px; transform: translateX(-50%);"></canvas>
   <canvas id="canvas_hero_bar" width="1280" height="120px" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%);"></canvas>
   {#if isMainMenuShow}
   <!-- Передать экшены для кнопок -->

@@ -11,12 +11,18 @@ export class Heroes {
 
   readonly heroes$ = this.#heroesSubject.asObservable();
 
+  startPosition: TPixelsCoords;
+
+  constructor(startPosition: TPixelsCoords) {
+    this.startPosition = startPosition;
+  }
+
   get heroes(): Hero[] {
     return this.#heroesSubject.getValue();
   }
 
-  initHero({ id }: IPlayer, bounds: Array<TCollisionArea>, position: TPixelsCoords): Hero {
-    const [initialX, initialY, height, width] = position;
+  initHero({ id }: IPlayer, bounds: Array<TCollisionArea>): Hero {
+    const [initialX, initialY, height, width] = this.startPosition;
 
     const hero = new Hero({
       controllerCreator: (hero) => collisions.decorateController(hero, bounds, new KeyboardController()),
@@ -32,8 +38,8 @@ export class Heroes {
     return hero;
   }
 
-  initConnectedHero({ id }: IPlayer, position: TPixelsCoords): Hero {
-    const [initialX, initialY, height, width] = position;
+  initConnectedHero({ id }: IPlayer): Hero {
+    const [initialX, initialY, height, width] = this.startPosition;
 
     const hero = new Hero({
       controllerCreator: () => new ServerController({ id }),
