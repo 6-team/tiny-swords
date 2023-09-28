@@ -1,12 +1,12 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
-  import { BehaviorSubject, Observable, filter, map, switchMap, tap } from "rxjs";
+  import { BehaviorSubject, Observable, filter, map, switchMap, tap, withLatestFrom, zip } from "rxjs";
   import { Hero } from '../entities/hero'
   import { Resource, ResourcesType } from '../entities/resource/index';
   import { TILE_SIZE, SCALE } from '../common/common.const'
   import { Actions, Heroes, Grid, Renderer, grid64 } from "../core";
   import { Level } from "../core/level/level";
-  import { nextLevelMenu, isMainMenu } from "../store/store";
+  import { nextLevelMenu, isMainMenu, endCoordsStore, startCoordsStore, mapsStore, boundariesStore, storeToObservable } from "../store";
   import MainMenu from "../components/mainMenu/MainMenu.svelte";
   import NextLevelMenu from "../components/nextLevelMenu/NextLevelMenu.svelte";
   import { frames$ } from "../tools/observables";
@@ -14,13 +14,50 @@
   import { LayersRenderType } from "../core/layers/layers.types";
 
   import type { IPlayer } from "@shared";
-  import type { TCollisionArea } from "../abilities/abilities.types";
+  import type { TCollisionArea, TPixelsCoords } from "../abilities/abilities.types";
   import type { ICollectingCharacter, IMovableCharacter } from "../common/common.types";
 
+  let staticScene: Renderer;
+  let foregroundScene: Renderer;
+
   const level = new Level();
-  const { startCoords, endCoords, boundaries, maps, gridX, gridY } = level.next();
-  const nextLevelArea = [grid64.transformToPixels(endCoords[0], endCoords[1], 1, 1)];
-  const startPosition = grid64.transformToPixels(startCoords[0] - 1, startCoords[1] - 1, 3, 3);
+  const { gridX, gridY, ...levelParts } = level.next();
+
+  const boundaries = storeToObservable(boundariesStore, levelParts.boundaries);
+  const startCoords = storeToObservable(startCoordsStore, levelParts.startCoords);
+  const endCoords = storeToObservable(endCoordsStore, levelParts.endCoords);
+  const maps = storeToObservable(mapsStore, levelParts.maps);
+
+  const levelStores$ = zip(boundaries, startCoords, endCoords, maps)
+    .pipe(map(([boundaries, startCoords, endCoords, maps]) => ({ boundaries, startCoords, endCoords, maps })),
+);
+
+  async function renderAsync(): Promise<void> {
+    for (const { map, type } of $maps) {
+      if (type === LayersRenderType.Background) {
+        await staticScene.renderStaticLayer(map);
+      }
+      if (type === LayersRenderType.Foreground) {
+        await foregroundScene.renderStaticLayer(map);
+      }
+    }
+  }
+
+  function createNewLevel(): void {
+    const { boundaries, endCoords, startCoords, maps } = new Level().next();
+
+    [staticScene, foregroundScene].forEach((scene) => scene.clear())
+
+    boundariesStore.set(boundaries);
+    endCoordsStore.set(endCoords);
+    startCoordsStore.set(startCoords);
+    mapsStore.set(maps);
+
+    renderAsync();
+  }
+
+  const nextLevelTile$ = endCoords.pipe(map(coords => grid64.transformToPixels(coords[0] - 1, coords[1] - 1, 1, 1)));
+  const startPosition = grid64.transformToPixels(0, 0, 3, 3); // Любая позиция, все равно она обновится в подписке на startCoords
 
   const actions = new Actions();
   const heroes = new Heroes(startPosition);
@@ -47,9 +84,29 @@
   ]);
 
   let isNextLevelMenu = false;
-  let isMainMenuShow = true
-  nextLevelMenu.subscribe( value => isNextLevelMenu = value)
-  isMainMenu.subscribe( value => isMainMenuShow = value)
+  let isMainMenuShow = true;
+
+  nextLevelMenu.subscribe(value => isNextLevelMenu = value);
+  isMainMenu.subscribe(value => isMainMenuShow = value);
+
+  startCoords.subscribe((coords) => {
+    /**
+     * Выставляем зависимость: герои должны перемещаться в новую позицию, когда стартовые координаты поменялись.
+     * А меняются они, когда герои переходят на новый уровень.
+     */ 
+    heroes.heroes$.forEach(heroesArray => {
+      const hero = heroesArray.at(-1);
+
+      if (!hero) {
+        return;
+      }
+
+      const movable = hero.getAbility('movable');
+      const [x, y] = grid64.transformToPixels(coords[0] - 1, coords[1] - 1, 3, 3);
+
+      movable.setCoords([x, y]);
+    });
+  });
 
   const initGame = (): void => {
     const action$ = actions.initGame().pipe(filter(Boolean), tap(() => console.log('The game was created')));
@@ -64,11 +121,18 @@
   }
 
   function handleHeroMovement(action$: Observable<IPlayer>): void {
-    const boundariesCoords = boundaries.map((bound): TCollisionArea => grid64.transformToPixels(bound[0], bound[1], 1, 1));
+    const boundariesCoords$ = boundaries
+      .pipe(
+        map(
+          (bounds): Array<TCollisionArea> => bounds.map(
+            (bound) => grid64.transformToPixels(bound[0], bound[1], 1, 1)
+          )
+        )
+      );
 
     action$
       .pipe(
-        map((hero) => heroes.initHero(hero, boundariesCoords)),
+        map((hero) => heroes.initHero(hero, boundariesCoords$)),
         switchMap((hero: Hero) => {
           const movable = hero.getAbility('movable');
 
@@ -98,7 +162,7 @@
      */
     const grid64 = new Grid({ tileSize: TILE_SIZE, maxX: gridX, maxY: gridY });
 
-    const staticScene = new Renderer({
+     staticScene = new Renderer({
       canvas: document.getElementById('canvas') as HTMLCanvasElement,
       scale: SCALE,
       grid: grid64,
@@ -107,24 +171,13 @@
     /**
      * Рендер слоя с объектами переднего плана
      */
-    const foregroundScene = new Renderer({
+    foregroundScene = new Renderer({
       canvas: document.getElementById('canvas_foreground') as HTMLCanvasElement,
       scale: SCALE,
       grid: grid64,
     });
 
-    async function renderAsync() {
-      for (const { map, type } of maps) {
-        if (type === LayersRenderType.Background) {
-          await staticScene.renderStaticLayer(map);
-        }
-        if (type === LayersRenderType.Foreground) {
-          await foregroundScene.renderStaticLayer(map);
-        }
-      }
-    }
-
-    renderAsync();
+    await renderAsync();
 
     /**
      * Рендер интерактивных элементов, которые будут в движении
@@ -162,21 +215,19 @@
     // ...
 
     // Это надо будет наверное вынести куда то
-    function checkCollisions(character: IMovableCharacter & ICollectingCharacter): void {
+    function checkCollisions(character: IMovableCharacter & ICollectingCharacter, nextLevelTile: TPixelsCoords): void {
       const movable = character.getAbility('movable');
       const collecting = character.getAbility('collecting');
 
-      for (const area of nextLevelArea) {
-        const hasCollisionWithNextLevelArea = collisions.hasCollision(
-          movable.getCollisionArea(),
-          area
-        );
+      const hasCollisionWithNextLevelArea = collisions.hasCollision(
+        movable.getCollisionArea(),
+        nextLevelTile
+      );
 
-        if (hasCollisionWithNextLevelArea) {
-          nextLevelMenu.set(true);
+      if (hasCollisionWithNextLevelArea) {
+        nextLevelMenu.set(true);
 
-          break;
-        }
+        return;
       }
 
       const resources = resources$.getValue();
@@ -214,11 +265,16 @@
       for (const hero of heroes) {
         const movable = hero.getAbility('movable');
 
-        movable.breakpoints$.subscribe((_) => {
-          checkCollisions(hero);
+        movable.breakpoints$.pipe(withLatestFrom(nextLevelTile$)).subscribe(([_, nextLevelTile]) => {
+          checkCollisions(hero, nextLevelTile);
         });
       }
     });
+  
+    levelStores$.subscribe(level => {
+      console.log('new level', level)
+    })
+    
   });
 
   onDestroy(() => {
@@ -233,11 +289,10 @@
   <canvas id="canvas_foreground" width="1280" height="832" style="position: absolute; left: 50%; top: 120px; transform: translateX(-50%);"></canvas>
   <canvas id="canvas_hero_bar" width="1280" height="120px" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%);"></canvas>
   {#if isMainMenuShow}
-  <!-- Передать экшены для кнопок -->
     <MainMenu {initGame} {connectToMultipleGame}/>
   {/if}
   {#if isNextLevelMenu}
-    <NextLevelMenu/>
+    <NextLevelMenu {createNewLevel}/>
   {/if}
 </div>
 

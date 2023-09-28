@@ -1,4 +1,4 @@
-import { distinctUntilChanged, map, withLatestFrom } from 'rxjs';
+import { Observable, distinctUntilChanged, map, withLatestFrom } from 'rxjs';
 import { TCollisionArea } from '../../abilities/abilities.types';
 import { IMovableCharacter } from '../../common/common.types';
 import { IController } from '../../controllers';
@@ -45,19 +45,23 @@ export class Collisions {
    * Декоратор контроллера: фильтрует поток движений, не пропуская движения в сторону элементов, на которые нельзя зайти
    *
    * @param character Персонаж
-   * @param bounds Границы, на которые персонажу заступать нельзя
+   * @param bounds Observable массив с границами, на которые персонажу заступать нельзя
    * @param controller Контроллер, предоставляющий поток движений, который нужно фильтровать
    *
    * @returns Новый контроллер
    */
-  decorateController(character: IMovableCharacter, bounds: Array<TCollisionArea>, controller: IController) {
+  decorateController(
+    character: IMovableCharacter,
+    bounds$: Observable<Array<TCollisionArea>>,
+    controller: IController,
+  ) {
     const movable = character.getAbility('movable');
 
     return {
       ...controller,
       movement$: frames$.pipe(
-        withLatestFrom(movable.breakpoints$, controller.movement$),
-        map(([_f, _s, direction]) => {
+        withLatestFrom(movable.breakpoints$, bounds$, controller.movement$),
+        map(([_f, _b, bounds, direction]) => {
           for (const bound of bounds) {
             const nextCollisionArea = movable.getNextCollisionArea(direction);
             const hasCollision = collisions.hasCollision(bound, nextCollisionArea);

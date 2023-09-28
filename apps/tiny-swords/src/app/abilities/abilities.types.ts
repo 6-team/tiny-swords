@@ -67,6 +67,14 @@ export interface IMovable extends IAbility<IMovableCharacter> {
   setController(controller: IController): this;
 
   /**
+   * Принудительно устанавливает координаты персонажу
+   *
+   * @param coords Новые координаты
+   * @returns Объект способности
+   */
+  setCoords(coords: [x: TNumberOfPixels, y: TNumberOfPixels]): this;
+
+  /**
    * Возвращает зону персонажа, которая участвует в сравнении коллизий.
    *
    * @returns Зона для сравнения коллизий

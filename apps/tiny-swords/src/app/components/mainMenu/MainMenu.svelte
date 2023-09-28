@@ -87,22 +87,25 @@
   </script>
 
     <div class="wrapper">
-        <div class="background-substrate">
-          {#each expandedBg as row }
-            <div class="bg-row">
-              {#each row as col }
-                <img src={col} alt='bg-tile'/>
+        <div class="container">
+          <div class="background-substrate">
+            {#each expandedBg as row }
+              <div class="bg-row">
+                {#each row as col }
+                  <img src={col} alt='bg-tile'/>
+                {/each}
+              </div>
+            {/each}
+            <div class="menu-wrapper">
+              {#each menuLink as { title, value } }
+                <button class={`menu-btn ${activeItem === value ? 'active': ''}`} on:click={()=>handleClick(value)} on:mouseenter={()=> isActiveMenuItem.set(value)} on:mouseleave={()=>isActiveMenuItem.set('') }>
+                  <span class="menu-title"> {title}</span>
+                </button>
               {/each}
             </div>
-          {/each}
-          <div class="menu-wrapper">
-            {#each menuLink as { title, value } }
-              <button class={`menu-btn ${activeItem === value ? 'active': ''}`} on:click={()=>handleClick(value)} on:mouseenter={()=> isActiveMenuItem.set(value)} on:mouseleave={()=>isActiveMenuItem.set('') }>
-                <span class="menu-title"> {title}</span>
-              </button>
-            {/each}
           </div>
         </div>
+
     </div>
 
 <Modal bind:showModal isActiveCloseButtonStore={isActiveCloseButton}>
@@ -110,6 +113,15 @@
 
 <style lang="scss">
   div.wrapper {
+    .container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0, 0.5);
+    }
+
     .menu-wrapper {
       position: absolute;
       top: 51%;
@@ -148,8 +160,8 @@
   .background-substrate {
     position: absolute;
     left: 50%;
-    top: 62%;
-    transform: translate(-50%, 0);
+    top: 50%;
+    transform: translate(-50%, -50%);
 
     .bg-row {
       display: flex;
