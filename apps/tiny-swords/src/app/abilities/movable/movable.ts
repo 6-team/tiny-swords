@@ -17,6 +17,7 @@ export class Movable implements IMovable {
   #sizes: [height: TNumberOfPixels, width: TNumberOfPixels];
   #isRightDirection = true;
   #movingProgressRemaining = 0;
+  #breakpointReached: boolean = false;
   #getCollisionAreaFunc?: MovableProps['getCollisionArea'];
   #context?: IMovableCharacter;
 
@@ -85,6 +86,7 @@ export class Movable implements IMovable {
     if (this.#movingProgressRemaining > 0) {
       this.#coords$.next(movementSetters[this.#movement$.getValue()](this.#coords$.getValue()));
       this.#movingProgressRemaining -= PIXELS_PER_FRAME;
+      this.#breakpointReached = false;
     }
 
     /**
@@ -99,9 +101,10 @@ export class Movable implements IMovable {
     /**
      * Если движение закончилось, и последняя команда не требует нового движения
      */
-    if (this.#movingProgressRemaining === 0 && direction === MovingDirection.IDLE) {
+    if (this.#movingProgressRemaining === 0 && direction === MovingDirection.IDLE && !this.#breakpointReached) {
       this.#movement$.next(direction);
       this.#breakpoints$.next(true);
+      this.#breakpointReached = true;
     }
 
     return this;
