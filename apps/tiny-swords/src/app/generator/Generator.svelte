@@ -110,7 +110,7 @@
     await staticScene.renderStaticLayer(maps[LAYERS.DECO]);
     await staticScene.renderStaticLayer(maps[LAYERS.ADD]);
     await staticScene.renderStaticLayer(maps[LAYERS.SIGN]);
-    await staticScene.renderStaticLayer(maps[LAYERS.BOUND]);
+    // await staticScene.renderStaticLayer(maps[LAYERS.BOUND]);
 
     /**
      * Рендер слоя с объектами переднего плана
