@@ -48,6 +48,8 @@ export interface IMovable {
 
   setDirection(direction: MovingDirection): void;
 
+  setCoords(coords: [x: TNumberOfPixels, y: TNumberOfPixels]): void;
+
   /**
    * Проверяет коллизию между текущим элементом и переданным
    *

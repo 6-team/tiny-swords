@@ -2,25 +2,16 @@
   import { onDestroy, onMount } from "svelte";
   import { Hero } from '../entities/hero'
   import { TILE_SIZE, SCALE } from '../common/common.const'
-  import { Actions, Heroes, Grid, Renderer, TileName } from "../core";
+  import { Actions, Heroes, Grid, Renderer, TileName, grid64 } from "../core";
   import { Level } from "../core/level/level";
-  import { nextLevelMenu, isMainMenu } from "../store/store";
+  import { nextLevelMenu, isMainMenu, endCoordsStore, startCoordsStore, mapsStore, boundariesStore, storeToObservable } from "../store";
   import MainMenu from "../components/mainMenu/MainMenu.svelte";
   import NextLevelMenu from "../components/nextLevelMenu/NextLevelMenu.svelte";
   import { LayersRenderType } from "../core/layers/layers.types";
-  
+
   import type { IMovable } from "../abilities";
-  import { Observable, filter, map, switchMap, tap } from "rxjs";
+  import { Observable, filter, map, tap, switchMap, zip, } from "rxjs";
   import type { IPlayer } from "@shared";
-
-  let interactiveScene: Renderer;
-
-  const level = new Level();
-  const { startCoords, endCoords, boundaries, maps, gridX, gridY } = level.next();
-  const nextLevelArea = [endCoords];
-
-  const actions = new Actions();
-  const heroes = new Heroes([startCoords[0] - 1, startCoords[1] - 1]);
 
   const resourcesMap = [
     [],
@@ -28,8 +19,61 @@
     [null, null, TileName.RESOURCES_GOLD, TileName.RESOURCES_WOOD, TileName.RESOURCES_MEAL],
   ];
 
+  let interactiveScene: Renderer;
+  let staticScene: Renderer;
+  let foregroundScene: Renderer;
+
+  const level = new Level();
+  const { gridX, gridY, ...levelParts } = level.next();
+
+  const boundaries = storeToObservable(boundariesStore, levelParts.boundaries);
+  const startCoords = storeToObservable(startCoordsStore, levelParts.startCoords);
+  const endCoords = storeToObservable(endCoordsStore, levelParts.endCoords);
+  const maps = storeToObservable(mapsStore, levelParts.maps);
+
+  const levelStores$ = zip(boundaries, startCoords, endCoords, maps)
+    .pipe(map(([boundaries, startCoords, endCoords, maps]) => ({ boundaries, startCoords, endCoords, maps })),
+);
+
+  async function renderAsync(): Promise<void> {
+    for (const { map, type } of $maps) {
+      if (type === LayersRenderType.Background) {
+        await staticScene.renderStaticLayer(map);
+      }
+      if (type === LayersRenderType.Foreground) {
+        await foregroundScene.renderStaticLayer(map);
+      }
+    }
+
+    await staticScene.renderStaticLayer(resourcesMap);
+  }
+
+  function createNewLevel(): void {
+    const { boundaries, endCoords, startCoords, maps } = new Level().next();
+      [staticScene, foregroundScene].forEach((scene) => scene.clear())
+      boundariesStore.set(boundaries);
+      endCoordsStore.set(endCoords);
+      startCoordsStore.set(startCoords);
+      mapsStore.set(maps);
+
+      renderAsync()
+
+      heroes.heroes$.forEach(heroes => {
+        heroes.forEach(hero => {
+          const movable = hero.getAbility('movable')
+          const [x, y] = grid64.transformToPixels(startCoords[0] - 1, startCoords[1] - 1, 3, 3)
+
+          movable?.setCoords([x, y])
+        })
+      })
+  }
+
+  const actions = new Actions();
+  const heroes = new Heroes([$startCoords[0] - 1, $startCoords[1] - 1]);
+
   let isNextLevelMenu = false;
-  let isMainMenuShow = true
+  let isMainMenuShow = true;
+
   nextLevelMenu.subscribe( value => isNextLevelMenu = value)
   isMainMenu.subscribe( value => isMainMenuShow = value)
 
@@ -57,8 +101,6 @@
     actions.updatePlayerListener().pipe(tap((player) => console.log('Update player', player))).subscribe((player) => {
       const existingPlayer = heroes.getHero(player);
 
-      console.log(player);
-
       if (existingPlayer) {
         const movable = existingPlayer.getAbility('movable')
 
@@ -78,7 +120,7 @@
      */
     const grid64 = new Grid({ tileSize: TILE_SIZE, maxX: gridX, maxY: gridY });
 
-    const staticScene = new Renderer({
+     staticScene = new Renderer({
       canvas: document.getElementById('canvas') as HTMLCanvasElement,
       scale: SCALE,
       grid: grid64,
@@ -87,26 +129,13 @@
     /**
      * Рендер слоя с объектами переднего плана
      */
-    const foregroundScene = new Renderer({
+    foregroundScene = new Renderer({
       canvas: document.getElementById('canvas_foreground') as HTMLCanvasElement,
       scale: SCALE,
       grid: grid64,
     });
 
-    async function renderAsync() {
-      for (const { map, type } of maps) {
-        if (type === LayersRenderType.Background) {
-          await staticScene.renderStaticLayer(map);
-        }
-        if (type === LayersRenderType.Foreground) {
-          await foregroundScene.renderStaticLayer(map);
-        }
-      }
-
-      await staticScene.renderStaticLayer(resourcesMap);
-    }
-
-    renderAsync();
+    await renderAsync();
 
     /**
      * Рендер интерактивных элементов, которые будут в движении
@@ -139,7 +168,7 @@
 
     // Это надо будет наверное вынести куда то
     function checkCollisions(movable: IMovable): void {
-      for (const area of nextLevelArea) {
+      for (const area of [$endCoords]) {
         const hasCollisionWithNextLevelArea = movable.checkCollision(
           grid64.transformToPixels(area[0], area[1], 1, 1),
         );
@@ -150,7 +179,7 @@
         }
       }
 
-      for (const bound of boundaries) {
+      for (const bound of $boundaries) {
         const hasCollision = movable.checkCollision(
           grid64.transformToPixels(bound[0], bound[1], 1, 1),
         );
@@ -185,6 +214,11 @@
         });
       }
     });
+  
+    levelStores$.subscribe(level => {
+      console.log('new level', level)
+    })
+    
   });
 
   onDestroy(() => {
@@ -198,11 +232,10 @@
   <canvas id="canvas_foreground" width="1280" height="832" style="position: absolute; left: 50%; top: 120px; transform: translateX(-50%);"></canvas>
   <canvas id="canvas_hero_bar" width="1280" height="120px" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%);"></canvas>
   {#if isMainMenuShow}
-  <!-- Передать экшены для кнопок -->
     <MainMenu {initGame} {connectToMultipleGame}/>
   {/if}
   {#if isNextLevelMenu}
-    <NextLevelMenu/>
+    <NextLevelMenu {createNewLevel}/>
   {/if}
 </div>
 

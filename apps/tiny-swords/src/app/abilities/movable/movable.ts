@@ -64,6 +64,10 @@ export class Movable implements IMovable {
     this.#controller.setDirection(direction);
   }
 
+  setCoords(coords: [TPixelsPosition, TPixelsPosition]): void {
+    this.#coords$.next(coords);
+  }
+
   /**
    * Обрабатывает получение нового фрейма.
    * В каждом фрейме проверяется, происходит ли сейчас движение персонажа.
