@@ -14,6 +14,9 @@ export const movementSetters: Record<MovingDirection, (value: [number, number]) 
   [MovingDirection.IDLE]: (coords) => coords,
 };
 
+/**
+ * @TODO Переписать 64 на tileSize, или может вообще вынести отсюда, чтобы не зависеть тут от Grid
+ */
 export const nextMoveCoordsGetters: Record<MovingDirection, (value: [number, number]) => [number, number]> = {
   [MovingDirection.UP]: ([prevX, prevY]) => [prevX, prevY - 64],
   [MovingDirection.DOWN]: ([prevX, prevY]) => [prevX, prevY + 64],
