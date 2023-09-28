@@ -38,7 +38,7 @@ export default class Hero
       movable,
       attacking,
       collecting,
-    } as any);
+    });
 
     const controller = controllerCreator(this);
 
