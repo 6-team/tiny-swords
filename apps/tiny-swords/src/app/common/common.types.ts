@@ -1,4 +1,4 @@
-import { IAttacking, IMovable, WithSetPersonageContext } from '../abilities/abilities.types';
+import { IAttacking, ICollecting, IMovable, WithSetPersonageContext } from '../abilities/abilities.types';
 
 export type TNumberOfTiles = number;
 
@@ -33,6 +33,14 @@ export interface ICharacter<Abilities extends Record<string | symbol | number, W
   getAbility<Name extends keyof Abilities>(name: Name): Abilities[Name];
 }
 
+export interface PowerUp {}
+
+export interface IResource {
+  powerUps: Array<PowerUp>;
+}
+
 export interface IMovableCharacter extends ICharacter<{ movable: IMovable }> {}
 
 export interface IAttackingCharacter extends ICharacter<{ attacking: IAttacking }> {}
+
+export interface ICollectingCharacter extends ICharacter<{ collecting: ICollecting }> {}

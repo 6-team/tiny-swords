@@ -5,5 +5,4 @@ import { MovingDirection } from '@shared';
 export interface IController {
   movement$: Observable<MovingDirection>;
   attack$: Observable<AttackingForce>;
-  setDirection(direction: MovingDirection): void;
 }

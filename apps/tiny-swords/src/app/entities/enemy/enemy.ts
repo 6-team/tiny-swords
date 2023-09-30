@@ -13,12 +13,12 @@ export default class Enemy extends Character<EnemyType, EnemyAbilities> implemen
   protected _type = EnemyType.WARRIOR_BLUE;
   protected _size = ENEMY_SIZE;
 
-  constructor({ controller, height, width, initialX, initialY }: EnemyConfig) {
+  constructor({ controllerCreator, height, width, initialX, initialY }: EnemyConfig) {
     super({
-      abilities: {
-        movable: new Movable({ height, width, initialX, initialY, stream$: controller.movement$ }),
-        attacking: new Attacking({ stream$: controller.attack$ }),
-      },
+      // abilities: {
+      //   movable: new Movable({ height, width, initialX, initialY, stream$: controller.movement$ }),
+      //   attacking: new Attacking({ stream$: controller.attack$ }),
+      // },
     });
   }
 

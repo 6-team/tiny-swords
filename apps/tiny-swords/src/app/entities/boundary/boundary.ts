@@ -1,5 +1,5 @@
-import { Tile } from "../tile/tile";
-import { BoundaryType, mapBoundaryToCoords } from "./boundary.const";
+import { Tile } from '../tile/tile';
+import { BoundaryType, mapBoundaryToCoords } from './boundary.const';
 
 export class BoundaryTile extends Tile<BoundaryType> {
   protected _type: BoundaryType;
