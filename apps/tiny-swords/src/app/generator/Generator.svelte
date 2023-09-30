@@ -56,7 +56,7 @@
     renderAsync();
   }
 
-  const nextLevelTile$ = endCoords.pipe(map(coords => grid64.transformToPixels(coords[0] - 1, coords[1] - 1, 1, 1)));
+  const nextLevelTile$ = endCoords.pipe(map(coords => grid64.transformToPixels(coords[0], coords[1], 1, 1)));
   const startPosition = grid64.transformToPixels(0, 0, 3, 3); // Любая позиция, все равно она обновится в подписке на startCoords
 
   const actions = new Actions();
