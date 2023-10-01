@@ -2,6 +2,8 @@ import { SoundType } from './sounds.types';
 import { MovingDirection } from '@shared';
 import { AttackingForce } from '../../abilities';
 import { HeroSoundsType } from './sounds.const';
+import { filter } from 'rxjs';
+import { ResourcesType } from '../../entities/resource';
 
 export class Sounds {
   private sounds: SoundType;
@@ -49,7 +51,7 @@ export class Sounds {
 }
 
 export class HeroSounds extends Sounds {
-  constructor({ controller }) {
+  constructor({ controller, collecting }) {
     super();
 
     this.addSound(HeroSoundsType.MOVEMENT, 'sounds/running.mp3');
@@ -68,6 +70,12 @@ export class HeroSounds extends Sounds {
 
     controller.attack$.subscribe((force) => {
       if (force === AttackingForce.WEAK) this.playAttackSound();
+    });
+
+    collecting.collection$.pipe(filter((resources: ResourcesType[]) => resources.length > 0)).subscribe((resources) => {
+      if (resources.length !== 0) {
+        this.playResourceSelection();
+      }
     });
   }
 

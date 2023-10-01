@@ -47,7 +47,7 @@ export default class Hero
     movable.setController(controller);
     attacking.setController(controller);
 
-    const heroSounds = new HeroSounds({ controller });
+    const heroSounds = new HeroSounds({ controller, collecting });
     isMuttedStore.subscribe((value) => {
       if (value) {
         heroSounds.muteSound();
