@@ -180,8 +180,6 @@
         nextLevelTile
       );
 
-      console.log(hasCollisionWithNextLevelArea)
-
       if (hasCollisionWithNextLevelArea) {
         nextLevelMenu.set(true);
 
