@@ -22,7 +22,7 @@
   const level = new Level();
   const heroes = new Heroes(level.startCoords);
 
-  const nextLevelTile$ = level.endCoords$.pipe(map(([x, y]) => grid64.transformToPixels(x - 1, y - 1, 1, 1)));
+  const nextLevelTile$ = level.endCoords$.pipe(map(([x, y]) => grid64.transformToPixels(x, y, 1, 1)));
 
   let isNextLevelMenu = false;
   let isMainMenuShow = true;
