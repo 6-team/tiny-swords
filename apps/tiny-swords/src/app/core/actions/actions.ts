@@ -8,18 +8,26 @@ import { MovingDirection } from '@shared';
 const ENDPOINT = 'ws://localhost:3000';
 
 export class Actions<T extends IPlayer<MovingDirection>> {
+  private static _instance: Actions<any>;
+
   #socketSubject = new BehaviorSubject<WebSocket>(null);
   #player: T = null;
 
   #socket$ = this.#socketSubject.asObservable().pipe(filter((socket) => socket?.connected));
 
   constructor() {
-    of(io(ENDPOINT))
-      .pipe(
-        switchMap((socket) => fromEvent(socket, 'connect').pipe(map(() => socket))),
-        first(),
-      )
-      .subscribe((socket) => this.#socketSubject.next(socket));
+    if (Actions._instance === undefined) {
+      Actions._instance = this;
+
+      of(io(ENDPOINT))
+        .pipe(
+          switchMap((socket) => fromEvent(socket, 'connect').pipe(map(() => socket))),
+          first(),
+        )
+        .subscribe((socket) => this.#socketSubject.next(socket));
+    }
+
+    return Actions._instance;
   }
 
   initGame(): Observable<T> {

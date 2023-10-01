@@ -1,5 +1,13 @@
-<script>
-  import { isNextLevelMenuStore } from "../../store/store";
+<script lang="ts">
+  import { nextLevelMenu } from "../../store/store";
+
+  export let createNewLevel: () => void;
+
+  function next() {
+    createNewLevel();
+    nextLevelMenu.set(false)
+  }
+
 </script>
 
 <div>
@@ -20,7 +28,7 @@
       </div>
     </div>
   </div>
-  <button class="next-btn" on:click={()=>isNextLevelMenuStore.set(false)}>
+  <button class="next-btn" on:click={()=>next()}>
     <span class="text-btn">Далее</span>
   </button>
 </div>
@@ -28,8 +36,8 @@
 <style lang="scss">
   .next-btn {
     position: absolute;
-    top: calc(100% - 50px);
-    left: calc(100% - 115px);
+    top: calc(100% - 80px);
+    left: calc(50% + 25px);
     transform: translate(-100%, -100%);
     font-size: 16px;
     background: no-repeat url(img/UI/Button_Blue_3Slides_Pressed.png);
@@ -63,13 +71,13 @@
       background-color: inherit;
       width: 128px;
       height: 43px;
-      
+
       .text-btn {
         top:15%
       }
     }
   }
-  
+
   .item-wrapper {
     // opacity: 0.7;
     padding: 0 65px;
@@ -77,7 +85,7 @@
       opacity: 1;
     }
   }
-  
+
   .ribbon {
     display: flex;
     position: absolute;
@@ -89,7 +97,7 @@
     font-family: "Vinque", serif;
     }
   }
-  
+
   .banner {
     position: absolute;
     & img.banner_img {
@@ -108,8 +116,8 @@
       font-size: 14px;
       font-family: "Vinque", serif;
     }
-  } 
-  
+  }
+
   .element {
     position: absolute;
     top: 40px;

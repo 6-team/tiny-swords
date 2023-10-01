@@ -20,10 +20,6 @@ export default class KeyboardController implements IController {
       .subscribe((direction) => this._movement$.next(direction ?? MovingDirection.IDLE));
   }
 
-  setDirection(direction: MovingDirection): void {
-    this._movement$.next(direction);
-  }
-
   private _addPushedKey(code: string): void {
     const direction = pushedKeys[code];
     const keys = [...this._pushedKeys$.getValue()];

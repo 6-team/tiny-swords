@@ -1,11 +1,15 @@
-import { Tile } from "../tile/tile";
-import { ResourcesType, mapResourcesToCoords } from "./resources.const";
+import { IResource, PowerUp } from '../../common/common.types';
+import { Tile } from '../tile/tile';
+import { ResourcesType, mapResourcesToCoords } from './resource.const';
+import { IResourceConfig } from './resource.types';
 
-export class ResourcesTile extends Tile<ResourcesType> {
+export class Resource extends Tile<ResourcesType> implements IResource {
   protected _type: ResourcesType;
-  protected _sprite;
+  protected _sprite: string;
 
-  constructor(type: ResourcesType = ResourcesType.GOLD) {
+  powerUps: Array<PowerUp> = [];
+
+  constructor({ type }: IResourceConfig) {
     super();
 
     this.setType(type);
@@ -17,12 +21,15 @@ export class ResourcesTile extends Tile<ResourcesType> {
     switch (type) {
       case ResourcesType.GOLD:
         this._sprite = '/img/Resources/G_Idle.png';
+
         break;
       case ResourcesType.WOOD:
         this._sprite = '/img/Resources/M_Idle.png';
+
         break;
       case ResourcesType.MEAT:
         this._sprite = '/img/Resources/W_Idle.png';
+
         break;
     }
   }

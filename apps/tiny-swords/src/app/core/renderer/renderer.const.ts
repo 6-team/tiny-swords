@@ -19,8 +19,6 @@ import { RocksType } from '../../entities/rocks/rocks.const';
 import { HouseType } from '../../entities/house/house.const';
 import { BoundaryTile } from '../../entities/boundary/boundary';
 import { BoundaryType } from '../../entities/boundary/boundary.const';
-import { ResourcesTile } from '../../entities/resources/resources';
-import { ResourcesType } from '../../entities/resources/resources.const';
 import { GoldMineTile } from '../../entities/gold-mine/gold-mine';
 import { GoldMineType } from '../../entities/gold-mine/gold-mine.const';
 
@@ -103,7 +101,7 @@ export const enum TileName {
   DECO_WEED_M,
   DECO_PUMPKIN_S,
   DECO_PUMPKIN_M,
-  
+
   DECO_BONE_S_RIGHT,
   DECO_BONE_S_LEFT,
   DECO_BONE_M_RIGHT,
@@ -144,10 +142,6 @@ export const enum TileName {
   GOLDMINE_BOTTOM_RIGHT,
 
   BOUNDARY,
-
-  RESOURCES_GOLD,
-  RESOURCES_WOOD,
-  RESOURCES_MEAL,
 }
 
 export const mapTileNameToClass: Partial<Record<TileName, { constructor: any; args: Array<any> }>> = {
@@ -269,8 +263,4 @@ export const mapTileNameToClass: Partial<Record<TileName, { constructor: any; ar
   [TileName.GOLDMINE_BOTTOM_RIGHT]: { constructor: GoldMineTile, args: [GoldMineType.BOTTOM_RIGHT] },
 
   [TileName.BOUNDARY]: { constructor: BoundaryTile, args: [BoundaryType.MIDDLE] },
-
-  [TileName.RESOURCES_GOLD]: { constructor: ResourcesTile, args: [ResourcesType.GOLD] },
-  [TileName.RESOURCES_WOOD]: { constructor: ResourcesTile, args: [ResourcesType.WOOD] },
-  [TileName.RESOURCES_MEAL]: { constructor: ResourcesTile, args: [ResourcesType.MEAT] },
 };
