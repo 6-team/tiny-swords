@@ -23,6 +23,10 @@ export class Resource extends Tile<ResourcesType> implements IResource {
     return this.#coords;
   }
 
+  get resourceType(): ResourcesType {
+    return this._type
+  }
+
   setType(type: ResourcesType = ResourcesType.GOLD) {
     this._type = type;
 
@@ -32,11 +36,11 @@ export class Resource extends Tile<ResourcesType> implements IResource {
 
         break;
       case ResourcesType.WOOD:
-        this._sprite = '/img/Resources/M_Idle.png';
+        this._sprite = '/img/Resources/W_Idle.png';
 
         break;
       case ResourcesType.MEAT:
-        this._sprite = '/img/Resources/W_Idle.png';
+        this._sprite = '/img/Resources/M_Idle.png';
 
         break;
     }
