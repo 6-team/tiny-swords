@@ -116,7 +116,6 @@
     /**
      * Рендер статичной карты
      */
-    console.log(level.gridX, level.gridY)
     const grid64 = new Grid({ tileSize: TILE_SIZE, maxX: level.gridX, maxY: level.gridY });
 
      staticScene = new Renderer({
