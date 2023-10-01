@@ -106,7 +106,7 @@
       .subscribe((data) => {
         level.updateLevel(data);
 
-        if (isNextLevelMenu) isNextLevelMenu = false;
+        if (isNextLevelMenu) nextLevelMenu.set(false);
       })
   }
 
@@ -179,6 +179,8 @@
         movable.getCollisionArea(),
         nextLevelTile
       );
+
+      console.log(hasCollisionWithNextLevelArea)
 
       if (hasCollisionWithNextLevelArea) {
         nextLevelMenu.set(true);
