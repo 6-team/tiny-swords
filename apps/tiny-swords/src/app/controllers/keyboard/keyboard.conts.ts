@@ -1,6 +1,7 @@
 import { MovingDirection } from '@shared';
+import { AttackingType } from '../../abilities/abilities.const';
 
-export const pushedKeys: Record<string, MovingDirection> = {
+export const directionKeys: Record<string, MovingDirection> = {
   ArrowUp: MovingDirection.UP,
   KeyW: MovingDirection.UP,
   ArrowDown: MovingDirection.DOWN,
@@ -9,4 +10,9 @@ export const pushedKeys: Record<string, MovingDirection> = {
   KeyA: MovingDirection.LEFT,
   ArrowRight: MovingDirection.RIGHT,
   KeyD: MovingDirection.RIGHT,
+};
+
+export const attackKeys: Record<string, AttackingType> = {
+  KeyF: AttackingType.UP,
+  KeyC: AttackingType.DOWN,
 };
