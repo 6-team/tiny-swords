@@ -1,10 +1,16 @@
+import { LevelData } from './level-data';
 import { Player } from './player';
 
-export class Game<T extends Player> {
+export class Game<T extends Player, L = LevelData> {
   #playersMap = new Map();
+  #level: L | null = null;
 
   get playersCount(): number {
     return this.#playersMap.size;
+  }
+
+  get level(): L | null {
+    return this.#level;
   }
 
   get players(): T[] {
@@ -13,6 +19,10 @@ export class Game<T extends Player> {
 
   setPlayer(player: T): void {
     this.#playersMap.set(player.id, player);
+  }
+
+  setLevel(level: L): void {
+    this.#level = level;
   }
 
   getPlayer(id: string): T {

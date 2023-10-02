@@ -3,18 +3,20 @@ import { ServerController } from '../../controllers/server';
 import { Hero } from '../../entities/hero';
 import { IPlayer } from '@shared';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { TCollisionArea, TPixelsCoords } from '../../abilities/abilities.types';
+import { TCollisionArea } from '../../abilities/abilities.types';
 import { collisions } from '../collisions';
+import { grid64 } from '../grid';
+import { CoordsTuple } from '../../entities/tile/tile.types';
 
 export class Heroes {
   readonly #heroesSubject = new BehaviorSubject<Hero[]>([]);
 
   readonly heroes$ = this.#heroesSubject.asObservable();
 
-  startPosition: TPixelsCoords;
+  #startCoords: CoordsTuple;
 
-  constructor(startPosition: TPixelsCoords) {
-    this.startPosition = startPosition;
+  constructor(startCoords: CoordsTuple) {
+    this.#startCoords = startCoords;
   }
 
   get heroes(): Hero[] {
@@ -22,7 +24,8 @@ export class Heroes {
   }
 
   initHero({ id }: IPlayer, bounds$: Observable<Array<TCollisionArea>>): Hero {
-    const [initialX, initialY, height, width] = this.startPosition;
+    const [x, y] = this.#startCoords;
+    const [initialX, initialY, height, width] = grid64.transformToPixels(x - 1, y - 1, 3, 3);
 
     const hero = new Hero({
       controllerCreator: (hero) => collisions.decorateController(hero, bounds$, new KeyboardController()),
@@ -38,8 +41,8 @@ export class Heroes {
     return hero;
   }
 
-  initConnectedHero({ id }: IPlayer): Hero {
-    const [initialX, initialY, height, width] = this.startPosition;
+  initConnectedHero({ id, coords: [startX, startY] }: IPlayer): Hero {
+    const [initialX, initialY, height, width] = grid64.transformToPixels(startX - 1, startY - 1, 3, 3);
 
     const hero = new Hero({
       controllerCreator: () => new ServerController({ id }),
