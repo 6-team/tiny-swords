@@ -1,3 +1,4 @@
+import { TPixelsCoords } from '../../abilities/abilities.types';
 import { IResource, PowerUp } from '../../common/common.types';
 import { Tile } from '../tile/tile';
 import { ResourcesType, mapResourcesToCoords } from './resource.const';
@@ -7,12 +8,19 @@ export class Resource extends Tile<ResourcesType> implements IResource {
   protected _type: ResourcesType;
   protected _sprite: string;
 
+  #coords: TPixelsCoords;
+
   powerUps: Array<PowerUp> = [];
 
-  constructor({ type }: IResourceConfig) {
+  constructor({ type, coords }: IResourceConfig) {
     super();
 
     this.setType(type);
+    this.#coords = coords;
+  }
+
+  get coords(): TPixelsCoords {
+    return this.#coords;
   }
 
   setType(type: ResourcesType = ResourcesType.GOLD) {

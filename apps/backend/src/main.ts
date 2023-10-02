@@ -1,6 +1,6 @@
 import { server } from './server';
 import { Connection } from './connection';
-import { ActionType, Game, Player } from '@shared';
+import { ActionType, Game, LevelData, Player } from '@shared';
 import { Socket } from 'socket.io';
 
 server.listen(3000);
@@ -16,11 +16,12 @@ connection.disconnect$.subscribe((client) => {
   game.removePlayer(client.id);
 });
 
-connection.listen(ActionType.InitGame).subscribe(({ client }) => {
+connection.listen<LevelData>(ActionType.InitGame).subscribe(({ client, data }) => {
   const id = client.id;
 
-  const player = new Player(id);
+  const player = new Player(id, data.startCoords);
   game.setPlayer(player);
+  game.setLevel(data);
 
   client.emit(ActionType.InitGame, player);
 });
@@ -36,12 +37,19 @@ connection.listen(ActionType.ConnectToGame).subscribe(({ client }) => {
     return;
   }
 
-  const player = new Player(client.id);
+  const player = new Player(client.id, game.level.startCoords);
 
   game.setPlayer(player);
   client.emit(ActionType.ConnectToGame, player);
+  client.emit(ActionType.UpdateLevel, game.level);
 
   notifyCurrentPlayerAboutOtherPlayers(client, player);
+});
+
+connection.listen<LevelData>(ActionType.UpdateLevel).subscribe(({ client, data: level }) => {
+  game.setLevel(level);
+
+  notifyOtherPlayersAboutUpdatedLevel(client, level);
 });
 
 connection.listen<Player>(ActionType.UpdatePlayer).subscribe(({ client, data: currentPlayer }) => {
@@ -53,8 +61,6 @@ connection.listen<Player>(ActionType.UpdatePlayer).subscribe(({ client, data: cu
 function notifyCurrentPlayerAboutOtherPlayers(client: Socket, player: Player): void {
   const otherPlayers = game.getOtherPlayers(player.id);
 
-  client.emit(ActionType.ConnectToGame, player);
-
   otherPlayers.forEach((player: Player) => client.emit(ActionType.UpdatePlayer, player));
 }
 
@@ -62,4 +68,10 @@ function notifyOtherPlayersAboutUpdatedPlayer(client: Socket, currentPlayer: Pla
   const otherPlayerIds = game.getOtherPlayerIds(currentPlayer.id);
 
   otherPlayerIds.forEach((id: string) => client.broadcast.to(id).emit(ActionType.UpdatePlayer, currentPlayer));
+}
+
+function notifyOtherPlayersAboutUpdatedLevel(client: Socket, level: LevelData): void {
+  const otherPlayerIds = game.getOtherPlayerIds(client.id);
+
+  otherPlayerIds.forEach((id: string) => client.broadcast.to(id).emit(ActionType.UpdateLevel, level));
 }
