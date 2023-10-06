@@ -3,7 +3,7 @@
   import { Observable, concatAll, concatMap, filter, from, map, switchMap, tap, withLatestFrom } from "rxjs";
   import { Hero } from '../entities/hero'
   import { TILE_SIZE, SCALE } from '../common/common.const'
-  import { actions, Heroes, Grid, Renderer, grid64 } from "../core";
+  import { actions, Heroes, Grid, Renderer, grid64, HeroHealthBar } from "../core";
   import { Level } from "../core/level/level";
   import { nextLevelMenu, isMainMenuStore, isMuttedStore } from "../store";
   import MainMenu from "../components/mainMenu/MainMenu.svelte";
@@ -15,12 +15,14 @@
   import type { IPlayer } from "@shared";
   import type { TPixelsCoords } from "../abilities/abilities.types";
   import type { ICollectingCharacter, IMovableCharacter } from "../common/common.types";
+  import { ResourcesType } from "../entities/resource";
 
   let staticScene: Renderer;
   let foregroundScene: Renderer;
 
   const level = new Level();
   const heroes = new Heroes(level.startCoords);
+  const heroHealthBar = new HeroHealthBar({totalLives: 3, availableLives: 1, blockedLives: 1});
 
   const nextLevelTile$ = level.endCoords$.pipe(map(([x, y]) => grid64.transformToPixels(x, y, 1, 1)));
 
@@ -158,16 +160,16 @@
       grid: grid64,
     });
 
+    const heroHealthBarScene = new Renderer({
+      canvas: document.getElementById('canvas_hero_health-bar') as HTMLCanvasElement,
+      scale: SCALE,
+      grid: grid64,
+    });
+
     await heroBarsScene.renderResourcesBar([
       { type: 'gold', image: 'img/Resources/G_Idle.png', count: 9999 },
       { type: 'wood', image: 'img/Resources/W_Idle.png', count: 0 },
     ]);
-
-    await heroBarsScene.renderHealthBar({
-      totalLives: 3,
-      availableLives: 1,
-      blockedLives: 1,
-    });
 
     // Дальше проверка: если перс повернут к врагу и они в соседних клетках, то удар засчитан
     // ...
@@ -197,6 +199,10 @@
         );
 
         if (hasCollision) {
+
+          if(resource.resourceType === ResourcesType.MEAT) {
+            heroHealthBar.addLive();
+          }
           collecting.collect(resource);
 
           const updatedResources = resources.filter((original) => original !== resource);
@@ -231,6 +237,11 @@
       }
     });
 
+    heroHealthBar.healthBar$.subscribe(lives => {
+      heroHealthBarScene.clear();
+      heroHealthBarScene.renderHealthBar(lives)
+    })
+
   });
 
   onDestroy(() => {
@@ -244,6 +255,7 @@
   <canvas id="canvas_interactive" width="1280" height="832" style="position: absolute; left: 50%; top: 120px; transform: translateX(-50%);"></canvas>
   <canvas id="canvas_foreground" width="1280" height="832" style="position: absolute; left: 50%; top: 120px; transform: translateX(-50%);"></canvas>
   <canvas id="canvas_hero_bar" width="1280" height="120px" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%);"></canvas>
+  <canvas id="canvas_hero_health-bar" width="1280" height="120px" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%);"></canvas>
   {#if isMainMenu}
     <MainMenu {initGame} {connectToMultipleGame}/>
   {/if}

@@ -152,16 +152,13 @@ export class Renderer {
 
     this.#context.drawImage(backgroundImage, barPositionX, barPositionY, backgroundWidth, backgroundHeight);
 
-    for (let i = 0; i < totalLives; i++) {
-      let heart;
-      if (i < availableLives) {
-        heart = heartImage;
-      } else if (i < availableLives + blockedLives) {
-        heart = wastedHeartImage;
-      } else {
-        heart = lockedHeartImage;
-      }
+    const available = new Array(availableLives).fill(heartImage);
+    const wasted = new Array(totalLives - availableLives - blockedLives).fill(wastedHeartImage);
+    const blocked = blockedLives >= 1 ? [lockedHeartImage] : [];
 
+    const hearts = [...available, ...wasted, ...blocked];
+
+    hearts.forEach((heart, i) => {
       this.#context.drawImage(
         heart,
         i * (heartWidth + heartPadding) + barPositionX + 22,
@@ -169,7 +166,7 @@ export class Renderer {
         heartWidth,
         heartHeight,
       );
-    }
+    });
     return this;
   }
 
