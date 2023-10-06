@@ -6,12 +6,8 @@ import { LayersMap } from '../layers/layers.types';
 import { BehaviorSubject, Observable, map, of } from 'rxjs';
 import { grid64 } from '../grid';
 import { TCollisionArea } from '../../abilities/abilities.types';
-import { Resource, ResourcesType } from '../../entities/resource';
-
-export const enum LevelType {
-  Ground,
-  Sand,
-}
+import { Resource } from '../../entities/resource';
+import { LevelType } from './level.types';
 
 export class Level {
   #levelCounter = 1;
@@ -22,11 +18,7 @@ export class Level {
   readonly #startCoordsSubject = new BehaviorSubject<[number, number]>([0, 0]);
   readonly #endCoordsSubject = new BehaviorSubject<[number, number]>([0, 0]);
   readonly #mapsSubject = new BehaviorSubject<LayersMap[]>([]);
-  readonly #resourcesSubject = new BehaviorSubject<Resource[]>([
-    new Resource({ type: ResourcesType.GOLD, coords: grid64.transformToPixels(3, 4, 1, 1) }),
-    new Resource({ type: ResourcesType.MEAT, coords: grid64.transformToPixels(4, 4, 1, 1) }),
-    new Resource({ type: ResourcesType.WOOD, coords: grid64.transformToPixels(5, 4, 1, 1) }),
-  ]);
+  readonly #resourcesSubject = new BehaviorSubject<Resource[]>([]);
 
   readonly startCoords$ = this.#startCoordsSubject.asObservable();
   readonly endCoords$ = this.#endCoordsSubject.asObservable();
@@ -36,13 +28,13 @@ export class Level {
     .asObservable()
     .pipe(map((bounds): TCollisionArea[] => bounds.map(([x, y]) => grid64.transformToPixels(x, y, 1, 1))));
 
-  #data: LevelData<LayersMap>;
+  #data: LevelData<LayersMap, Resource>;
 
   constructor() {
     this.next();
   }
 
-  get data(): LevelData<LayersMap> {
+  get data(): LevelData<LayersMap, Resource> {
     return this.#data;
   }
 
@@ -62,8 +54,8 @@ export class Level {
     return this.#resourcesSubject.getValue();
   }
 
-  updateLevel(levelData: LevelData<LayersMap>): void {
-    const { gridX, gridY, startCoords, endCoords, maps, boundaries } = levelData;
+  updateLevel(levelData: LevelData<LayersMap, Resource>): void {
+    const { gridX, gridY, startCoords, endCoords, maps, boundaries, resources } = levelData;
 
     this.#data = levelData;
     this.#boundariesSubject.next(boundaries);
@@ -72,6 +64,7 @@ export class Level {
     this.#mapsSubject.next(maps);
     this.#gridXSubject.next(gridX);
     this.#gridYSubject.next(gridY);
+    this.#resourcesSubject.next(resources);
   }
 
   updateResources(resources: Resource[]): void {
@@ -85,7 +78,7 @@ export class Level {
     const nextLevelType = randomElement([LevelType.Ground, LevelType.Sand]);
     const border = randomElement([1, 2]);
 
-    const { gridX, gridY, startCoords, endCoords, maps, boundaries } = new Layers(
+    const { gridX, gridY, startCoords, endCoords, maps, boundaries, resources } = new Layers(
       currentLevelType,
       nextLevelType,
       SIZE_X,
@@ -95,7 +88,7 @@ export class Level {
 
     console.timeEnd();
 
-    this.updateLevel({ gridX, gridY, startCoords, endCoords, maps, boundaries });
+    this.updateLevel({ gridX, gridY, startCoords, endCoords, maps, boundaries, resources });
 
     return of(this.data);
   }

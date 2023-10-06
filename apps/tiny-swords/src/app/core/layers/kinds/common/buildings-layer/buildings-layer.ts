@@ -1,6 +1,6 @@
-import { LevelType } from "../../../../level/level";
 import { goldMineConditions, leftHouseConditions, rightHouseConditions, treeBottomConditions } from "./buldings-conditions";
 import { Layer } from "../../../../layer/layer";
+import { LevelType } from "../../../../level/level.types";
 
 export class BuildingsLayer {
   constructor(gridX: number, gridY: number, level: LevelType, nextLevel: LevelType, startCoords: [number, number], endCoords: [number, number], layer) {

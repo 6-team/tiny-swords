@@ -6,13 +6,17 @@ import { ShadowLayer } from './kinds/common/shadow-layer/shadow-layer';
 import { DecoLayer } from './kinds/common/decorations-layer/decorations-layer';
 import { BuildingsLayer } from './kinds/common/buildings-layer/buildings-layer';
 import { SignLayer } from './kinds/common/sign-layer/sign-layer';
-import { BoundaryLayer } from './kinds/common/boundary-layer/boundary-layer';
+// import { BoundaryLayer } from './kinds/common/boundary-layer/boundary-layer';
 import { ForegroundLayer } from './kinds/common/foreground-layer/foreground-layer';
-import { LevelType } from '../level/level';
 import { SandLayer } from './kinds/common/sand-layer/sand-layer';
+import { LevelType } from '../level/level.types';
+import { Resource } from '../../entities/resource';
+import { grid64 } from '../grid';
+import { ResourcesLayer } from './kinds/common/resources-layer/resurces-layer';
 
 export class Layers {
   #layers;
+  #resources;
   gridX;
   gridY;
   startCoords;
@@ -33,6 +37,7 @@ export class Layers {
 
     const buildingsLayer = new BuildingsLayer(gridX, gridY, level, nextLevel, startCoords, endCoords, terrainLayer);
     const signLayer = new SignLayer(gridX, gridY, startCoords, endCoords);
+    const decoLayer = new DecoLayer(gridX, gridY, level, [terrainLayer, buildingsLayer, signLayer]);
 
     this.#layers = [
       {
@@ -51,7 +56,7 @@ export class Layers {
         renderOrder: 1,
       },
       {
-        layer: new DecoLayer(gridX, gridY, level, [terrainLayer, buildingsLayer, signLayer]),
+        layer: decoLayer,
         type: LayersRenderType.Background,
         renderOrder: 3,
       },
@@ -76,6 +81,8 @@ export class Layers {
         renderOrder: 7,
       },
     ];
+
+    this.#resources = new ResourcesLayer(gridX, gridY, level, [terrainLayer, buildingsLayer, signLayer, decoLayer]);
   }
 
   get boundaries() {
@@ -122,5 +129,13 @@ export class Layers {
     });
 
     return maps.sort((a, b) => a.renderOrder - b.renderOrder);
+  }
+
+  get resources() {
+    return this.#resources.array
+      .filter(({ collapsed }) => collapsed)
+      .map(({ options, coords }) => {
+        return new Resource({ type: options[0], coords: grid64.transformToPixels(coords[0], coords[1], 1, 1) })
+      });
   }
 }

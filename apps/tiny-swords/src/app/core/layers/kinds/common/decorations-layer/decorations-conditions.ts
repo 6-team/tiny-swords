@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { LevelType } from "../../../../level/level";
 import { TileName } from "../../../../renderer";
 import { Layer } from "../../../../layer/layer";
 import { randomElement, shuffleArray, weightedRandomElement } from "../../../layers.utils";
 import { LayerCondition } from "../../../../layer/layer.types";
+import { LevelType } from "../../../../level/level.types";
 
 export const GROUND_DECO_TILE_WEIGHT: Record<number, [TileName, number, boolean][]> = {
   10: [
@@ -127,6 +127,7 @@ export const decorationsWaterConditions = (layers): LayerCondition[] => {
           [TileName.ROCKS_L, 1],
         ]),
         coords,
+        boundary: false,
       });
     }
   }
@@ -184,6 +185,9 @@ export const decorationsTerrainConditions = (level: LevelType, layers): LayerCon
 
         const tile = weightedRandomElement(decoWeight[key]);
         const [_, __, boundary] = decoWeight[key].find(([tileName]) => tileName === tile);
+
+
+        console.log(boundary);
 
         conditions.push({
           tile,

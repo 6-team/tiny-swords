@@ -1,5 +1,5 @@
 import { LayerCondition } from "../../../../layer/layer.types";
-import { LevelType } from "../../../../level/level";
+import { LevelType } from "../../../../level/level.types";
 import { TileName } from "../../../../renderer";
 
 const getGroundConditions = (tile, coords) => {

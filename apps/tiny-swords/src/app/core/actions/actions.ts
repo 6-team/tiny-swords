@@ -4,11 +4,12 @@ import io, { Socket as WebSocket } from 'socket.io-client';
 import { ActionType, IPlayer, LevelData } from '@shared';
 import { MovingDirection } from '@shared';
 import { LayersMap } from '../layers/layers.types';
+import { Resource } from '../../entities/resource';
 
 // TODO: need to move
 const ENDPOINT = 'ws://localhost:3000';
 
-class Actions<T extends IPlayer<MovingDirection>, L extends LevelData<LayersMap>> {
+class Actions<T extends IPlayer<MovingDirection>, L extends LevelData<LayersMap, Resource>> {
   #socketSubject = new BehaviorSubject<WebSocket>(null);
   #player: T = null;
 
