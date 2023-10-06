@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
-  import { BehaviorSubject, Observable, combineLatest, filter, map, merge, mergeMap, of, reduce, switchMap, tap, withLatestFrom, zip } from "rxjs";
+  import { BehaviorSubject, Observable, combineLatest, filter, map, switchMap, tap, withLatestFrom, zip } from "rxjs";
   import { Hero } from '../entities/hero';
   import { Enemy } from '../entities/enemy';
   import { Resource, ResourcesType } from '../entities/resource/index';
@@ -17,7 +17,8 @@
 
   import type { IPlayer } from "@shared";
   import type { TCollisionArea, TPixelsCoords } from "../abilities/abilities.types";
-  import type { ICollectingCharacter, IMovableCharacter } from "../common/common.types";
+  import type { IAttackingCharacter, ICollectingCharacter, IMovableCharacter } from "../common/common.types";
+  import { AttackingType } from "../abilities/abilities.const";
 
   let staticScene: Renderer;
   let foregroundScene: Renderer;
@@ -272,6 +273,29 @@
       }
     }
 
+    function checkAttackCollisions(hero: IAttackingCharacter, type: AttackingType) {
+      const attacking = hero.getAbility('attacking');
+      const enemies = enemies$.getValue();
+
+      for (const enemy of enemies) {
+        const enemyMovable = enemy.getAbility('movable');
+        const hasCollision = collisions.hasCollision(
+          attacking.getAffectedArea(),
+          enemyMovable.getCollisionArea()
+        );
+
+        if (hasCollision) {
+          /**
+           * Вот тут мы попали по одному из врагов. Нужно что-то с ним сделать.
+           */
+
+          console.log('DIE!!');
+
+          break;
+        }
+      }
+    }
+
     let lastTime = 0;
 
     resources$.subscribe((resources) => {
@@ -295,9 +319,14 @@
     heroes.heroes$.subscribe((heroes) => {
       for (const hero of heroes) {
         const movable = hero.getAbility('movable');
+        const attacking = hero.getAbility('attacking');
 
         movable.breakpoints$.pipe(withLatestFrom(nextLevelTile$)).subscribe(([_, nextLevelTile]) => {
           checkCollisions(hero, nextLevelTile);
+        });
+
+        attacking.attack$.subscribe((type) => {
+          checkAttackCollisions(hero, type);
         });
       }
     });

@@ -1,10 +1,11 @@
-import { IAttacking } from '../abilities.types';
+import { IAttacking, TCollisionArea } from '../abilities.types';
 import { IAttackingCharacter, IMovableCharacter } from '../../common/common.types';
 import { AttackingError } from './attacking.const';
 import { AttackingType } from '../abilities.const';
-import { filter, noop } from 'rxjs';
+import { Subject, filter, noop } from 'rxjs';
 import { IController } from '../../controllers';
 import { HeroActionAnimation } from '../../entities/hero/hero.const';
+import { AttackingProps } from './attacking.types';
 
 /**
  * Класс способности атаковать
@@ -12,17 +13,36 @@ import { HeroActionAnimation } from '../../entities/hero/hero.const';
 export class Attacking implements IAttacking {
   #context?: IAttackingCharacter & IMovableCharacter;
   #isAttacking: boolean = false;
+  #getAffectedAreaFunc: AttackingProps['getAffectedArea'];
 
-  getAffectedArea() {
+  private _attack$ = new Subject<AttackingType>();
+
+  readonly attack$ = this._attack$.asObservable();
+
+  constructor({ getAffectedArea }: AttackingProps = {}) {
+    this.#getAffectedAreaFunc = getAffectedArea;
+  }
+
+  /**
+   * Вычисляет зону, куда будет атаковать персонаж и которая будет считаться зоной поражения для других.
+   *
+   * @returns Зона поражения в виде кортежа пикселей
+   */
+  getAffectedArea(): TCollisionArea {
     if (!this.#context) {
       throw new Error(AttackingError.PERSONAGE_NOT_SET);
     }
 
     const movable = this.#context.getAbility('movable');
+    const collisionArea = movable.getCollisionArea();
 
-    if (movable.isRightDirection) {
-      movable.getCollisionArea();
+    if (this.#getAffectedAreaFunc) {
+      return this.#getAffectedAreaFunc(this);
     }
+
+    return movable.isRightDirection
+      ? this.#getRightAffectedArea(collisionArea)
+      : this.#getLeftAffectedArea(collisionArea);
   }
 
   /**
@@ -73,7 +93,8 @@ export class Attacking implements IAttacking {
 
     const { isMoving, isRightDirection } = this.#context.getAbility('movable');
 
-    if (!isMoving) {
+    if (!isMoving && !this.#isAttacking) {
+      this._attack$.next(type);
       this.#isAttacking = true;
       this.#context
         .setAnimationOnce(this.#getAnimationWithDirection(type, isRightDirection))
@@ -100,5 +121,19 @@ export class Attacking implements IAttacking {
       case AttackingType.UP:
         return isRightDirection ? HeroActionAnimation.RIGHT_ATTACK_UP : HeroActionAnimation.LEFT_ATTACK_UP;
     }
+  }
+
+  #getRightAffectedArea(area: TCollisionArea): TCollisionArea {
+    /**
+     * @TODO Переписать 64 на tileSize, или может вообще вынести отсюда, чтобы не зависеть тут от Grid
+     */
+    return [area[0] + 64, area[1], area[2], area[3]];
+  }
+
+  #getLeftAffectedArea(area: TCollisionArea): TCollisionArea {
+    /**
+     * @TODO Переписать 64 на tileSize, или может вообще вынести отсюда, чтобы не зависеть тут от Grid
+     */
+    return [area[0] - 64, area[1], area[2], area[3]];
   }
 }

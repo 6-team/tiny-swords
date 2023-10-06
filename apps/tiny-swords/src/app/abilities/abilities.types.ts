@@ -35,6 +35,11 @@ export interface ICollecting extends IAbility<ICollectingCharacter> {
 
 export interface IAttacking extends IAbility<IAttackingCharacter> {
   /**
+   * Поток атак
+   */
+  attack$: Observable<AttackingType>;
+
+  /**
    * Атакует ли персонаж прямо сейчас
    */
   isAttacking: boolean;
@@ -46,6 +51,13 @@ export interface IAttacking extends IAbility<IAttackingCharacter> {
    * @returns Объект способности
    */
   attack(type?: AttackingType): this;
+
+  /**
+   * Вычисляет зону, куда будет атаковать персонаж и которая будет считаться зоной поражения для других.
+   *
+   * @returns Зона поражения в виде кортежа пикселей
+   */
+  getAffectedArea(): TPixelsCoords;
 }
 
 export interface IMovable extends IAbility<IMovableCharacter> {
