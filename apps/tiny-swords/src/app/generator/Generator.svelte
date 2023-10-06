@@ -1,17 +1,19 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
   import { BehaviorSubject, Observable, filter, map, switchMap, tap, withLatestFrom, zip } from "rxjs";
-  import { Hero } from '../entities/hero'
+  import { Hero } from '../entities/hero';
+  import { Enemy } from '../entities/enemy';
   import { Resource, ResourcesType } from '../entities/resource/index';
-  import { TILE_SIZE, SCALE } from '../common/common.const'
+  import { TILE_SIZE, SCALE } from '../common/common.const';
   import { Actions, Heroes, Grid, Renderer, grid64 } from "../core";
+  import { AIController } from '../controllers/AI';
   import { Level } from "../core/level/level";
   import { nextLevelMenu, isMainMenu, endCoordsStore, startCoordsStore, mapsStore, boundariesStore, storeToObservable } from "../store";
   import MainMenu from "../components/mainMenu/MainMenu.svelte";
   import NextLevelMenu from "../components/nextLevelMenu/NextLevelMenu.svelte";
   import { frames$ } from "../tools/observables";
   import { collisions } from "../core/collisions";
-  import { LayersRenderType } from "../core/layers/layers.types";
+  import { LayersRenderType } from "../core/layers/layers.types"
 
   import type { IPlayer } from "@shared";
   import type { TCollisionArea, TPixelsCoords } from "../abilities/abilities.types";
@@ -61,6 +63,16 @@
 
   const actions = new Actions();
   const heroes = new Heroes(startPosition);
+
+  const enemyCoords = grid64.transformToPixels(5, 5, 3, 3);
+  const enemy = new Enemy({
+    id: "enemy_test",
+    initialX: enemyCoords[0],
+    initialY: enemyCoords[1],
+    height: enemyCoords[2],
+    width: enemyCoords[3],
+    controllerCreator: () => new AIController()
+  });
 
   const resources$ = new BehaviorSubject([
     {
@@ -257,6 +269,7 @@
     frames$.subscribe((timeStamp = 0) => {
       const deltaTime = timeStamp - lastTime;
 
+      interactiveScene.renderMovable(enemy, deltaTime);
       interactiveScene.renderMovableLayer(heroes.heroes, deltaTime);
       lastTime = timeStamp
     });

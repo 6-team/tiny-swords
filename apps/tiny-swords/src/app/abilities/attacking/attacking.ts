@@ -13,6 +13,18 @@ export class Attacking implements IAttacking {
   #context?: IAttackingCharacter & IMovableCharacter;
   #isAttacking: boolean = false;
 
+  getAffectedArea() {
+    if (!this.#context) {
+      throw new Error(AttackingError.PERSONAGE_NOT_SET);
+    }
+
+    const movable = this.#context.getAbility('movable');
+
+    if (movable.isRightDirection) {
+      movable.getCollisionArea();
+    }
+  }
+
   /**
    * Атакует ли персонаж прямо сейчас
    */
@@ -84,12 +96,9 @@ export class Attacking implements IAttacking {
   #getAnimationWithDirection(type: AttackingType, isRightDirection: boolean) {
     switch (type) {
       case AttackingType.DOWN:
-        return isRightDirection ? HeroActionAnimation.RIGHT_ATTACK_DOWN : HeroActionAnimation.FRONT_ATTACK_DOWN;
+        return isRightDirection ? HeroActionAnimation.RIGHT_ATTACK_DOWN : HeroActionAnimation.LEFT_ATTACK_DOWN;
       case AttackingType.UP:
-        /**
-         * Заменить на удар слева, когда он появится
-         */
-        return isRightDirection ? HeroActionAnimation.RIGHT_ATTACK_UP : HeroActionAnimation.FRONT_ATTACK_UP;
+        return isRightDirection ? HeroActionAnimation.RIGHT_ATTACK_UP : HeroActionAnimation.LEFT_ATTACK_UP;
     }
   }
 }

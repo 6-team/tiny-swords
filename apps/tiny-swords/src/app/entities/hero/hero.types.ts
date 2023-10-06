@@ -1,12 +1,6 @@
 import { IAttacking, IMovable } from '../../abilities';
 import { ICollecting } from '../../abilities/abilities.types';
-import {
-  IAttackingCharacter,
-  ICharacter,
-  IMovableCharacter,
-  TNumberOfPixels,
-  TPixelsPosition,
-} from '../../common/common.types';
+import { IAttackingCharacter, IMovableCharacter, TNumberOfPixels, TPixelsPosition } from '../../common/common.types';
 import { IController } from '../../controllers';
 
 export type HeroAbilities = {
