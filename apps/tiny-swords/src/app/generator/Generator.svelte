@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
-  import { BehaviorSubject, Observable, filter, map, switchMap, tap, withLatestFrom, zip } from "rxjs";
+  import { BehaviorSubject, Observable, combineLatest, filter, map, merge, mergeMap, of, reduce, switchMap, tap, withLatestFrom, zip } from "rxjs";
   import { Hero } from '../entities/hero';
   import { Enemy } from '../entities/enemy';
   import { Resource, ResourcesType } from '../entities/resource/index';
@@ -65,14 +65,16 @@
   const heroes = new Heroes(startPosition);
 
   const enemyCoords = grid64.transformToPixels(5, 5, 3, 3);
-  const enemy = new Enemy({
-    id: "enemy_test",
-    initialX: enemyCoords[0],
-    initialY: enemyCoords[1],
-    height: enemyCoords[2],
-    width: enemyCoords[3],
-    controllerCreator: () => new AIController()
-  });
+  const enemies$ = new BehaviorSubject([
+    new Enemy({
+      id: "enemy_test",
+      initialX: enemyCoords[0],
+      initialY: enemyCoords[1],
+      height: enemyCoords[2],
+      width: enemyCoords[3],
+      controllerCreator: () => new AIController()
+    })
+  ]);
 
   const resources$ = new BehaviorSubject([
     {
@@ -133,6 +135,15 @@
   }
 
   function handleHeroMovement(action$: Observable<IPlayer>): void {
+    const enemiesCoords$ = enemies$
+      .pipe(
+        map(
+          (enemies) => enemies.map(
+            (enemy) => enemy.getAbility("movable").getCollisionArea()
+          )
+        )
+      );
+
     const boundariesCoords$ = boundaries
       .pipe(
         map(
@@ -142,9 +153,13 @@
         )
       );
 
+    const bounds$ = combineLatest([enemiesCoords$, boundariesCoords$]).pipe(
+      map((tuple) => tuple.flat())
+    );
+
     action$
       .pipe(
-        map((hero) => heroes.initHero(hero, boundariesCoords$)),
+        map((hero) => heroes.initHero(hero, bounds$)),
         switchMap((hero: Hero) => {
           const movable = hero.getAbility('movable');
 
@@ -269,7 +284,10 @@
     frames$.subscribe((timeStamp = 0) => {
       const deltaTime = timeStamp - lastTime;
 
-      interactiveScene.renderMovable(enemy, deltaTime);
+      for (const enemy of enemies$.getValue()) {
+        interactiveScene.renderMovable(enemy, deltaTime);
+      }
+
       interactiveScene.renderMovableLayer(heroes.heroes, deltaTime);
       lastTime = timeStamp
     });
