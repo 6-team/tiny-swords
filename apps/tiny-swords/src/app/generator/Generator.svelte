@@ -5,7 +5,7 @@
   import { TILE_SIZE, SCALE } from '../common/common.const'
   import { actions, Heroes, Grid, Renderer, grid64 } from "../core";
   import { Level } from "../core/level/level";
-  import { nextLevelMenu, isMainMenu } from "../store";
+  import { nextLevelMenu, isMainMenuStore, isMuttedStore } from "../store";
   import MainMenu from "../components/mainMenu/MainMenu.svelte";
   import NextLevelMenu from "../components/nextLevelMenu/NextLevelMenu.svelte";
   import { frames$ } from "../tools/observables";
@@ -25,10 +25,12 @@
   const nextLevelTile$ = level.endCoords$.pipe(map(([x, y]) => grid64.transformToPixels(x, y, 1, 1)));
 
   let isNextLevelMenu = false;
-  let isMainMenuShow = true;
+  let isMainMenu = true;
+  let isMuttedValue = false;
 
   nextLevelMenu.subscribe(value => isNextLevelMenu = value);
-  isMainMenu.subscribe(value => isMainMenuShow = value);
+  isMainMenuStore.subscribe(value => isMainMenu = value);
+  isMuttedStore.subscribe( value => isMuttedValue = value)
 
   level.startCoords$.subscribe(([startX, startY]) => {
     /**
@@ -242,11 +244,27 @@
   <canvas id="canvas_interactive" width="1280" height="832" style="position: absolute; left: 50%; top: 120px; transform: translateX(-50%);"></canvas>
   <canvas id="canvas_foreground" width="1280" height="832" style="position: absolute; left: 50%; top: 120px; transform: translateX(-50%);"></canvas>
   <canvas id="canvas_hero_bar" width="1280" height="120px" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%);"></canvas>
-  {#if isMainMenuShow}
+  {#if isMainMenu}
     <MainMenu {initGame} {connectToMultipleGame}/>
   {/if}
   {#if isNextLevelMenu}
     <NextLevelMenu {createNewLevel}/>
   {/if}
+  <button class="volume-btn" on:click={()=> {
+    isMuttedStore.set(!isMuttedValue)}}>
+    <img src = {isMuttedValue ? 'img/UI/Disable_03.png' : 'img/UI/Regular_03.png'} alt= 'volume-img'/>
+  </button>
 </div>
 
+<style lang="scss">
+  button.volume-btn {
+    border: none;
+    background: transparent;
+    outline: none;
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    transform: translate(-100%, -50%);
+    img:hover {scale: 1.2}
+  }
+</style>

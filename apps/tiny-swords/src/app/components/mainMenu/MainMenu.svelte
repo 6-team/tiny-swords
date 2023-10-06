@@ -1,10 +1,11 @@
 <script lang="ts">
   import Modal from '../../modals/Modal.svelte';
-  import { isActiveCloseButton, isActiveMenuItem, isMainMenu } from '../../store/store';
+  import { isActiveCloseButtonStore, isActiveMenuItemStore, isMainMenuStore, isMuttedStore } from '../../store/store';
+  import {Sounds, SystemSoundsType} from '../../core/sounds'
 
   let showModal = false;
   let menuIndex = 0;
-  let activeItem = '';
+  let isActiveMenuItem = '';
 
   export let initGame: () => void;
   export let connectToMultipleGame: () => void;
@@ -14,16 +15,29 @@
     {title: 'Сетевая игра', value: 'multi-player'}
   ];
 
+
+
+  const menuSound = new Sounds()
+  menuSound.addSound(SystemSoundsType.START_GAME, 'sounds/sword.mp3')
+  menuSound.addSound(SystemSoundsType.MENU_CLICK, 'sounds/click.mp3')
+
+  isMuttedStore.subscribe( value => {
+    if(value) {
+      menuSound.muteSound()
+    } else {
+      menuSound.unmuteSound()
+    }
+  })
+
   function handleClick(item: string):void {
+    menuSound.playSound(SystemSoundsType.START_GAME);
     switch (item) {
       case 'multi-player':
-        console.log('start multiplayer game');
-        isMainMenu.set(false);
+        isMainMenuStore.set(false);
         connectToMultipleGame();
         break;
       case 'generator':
-        console.log('start single game');
-        isMainMenu.set(false);
+        isMainMenuStore.set(false);
         initGame();
         break;
       default:
@@ -63,26 +77,28 @@
 
   switch (e.code) {
     case 'ArrowDown':
+      menuSound.playSound(SystemSoundsType.MENU_CLICK)
       menuIndex = (menuIndex + 1) % menuLinkLength;
       break;
-
+      
     case 'ArrowUp':
+      menuSound.playSound(SystemSoundsType.MENU_CLICK)
       menuIndex = (menuIndex - 1 + menuLinkLength) % menuLinkLength;
       break;
 
     case 'Escape':
-      isActiveMenuItem.set('');
+      isActiveMenuItemStore.set('');
       return;
 
     case 'Enter':
-      handleClick(activeItem);
+      handleClick(isActiveMenuItem);
       break;
   }
 
-  isActiveMenuItem.set(menuLink[menuIndex].value);
+  isActiveMenuItemStore.set(menuLink[menuIndex].value);
 }
 
-  isActiveMenuItem.subscribe( value => activeItem = value);
+  isActiveMenuItemStore.subscribe( value => isActiveMenuItem = value);
 
   </script>
 
@@ -98,17 +114,22 @@
             {/each}
             <div class="menu-wrapper">
               {#each menuLink as { title, value } }
-                <button class={`menu-btn ${activeItem === value ? 'active': ''}`} on:click={()=>handleClick(value)} on:mouseenter={()=> isActiveMenuItem.set(value)} on:mouseleave={()=>isActiveMenuItem.set('') }>
+                <button class={`menu-btn ${isActiveMenuItem === value ? 'active': ''}`} 
+                on:click={()=>handleClick(value)} 
+                on:mouseenter={()=> {
+                  menuSound.playSound(SystemSoundsType.MENU_CLICK)
+                  isActiveMenuItemStore.set(value)
+                  }} 
+                on:mouseleave={()=>isActiveMenuItemStore.set('') }>
                   <span class="menu-title"> {title}</span>
                 </button>
               {/each}
             </div>
           </div>
         </div>
+        </div>
 
-    </div>
-
-<Modal bind:showModal isActiveCloseButtonStore={isActiveCloseButton}>
+<Modal bind:showModal isActiveCloseButtonStore={isActiveCloseButtonStore}>
 </Modal>
 
 <style lang="scss">
