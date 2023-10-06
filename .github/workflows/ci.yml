@@ -1,0 +1,29 @@
+name: Tiny Swords CI
+
+on:
+  pull_request:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    concurrency: ci-${{github.ref}}
+    steps:
+      - name: Actions Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - uses: nrwl/nx-set-shas@v3
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Lint
+        run: npx nx affected -t lint --parallel=3
+      - name: Test
+        run: npx nx affected -t test --parallel=3
+      - name: Build
+        run: npx nx affected -t build --parallel=3
