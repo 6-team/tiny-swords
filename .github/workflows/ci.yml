@@ -9,6 +9,7 @@ on:
 
 jobs:
   main:
+    permissions: {}
     runs-on: ubuntu-latest
     concurrency: ci-${{github.ref}}
     steps:
