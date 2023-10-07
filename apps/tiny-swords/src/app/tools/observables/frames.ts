@@ -4,28 +4,20 @@ const observable = new Subject<number>();
 
 const MIN_FRAME_MS = 16;
 
-function raf() {
-  const timeoutPromise = new Promise((resolve) => {
+function scheduleNextFrame() {
+  const timeout = new Promise((resolve) => {
     setTimeout(() => resolve(Number(Date.now())), MIN_FRAME_MS);
   });
-  const rafPromise = new Promise((resolve) => {
+  const raf = new Promise((resolve) => {
     requestAnimationFrame(() => resolve(Number(Date.now())));
   });
 
-  Promise.race([timeoutPromise, rafPromise]).then((timestamp: number) => {
+  Promise.race([timeout, raf]).then((timestamp: number) => {
     observable.next(timestamp);
-    raf();
+    scheduleNextFrame();
   });
 }
 
-raf();
+scheduleNextFrame();
 
 export const frames$ = observable.asObservable();
-
-let prev = Number(new Date());
-
-frames$.subscribe((frame) => {
-  const next = Number(new Date());
-  console.log(next - prev);
-  prev = next;
-});
