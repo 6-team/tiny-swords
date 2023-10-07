@@ -11,16 +11,14 @@
 		isActiveCloseButton = value;
 	});
     let closeImageBtnSrc =  'img/UI/Regular_01.png'
-	
+
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
 <dialog
 	bind:this={dialog}
 	on:close={() => (showModal = false)}
 	on:click|self={() => dialog.close()}
 >
-	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<div on:click|stopPropagation>
 		<div class='btn-wrapper'>
             <button autofocus on:click={() => {
@@ -29,12 +27,12 @@
                 dialog.close()
             }}
             on:mousedown={() => {
-    
+
                 isActiveCloseButtonStore.set(true)
                 closeImageBtnSrc = 'img/UI/Pressed_01.png'
             }}
             on:mouseup={() => {
-    
+
                 isActiveCloseButtonStore.set(true)
                 closeImageBtnSrc =  'img/UI/Regular_01.png'
             }}

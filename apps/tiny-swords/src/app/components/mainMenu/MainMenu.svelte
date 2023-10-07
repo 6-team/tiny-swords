@@ -1,6 +1,5 @@
 <script lang="ts">
-  import Modal from '../../modals/Modal.svelte';
-  import { isActiveCloseButtonStore, isActiveMenuItemStore, isMainMenuStore, isMuttedStore } from '../../store/store';
+  import { isActiveMenuItemStore, isMainMenuStore, isMuttedStore } from '../../store/store';
   import {Sounds, SystemSoundsType} from '../../core/sounds'
 
   let showModal = false;
@@ -14,8 +13,6 @@
     {title: 'Новая игра', value: 'generator'},
     {title: 'Сетевая игра', value: 'multi-player'}
   ];
-
-
 
   const menuSound = new Sounds()
   menuSound.addSound(SystemSoundsType.START_GAME, 'sounds/sword.mp3')
@@ -80,7 +77,7 @@
       menuSound.playSound(SystemSoundsType.MENU_CLICK)
       menuIndex = (menuIndex + 1) % menuLinkLength;
       break;
-      
+
     case 'ArrowUp':
       menuSound.playSound(SystemSoundsType.MENU_CLICK)
       menuIndex = (menuIndex - 1 + menuLinkLength) % menuLinkLength;
@@ -114,12 +111,12 @@
             {/each}
             <div class="menu-wrapper">
               {#each menuLink as { title, value } }
-                <button class={`menu-btn ${isActiveMenuItem === value ? 'active': ''}`} 
-                on:click={()=>handleClick(value)} 
+                <button class={`menu-btn ${isActiveMenuItem === value ? 'active': ''}`}
+                on:click={()=>handleClick(value)}
                 on:mouseenter={()=> {
                   menuSound.playSound(SystemSoundsType.MENU_CLICK)
                   isActiveMenuItemStore.set(value)
-                  }} 
+                  }}
                 on:mouseleave={()=>isActiveMenuItemStore.set('') }>
                   <span class="menu-title"> {title}</span>
                 </button>
@@ -128,9 +125,6 @@
           </div>
         </div>
         </div>
-
-<Modal bind:showModal isActiveCloseButtonStore={isActiveCloseButtonStore}>
-</Modal>
 
 <style lang="scss">
   div.wrapper {
