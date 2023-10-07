@@ -9,6 +9,7 @@ on:
 
 jobs:
   main:
+    permissions: write-all
     runs-on: ubuntu-latest
     concurrency: ci-${{github.ref}}
     steps:
