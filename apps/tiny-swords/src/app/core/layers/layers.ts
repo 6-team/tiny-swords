@@ -1,18 +1,18 @@
-import { GroundLayer } from './kinds/common/ground-layer/ground-layer';
+import { GroundLayer } from './kinds/ground-layer/ground-layer';
 import { LayersMap, LayersRenderType } from './layers.types';
-import { WaterLayer } from './kinds/common/water-layer/water-layer';
+import { WaterLayer } from './kinds/water-layer/water-layer';
 import { getStartEndCoords } from './layers.utils';
-import { ShadowLayer } from './kinds/common/shadow-layer/shadow-layer';
-import { DecoLayer } from './kinds/common/decorations-layer/decorations-layer';
-import { BuildingsLayer } from './kinds/common/buildings-layer/buildings-layer';
-import { SignLayer } from './kinds/common/sign-layer/sign-layer';
-// import { BoundaryLayer } from './kinds/common/boundary-layer/boundary-layer';
-import { ForegroundLayer } from './kinds/common/foreground-layer/foreground-layer';
-import { SandLayer } from './kinds/common/sand-layer/sand-layer';
+import { ShadowLayer } from './kinds/shadow-layer/shadow-layer';
+import { DecoLayer } from './kinds/decorations-layer/decorations-layer';
+import { BuildingsLayer } from './kinds/buildings-layer/buildings-layer';
+import { SignLayer } from './kinds/sign-layer/sign-layer';
+// import { BoundaryLayer } from './kinds/boundary-layer/boundary-layer';
+import { ForegroundLayer } from './kinds/foreground-layer/foreground-layer';
+import { SandLayer } from './kinds/sand-layer/sand-layer';
 import { LevelType } from '../level/level.types';
 import { Resource } from '../../entities/resource';
 import { grid64 } from '../grid';
-import { ResourcesLayer } from './kinds/common/resources-layer/resurces-layer';
+import { ResourcesLayer } from './kinds/resources-layer/resurces-layer';
 
 export class Layers {
   #layers;

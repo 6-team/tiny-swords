@@ -35,7 +35,7 @@ export const getStartEndCoords = (gridX, gridY, border): [number, number][] => {
 /**
  * Перемешивание массива
  */
-export const shuffleArray = <T>(array: Array<T>): Array<T> => {
+const shuffleArray = <T>(array: Array<T>): Array<T> => {
   let currentIndex = array.length;
   let temporaryValue;
   let randomIndex;
@@ -50,4 +50,15 @@ export const shuffleArray = <T>(array: Array<T>): Array<T> => {
   }
 
   return array;
+}
+
+/**
+ * Перемешивание и фильтрация массива координат для слоя
+ */
+export const getShuffleFilterCoords = (layer, condition) => {
+  return shuffleArray(
+    layer.array
+      .map(({ coords }) => coords)
+      .filter(condition)
+  );
 }
