@@ -30,7 +30,7 @@
   })
 
   function handleClick(item: string):void {
-    menuSound.playSound(SystemSoundsType.START_GAME);
+    menuSound.playSound(SystemSoundsType.START_GAME, 0.3);
     switch (item) {
       case 'multi-player':
         isMainMenuStore.set(false);
@@ -77,12 +77,12 @@
 
   switch (e.code) {
     case 'ArrowDown':
-      menuSound.playSound(SystemSoundsType.MENU_CLICK)
+      menuSound.playSound(SystemSoundsType.MENU_CLICK, 0.3)
       menuIndex = (menuIndex + 1) % menuLinkLength;
       break;
       
     case 'ArrowUp':
-      menuSound.playSound(SystemSoundsType.MENU_CLICK)
+      menuSound.playSound(SystemSoundsType.MENU_CLICK, 0.3)
       menuIndex = (menuIndex - 1 + menuLinkLength) % menuLinkLength;
       break;
 
@@ -117,7 +117,7 @@
                 <button class={`menu-btn ${isActiveMenuItem === value ? 'active': ''}`} 
                 on:click={()=>handleClick(value)} 
                 on:mouseenter={()=> {
-                  menuSound.playSound(SystemSoundsType.MENU_CLICK)
+                  menuSound.playSound(SystemSoundsType.MENU_CLICK, 0.3)
                   isActiveMenuItemStore.set(value)
                   }} 
                 on:mouseleave={()=>isActiveMenuItemStore.set('') }>

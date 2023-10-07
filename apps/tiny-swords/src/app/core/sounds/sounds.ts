@@ -17,9 +17,10 @@ export class Sounds {
     this.sounds[name] = sound;
   }
 
-  playSound(name: string): void {
+  playSound(name: string, volume = 1): void {
     if (this.sounds[name]) {
       const sound = this.sounds[name];
+      sound.volume = volume;
       sound.currentTime = 0;
       sound.play();
     }
