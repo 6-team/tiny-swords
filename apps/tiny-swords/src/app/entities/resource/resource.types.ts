@@ -3,5 +3,6 @@ import { ResourcesType } from './resource.const';
 
 export interface IResourceConfig {
   type: ResourcesType;
-  coords: TPixelsCoords;
+  coords?: TPixelsCoords;
+  quantity?: number;
 }

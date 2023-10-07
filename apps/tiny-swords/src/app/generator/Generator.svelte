@@ -2,8 +2,9 @@
   import { onDestroy, onMount } from "svelte";
   import { Observable, concatAll, concatMap, filter, from, map, switchMap, tap, withLatestFrom } from "rxjs";
   import { Hero } from '../entities/hero'
+  import {  Resource, ResourcesType } from '../entities/resource/index';
   import { TILE_SIZE, SCALE } from '../common/common.const'
-  import { actions, Heroes, Grid, Renderer, grid64, HeroHealthBar } from "../core";
+  import { actions, Heroes, Grid, Renderer, grid64, HeroHealthBar, HeroResourcesBar } from "../core";
   import { Level } from "../core/level/level";
   import { nextLevelMenu, isMainMenuStore, isMuttedStore } from "../store";
   import MainMenu from "../components/mainMenu/MainMenu.svelte";
@@ -15,7 +16,6 @@
   import type { IPlayer } from "@shared";
   import type { TPixelsCoords } from "../abilities/abilities.types";
   import type { ICollectingCharacter, IMovableCharacter } from "../common/common.types";
-  import { ResourcesType } from "../entities/resource";
 
   let staticScene: Renderer;
   let foregroundScene: Renderer;
@@ -104,6 +104,15 @@
       });
   }
 
+  const gameResources = new HeroResourcesBar([new Resource({type: ResourcesType.GOLD, quantity: 0}), new Resource({type: ResourcesType.WOOD, quantity: 0})])
+
+  const buyImprovements = (resources: {[K in ResourcesType]?: number}):void => {
+    gameResources.spend(resources);
+    heroHealthBar.unblockLive()
+
+  };
+  const availableResourcesCheck = (resources: {[K in ResourcesType]?: number}):boolean => gameResources.availableResourcesCheck(resources);
+  
   function handleUpdatedLevel(): void {
     actions.updateLevelListener()
       .pipe(tap(() => console.log('Update level')))
@@ -166,10 +175,7 @@
       grid: grid64,
     });
 
-    await heroBarsScene.renderResourcesBar([
-      { type: 'gold', image: 'img/Resources/G_Idle.png', count: 9999 },
-      { type: 'wood', image: 'img/Resources/W_Idle.png', count: 0 },
-    ]);
+    await heroBarsScene.renderResourcesBar(gameResources.getResources())
 
     // Дальше проверка: если перс повернут к врагу и они в соседних клетках, то удар засчитан
     // ...
@@ -206,6 +212,7 @@
           collecting.collect(resource);
 
           const updatedResources = resources.filter((original) => original !== resource);
+          gameResources.addResource(resource.getType())
           level.updateResources(updatedResources)
         }
       }
@@ -237,6 +244,11 @@
       }
     });
 
+    gameResources.resources$.subscribe(() => {
+    heroBarsScene.clear()
+    heroBarsScene.renderResourcesBar(gameResources.getResources())
+  }
+    )
     heroHealthBar.healthBar$.subscribe(lives => {
       heroHealthBarScene.clear();
       heroHealthBarScene.renderHealthBar(lives)
@@ -260,7 +272,7 @@
     <MainMenu {initGame} {connectToMultipleGame}/>
   {/if}
   {#if isNextLevelMenu}
-    <NextLevelMenu {createNewLevel}/>
+    <NextLevelMenu {createNewLevel} {buyImprovements} {availableResourcesCheck}/>
   {/if}
   <button class="volume-btn" on:click={()=> {
     isMuttedStore.set(!isMuttedValue)}}>

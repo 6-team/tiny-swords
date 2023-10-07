@@ -1,3 +1,4 @@
+import { IResource } from './../../common/common.types';
 import { IGrid, IMovableCharacter, ITile } from '../../common/common.types';
 import { Maybe } from '../../tools/monads/maybe';
 import { TileName, mapTileNameToClass } from './renderer.const';
@@ -170,7 +171,7 @@ export class Renderer {
     return this;
   }
 
-  async renderResourcesBar(resources: Array<{ type: string; count: number; image: string }>) {
+  async renderResourcesBar(resources: Array<IResource>) {
     const backgroundImage = await loadImage('img/UI/Banner_Connection_Left.png');
     const hPadding = 30;
     const vPadding = 10;
@@ -180,19 +181,15 @@ export class Renderer {
     this.#context.font = '18px vinque';
     this.#context.fillStyle = 'SaddleBrown';
 
-    const maxWidthText = Math.max(...resources.map(({ count }) => this.#context.measureText(String(count)).width));
-    this.#context.drawImage(
-      backgroundImage,
-      0,
-      20,
-      backgroundWidth + maxWidthText + maxWidthText / 2,
-      backgroundHeight,
+    const maxWidthText = Math.max(
+      ...resources.map((resource) => this.#context.measureText(String(resource.getQuantity())).width),
     );
+    this.#context.drawImage(backgroundImage, 0, 20, backgroundWidth + maxWidthText + 20, backgroundHeight);
 
     await Promise.all(
       resources.map(async (resource, i) => {
-        const resourceImage = await loadImage(resource.image);
-        this.#context.fillText(String(resource.count), 85 + maxWidthText / 5, i * hPadding + 55);
+        const resourceImage = await loadImage(resource.getImage());
+        this.#context.fillText(String(resource.getQuantity()), 85 + maxWidthText / 5, i * hPadding + 55);
         this.#context.drawImage(resourceImage, vPadding + 20 + maxWidthText / 5, i * hPadding + 23, 45, 45);
       }),
     );
