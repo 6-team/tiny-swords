@@ -105,16 +105,7 @@
         )
       );
 
-    const boundariesCoords$ = level.boundaries$
-      .pipe(
-        map(
-          (bounds): Array<TCollisionArea> => bounds.map(
-            (bound) => grid64.transformToPixels(bound[0], bound[1], 1, 1)
-          )
-        )
-      );
-
-    const bounds$ = combineLatest([enemiesCoords$, boundariesCoords$]).pipe(
+    const bounds$ = combineLatest([enemiesCoords$, level.boundaries$]).pipe(
       map((tuple) => tuple.flat())
     );
 
