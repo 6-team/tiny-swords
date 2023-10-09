@@ -271,6 +271,21 @@
           resources$.next(resources.filter((original) => original.element !== resource.element));
         }
       }
+
+      const enemies = enemies$.getValue();
+
+      for (const enemy of enemies) {
+        const enemyAttacking = enemy.getAbility('attacking');
+
+        const enemyHasAttackCollision = collisions.hasCollision(
+          enemyAttacking.getAffectedArea(),
+          movable.getCollisionArea()
+        );
+
+        if (enemyHasAttackCollision) {
+          enemyAttacking.attack();
+        }
+      }
     }
 
     function checkAttackCollisions(hero: IAttackingCharacter, type: AttackingType) {
@@ -279,12 +294,12 @@
 
       for (const enemy of enemies) {
         const enemyMovable = enemy.getAbility('movable');
-        const hasCollision = collisions.hasCollision(
+        const hasAttackCollision = collisions.hasCollision(
           attacking.getAffectedArea(),
           enemyMovable.getCollisionArea()
         );
 
-        if (hasCollision) {
+        if (hasAttackCollision) {
           /**
            * Вот тут мы попали по одному из врагов. Нужно что-то с ним сделать.
            */
