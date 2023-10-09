@@ -16,9 +16,9 @@ export enum EnemyActionAnimation {
 }
 
 export const enum EnemyType {
-  WARRIOR_RED,
+  TORCH_RED,
 }
 
 export const mapEnemyTypeToCoords: Record<EnemyType, CoordsTuple> = {
-  [EnemyType.WARRIOR_RED]: [0, 22],
+  [EnemyType.TORCH_RED]: [0, 22],
 };
