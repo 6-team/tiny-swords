@@ -2,9 +2,7 @@ import { Subject, filter } from 'rxjs';
 import { AttackingType } from '../../abilities/abilities.const';
 import { IController } from '../controllers.types';
 import { MovingDirection } from '@shared';
-import { Actions } from '../../core';
-
-const actions = new Actions();
+import { actions } from '../../core';
 
 export default class ServerController implements IController {
   private _movement$ = new Subject<MovingDirection>();

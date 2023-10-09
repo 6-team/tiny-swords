@@ -21,6 +21,8 @@ import { BoundaryTile } from '../../entities/boundary/boundary';
 import { BoundaryType } from '../../entities/boundary/boundary.const';
 import { GoldMineTile } from '../../entities/gold-mine/gold-mine';
 import { GoldMineType } from '../../entities/gold-mine/gold-mine.const';
+import { SheepType } from '../../entities/sheep/sheep.const';
+import { SheepTile } from '../../entities/sheep/sheep';
 
 export const enum TileName {
   WATER_MIDDLE_MIDDLE,
@@ -115,6 +117,9 @@ export const enum TileName {
   ROCKS_S,
   ROCKS_M,
   ROCKS_L,
+
+  SHEEP_RIGHT,
+  SHEEP_LEFT,
 
   TREE_TOP_LEFT,
   TREE_TOP_MIDDLE,
@@ -236,6 +241,9 @@ export const mapTileNameToClass: Partial<Record<TileName, { constructor: any; ar
   [TileName.ROCKS_S]: { constructor: RocksTile, args: [RocksType.ROCKS_S] },
   [TileName.ROCKS_M]: { constructor: RocksTile, args: [RocksType.ROCKS_M] },
   [TileName.ROCKS_L]: { constructor: RocksTile, args: [RocksType.ROCKS_L] },
+
+  [TileName.SHEEP_RIGHT]: { constructor: SheepTile, args: [SheepType.SHEEP_RIGHT] },
+  [TileName.SHEEP_LEFT]: { constructor: SheepTile, args: [SheepType.SHEEP_LEFT] },
 
   [TileName.TREE_TOP_LEFT]: { constructor: TreeTile, args: [TreeType.TOP_LEFT] },
   [TileName.TREE_TOP_MIDDLE]: { constructor: TreeTile, args: [TreeType.TOP_MIDDLE] },

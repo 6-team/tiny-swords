@@ -1,9 +1,15 @@
+import { BehaviorSubject, Observable } from 'rxjs';
 import { IResource, ICollectingCharacter } from '../../common/common.types';
 import { ICollecting } from '../abilities.types';
 
 export class Collecting implements ICollecting {
   #context: ICollectingCharacter;
-  #collection: Array<IResource> = [];
+  #collectionSubject: BehaviorSubject<Array<IResource>> = new BehaviorSubject([]);
+  collection$: Observable<Array<IResource>>;
+
+  constructor() {
+    this.collection$ = this.#collectionSubject.asObservable();
+  }
 
   /**
    * Устанавливает контекст/носителя данной способности.
@@ -24,10 +30,9 @@ export class Collecting implements ICollecting {
    * @param item Предмет коллекционирования
    */
   collect(item: IResource) {
-    this.#collection.push(item);
-
-    console.log(this.#collection);
-
+    const collection = this.#collectionSubject.getValue();
+    this.#collectionSubject.next([...collection, item]);
+    console.log(this.#collectionSubject);
     return this;
   }
 }
