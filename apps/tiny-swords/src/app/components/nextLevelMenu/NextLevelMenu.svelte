@@ -1,23 +1,35 @@
 <script lang="ts">
-    import LifeItem from "./LifeItem.svelte";
+    import UpgradeItem from "./UpgradeItem.svelte";
     import { nextLevelMenu } from "../../store/store";
     import { ResourcesType } from "../../entities/resource";
 
     export let createNewLevel: () => void;
-    export let buyImprovements: (resource: {[K in ResourcesType]?: number}) => void;
-    export let availableResourcesCheck: (resource: {[K in ResourcesType]?: number}) => boolean;
+    export let buyImprovements: (resource: { type: ResourcesType; price: number }, type: string) => void;
+    export let availableResourcesCheck: (resource: { type: ResourcesType, price: number}) => boolean;
 
     function next() {
         createNewLevel();
         nextLevelMenu.set(false)
     }
+
+    const items = [
+        {name: "Жизнь", type: 'life', cost: {type: ResourcesType.WOOD, price: 1}, icon: '../../../public/img/UI/1.png'},
+        {name: "Жизнь", type: 'life', cost: {type: ResourcesType.GOLD, price: 100}, icon: '../../../public/img/UI/1.png'},
+        {name: "Щит", type: 'shield',cost: {type: ResourcesType.GOLD, price: 300}, icon: '../../../public/img/UI/shield.png', styles: {icon_wrapper: 'top: 34%'}},
+        {name: "Оружие", type: 'archer_bow',cost: {type: ResourcesType.WOOD, price: 20}, icon: '../../../public/img/UI/archer_bow.png', styles: {icon: 'scale: 1.2'}},
+        {name: "Помощник", type: 'archer',cost: {type: ResourcesType.GOLD, price: 1000}, icon: '../../../public/img/UI/archer.png', styles: {icon: 'scale: 1.2'}},
+        {name: "Динамит", type: 'tnt',cost: {type: ResourcesType.WOOD, price: 30}, icon: '../../../public/img/UI/tnt.png',styles: {icon_wrapper: 'top: 32%'}},
+    ]
 </script>
 
 <div>
     <div class="overlay"></div>
     <div class="next-level-menu-wrapper">
         <div class="next-level-menu">
-            <LifeItem  {buyImprovements} {availableResourcesCheck}/>
+            {#each items as item}
+                
+                <UpgradeItem  {buyImprovements} {availableResourcesCheck} {item}/>
+            {/each}
             <button class="button next-level-menu__next" on:click={()=>next()}>
                 <span class="button__text">Далее</span>
             </button>
@@ -83,6 +95,9 @@
     .next-level-menu {
     display: flex;
     justify-content: flex-start;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-row-gap: 1em;
 
     &__next {
         position: absolute;

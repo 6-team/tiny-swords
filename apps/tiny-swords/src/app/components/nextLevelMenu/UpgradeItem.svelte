@@ -1,35 +1,42 @@
 <script lang="ts">
   import { ResourcesType } from "../../entities/resource";
-  export let buyImprovements: (resource: {[K in ResourcesType]?: number}) => void;
-  export let availableResourcesCheck: (resource: {[K in ResourcesType]?: number}) => boolean;
-  
+  export let buyImprovements: (resource: { type: ResourcesType; price: number }, type: string) => void;
+  export let availableResourcesCheck: (resource: { type: ResourcesType, price: number}) => boolean;
+  export let item: {name: string, type: string, icon: string, cost: {type: ResourcesType, price: number}, styles?: {icon?:string, icon_wrapper?: string}}
 
-  const lifeData = {name: "Жизнь", cost: {[ResourcesType.WOOD]: 3} }
-  let isEnoughResources = availableResourcesCheck(lifeData.cost);
+  const  {name, cost, icon, styles={}, type} = item
+
+
+  let isEnoughResources = availableResourcesCheck(cost);
   
+  const priceIcon: {[key in ResourcesType]?: string} = {
+    [ResourcesType.WOOD]: '../../../public/img/Resources/W_Idle.png',
+    [ResourcesType.GOLD]: '../../../public/img/Resources/G_Idle.png',
+
+  }
 </script>
   
   
   <div class="power-up-wrapper">
-    <button class="power-up" class:available={isEnoughResources} on:click={()=>buyImprovements(lifeData.cost)}>
+    <button class="power-up" class:available={isEnoughResources} on:click={()=>buyImprovements(cost, type)}>
       <div class="power-up__ribbon">
         <img class="power-up__ribbon-img" src="../../../public/img/UI/Ribbon_Blue_3Slides_1.png" alt="ribbon-img"/>
-        <span class="power-up__ribbon-text">{lifeData.name}</span>
+        <span class="power-up__ribbon-text">{name}</span>
       </div>
       <div class="power-up__banner">
         <img class="power-up__banner-img" src="../../../public/img/UI/Banner_Connection_Down.png" alt="banner-img"/>
-        <div class="power-up__sign">
-          <img class="power-up__sign-img" src="../../../public/img/UI/1.png" alt="item-img"/>
-          {#if !isEnoughResources}
-            <img class='power-up__lock' src="../../../public/img/UI/Regular_10.png" alt="lock-img"/>
-          {/if}
+        <div class="power-up__sign" style={styles?.icon_wrapper}>
+          <img class="power-up__sign-img" src={icon} alt="item-img" style={styles.icon}/>
         </div>
-        <div class="power-up__price">
-          <img class="power-up__price-img" src="../../../public/img/Resources/W_Idle.png" alt="resources-img"/>
-          <span class="power-up__price-count">{Object.values(lifeData.cost)[0]}</span>
-        </div>
+        {#if !isEnoughResources}
+        <img class='power-up__lock' src="../../../public/img/UI/Regular_10.png" alt="lock-img"/>
+      {/if}
       </div>
-    </button>
+      <div class="power-up__price">
+          <img class="power-up__price-img" src={priceIcon[cost.type]} alt="resources-img"/>
+          <span class="power-up__price-count">{cost.price}</span>
+        </div>
+      </button>
   </div>
 
 
@@ -91,23 +98,23 @@
 
     &__lock {
       position: absolute;
-      top: 40%;
+      top: 50%;
       left: 50%;
-      width: 40%;
+      width: 16px;
       transform: translate(-50%, -50%);
     }
-
     &__price {
-      position: absolute;
-      bottom: 5px;
-      left: 50%;
-      display: flex;
-      transform: translateX(-50%);
+    position: absolute; 
+    bottom: 5px;
+    left: 50%;
+    display: flex;
+    transform: translateX(-50%);
     }
 
     &__price-img {
       width: 20px;
       margin-left: -2px;
+      margin-top: -2px;
     }
 
     &__price-count {

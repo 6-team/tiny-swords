@@ -38,7 +38,7 @@ export interface PowerUp {}
 export interface IResource {
   powerUps: Array<PowerUp>;
   getQuantity: () => number;
-  getImage: () => string;
+  resourceImage: string;
 }
 
 export type IMovableCharacter = ICharacter<{ movable: IMovable }>;

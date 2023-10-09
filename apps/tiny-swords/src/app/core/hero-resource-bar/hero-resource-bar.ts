@@ -18,7 +18,7 @@ export class HeroResourcesBar implements IHeroResourcesBar {
   }
 
   public getResource(type: ResourcesType): Resource {
-    const resource = this.getResources().find((r) => r.getType() === type);
+    const resource = this.getResources().find((r) => r.resourceType === type);
     if (!resource) {
       console.log(`Resource ${type} does not exist!`);
     }
@@ -30,27 +30,27 @@ export class HeroResourcesBar implements IHeroResourcesBar {
     const resource = this.getResource(type);
     if (resource) {
       resource.add(quantityResources[type]);
-      const updatedResources = resources.map((_resource) => (_resource.getType() === type ? resource : _resource));
+      const updatedResources = resources.map((_resource) => (_resource.resourceType === type ? resource : _resource));
       this.#resourcesSubject.next(updatedResources);
     }
   }
 
-  public availableResourcesCheck(cost: { [K in ResourcesType]?: number }): boolean {
+  public availableResourcesCheck(cost: { type: ResourcesType; price: number }): boolean {
     const resources = this.getResources();
-    return resources.some((resource) => resource.getQuantity() >= cost[resource.getType()] || 0);
+    const resource = resources.find((_resource) => _resource.resourceType === cost.type);
+    return resource.getQuantity() >= (cost.price || 0);
   }
 
-  public spend(cost: { [K in ResourcesType]?: number }): void {
+  public spend(cost: { type: ResourcesType; price: number }): void {
     const resources = this.getResources();
-    for (const resource of resources) {
-      const type = resource.getType();
-      const costForThisResource = cost[type] || 0;
-      if (resource.getQuantity() >= costForThisResource) {
-        resource.subtract(costForThisResource);
-        const updatedResources = resources.map((_resource) => (_resource.getType() === type ? resource : _resource));
-        this.#resourcesSubject.next(updatedResources);
-        return;
-      }
+    const resource = resources.find((_resource) => _resource.resourceType === cost.type);
+    if (resource.getQuantity() >= cost.price) {
+      resource.subtract(cost.price);
+      const updatedResources = resources.map((_resource) =>
+        _resource.resourceType === resource.resourceType ? resource : _resource,
+      );
+      this.#resourcesSubject.next(updatedResources);
+      return;
     }
   }
 }

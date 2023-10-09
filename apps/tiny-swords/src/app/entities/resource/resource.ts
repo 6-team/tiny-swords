@@ -26,7 +26,11 @@ export class Resource extends Tile<ResourcesType> implements IResource {
   }
 
   get resourceType(): ResourcesType {
-    return this._type
+    return this._type;
+  }
+
+  get resourceImage(): string {
+    return this._sprite;
   }
 
   setType(type: ResourcesType = ResourcesType.GOLD) {
@@ -50,10 +54,6 @@ export class Resource extends Tile<ResourcesType> implements IResource {
 
   protected _getCoordsMap() {
     return mapResourcesToCoords;
-  }
-
-  getImage() {
-    return this._sprite;
   }
 
   public getQuantity(): number {

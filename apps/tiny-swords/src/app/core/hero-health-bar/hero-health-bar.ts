@@ -37,4 +37,8 @@ export class HeroHealthBar<
       });
     }
   }
+
+  get lives() {
+    return this._healthBarSubject.getValue();
+  }
 }

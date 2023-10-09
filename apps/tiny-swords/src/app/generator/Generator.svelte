@@ -106,12 +106,14 @@
 
   const gameResources = new HeroResourcesBar([new Resource({type: ResourcesType.GOLD, quantity: 0}), new Resource({type: ResourcesType.WOOD, quantity: 0})])
 
-  const buyImprovements = (resources: {[K in ResourcesType]?: number}):void => {
-    gameResources.spend(resources);
-    heroHealthBar.unblockLive()
+  const buyImprovements = (resources: { type: ResourcesType; price: number }, type: string):void => {
+    if(type === 'life' && heroHealthBar.lives.blockedLives) {
+      gameResources.spend(resources);
+      heroHealthBar.unblockLive()
+    }
 
   };
-  const availableResourcesCheck = (resources: {[K in ResourcesType]?: number}):boolean => gameResources.availableResourcesCheck(resources);
+  const availableResourcesCheck = (resources: { type: ResourcesType, price: number}):boolean => gameResources.availableResourcesCheck(resources);
   
   function handleUpdatedLevel(): void {
     actions.updateLevelListener()
@@ -212,7 +214,7 @@
           collecting.collect(resource);
 
           const updatedResources = resources.filter((original) => original !== resource);
-          gameResources.addResource(resource.getType())
+          gameResources.addResource(resource.resourceType)
           level.updateResources(updatedResources)
         }
       }

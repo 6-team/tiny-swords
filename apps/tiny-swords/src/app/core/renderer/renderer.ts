@@ -188,7 +188,7 @@ export class Renderer {
 
     await Promise.all(
       resources.map(async (resource, i) => {
-        const resourceImage = await loadImage(resource.getImage());
+        const resourceImage = await loadImage(resource.resourceImage);
         this.#context.fillText(String(resource.getQuantity()), 85 + maxWidthText / 5, i * hPadding + 55);
         this.#context.drawImage(resourceImage, vPadding + 20 + maxWidthText / 5, i * hPadding + 23, 45, 45);
       }),
