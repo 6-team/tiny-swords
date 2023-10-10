@@ -3,7 +3,7 @@ import { Connection } from './connection';
 import { ActionType, Game, LevelData, Player } from '@shared';
 import { Socket } from 'socket.io';
 
-server.listen(3000);
+server.listen(3016);
 
 const game = new Game();
 const connection = new Connection();
