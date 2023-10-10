@@ -3,7 +3,9 @@ import { Connection } from './connection';
 import { ActionType, Game, LevelData, Player } from '@shared';
 import { Socket } from 'socket.io';
 
-server.listen(3000);
+const port = Number(process.env.PORT) || 3000;
+
+server.listen(port);
 
 const game = new Game();
 const connection = new Connection();
