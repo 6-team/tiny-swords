@@ -17,7 +17,7 @@ export class Movable implements IMovable {
   #sizes: [height: TNumberOfPixels, width: TNumberOfPixels];
   #isRightDirection = true;
   #movingProgressRemaining = 0;
-  #breakpointReached: boolean = false;
+  #breakpointReached: boolean = true;
   #getCollisionAreaFunc?: MovableProps['getCollisionArea'];
   #context?: IMovableCharacter;
 
@@ -226,6 +226,14 @@ export class Movable implements IMovable {
    */
   get coords() {
     return this.#coords$.getValue();
+  }
+
+  get isMoving() {
+    return !this.#breakpointReached;
+  }
+
+  get isRightDirection() {
+    return this.#isRightDirection;
   }
 
   get sizes() {

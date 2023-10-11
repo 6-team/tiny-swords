@@ -1,7 +1,9 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
-  import { Observable, concatAll, concatMap, filter, from, map, switchMap, tap, withLatestFrom } from "rxjs";
+  import { BehaviorSubject, Observable, combineLatest, concatAll, concatMap, filter, from, map, switchMap, tap, withLatestFrom } from "rxjs";
   import { Hero } from '../entities/hero'
+  import { Enemy } from '../entities/enemy';
+  import { AIController } from '../controllers/AI';
   import { TILE_SIZE, SCALE } from '../common/common.const'
   import { actions, Heroes, Grid, Renderer, grid64, HeroHealthBar } from "../core";
   import { Level } from "../core/level/level";
@@ -10,12 +12,13 @@
   import NextLevelMenu from "../components/nextLevelMenu/NextLevelMenu.svelte";
   import { frames$ } from "../tools/observables";
   import { collisions } from "../core/collisions";
-  import { LayersRenderType } from "../core/layers/layers.types";
-
+  import { LayersRenderType } from "../core/layers/layers.types"
+  
   import type { IPlayer } from "@shared";
-  import type { TPixelsCoords } from "../abilities/abilities.types";
-  import type { ICollectingCharacter, IMovableCharacter } from "../common/common.types";
+  import type { TCollisionArea, TPixelsCoords } from "../abilities/abilities.types";
+  import type { IAttackingCharacter, ICollectingCharacter, IMovableCharacter } from "../common/common.types";
   import { ResourcesType } from "../entities/resource";
+  import { AttackingType } from "../abilities/abilities.const";
 
   let staticScene: Renderer;
   let foregroundScene: Renderer;
@@ -29,6 +32,18 @@
   let isNextLevelMenu = false;
   let isMainMenu = true;
   let isMuttedValue = false;
+
+  const enemyCoords = grid64.transformToPixels(5, 5, 3, 3);
+  const enemies$ = new BehaviorSubject([
+    new Enemy({
+      id: "enemy_test",
+      initialX: enemyCoords[0],
+      initialY: enemyCoords[1],
+      height: enemyCoords[2],
+      width: enemyCoords[3],
+      controllerCreator: () => new AIController()
+    })
+  ]);
 
   nextLevelMenu.subscribe(value => isNextLevelMenu = value);
   isMainMenuStore.subscribe(value => isMainMenu = value);
@@ -81,9 +96,22 @@
   }
 
   function handleHeroMovement(action$: Observable<IPlayer>): void {
+    const enemiesCoords$ = enemies$
+      .pipe(
+        map(
+          (enemies) => enemies.map(
+            (enemy) => enemy.getAbility("movable").getCollisionArea()
+          )
+        )
+      );
+
+    const bounds$ = combineLatest([enemiesCoords$, level.boundaries$]).pipe(
+      map((tuple) => tuple.flat())
+    );
+
     action$
       .pipe(
-        map((hero) => heroes.initHero(hero, level.boundaries$)),
+        map((hero) => heroes.initHero(hero, bounds$)),
         switchMap((hero: Hero) => {
           const movable = hero.getAbility('movable');
 
@@ -209,6 +237,44 @@
           level.updateResources(updatedResources)
         }
       }
+
+      const enemies = enemies$.getValue();
+
+      for (const enemy of enemies) {
+        const enemyAttacking = enemy.getAbility('attacking');
+
+        const enemyHasAttackCollision = collisions.hasCollision(
+          enemyAttacking.getAffectedArea(),
+          movable.getCollisionArea()
+        );
+
+        if (enemyHasAttackCollision) {
+          enemyAttacking.attack();
+        }
+      }
+    }
+
+    function checkAttackCollisions(hero: IAttackingCharacter, type: AttackingType) {
+      const attacking = hero.getAbility('attacking');
+      const enemies = enemies$.getValue();
+
+      for (const enemy of enemies) {
+        const enemyMovable = enemy.getAbility('movable');
+        const hasAttackCollision = collisions.hasCollision(
+          attacking.getAffectedArea(),
+          enemyMovable.getCollisionArea()
+        );
+
+        if (hasAttackCollision) {
+          /**
+           * Вот тут мы попали по одному из врагов. Нужно что-то с ним сделать.
+           */
+
+          console.log('DIE!!');
+
+          break;
+        }
+      }
     }
 
     let lastTime = 0;
@@ -223,6 +289,10 @@
     frames$.subscribe((timeStamp = 0) => {
       const deltaTime = timeStamp - lastTime;
 
+      for (const enemy of enemies$.getValue()) {
+        interactiveScene.renderMovable(enemy, deltaTime);
+      }
+
       interactiveScene.renderMovableLayer(heroes.heroes, deltaTime);
       lastTime = timeStamp
     });
@@ -230,9 +300,14 @@
     heroes.heroes$.subscribe((heroes) => {
       for (const hero of heroes) {
         const movable = hero.getAbility('movable');
+        const attacking = hero.getAbility('attacking');
 
         movable.breakpoints$.pipe(withLatestFrom(nextLevelTile$)).subscribe(([_, nextLevelTile]) => {
           checkCollisions(hero, nextLevelTile);
+        });
+
+        attacking.attack$.subscribe((type) => {
+          checkAttackCollisions(hero, type);
         });
       }
     });

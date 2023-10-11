@@ -2,7 +2,7 @@ import { Subject } from 'rxjs';
 
 const observable = new Subject<number>();
 
-const MIN_FRAME_MS = 16;
+const MIN_FRAME_MS = 17;
 
 function scheduleNextFrame() {
   const timeout = new Promise((resolve) => {
