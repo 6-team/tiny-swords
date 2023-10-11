@@ -38,15 +38,15 @@ export class Resource extends Tile<ResourcesType> implements IResource {
 
     switch (type) {
       case ResourcesType.GOLD:
-        this._sprite = '/img/Resources/G_Idle.png';
+        this._sprite = './img/Resources/G_Idle.png';
 
         break;
       case ResourcesType.WOOD:
-        this._sprite = '/img/Resources/W_Idle.png';
+        this._sprite = './img/Resources/W_Idle.png';
 
         break;
       case ResourcesType.MEAT:
-        this._sprite = '/img/Resources/M_Idle.png';
+        this._sprite = './img/Resources/M_Idle.png';
 
         break;
     }

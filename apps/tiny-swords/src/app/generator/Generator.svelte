@@ -353,7 +353,7 @@
   {/if}
   <button class="volume-btn" on:click={()=> {
     isMuttedStore.set(!isMuttedValue)}}>
-    <img src = {isMuttedValue ? '/img/UI/Disable_03.png' : '/img/UI/Regular_03.png'} alt= 'volume-img'/>
+    <img src = {isMuttedValue ? './img/UI/Disable_03.png' : './img/UI/Regular_03.png'} alt= 'volume-img'/>
   </button>
 </div>
 

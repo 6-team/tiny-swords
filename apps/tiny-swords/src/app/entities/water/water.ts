@@ -3,7 +3,7 @@ import { WaterType, mapWaterToCoords } from './water.const';
 
 export class WaterTile extends Tile<WaterType> {
   protected _type: WaterType;
-  protected _sprite = '/img/Terrain/Water/Water.png';
+  protected _sprite = './img/Terrain/Water/Water.png';
 
   constructor(type: WaterType = WaterType.MIDDLE_MIDDLE) {
     super();

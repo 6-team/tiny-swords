@@ -16,13 +16,13 @@ export class RocksTile extends Tile<RocksType> {
 
     switch (type) {
       case RocksType.ROCKS_S:
-        this._sprite = '/img/Terrain/Water/Rocks/Rocks_01.png';
+        this._sprite = './img/Terrain/Water/Rocks/Rocks_01.png';
         break;
       case RocksType.ROCKS_M:
-        this._sprite = '/img/Terrain/Water/Rocks/Rocks_02.png';
+        this._sprite = './img/Terrain/Water/Rocks/Rocks_02.png';
         break;
       case RocksType.ROCKS_L:
-        this._sprite = '/img/Terrain/Water/Rocks/Rocks_03.png';
+        this._sprite = './img/Terrain/Water/Rocks/Rocks_03.png';
         break;
     }
   }

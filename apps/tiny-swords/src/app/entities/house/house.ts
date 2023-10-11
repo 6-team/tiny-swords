@@ -3,7 +3,7 @@ import { HouseType, mapTerrainToCoords } from "./house.const";
 
 export class HouseTile extends Tile<HouseType> {
   protected _type: HouseType;
-  protected _sprite = '/img/Factions/Knights/Buildings/House/House_Blue.png';
+  protected _sprite = './img/Factions/Knights/Buildings/House/House_Blue.png';
 
   constructor(type: HouseType = HouseType.TOP_LEFT) {
     super();
