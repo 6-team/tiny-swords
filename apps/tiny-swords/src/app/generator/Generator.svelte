@@ -14,7 +14,7 @@
   import { frames$ } from "../tools/observables";
   import { collisions } from "../core/collisions";
   import { LayersRenderType } from "../core/layers/layers.types"
-  
+
   import type { IPlayer } from "@shared";
   import type { TPixelsCoords } from "../abilities/abilities.types";
   import type { IAttackingCharacter, ICollectingCharacter, IMovableCharacter } from "../common/common.types";
@@ -142,7 +142,7 @@
 
   };
   const availableResourcesCheck = (resources: { type: ResourcesType, price: number}):boolean => gameResources.availableResourcesCheck(resources);
-  
+
   function handleUpdatedLevel(): void {
     actions.updateLevelListener()
       .pipe(tap(() => console.log('Update level')))
@@ -353,7 +353,7 @@
   {/if}
   <button class="volume-btn" on:click={()=> {
     isMuttedStore.set(!isMuttedValue)}}>
-    <img src = {isMuttedValue ? 'img/UI/Disable_03.png' : 'img/UI/Regular_03.png'} alt= 'volume-img'/>
+    <img src = {isMuttedValue ? '/img/UI/Disable_03.png' : '/img/UI/Regular_03.png'} alt= 'volume-img'/>
   </button>
 </div>
 

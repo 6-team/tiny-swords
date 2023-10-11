@@ -27,7 +27,7 @@
     <div class="next-level-menu-wrapper">
         <div class="next-level-menu">
             {#each items as item}
-                
+
                 <UpgradeItem  {buyImprovements} {availableResourcesCheck} {item}/>
             {/each}
             <button class="button next-level-menu__next" on:click={()=>next()}>
@@ -44,7 +44,7 @@
         aspect-ratio: 4 / 3;
         left: 50%;
         top: 120px;
-        background: url('img/UI/level_results.png') center center /contain no-repeat;
+        background: url('/img/UI/level_results.png') center center /contain no-repeat;
         transform: translateX(-50%);
         padding: 50px;
     }
