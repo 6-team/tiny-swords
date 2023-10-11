@@ -16,6 +16,7 @@
           "mode": "development"
         },
         "production": {
+          "baseHref": "/tiny-swords/",
           "mode": "production"
         }
       }
