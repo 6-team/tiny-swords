@@ -15,7 +15,7 @@ export default class Hero
   extends Character<HeroType, HeroAbilities>
   implements IMovableCharacter, IAttackingCharacter, ICollectingCharacter
 {
-  protected _sprite = '/img/Factions/Knights/Troops/Warrior/Blue/Warrior_Blue.png';
+  protected _sprite = './img/Factions/Knights/Troops/Warrior/Blue/Warrior_Blue.png';
   protected _type = HeroType.WARRIOR_BLUE;
   protected _size = HERO_SIZE;
 

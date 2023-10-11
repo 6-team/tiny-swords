@@ -8,28 +8,28 @@
 
 
   let isEnoughResources = availableResourcesCheck(cost);
-  
+
   const priceIcon: {[key in ResourcesType]?: string} = {
-    [ResourcesType.WOOD]: '../../../public/img/Resources/W_Idle.png',
-    [ResourcesType.GOLD]: '../../../public/img/Resources/G_Idle.png',
+    [ResourcesType.WOOD]: './img/Resources/W_Idle.png',
+    [ResourcesType.GOLD]: './img/Resources/G_Idle.png',
 
   }
 </script>
-  
-  
+
+
   <div class="power-up-wrapper">
     <button class="power-up" class:available={isEnoughResources} on:click={()=>buyImprovements(cost, type)}>
       <div class="power-up__ribbon">
-        <img class="power-up__ribbon-img" src="../../../public/img/UI/Ribbon_Blue_3Slides_1.png" alt="ribbon-img"/>
+        <img class="power-up__ribbon-img" src="./img/UI/Ribbon_Blue_3Slides_1.png" alt="ribbon-img"/>
         <span class="power-up__ribbon-text">{name}</span>
       </div>
       <div class="power-up__banner">
-        <img class="power-up__banner-img" src="../../../public/img/UI/Banner_Connection_Down.png" alt="banner-img"/>
+        <img class="power-up__banner-img" src="./img/UI/Banner_Connection_Down.png" alt="banner-img"/>
         <div class="power-up__sign" style={styles?.icon_wrapper}>
           <img class="power-up__sign-img" src={icon} alt="item-img" style={styles.icon}/>
         </div>
         {#if !isEnoughResources}
-        <img class='power-up__lock' src="../../../public/img/UI/Regular_10.png" alt="lock-img"/>
+        <img class='power-up__lock' src="./img/UI/Regular_10.png" alt="lock-img"/>
       {/if}
       </div>
       <div class="power-up__price">
@@ -104,7 +104,7 @@
       transform: translate(-50%, -50%);
     }
     &__price {
-    position: absolute; 
+    position: absolute;
     bottom: 5px;
     left: 50%;
     display: flex;

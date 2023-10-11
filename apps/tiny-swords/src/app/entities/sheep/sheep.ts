@@ -3,7 +3,7 @@ import { SheepType, mapSheepToCoords } from "./sheep.const";
 
 export class SheepTile extends Tile<SheepType> {
   protected _type: SheepType;
-  protected _sprite = '/img/Resources/Sheep/HappySheep_Idle.png';
+  protected _sprite = './img/Resources/Sheep/HappySheep_Idle.png';
 
   constructor(type: SheepType = SheepType.SHEEP_RIGHT) {
     super();

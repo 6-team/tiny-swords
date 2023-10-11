@@ -3,7 +3,7 @@ import { GoldMineType, mapTerrainToCoords } from "./gold-mine.const";
 
 export class GoldMineTile extends Tile<GoldMineType> {
   protected _type: GoldMineType;
-  protected _sprite = '/img/Resources/Gold_mine/GoldMine_Inactive.png';
+  protected _sprite = './img/Resources/Gold_mine/GoldMine_Inactive.png';
 
   constructor(type: GoldMineType = GoldMineType.TOP_LEFT) {
     super();

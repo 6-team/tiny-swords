@@ -145,10 +145,10 @@ export class Renderer {
     const barPositionY = 20;
 
     const [backgroundImage, heartImage, wastedHeartImage, lockedHeartImage] = await Promise.all([
-      loadImage('img/UI/Ribbon_Yellow_3Slides.png'),
-      loadImage('img/UI/1.png'),
-      loadImage('img/UI/1-1.png'),
-      loadImage('img/UI/Regular_10.png'),
+      loadImage('./img/UI/Ribbon_Yellow_3Slides.png'),
+      loadImage('./img/UI/1.png'),
+      loadImage('./img/UI/1-1.png'),
+      loadImage('./img/UI/Regular_10.png'),
     ]);
 
     this.#context.drawImage(backgroundImage, barPositionX, barPositionY, backgroundWidth, backgroundHeight);
@@ -172,7 +172,7 @@ export class Renderer {
   }
 
   async renderResourcesBar(resources: Array<IResource>) {
-    const backgroundImage = await loadImage('img/UI/Banner_Connection_Left.png');
+    const backgroundImage = await loadImage('./img/UI/Banner_Connection_Left.png');
     const hPadding = 30;
     const vPadding = 10;
     const backgroundWidth = 85;

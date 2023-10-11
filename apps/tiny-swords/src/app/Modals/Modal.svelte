@@ -10,7 +10,7 @@
 	const unsubscribe = isActiveCloseButtonStore.subscribe((value) => {
 		isActiveCloseButton = value;
 	});
-    let closeImageBtnSrc =  'img/UI/Regular_01.png'
+    let closeImageBtnSrc =  './img/UI/Regular_01.png'
 
 </script>
 
@@ -29,12 +29,12 @@
             on:mousedown={() => {
 
                 isActiveCloseButtonStore.set(true)
-                closeImageBtnSrc = 'img/UI/Pressed_01.png'
+                closeImageBtnSrc = './img/UI/Pressed_01.png'
             }}
             on:mouseup={() => {
 
                 isActiveCloseButtonStore.set(true)
-                closeImageBtnSrc =  'img/UI/Regular_01.png'
+                closeImageBtnSrc =  './img/UI/Regular_01.png'
             }}
             >
         </button>
@@ -50,7 +50,7 @@
 	dialog {
 		border-radius: 0.2em;
 		border: none;
-		background: center / cover no-repeat url(img/UI/free-png.ru-709.png);
+		background: center / cover no-repeat url(/img/UI/free-png.ru-709.png);
     	width: 1023px;
     	height: 723px;
 	}
@@ -98,9 +98,9 @@
 		display: block;
         justify-content: end;
         display: flex;
-        background: 50% 20% / auto no-repeat url('img/UI/Regular_01.png');
+        background: 50% 20% / auto no-repeat url('/img/UI/Regular_01.png');
 	}
     button:active {
-        background: 50% 30% / auto no-repeat url('img/UI/Pressed_01.png');
+        background: 50% 30% / auto no-repeat url('/img/UI/Pressed_01.png');
 	}
 </style>

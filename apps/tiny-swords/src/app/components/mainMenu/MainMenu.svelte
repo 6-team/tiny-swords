@@ -15,8 +15,8 @@
   ];
 
   const menuSound = new Sounds()
-  menuSound.addSound(SystemSoundsType.START_GAME, 'sounds/sword.mp3')
-  menuSound.addSound(SystemSoundsType.MENU_CLICK, 'sounds/click.mp3')
+  menuSound.addSound(SystemSoundsType.START_GAME, './sounds/sword.mp3')
+  menuSound.addSound(SystemSoundsType.MENU_CLICK, './sounds/click.mp3')
 
   isMuttedStore.subscribe( value => {
     if(value) {
@@ -44,9 +44,9 @@
   }
 
   const bgTiles = [
-    ["/img/UI/cut_layout/1.png","img/UI/cut_layout/2.png","img/UI/cut_layout/3.png"],
-    ["/img/UI/cut_layout/4.png","img/UI/cut_layout/5.png","img/UI/cut_layout/6.png"],
-    ["/img/UI/cut_layout/7.png","img/UI/cut_layout/8.png","img/UI/cut_layout/9.png"]
+    ["./img/UI/cut_layout/1.png","./img/UI/cut_layout/2.png","./img/UI/cut_layout/3.png"],
+    ["./img/UI/cut_layout/4.png","./img/UI/cut_layout/5.png","./img/UI/cut_layout/6.png"],
+    ["./img/UI/cut_layout/7.png","./img/UI/cut_layout/8.png","./img/UI/cut_layout/9.png"]
   ]
 
   function expandBg(bgTiles: Array<Array<string>>, count:number):Array<Array<string>> {

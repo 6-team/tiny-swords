@@ -13,12 +13,12 @@
     }
 
     const items = [
-        {name: "Жизнь", type: 'life', cost: {type: ResourcesType.WOOD, price: 1}, icon: '../../../public/img/UI/1.png'},
-        {name: "Жизнь", type: 'life', cost: {type: ResourcesType.GOLD, price: 100}, icon: '../../../public/img/UI/1.png'},
-        {name: "Щит", type: 'shield',cost: {type: ResourcesType.GOLD, price: 300}, icon: '../../../public/img/UI/shield.png', styles: {icon_wrapper: 'top: 34%'}},
-        {name: "Оружие", type: 'archer_bow',cost: {type: ResourcesType.WOOD, price: 20}, icon: '../../../public/img/UI/archer_bow.png', styles: {icon: 'scale: 1.2'}},
-        {name: "Помощник", type: 'archer',cost: {type: ResourcesType.GOLD, price: 1000}, icon: '../../../public/img/UI/archer.png', styles: {icon: 'scale: 1.2'}},
-        {name: "Динамит", type: 'tnt',cost: {type: ResourcesType.WOOD, price: 30}, icon: '../../../public/img/UI/tnt.png',styles: {icon_wrapper: 'top: 32%'}},
+        {name: "Жизнь", type: 'life', cost: {type: ResourcesType.WOOD, price: 1}, icon: './img/UI/1.png'},
+        {name: "Жизнь", type: 'life', cost: {type: ResourcesType.GOLD, price: 100}, icon: './img/UI/1.png'},
+        {name: "Щит", type: 'shield',cost: {type: ResourcesType.GOLD, price: 300}, icon: './img/UI/shield.png', styles: {icon_wrapper: 'top: 34%'}},
+        {name: "Оружие", type: 'archer_bow',cost: {type: ResourcesType.WOOD, price: 20}, icon: './img/UI/archer_bow.png', styles: {icon: 'scale: 1.2'}},
+        {name: "Помощник", type: 'archer',cost: {type: ResourcesType.GOLD, price: 1000}, icon: './img/UI/archer.png', styles: {icon: 'scale: 1.2'}},
+        {name: "Динамит", type: 'tnt',cost: {type: ResourcesType.WOOD, price: 30}, icon: './img/UI/tnt.png',styles: {icon_wrapper: 'top: 32%'}},
     ]
 </script>
 
@@ -61,7 +61,7 @@
     .button {
         position: relative;
         font-size: 16px;
-        background: no-repeat url(img/UI/Button_Blue_3Slides_Pressed.png);
+        background: no-repeat url(/img/UI/Button_Blue_3Slides_Pressed.png);
         background-size: cover;
         width: fit-content;
         font-family: "Vinque", serif;
@@ -83,7 +83,7 @@
     }
 
     &:hover{
-        background: no-repeat url(img/UI/Button_Blue_3Slides.png);
+        background: no-repeat url(/img/UI/Button_Blue_3Slides.png);
         background-size: cover;
 
         .button__text {
