@@ -44,9 +44,9 @@
   }
 
   const bgTiles = [
-    ["img/UI/cut_layout/1.png","img/UI/cut_layout/2.png","img/UI/cut_layout/3.png"],
-    ["img/UI/cut_layout/4.png","img/UI/cut_layout/5.png","img/UI/cut_layout/6.png"],
-    ["img/UI/cut_layout/7.png","img/UI/cut_layout/8.png","img/UI/cut_layout/9.png"]
+    ["/img/UI/cut_layout/1.png","img/UI/cut_layout/2.png","img/UI/cut_layout/3.png"],
+    ["/img/UI/cut_layout/4.png","img/UI/cut_layout/5.png","img/UI/cut_layout/6.png"],
+    ["/img/UI/cut_layout/7.png","img/UI/cut_layout/8.png","img/UI/cut_layout/9.png"]
   ]
 
   function expandBg(bgTiles: Array<Array<string>>, count:number):Array<Array<string>> {
@@ -144,7 +144,7 @@
       transform: translate(-50%,-50%);
 
       button {
-      background: no-repeat url(img/UI/Button_Blue_3Slides_Pressed.png);
+      background: no-repeat url(/img/UI/Button_Blue_3Slides_Pressed.png);
       background-size: cover;
       width: 128px;
       height: 43px;
@@ -162,7 +162,7 @@
       }
 
       &.active {
-        background: no-repeat url(img/UI/Button_Blue_3Slides.png);
+        background: no-repeat url(/img/UI/Button_Blue_3Slides.png);
         background-size: cover;
 
         .menu-title {
