@@ -13,4 +13,5 @@ export interface EnemyConfig {
   width: TNumberOfPixels;
   initialX: TTilePosition;
   initialY: TTilePosition;
+  id: string;
 }

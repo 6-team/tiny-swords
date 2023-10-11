@@ -1,4 +1,4 @@
 import KeyboardController from './keyboard';
 
-export { pushedKeys } from './keyboard.conts';
+export { directionKeys, attackKeys } from './keyboard.conts';
 export { KeyboardController };

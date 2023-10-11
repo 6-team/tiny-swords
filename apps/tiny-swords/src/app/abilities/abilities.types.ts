@@ -9,7 +9,7 @@ import {
   TNumberOfPixels,
   TPixelsPosition,
 } from '../common/common.types';
-import { AttackingForce } from './abilities.const';
+import { AttackingType } from './abilities.const';
 import { MovingDirection } from '@shared';
 import { IController } from '../controllers';
 
@@ -34,7 +34,30 @@ export interface ICollecting extends IAbility<ICollectingCharacter> {
 }
 
 export interface IAttacking extends IAbility<IAttackingCharacter> {
-  attack(type?: AttackingForce): this;
+  /**
+   * Поток атак
+   */
+  attack$: Observable<AttackingType>;
+
+  /**
+   * Атакует ли персонаж прямо сейчас
+   */
+  isAttacking: boolean;
+
+  /**
+   * Метод для атаки.
+   *
+   * @param type Тип удара
+   * @returns Объект способности
+   */
+  attack(type?: AttackingType): this;
+
+  /**
+   * Вычисляет зону, куда будет атаковать персонаж и которая будет считаться зоной поражения для других.
+   *
+   * @returns Зона поражения в виде кортежа пикселей
+   */
+  getAffectedArea(): TPixelsCoords;
 }
 
 export interface IMovable extends IAbility<IMovableCharacter> {
@@ -47,6 +70,16 @@ export interface IMovable extends IAbility<IMovableCharacter> {
    * @deprecated Для обратной совместимости, пока не научились рендерить реактивно
    */
   coords: [x: TNumberOfPixels, y: TNumberOfPixels];
+
+  /**
+   * В движении ли персонаж в данный момент
+   */
+  isMoving: boolean;
+
+  /**
+   * Повернут ли персонаж вправо
+   */
+  isRightDirection: boolean;
 
   /**
    * Устанавливает контекст/носителя данной способности.

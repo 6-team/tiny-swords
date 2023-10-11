@@ -1,19 +1,17 @@
 name: Tiny Swords CI
 
 on:
-  pull_request:
   workflow_dispatch:
-  push:
-    branches:
-      - main
+  pull_request:
 
 jobs:
   main:
+    if: github.event.pull_request.merged == false
     permissions: write-all
     runs-on: ubuntu-latest
     concurrency: ci-${{github.ref}}
     steps:
-      - name: Actions Checkout
+      - name: Checkout 🛎
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
@@ -27,4 +25,4 @@ jobs:
       - name: Test
         run: npx nx affected -t test --parallel=3
       - name: Build
-        run: npx nx affected -t build --parallel=3
+        run: npx nx run-many -t build -p backend tiny-swords

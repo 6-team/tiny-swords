@@ -11,6 +11,7 @@ export abstract class Tile<T extends string | number | symbol> implements ITile 
   protected _col = 0;
   protected _scale = 1;
   protected _framePerTime = 0;
+  protected _animationResolve?: () => void;
   protected readonly _size: number = 64;
   private readonly _spriteFramesCount: number = 6;
   private readonly _fps: number = 10;
@@ -37,8 +38,35 @@ export abstract class Tile<T extends string | number | symbol> implements ITile 
    *
    * @param row Номер кадра анимации
    */
-  setAnimation(row: number) {
+  setAnimation(row: number): void {
     this._row = row;
+    this._col = 0;
+  }
+
+  /**
+   * Устанавливает анимацию, воспроизводит её один раз и возвращает предыдущую анимацию
+   *
+   * @param row Номер анимации
+   */
+  setAnimationOnce(row: number): Promise<void> {
+    /**
+     * Если предыдущая анимация не завершилась, игнорируем вызов
+     */
+    if (this._animationResolve) {
+      return Promise.reject();
+    }
+
+    const prev = this._row;
+
+    this._row = row;
+    this._col = 0;
+
+    return new Promise<number>((resolve) => {
+      this._animationResolve = () => resolve(prev);
+    }).then((prevAnimation) => {
+      this._row = prevAnimation;
+      this._animationResolve = undefined;
+    });
   }
 
   /**
@@ -54,6 +82,10 @@ export abstract class Tile<T extends string | number | symbol> implements ITile 
     if (this._framePerTime > 1000 / this._fps) {
       this._framePerTime = 0;
       this._col = (this._col + 1) % this._spriteFramesCount;
+
+      if (this._animationResolve && this._col === 0) {
+        this._animationResolve();
+      }
     } else {
       this._framePerTime += deltaTime;
     }

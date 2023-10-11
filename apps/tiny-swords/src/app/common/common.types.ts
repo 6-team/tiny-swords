@@ -26,6 +26,7 @@ export interface ITile {
     scale: number;
   }>;
   setAnimation(row: number): void;
+  setAnimationOnce(row: number): Promise<void>;
   initAnimation(deltaTime: number): void;
 }
 
