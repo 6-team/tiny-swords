@@ -2,7 +2,7 @@ name: Tiny Swords CI
 
 on:
   workflow_dispatch:
-  push:
+  pull_request:
 
 jobs:
   main:
