@@ -38,10 +38,12 @@ export interface PowerUp {}
 
 export interface IResource {
   powerUps: Array<PowerUp>;
+  getQuantity: () => number;
+  resourceImage: string;
 }
 
-export interface IMovableCharacter extends ICharacter<{ movable: IMovable }> {}
+export type IMovableCharacter = ICharacter<{ movable: IMovable }>;
 
-export interface IAttackingCharacter extends ICharacter<{ attacking: IAttacking }> {}
+export type IAttackingCharacter = ICharacter<{ attacking: IAttacking }>;
 
-export interface ICollectingCharacter extends ICharacter<{ collecting: ICollecting }> {}
+export type ICollectingCharacter = ICharacter<{ collecting: ICollecting }>;

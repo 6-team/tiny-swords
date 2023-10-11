@@ -1,4 +1,4 @@
-import { CoordsTuple } from "../tile/tile.types";
+import { CoordsTuple } from '../tile/tile.types';
 
 export const enum ResourcesType {
   GOLD,
