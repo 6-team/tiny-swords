@@ -12,8 +12,8 @@ export default class Enemy
   extends Character<EnemyType, EnemyAbilities>
   implements IMovableCharacter, IAttackingCharacter
 {
-  protected _sprite: string = '/img/Factions/Knights/Troops/Warrior/Red/Warrior_Red.png';
-  protected _type = EnemyType.WARRIOR_RED;
+  protected _sprite: string = '/img/Factions/Goblins/Troops/Torch/Red/Torch_Red.png';
+  protected _type = EnemyType.TORCH_RED;
   protected _size = ENEMY_SIZE;
 
   constructor({ controllerCreator, height, width, initialX, initialY, id }: EnemyConfig) {
