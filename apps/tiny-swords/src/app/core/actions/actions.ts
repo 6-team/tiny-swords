@@ -4,11 +4,12 @@ import io, { Socket as WebSocket } from 'socket.io-client';
 import { ActionType, IPlayer, LevelData } from '@shared';
 import { MovingDirection } from '@shared';
 import { LayersMap } from '../layers/layers.types';
+import { Resource } from '../../entities/resource';
 
 // TODO: need to move
 const ENDPOINT = 'https://tiny-swords-b4d29a0600f2.herokuapp.com/';
 
-class Actions<T extends IPlayer<MovingDirection>, L extends LevelData<LayersMap>> {
+class Actions<T extends IPlayer<MovingDirection>, L extends LevelData<LayersMap, Resource>> {
   #socketSubject = new BehaviorSubject<WebSocket>(null);
   #player: T = null;
 
@@ -23,10 +24,10 @@ class Actions<T extends IPlayer<MovingDirection>, L extends LevelData<LayersMap>
       .subscribe((socket) => this.#socketSubject.next(socket));
   }
 
-  initGame(map: LevelData): Observable<T> {
+  initGame(level: L): Observable<T> {
     if (this.#player) return of(null);
 
-    return this.emit(ActionType.InitGame, map).pipe(
+    return this.emit(ActionType.InitGame, this.levelToPlain(level)).pipe(
       switchMap(() => this.listen<T>(ActionType.InitGame).pipe(tap(this.setPlayer.bind(this)))),
     );
   }
@@ -53,15 +54,25 @@ class Actions<T extends IPlayer<MovingDirection>, L extends LevelData<LayersMap>
   }
 
   updateLevel(level: L): Observable<WebSocket> {
-    return this.emit(ActionType.UpdateLevel, level);
+    return this.emit(ActionType.UpdateLevel, this.levelToPlain(level));
   }
 
   updateLevelListener(): Observable<L> {
-    return this.listen<L>(ActionType.UpdateLevel);
+    return this.listen<L>(ActionType.UpdateLevel).pipe(map((level) => ({
+      ...level,
+      resources: level.resources.map(({ coords, resourceType }) => new Resource({ coords, type: resourceType })),
+    })));
   }
 
   closeGame(): void {
     this.#socketSubject.getValue().close();
+  }
+
+  private levelToPlain(level: L): L {
+    return {
+      ...level,
+      resources: level.resources.map(({ coords, resourceType }) => ({ coords, resourceType })),
+    }
   }
 
   private setPlayer(player: T): void {

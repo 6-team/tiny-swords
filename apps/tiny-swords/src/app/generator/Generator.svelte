@@ -47,7 +47,7 @@
 
   nextLevelMenu.subscribe(value => isNextLevelMenu = value);
   isMainMenuStore.subscribe(value => isMainMenu = value);
-  isMuttedStore.subscribe( value => isMuttedValue = value)
+  isMuttedStore.subscribe( value => isMuttedValue = value);
 
   level.startCoords$.subscribe(([startX, startY]) => {
     /**
