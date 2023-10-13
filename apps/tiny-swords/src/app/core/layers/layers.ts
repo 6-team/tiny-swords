@@ -85,7 +85,7 @@ export class Layers {
     ];
 
     this.#resources = new ResourcesLayer(gridX, gridY, level, [terrainLayer, buildingsLayer, signLayer, decoLayer]);
-    this.#enemies = new EnemiesLayer(gridX, gridY, level, [terrainLayer, buildingsLayer, signLayer]);
+    this.#enemies = new EnemiesLayer(gridX, gridY, level, startCoords, endCoords, [terrainLayer, buildingsLayer, signLayer]);
   }
 
   get boundaries() {
