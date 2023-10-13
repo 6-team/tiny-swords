@@ -53,6 +53,7 @@ export class Movable implements IMovable {
    */
   setController(controller: IController) {
     combineLatest([frames$, controller.movement$]).subscribe(this.#handleFrameChange);
+    controller.animation$.subscribe(this.#handleAnimationChange);
 
     return this;
   }
@@ -81,6 +82,16 @@ export class Movable implements IMovable {
 
     return this;
   }
+
+  #handleAnimationChange = (direction: MovingDirection) => {
+    if (this.isMoving) {
+      return this;
+    }
+
+    this.#handleMovementChange(direction);
+
+    return this;
+  };
 
   /**
    * Обрабатывает получение нового фрейма.
@@ -218,7 +229,7 @@ export class Movable implements IMovable {
   getCollisionArea() {
     return this.#getCollisionAreaFunc
       ? this.#getCollisionAreaFunc(this)
-      : ([this.coords[0], this.coords$[1], this.#sizes[0], this.#sizes[1]] as TCollisionArea);
+      : ([this.coords[0], this.coords[1], this.#sizes[0], this.#sizes[1]] as TCollisionArea);
   }
 
   /**
