@@ -33,17 +33,20 @@
   let isMainMenu = true;
   let isMuttedValue = false;
 
-  const enemyCoords = grid64.transformToPixels(5, 5, 3, 3);
-  const enemies$ = new BehaviorSubject([
-    new Enemy({
-      id: "enemy_test",
+  const enemies = level.enemies.map(({ coords }, index) => {
+    const enemyCoords = grid64.transformToPixels(coords[0] - 1, coords[1] - 1, 3, 3);
+    
+    return new Enemy({
+      id: `enemy_${index}`,
       initialX: enemyCoords[0],
       initialY: enemyCoords[1],
       height: enemyCoords[2],
       width: enemyCoords[3],
       controllerCreator: () => new AIController()
-    })
-  ]);
+    });
+  });
+
+  const enemies$ = new BehaviorSubject(enemies);
 
   nextLevelMenu.subscribe(value => isNextLevelMenu = value);
   isMainMenuStore.subscribe(value => isMainMenu = value);

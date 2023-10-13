@@ -1,3 +1,4 @@
+import { LayerCell, LayerCondition } from "../layer/layer.types";
 import { TileName } from "../renderer";
 
 export const randomElement = <T>(array: Array<T>): T => {
@@ -33,6 +34,36 @@ export const getStartEndCoords = (gridX, gridY, border): [number, number][] => {
 }
 
 /**
+ * Получения количества ячеек по проценту от общего числа
+ * 
+ * @param allCells Количество всех ячеек
+ * @param percent Процент
+ * @returns Количество
+ */
+export const getQuantityCells = (allCells: number, percent: number) => {
+  return Math.floor(allCells / 100 * percent);
+}
+
+/**
+ * Создание словаря с координатами ячеек
+ * 
+ * @param layer массив ячеек слоя
+ * @param condition условие для добавления координат в словарь
+ * @returns 
+ */
+export const createCoordsLayerDict = (cells: LayerCell[], condition: (tile: TileName, boundary: boolean) => boolean): Record<string, true> => {
+  return cells.reduce((acc, { coords, options, boundary }) => {
+    if (condition(options[0], boundary)) {
+      return {
+        ...acc,
+        [`${coords[0]}-${coords[1]}`]: true
+      }
+    }
+    return acc;
+  }, {});
+}
+
+/**
  * Перемешивание массива
  */
 const shuffleArray = <T>(array: Array<T>): Array<T> => {
@@ -62,3 +93,27 @@ export const getShuffleFilterCoords = (layer, condition) => {
       .filter(condition)
   );
 }
+
+export const createLayerConditions = (availableCells, tilesList): LayerCondition[] => {
+  const conditions = [];
+
+  let cursor = 0;
+
+  for (let i = 0; i < tilesList.length; i++) {
+    const { count, weightedTiles } = tilesList[i];
+
+    for (let j = 0; j < count; j++) {
+      const coords = availableCells[cursor];
+  
+      conditions.push({
+        tile: weightedRandomElement(weightedTiles.map(({ tile, weight }) => [tile, weight])),
+        coords,
+        boundary: false,
+      });
+
+      cursor++;
+    }
+  };
+
+  return conditions;
+};

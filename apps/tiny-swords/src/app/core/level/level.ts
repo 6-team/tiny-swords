@@ -19,11 +19,14 @@ export class Level {
   readonly #endCoordsSubject = new BehaviorSubject<[number, number]>([0, 0]);
   readonly #mapsSubject = new BehaviorSubject<LayersMap[]>([]);
   readonly #resourcesSubject = new BehaviorSubject<Resource[]>([]);
+  readonly #enemiesSubject = new BehaviorSubject<Record<string, [number, number]>[]>([]);
 
   readonly startCoords$ = this.#startCoordsSubject.asObservable();
   readonly endCoords$ = this.#endCoordsSubject.asObservable();
   readonly maps$ = this.#mapsSubject.asObservable();
   readonly resources$ = this.#resourcesSubject.asObservable();
+  readonly enemies$ = this.#enemiesSubject.asObservable();
+
   readonly boundaries$ = this.#boundariesSubject
     .asObservable()
     .pipe(map((bounds): TCollisionArea[] => bounds.map(([x, y]) => grid64.transformToPixels(x, y, 1, 1))));
@@ -54,8 +57,12 @@ export class Level {
     return this.#resourcesSubject.getValue();
   }
 
+  get enemies(): Record<string, [number, number]>[] {
+    return this.#enemiesSubject.getValue();
+  }
+
   updateLevel(levelData: LevelData<LayersMap, Resource>): void {
-    const { gridX, gridY, startCoords, endCoords, maps, boundaries, resources } = levelData;
+    const { gridX, gridY, startCoords, endCoords, maps, boundaries, resources, enemies } = levelData;
 
     this.#data = levelData;
     this.#boundariesSubject.next(boundaries);
@@ -65,6 +72,7 @@ export class Level {
     this.#gridXSubject.next(gridX);
     this.#gridYSubject.next(gridY);
     this.#resourcesSubject.next(resources);
+    this.#enemiesSubject.next(enemies);
   }
 
   updateResources(resources: Resource[]): void {
@@ -78,7 +86,7 @@ export class Level {
     const nextLevelType = randomElement([LevelType.Ground, LevelType.Sand]);
     const border = randomElement([1, 2]);
 
-    const { gridX, gridY, startCoords, endCoords, maps, boundaries, resources } = new Layers(
+    const { gridX, gridY, startCoords, endCoords, maps, boundaries, resources, enemies } = new Layers(
       currentLevelType,
       nextLevelType,
       SIZE_X,
@@ -88,7 +96,7 @@ export class Level {
 
     console.timeEnd();
 
-    this.updateLevel({ gridX, gridY, startCoords, endCoords, maps, boundaries, resources });
+    this.updateLevel({ gridX, gridY, startCoords, endCoords, maps, boundaries, resources, enemies });
 
     return of(this.data);
   }

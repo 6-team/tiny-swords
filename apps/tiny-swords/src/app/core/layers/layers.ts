@@ -13,10 +13,12 @@ import { LevelType } from '../level/level.types';
 import { Resource } from '../../entities/resource';
 import { grid64 } from '../grid';
 import { ResourcesLayer } from './kinds/resources-layer/resurces-layer';
+import { EnemiesLayer } from './kinds/enemies-layer/enemies-layer';
 
 export class Layers {
   #layers;
   #resources;
+  #enemies;
   gridX;
   gridY;
   startCoords;
@@ -83,6 +85,7 @@ export class Layers {
     ];
 
     this.#resources = new ResourcesLayer(gridX, gridY, level, [terrainLayer, buildingsLayer, signLayer, decoLayer]);
+    this.#enemies = new EnemiesLayer(gridX, gridY, level, [terrainLayer, buildingsLayer, signLayer]);
   }
 
   get boundaries() {
@@ -137,5 +140,11 @@ export class Layers {
       .map(({ options, coords }) => {
         return new Resource({ type: options[0], coords: grid64.transformToPixels(coords[0], coords[1], 1, 1) })
       });
+  }
+
+  get enemies() {
+    return this.#enemies.array
+      .filter(({ collapsed }) => collapsed)
+      .map(({ coords }) => ({ coords }));
   }
 }
