@@ -52,7 +52,7 @@ export class Sounds {
 }
 
 export class HeroSounds extends Sounds {
-  constructor({ controller, collecting }) {
+  constructor({ movable, attacking, collecting }) {
     super();
 
     this.addSound(HeroSoundsType.MOVEMENT, 'sounds/running.mp3');
@@ -62,15 +62,15 @@ export class HeroSounds extends Sounds {
     this.addSound(HeroSoundsType.HIT_ATTACK, 'sounds/hit_attack.mp3');
     this.addSound(HeroSoundsType.HITTING, 'sounds/hitting.mp3');
 
-    controller.movement$.subscribe((direction) => {
+    movable.movement$.subscribe((direction) => {
       if (Object.values(MovingDirection).includes(direction) && !this.isPlaySound(HeroSoundsType.MOVEMENT)) {
         this.playMovementSound();
       }
       if (direction === MovingDirection.IDLE) this.stopMovementSound();
     });
 
-    controller.attack$.subscribe((force) => {
-      if (force === AttackingType.DOWN) this.playAttackSound();
+    attacking.attack$.subscribe(() => {
+      this.playAttackSound();
     });
 
     collecting.collection$.pipe(filter((resources: ResourcesType[]) => resources.length > 0)).subscribe((resources) => {
@@ -97,7 +97,7 @@ export class HeroSounds extends Sounds {
   }
 
   playAttackSound() {
-    this.playSound(HeroSoundsType.ATTACK);
+    this.playSound(HeroSoundsType.ATTACK, 0.3);
   }
 
   playHittingSound() {
