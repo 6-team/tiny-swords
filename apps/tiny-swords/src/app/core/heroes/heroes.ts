@@ -2,8 +2,8 @@ import { KeyboardController } from '../../controllers/keyboard';
 import { ServerController } from '../../controllers/server';
 import { Hero } from '../../entities/hero';
 import { IPlayer } from '@shared';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { TCollisionArea } from '../../abilities/abilities.types';
+import { BehaviorSubject, Observable, concatAll, filter, map, merge, mergeMap } from 'rxjs';
+import { TCollisionArea, TPixelsCoords } from '../../abilities/abilities.types';
 import { collisions } from '../collisions';
 import { grid64 } from '../grid';
 import { CoordsTuple } from '../../entities/tile/tile.types';
@@ -12,8 +12,10 @@ export class Heroes {
   readonly #heroesSubject = new BehaviorSubject<Hero[]>([]);
 
   readonly heroes$ = this.#heroesSubject.asObservable();
+  readonly heroesBoundaries$ = this.#initHeroesBoundaries();
 
   #startCoords: CoordsTuple;
+  #mainHero: Hero;
 
   constructor(startCoords: CoordsTuple) {
     this.#startCoords = startCoords;
@@ -37,6 +39,7 @@ export class Heroes {
     });
 
     this.addHero(hero);
+    this.#mainHero = hero;
 
     return hero;
   }
@@ -64,7 +67,32 @@ export class Heroes {
     this.#heroesSubject.next(heroes);
   }
 
-  getHero(player: { id: string }): Hero | undefined {
-    return this.heroes.find(({ id }) => player.id === id);
+  removeHero(id: string | number): void {
+    const heroes = this.heroes.filter((hero) => hero.id !== id);
+
+    this.#heroesSubject.next(heroes);
+  }
+
+  getHero(id: string | number): Hero | undefined {
+    return this.heroes.find((hero) => hero.id === id);
+  }
+
+  isMainHero(id: string | number): boolean {
+    return this.#mainHero.id === id;
+  }
+
+  #initHeroesBoundaries(): Observable<TPixelsCoords[]> {
+    const boundaries$ = this.heroes$.pipe(
+      filter((heroes) => !!heroes.length),
+      concatAll(),
+      mergeMap((hero) => hero.getAbility('movable').coords$),
+      map(() => this.heroes.map((enemy) => enemy.getAbility('movable').getCollisionArea())),
+    );
+    const emptyBoundary$ = this.heroes$.pipe(
+      filter((heroes) => !heroes.length),
+      map(() => []),
+    );
+
+    return merge(boundaries$, emptyBoundary$);
   }
 }

@@ -1,5 +1,4 @@
-import { MovingDirection } from '@shared';
-import { AttackingType } from '../../abilities/abilities.const';
+import { MovingDirection, AttackingType } from '@shared';
 
 export const directionKeys: Record<string, MovingDirection> = {
   ArrowUp: MovingDirection.UP,

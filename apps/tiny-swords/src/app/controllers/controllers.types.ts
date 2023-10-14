@@ -1,6 +1,5 @@
 import { Observable } from 'rxjs';
-import { MovingDirection } from '@shared';
-import { AttackingType } from '../abilities/abilities.const';
+import { MovingDirection, AttackingType } from '@shared';
 
 export interface IController {
   movement$: Observable<MovingDirection>;

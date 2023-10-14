@@ -1,9 +1,8 @@
 import { SoundType } from './sounds.types';
-import { MovingDirection } from '@shared';
+import { MovingDirection, AttackingType } from '@shared';
 import { HeroSoundsType } from './sounds.const';
 import { filter } from 'rxjs';
 import { ResourcesType } from '../../entities/resource';
-import { AttackingType } from '../../abilities/abilities.const';
 
 export class Sounds {
   private sounds: SoundType;

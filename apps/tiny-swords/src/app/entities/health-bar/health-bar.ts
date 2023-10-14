@@ -1,19 +1,23 @@
-import { IHealthBar } from './health-bar.types';
+import { IHealthBar, IHealthBarConfig } from './health-bar.types';
 import { BehaviorSubject } from 'rxjs';
 
-export abstract class HealthBar<T extends { availableLives: number }> implements IHealthBar {
-  protected abstract _healthBarSubject: BehaviorSubject<T>;
-
-  removeLive(): void {
-    const healthValue = this._healthBarSubject.getValue();
-
-    this._healthBarSubject.next({
-      ...healthValue,
-      availableLives: healthValue.availableLives - 1,
-    });
-  }
+export abstract class HealthBar<T extends IHealthBarConfig = IHealthBarConfig> implements IHealthBar {
+  protected readonly healthBarSubject: BehaviorSubject<T> = new BehaviorSubject<T>({ availableLives: 0 } as T);
+  readonly healthBar$ = this.healthBarSubject.asObservable();
 
   get isDead(): boolean {
-    return this._healthBarSubject.getValue().availableLives === 0;
+    return this.healthBar.availableLives === 0;
+  }
+
+  get healthBar(): T {
+    return this.healthBarSubject.getValue();
+  }
+
+  removeLive(): void {
+    this.updateHealthBar({ availableLives: this.healthBar.availableLives - 1 } as Partial<T>);
+  }
+
+  updateHealthBar(healthBar: Partial<T>): void {
+    this.healthBarSubject.next({ ...this.healthBar, ...healthBar });
   }
 }
