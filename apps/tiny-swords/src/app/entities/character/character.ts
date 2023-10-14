@@ -12,7 +12,7 @@ export default abstract class Character<
 {
   protected _abilities: Abilities;
 
-  id: string;
+  id: string | number;
 
   constructor({ id }: CharacterConfig = {}) {
     super();

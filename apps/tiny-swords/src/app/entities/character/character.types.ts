@@ -1,3 +1,3 @@
 export interface CharacterConfig {
-  id?: string;
+  id?: string | number;
 }

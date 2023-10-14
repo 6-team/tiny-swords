@@ -17,6 +17,10 @@ export class Level {
   readonly #gridYSubject = new BehaviorSubject<number>(0);
   readonly #startCoordsSubject = new BehaviorSubject<[number, number]>([0, 0]);
   readonly #endCoordsSubject = new BehaviorSubject<[number, number]>([0, 0]);
+  readonly #enemiesCoordsSubject = new BehaviorSubject<[number, number][]>([
+    [5, 5],
+    [10, 10],
+  ]);
   readonly #mapsSubject = new BehaviorSubject<LayersMap[]>([]);
   readonly #resourcesSubject = new BehaviorSubject<Resource[]>([]);
 
@@ -24,6 +28,7 @@ export class Level {
   readonly endCoords$ = this.#endCoordsSubject.asObservable();
   readonly maps$ = this.#mapsSubject.asObservable();
   readonly resources$ = this.#resourcesSubject.asObservable();
+  readonly enemiesCoords$ = this.#enemiesCoordsSubject.asObservable();
   readonly boundaries$ = this.#boundariesSubject
     .asObservable()
     .pipe(map((bounds): TCollisionArea[] => bounds.map(([x, y]) => grid64.transformToPixels(x, y, 1, 1))));

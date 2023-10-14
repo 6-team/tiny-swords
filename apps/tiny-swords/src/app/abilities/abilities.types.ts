@@ -9,8 +9,7 @@ import {
   TNumberOfPixels,
   TPixelsPosition,
 } from '../common/common.types';
-import { AttackingType } from './abilities.const';
-import { MovingDirection } from '@shared';
+import { MovingDirection, AttackingType } from '@shared';
 import { IController } from '../controllers';
 
 interface IAbility<Context> {
