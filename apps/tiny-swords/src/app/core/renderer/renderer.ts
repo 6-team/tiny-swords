@@ -144,29 +144,30 @@ export class Renderer {
     const barPositionX = 1152;
     const barPositionY = 20;
 
-    const [backgroundImage, heartImage, wastedHeartImage, lockedHeartImage] = await Promise.all([
+    const [backgroundImage, heartImage, lockedHeartImage] = await Promise.all([
       loadImage('./img/UI/Ribbon_Yellow_3Slides.png'),
       loadImage('./img/UI/1.png'),
-      loadImage('./img/UI/1-1.png'),
       loadImage('./img/UI/Regular_10.png'),
     ]);
 
     this.#context.drawImage(backgroundImage, barPositionX, barPositionY, backgroundWidth, backgroundHeight);
 
     const available = new Array(availableLives).fill(heartImage);
-    const wasted = new Array(totalLives - availableLives - blockedLives).fill(wastedHeartImage);
-    const blocked = blockedLives >= 1 ? [lockedHeartImage] : [];
+    const wasted = new Array(totalLives - availableLives - blockedLives);
+    const blocked = blockedLives >= 1 ? new Array(blockedLives).fill(lockedHeartImage) : [];
 
     const hearts = [...available, ...wasted, ...blocked];
 
     hearts.forEach((heart, i) => {
-      this.#context.drawImage(
-        heart,
-        i * (heartWidth + heartPadding) + barPositionX + 22,
-        barPositionY + 5,
-        heartWidth,
-        heartHeight,
-      );
+      if (heart) {
+        this.#context.drawImage(
+          heart,
+          i * (heartWidth + heartPadding) + barPositionX + 22,
+          barPositionY + 5,
+          heartWidth,
+          heartHeight,
+        );
+      }
     });
     return this;
   }

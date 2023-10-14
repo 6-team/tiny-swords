@@ -7,13 +7,19 @@ export class HeroHealthBar extends HealthBar<IHeroHealthBarConfig> implements IH
     this.updateHealthBar(healthBar);
   }
 
+  get blockedLives(): number {
+    return this.healthBar.blockedLives;
+  }
+
   unblockLive(): void {
-    this.updateHealthBar({ blockedLives: 0 });
+    this.updateHealthBar({ blockedLives: this.blockedLives >= 1 ? this.blockedLives - 1 : 0 });
   }
 
   addLive(): void {
-    if (this.healthBar.availableLives + this.healthBar.blockedLives < this.healthBar.totalLives) {
-      this.updateHealthBar({ availableLives: this.healthBar.availableLives + 1 });
+    const { blockedLives, availableLives, totalLives } = this.healthBar;
+
+    if (availableLives + blockedLives < totalLives) {
+      this.updateHealthBar({ availableLives: availableLives + 1 });
     }
   }
 }
