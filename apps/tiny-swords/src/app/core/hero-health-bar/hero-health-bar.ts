@@ -22,9 +22,10 @@ export class HeroHealthBar<
   }
 
   unblockLive(): void {
+    const healthBar = this._healthBarSubject.getValue();
     this._healthBarSubject.next({
-      ...this._healthBarSubject.getValue(),
-      blockedLives: 0,
+      ...healthBar,
+      blockedLives: healthBar.blockedLives >= 1 ? healthBar.blockedLives - 1 : 0,
     });
   }
 
