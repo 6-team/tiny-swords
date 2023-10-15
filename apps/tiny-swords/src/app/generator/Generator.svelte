@@ -253,9 +253,7 @@
         );
 
         if (enemyHasAttackCollision) {
-          enemyAttacking.attack();
-
-          enemyAttacking.isAttacking$.pipe(filter(isAttacking => !isAttacking), first())
+          enemyAttacking.attack().isAttacking$.pipe(filter(isAttacking => !isAttacking), first())
             .subscribe(() => {
               if (heroes.isMainHero(character.id)) {
                 heroHealthBar.removeLive();
