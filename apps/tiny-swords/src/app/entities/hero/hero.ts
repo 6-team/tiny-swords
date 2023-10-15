@@ -4,7 +4,7 @@ import { Movable } from '../../abilities/movable';
 import { IAttackingCharacter, ICollectingCharacter, IMovableCharacter } from '../../common/common.types';
 import { grid64 } from '../../core/grid';
 import { Character } from '../character';
-import { HeroType, mapHeroTypeToCoords } from './hero.const';
+import { HeroType, mapHeroImages, mapHeroTypeToCoords } from './hero.const';
 import { HeroAbilities, HeroConfig } from './hero.types';
 import { isMuttedStore } from '../../store/store';
 import { HeroSounds } from '../../core/sounds';
@@ -16,12 +16,15 @@ export default class Hero
   extends Character<HeroType, HeroAbilities>
   implements IMovableCharacter, IAttackingCharacter, ICollectingCharacter
 {
-  protected _sprite = './img/Factions/Knights/Troops/Warrior/Blue/Warrior_Blue.png';
-  protected _type = HeroType.WARRIOR_BLUE;
+  protected _sprite: string;
+  protected _type: HeroType;
   protected _size = HERO_SIZE;
 
-  constructor({ controllerCreator, height, width, initialX, initialY, id }: HeroConfig) {
+  constructor({ controllerCreator, height, width, initialX, initialY, id, type = HeroType.WARRIOR_BLUE }: HeroConfig) {
     super({ id });
+
+    this._type = type;
+    this._sprite = mapHeroImages[type];
 
     const attacking = new Attacking();
     const collecting = new Collecting();

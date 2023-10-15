@@ -7,6 +7,7 @@ import { TCollisionArea, TPixelsCoords } from '../../abilities/abilities.types';
 import { collisions } from '../collisions';
 import { grid64 } from '../grid';
 import { CoordsTuple } from '../../entities/tile/tile.types';
+import { HeroType } from '../../entities/hero/hero.const';
 
 export class Heroes {
   readonly #heroesSubject = new BehaviorSubject<Hero[]>([]);
@@ -46,6 +47,7 @@ export class Heroes {
 
   initConnectedHero({ id, coords: [startX, startY] }: IPlayer): Hero {
     const [initialX, initialY, height, width] = grid64.transformToPixels(startX - 1, startY - 1, 3, 3);
+    const type = this.#getUniqueType();
 
     const hero = new Hero({
       controllerCreator: () => new ServerController({ id }),
@@ -54,6 +56,7 @@ export class Heroes {
       height,
       width,
       id,
+      type,
     });
 
     this.addHero(hero);
@@ -79,6 +82,14 @@ export class Heroes {
 
   isMainHero(id: string | number): boolean {
     return this.#mainHero.id === id;
+  }
+
+  #getUniqueType(): HeroType {
+    const types = Object.values(HeroType)
+      .filter((type) => Number.isFinite(type))
+      .filter((type) => !this.heroes.find((hero) => hero.type === type)) as HeroType[];
+
+    return types.at(0) || HeroType.WARRIOR_BLUE;
   }
 
   #initHeroesBoundaries(): Observable<TPixelsCoords[]> {
