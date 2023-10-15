@@ -18,7 +18,9 @@ export class HeroSounds extends Sounds {
     this.addSound(HeroSoundsType.HIT_ATTACK, 'sounds/hit_attack.mp3');
     this.addSound(HeroSoundsType.HITTING, 'sounds/hitting.mp3');
 
-    movable.movement$.subscribe((direction) => {
+    const controller = movable.getController();
+
+    controller.movement$.subscribe((direction) => {
       if (Object.values(MovingDirection).includes(direction) && !this.isPlaySound(HeroSoundsType.MOVEMENT)) {
         this.playMovementSound();
       }
