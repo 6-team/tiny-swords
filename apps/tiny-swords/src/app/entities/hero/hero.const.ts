@@ -15,10 +15,25 @@ export enum HeroActionAnimation {
   BACK_ATTACK_DOWN,
 }
 
-export const enum HeroType {
+export enum HeroType {
   WARRIOR_BLUE,
+  WARRIOR_PURPLE,
+  WARRIOR_RED,
+  WARRIOR_YELLOW,
 }
 
 export const mapHeroTypeToCoords: Record<HeroType, CoordsTuple> = {
   [HeroType.WARRIOR_BLUE]: [0, 22],
+  [HeroType.WARRIOR_PURPLE]: [0, 22],
+  [HeroType.WARRIOR_RED]: [0, 22],
+  [HeroType.WARRIOR_YELLOW]: [0, 22],
+};
+
+const path = './img/Factions/Knights/Troops/Warrior/';
+
+export const mapHeroImages: Record<HeroType, string> = {
+  [HeroType.WARRIOR_BLUE]: `${path}Blue/Warrior_Blue.png`,
+  [HeroType.WARRIOR_PURPLE]: `${path}Purple/Warrior_Purple.png`,
+  [HeroType.WARRIOR_RED]: `${path}Red/Warrior_Red.png`,
+  [HeroType.WARRIOR_YELLOW]: `${path}Yellow/Warrior_Yellow.png`,
 };

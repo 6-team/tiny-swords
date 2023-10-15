@@ -1,1 +1,1 @@
-export type { IAttacking, IMovable, WithSetPersonageContext } from './abilities.types';
+export type { IAttacking, IMovable, WithSetPersonageContext, ICollecting } from './abilities.types';

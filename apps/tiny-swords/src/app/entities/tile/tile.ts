@@ -18,6 +18,10 @@ export abstract class Tile<T extends string | number | symbol> implements ITile 
 
   protected abstract _getCoordsMap(): Record<T, CoordsTuple>;
 
+  get type(): T {
+    return this._type;
+  }
+
   /**
    * Инициирует загрузку изображения и возвращает промис
    *

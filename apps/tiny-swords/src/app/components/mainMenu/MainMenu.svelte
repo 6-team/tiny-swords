@@ -69,17 +69,19 @@
 }
   const expandedBg = expandBg(bgTiles, menuLink.length);
 
+  const playSystemSoundMenuClick = () =>  menuSound.playSound(SystemSoundsType.MENU_CLICK, 0.3)
+
   function keyboardHandler(e: KeyboardEvent): void {
   const menuLinkLength = menuLink.length;
 
   switch (e.code) {
     case 'ArrowDown':
-      menuSound.playSound(SystemSoundsType.MENU_CLICK, 0.3)
+      playSystemSoundMenuClick()
       menuIndex = (menuIndex + 1) % menuLinkLength;
       break;
 
     case 'ArrowUp':
-      menuSound.playSound(SystemSoundsType.MENU_CLICK, 0.3)
+      playSystemSoundMenuClick()
       menuIndex = (menuIndex - 1 + menuLinkLength) % menuLinkLength;
       break;
 
@@ -114,7 +116,7 @@
                 <button class={`menu-btn ${isActiveMenuItem === value ? 'active': ''}`}
                 on:click={()=>handleClick(value)}
                 on:mouseenter={()=> {
-                  menuSound.playSound(SystemSoundsType.MENU_CLICK, 0.3)
+                  playSystemSoundMenuClick()
                   isActiveMenuItemStore.set(value)
                   }}
                 on:mouseleave={()=>isActiveMenuItemStore.set('') }>

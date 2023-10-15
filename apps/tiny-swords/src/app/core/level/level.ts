@@ -17,16 +17,15 @@ export class Level {
   readonly #gridYSubject = new BehaviorSubject<number>(0);
   readonly #startCoordsSubject = new BehaviorSubject<[number, number]>([0, 0]);
   readonly #endCoordsSubject = new BehaviorSubject<[number, number]>([0, 0]);
+  readonly #enemiesCoordsSubject = new BehaviorSubject<[number, number][]>([]);
   readonly #mapsSubject = new BehaviorSubject<LayersMap[]>([]);
   readonly #resourcesSubject = new BehaviorSubject<Resource[]>([]);
-  readonly #enemiesSubject = new BehaviorSubject<Record<string, [number, number]>[]>([]);
 
   readonly startCoords$ = this.#startCoordsSubject.asObservable();
   readonly endCoords$ = this.#endCoordsSubject.asObservable();
   readonly maps$ = this.#mapsSubject.asObservable();
   readonly resources$ = this.#resourcesSubject.asObservable();
-  readonly enemies$ = this.#enemiesSubject.asObservable();
-
+  readonly enemiesCoords$ = this.#enemiesCoordsSubject.asObservable();
   readonly boundaries$ = this.#boundariesSubject
     .asObservable()
     .pipe(map((bounds): TCollisionArea[] => bounds.map(([x, y]) => grid64.transformToPixels(x, y, 1, 1))));
@@ -57,8 +56,8 @@ export class Level {
     return this.#resourcesSubject.getValue();
   }
 
-  get enemies(): Record<string, [number, number]>[] {
-    return this.#enemiesSubject.getValue();
+  get enemiesCoords(): [number, number][] {
+    return this.#enemiesCoordsSubject.getValue();
   }
 
   updateLevel(levelData: LevelData<LayersMap, Resource>): void {
@@ -72,7 +71,7 @@ export class Level {
     this.#gridXSubject.next(gridX);
     this.#gridYSubject.next(gridY);
     this.#resourcesSubject.next(resources);
-    this.#enemiesSubject.next(enemies);
+    this.#enemiesCoordsSubject.next(enemies);
   }
 
   updateResources(resources: Resource[]): void {

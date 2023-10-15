@@ -5,11 +5,7 @@ import { ICollecting } from '../abilities.types';
 export class Collecting implements ICollecting {
   #context: ICollectingCharacter;
   #collectionSubject: BehaviorSubject<Array<IResource>> = new BehaviorSubject([]);
-  collection$: Observable<Array<IResource>>;
-
-  constructor() {
-    this.collection$ = this.#collectionSubject.asObservable();
-  }
+  collection$: Observable<Array<IResource>> = this.#collectionSubject.asObservable();
 
   /**
    * Устанавливает контекст/носителя данной способности.
@@ -32,7 +28,7 @@ export class Collecting implements ICollecting {
   collect(item: IResource) {
     const collection = this.#collectionSubject.getValue();
     this.#collectionSubject.next([...collection, item]);
-    console.log(this.#collectionSubject);
+
     return this;
   }
 }

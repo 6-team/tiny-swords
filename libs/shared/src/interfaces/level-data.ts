@@ -6,5 +6,5 @@ export interface LevelData<M = unknown, R = unknown> {
   maps: M[];
   boundaries: [number, number][];
   resources: R[];
-  enemies: Record<string, [number, number]>[];
+  enemies: [number, number][];
 }

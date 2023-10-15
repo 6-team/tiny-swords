@@ -2,6 +2,7 @@ import { IAttacking, IMovable } from '../../abilities';
 import { ICollecting } from '../../abilities/abilities.types';
 import { IAttackingCharacter, IMovableCharacter, TNumberOfPixels, TPixelsPosition } from '../../common/common.types';
 import { IController } from '../../controllers';
+import { HeroType } from './hero.const';
 
 export type HeroAbilities = {
   movable: IMovable;
@@ -15,5 +16,6 @@ export interface HeroConfig {
   width: TNumberOfPixels;
   initialX: TPixelsPosition;
   initialY: TPixelsPosition;
-  id: string;
+  id: string | number;
+  type?: HeroType;
 }

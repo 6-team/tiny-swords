@@ -1,44 +1,25 @@
-import { IHeroHealthBar } from './hero-health-bar.types';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { IHeroHealthBar, IHeroHealthBarConfig } from './hero-health-bar.types';
 import { HealthBar } from '../../entities/health-bar';
 
-export class HeroHealthBar<
-    LiveTypes extends {
-      totalLives: number;
-      availableLives: number;
-      blockedLives: number;
-    },
-  >
-  extends HealthBar<LiveTypes>
-  implements IHeroHealthBar
-{
-  _healthBarSubject: BehaviorSubject<LiveTypes>;
-  healthBar$: Observable<LiveTypes>;
-
-  constructor(healthBar: LiveTypes) {
+export class HeroHealthBar extends HealthBar<IHeroHealthBarConfig> implements IHeroHealthBar {
+  constructor(healthBar: IHeroHealthBarConfig) {
     super();
-    this._healthBarSubject = new BehaviorSubject<LiveTypes>(healthBar);
-    this.healthBar$ = this._healthBarSubject.asObservable();
+    this.updateHealthBar(healthBar);
+  }
+
+  get blockedLives(): number {
+    return this.healthBar.blockedLives;
   }
 
   unblockLive(): void {
-    this._healthBarSubject.next({
-      ...this._healthBarSubject.getValue(),
-      blockedLives: 0,
-    });
+    this.updateHealthBar({ blockedLives: this.blockedLives >= 1 ? this.blockedLives - 1 : 0 });
   }
 
   addLive(): void {
-    const healthBar = this._healthBarSubject.getValue();
-    if (healthBar.availableLives + healthBar.blockedLives < healthBar.totalLives) {
-      this._healthBarSubject.next({
-        ...healthBar,
-        availableLives: healthBar.availableLives + 1,
-      });
-    }
-  }
+    const { blockedLives, availableLives, totalLives } = this.healthBar;
 
-  get lives() {
-    return this._healthBarSubject.getValue();
+    if (availableLives + blockedLives < totalLives) {
+      this.updateHealthBar({ availableLives: availableLives + 1 });
+    }
   }
 }

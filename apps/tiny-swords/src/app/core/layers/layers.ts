@@ -145,6 +145,6 @@ export class Layers {
   get enemies() {
     return this.#enemies.array
       .filter(({ collapsed }) => collapsed)
-      .map(({ coords }) => ({ coords }));
+      .map(({ coords }) => (coords));
   }
 }
