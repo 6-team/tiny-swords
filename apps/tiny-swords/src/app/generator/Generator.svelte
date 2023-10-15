@@ -2,7 +2,7 @@
   import { onDestroy, onMount } from "svelte";
   import { BehaviorSubject, Observable, combineLatest, concatAll, concatMap, filter, from, map, switchMap, tap, withLatestFrom } from "rxjs";
   import { Hero } from '../entities/hero'
-  import {  Resource, ResourcesType } from '../entities/resource/index';
+  import { Resource, ResourcesType } from '../entities/resource/index';
   import { Enemy } from '../entities/enemy';
   import { AIController } from '../controllers/AI';
   import { TILE_SIZE, SCALE } from '../common/common.const'
@@ -114,15 +114,16 @@
         map((hero) => heroes.initHero(hero, bounds$)),
         switchMap((hero: Hero) => {
           const movable = hero.getAbility('movable');
+          const controller = movable.getController();
 
-          return movable.movement$.pipe(switchMap((direction) => actions.updatePlayer({ id: hero.id, direction, coords: movable.coords })));
+          return controller.movement$
+            .pipe(switchMap((direction) => actions.updatePlayer({id: hero.id, direction, coords: movable.coords })));
         })
       ).subscribe();
   }
 
   function handleUpdatedPlayers(): void {
     actions.updatePlayerListener()
-      .pipe(tap((player) => console.log('Update player', player)))
       .subscribe((player) => {
         const existingPlayer = heroes.getHero(player);
 

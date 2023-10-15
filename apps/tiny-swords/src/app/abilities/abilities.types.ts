@@ -100,6 +100,13 @@ export interface IMovable extends IAbility<IMovableCharacter> {
   setController(controller: IController): this;
 
   /**
+   * Возвращает объект контроллера, который управляет текущим персонажем
+   *
+   * @returns Контроллер
+   */
+  getController(): IController;
+
+  /**
    * Принудительно устанавливает координаты персонажу
    *
    * @param coords Новые координаты
@@ -126,11 +133,6 @@ export interface IMovable extends IAbility<IMovableCharacter> {
    * Поток координат персонажа
    */
   coords$: Observable<[x: TNumberOfPixels, y: TNumberOfPixels]>;
-
-  /**
-   * Поток команд для движения
-   */
-  movement$: Observable<MovingDirection>;
 
   /**
    * Поток координат, когда персонаж оказывается в очередной клетке
