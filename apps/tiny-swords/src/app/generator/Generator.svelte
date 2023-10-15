@@ -22,7 +22,7 @@
 
   const level = new Level();
   const heroes = new Heroes(level.startCoords);
-  const heroHealthBar = new HeroHealthBar({ totalLives: 3, availableLives: 2, blockedLives: 1 });
+  const heroHealthBar = new HeroHealthBar({ totalLives: 3, availableLives: 1, blockedLives: 2 });
 
   const nextLevelTile$ = level.endCoords$.pipe(map(([x, y]) => grid64.transformToPixels(x, y, 1, 1)));
 
