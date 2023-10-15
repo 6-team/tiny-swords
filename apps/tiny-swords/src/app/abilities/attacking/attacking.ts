@@ -1,7 +1,7 @@
 import { IAttacking, TCollisionArea } from '../abilities.types';
 import { IAttackingCharacter, IMovableCharacter } from '../../common/common.types';
 import { AttackingError } from './attacking.const';
-import { Subject, filter, noop } from 'rxjs';
+import { BehaviorSubject, Subject, filter, noop } from 'rxjs';
 import { IController } from '../../controllers';
 import { HeroActionAnimation } from '../../entities/hero/hero.const';
 import { AttackingProps } from './attacking.types';
@@ -12,12 +12,13 @@ import { AttackingType } from '@shared';
  */
 export class Attacking implements IAttacking {
   #context?: IAttackingCharacter & IMovableCharacter;
-  #isAttacking = false;
   #getAffectedAreaFunc: AttackingProps['getAffectedArea'];
 
   private _attack$ = new Subject<AttackingType>();
+  private _isAttacking$ = new BehaviorSubject<boolean>(false);
 
   readonly attack$ = this._attack$.asObservable();
+  readonly isAttacking$ = this._isAttacking$.asObservable();
 
   constructor({ getAffectedArea }: AttackingProps = {}) {
     this.#getAffectedAreaFunc = getAffectedArea;
@@ -48,8 +49,8 @@ export class Attacking implements IAttacking {
   /**
    * Атакует ли персонаж прямо сейчас
    */
-  get isAttacking() {
-    return this.#isAttacking;
+  get isAttacking(): boolean {
+    return this._isAttacking$.getValue();
   }
 
   /**
@@ -59,7 +60,7 @@ export class Attacking implements IAttacking {
    * @param context Контекст
    * @returns Объект способности
    */
-  setContext(context: IAttackingCharacter & IMovableCharacter) {
+  setContext(context: IAttackingCharacter & IMovableCharacter): this {
     this.#context = context;
 
     return this;
@@ -72,7 +73,7 @@ export class Attacking implements IAttacking {
    * @param controller Контроллер
    * @returns Объект способности
    */
-  setController(controller: IController) {
+  setController(controller: IController): this {
     controller.attack$.pipe(filter(() => Boolean(this.#context))).subscribe((type) => {
       this.attack(type);
     });
@@ -93,13 +94,14 @@ export class Attacking implements IAttacking {
 
     const { isMoving, isRightDirection } = this.#context.getAbility('movable');
 
-    if (!isMoving && !this.#isAttacking) {
-      this._attack$.next(type);
-      this.#isAttacking = true;
+    if (!isMoving && !this.isAttacking) {
+      this.#setIsAttacking();
+
       this.#context
         .setAnimationOnce(this.#getAnimationWithDirection(type, isRightDirection))
         .then(() => {
-          this.#isAttacking = false;
+          this.#setIsAttacking(false);
+          this._attack$.next(type);
         })
         .catch(noop);
     }
@@ -135,5 +137,9 @@ export class Attacking implements IAttacking {
      * @TODO Переписать 64 на tileSize, или может вообще вынести отсюда, чтобы не зависеть тут от Grid
      */
     return [area[0] - 64, area[1], area[2], area[3]];
+  }
+
+  #setIsAttacking(isAttacking = true): void {
+    this._isAttacking$.next(isAttacking);
   }
 }

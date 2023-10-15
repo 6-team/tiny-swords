@@ -1,4 +1,3 @@
-import { HeroSounds } from './../../core/sounds/sounds';
 import { Attacking } from '../../abilities/attacking';
 import { Collecting } from '../../abilities/collecting';
 import { Movable } from '../../abilities/movable';
@@ -8,6 +7,8 @@ import { Character } from '../character';
 import { HeroType, mapHeroTypeToCoords } from './hero.const';
 import { HeroAbilities, HeroConfig } from './hero.types';
 import { isMuttedStore } from '../../store/store';
+import { HeroSounds } from '../../core/sounds';
+import { IAttacking, ICollecting, IMovable } from '../../abilities';
 
 const HERO_SIZE = 192;
 
@@ -36,18 +37,18 @@ export default class Hero
       },
     });
 
-    this._setAbilities({
-      movable,
-      attacking,
-      collecting,
-    });
+    this._setAbilities({ movable, attacking, collecting });
 
     const controller = controllerCreator(this);
 
     movable.setController(controller);
     attacking.setController(controller);
+    this.#initSounds(movable, attacking, collecting);
+  }
 
+  #initSounds(movable: IMovable, attacking: IAttacking, collecting: ICollecting): void {
     const heroSounds = new HeroSounds({ movable, attacking, collecting });
+
     isMuttedStore.subscribe((value) => {
       if (value) {
         heroSounds.muteSound();
