@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
-  import { Observable, combineLatest, concatAll, concatMap, filter, from, map, merge, switchMap, tap, withLatestFrom } from "rxjs";
+  import { Observable, combineLatest, concatAll, concatMap, filter, first, from, map, merge, switchMap, tap, withLatestFrom } from "rxjs";
   import { Hero } from '../entities/hero'
   import { Resource, ResourcesType } from '../entities/resource/index';
   import { TILE_SIZE, SCALE } from '../common/common.const'
@@ -255,13 +255,16 @@
         if (enemyHasAttackCollision) {
           enemyAttacking.attack();
 
-          if (heroes.isMainHero(character.id)) {
-            heroHealthBar.removeLive();
+          enemyAttacking.isAttacking$.pipe(filter(isAttacking => !isAttacking), first())
+            .subscribe(() => {
+              if (heroes.isMainHero(character.id)) {
+                heroHealthBar.removeLive();
 
-            if (heroHealthBar.isDead) {
-              heroes.removeHero(character.id);
-            }
-          }
+                if (heroHealthBar.isDead) {
+                  heroes.removeHero(character.id);
+                }
+              }
+            })
         }
       }
     }
@@ -277,7 +280,7 @@
         );
 
         if (hasAttackCollision) {
-          enemies.removeEnemy(enemy.id)
+          attacking.isAttacking$.pipe(filter(isAttacking => !isAttacking), first()).subscribe(() => enemies.removeEnemy(enemy.id));
 
           break;
         }

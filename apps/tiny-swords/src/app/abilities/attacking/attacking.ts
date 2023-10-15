@@ -96,12 +96,12 @@ export class Attacking implements IAttacking {
 
     if (!isMoving && !this.isAttacking) {
       this.#setIsAttacking();
+      this._attack$.next(type);
 
       this.#context
         .setAnimationOnce(this.#getAnimationWithDirection(type, isRightDirection))
         .then(() => {
           this.#setIsAttacking(false);
-          this._attack$.next(type);
         })
         .catch(noop);
     }
