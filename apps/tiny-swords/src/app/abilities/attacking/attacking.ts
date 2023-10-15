@@ -1,18 +1,18 @@
 import { IAttacking, TCollisionArea } from '../abilities.types';
 import { IAttackingCharacter, IMovableCharacter } from '../../common/common.types';
 import { AttackingError } from './attacking.const';
-import { AttackingType } from '../abilities.const';
 import { Subject, filter, noop } from 'rxjs';
 import { IController } from '../../controllers';
 import { HeroActionAnimation } from '../../entities/hero/hero.const';
 import { AttackingProps } from './attacking.types';
+import { AttackingType } from '@shared';
 
 /**
  * Класс способности атаковать
  */
 export class Attacking implements IAttacking {
   #context?: IAttackingCharacter & IMovableCharacter;
-  #isAttacking: boolean = false;
+  #isAttacking = false;
   #getAffectedAreaFunc: AttackingProps['getAffectedArea'];
 
   private _attack$ = new Subject<AttackingType>();

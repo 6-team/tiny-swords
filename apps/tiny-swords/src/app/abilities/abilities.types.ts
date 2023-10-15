@@ -9,8 +9,7 @@ import {
   TNumberOfPixels,
   TPixelsPosition,
 } from '../common/common.types';
-import { AttackingType } from './abilities.const';
-import { MovingDirection } from '@shared';
+import { MovingDirection, AttackingType } from '@shared';
 import { IController } from '../controllers';
 
 interface IAbility<Context> {
@@ -31,6 +30,11 @@ export interface ICollecting extends IAbility<ICollectingCharacter> {
    * @param item Предмет коллекционирования
    */
   collect(item: IResource): this;
+
+  /**
+   * Поток, в котором приходят массивы ресурсов, имеющихся у персонажа
+   */
+  collection$: Observable<Array<IResource>>;
 }
 
 export interface IAttacking extends IAbility<IAttackingCharacter> {

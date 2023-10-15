@@ -1,6 +1,5 @@
-import { MovingDirection } from '@shared';
+import { MovingDirection, AttackingType } from '@shared';
 import { Subject } from 'rxjs';
-import { AttackingType } from '../../abilities/abilities.const';
 
 export class AIController {
   private _movement$ = new Subject<MovingDirection>();

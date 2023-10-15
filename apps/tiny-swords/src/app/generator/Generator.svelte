@@ -1,12 +1,10 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
-  import { BehaviorSubject, Observable, combineLatest, concatAll, concatMap, filter, from, map, switchMap, tap, withLatestFrom } from "rxjs";
+  import { Observable, combineLatest, concatAll, concatMap, filter, from, map, merge, switchMap, tap, withLatestFrom } from "rxjs";
   import { Hero } from '../entities/hero'
   import { Resource, ResourcesType } from '../entities/resource/index';
-  import { Enemy } from '../entities/enemy';
-  import { AIController } from '../controllers/AI';
   import { TILE_SIZE, SCALE } from '../common/common.const'
-  import { actions, Heroes, Grid, Renderer, grid64, HeroHealthBar, HeroResourcesBar } from "../core";
+  import { actions, Heroes, Grid, Renderer, grid64, HeroHealthBar, HeroResourcesBar, enemies } from "../core";
   import { Level } from "../core/level/level";
   import { nextLevelMenu, isMainMenuStore, isMuttedStore } from "../store";
   import MainMenu from "../components/mainMenu/MainMenu.svelte";
@@ -15,35 +13,22 @@
   import { collisions } from "../core/collisions";
   import { LayersRenderType } from "../core/layers/layers.types"
 
-  import type { IPlayer } from "@shared";
+  import type { AttackingType, IPlayer } from "@shared";
   import type { TPixelsCoords } from "../abilities/abilities.types";
-  import type { IAttackingCharacter, ICollectingCharacter, IMovableCharacter } from "../common/common.types";
-  import { AttackingType } from "../abilities/abilities.const";
+  import type { IAttackingCharacter } from "../common/common.types";
 
   let staticScene: Renderer;
   let foregroundScene: Renderer;
 
   const level = new Level();
   const heroes = new Heroes(level.startCoords);
-  const heroHealthBar = new HeroHealthBar({totalLives: 3, availableLives: 1, blockedLives: 1});
+  const heroHealthBar = new HeroHealthBar({ totalLives: 3, availableLives: 2, blockedLives: 1 });
 
   const nextLevelTile$ = level.endCoords$.pipe(map(([x, y]) => grid64.transformToPixels(x, y, 1, 1)));
 
   let isNextLevelMenu = false;
   let isMainMenu = true;
   let isMuttedValue = false;
-
-  const enemyCoords = grid64.transformToPixels(5, 5, 3, 3);
-  const enemies$ = new BehaviorSubject([
-    new Enemy({
-      id: "enemy_test",
-      initialX: enemyCoords[0],
-      initialY: enemyCoords[1],
-      height: enemyCoords[2],
-      width: enemyCoords[3],
-      controllerCreator: () => new AIController()
-    })
-  ]);
 
   nextLevelMenu.subscribe(value => isNextLevelMenu = value);
   isMainMenuStore.subscribe(value => isMainMenu = value);
@@ -96,16 +81,7 @@
   }
 
   function handleHeroMovement(action$: Observable<IPlayer>): void {
-    const enemiesCoords$ = enemies$
-      .pipe(
-        map(
-          (enemies) => enemies.map(
-            (enemy) => enemy.getAbility("movable").getCollisionArea()
-          )
-        )
-      );
-
-    const bounds$ = combineLatest([enemiesCoords$, level.boundaries$]).pipe(
+    const bounds$ = combineLatest([enemies.enemiesBoundaries$, level.boundaries$]).pipe(
       map((tuple) => tuple.flat())
     );
 
@@ -114,18 +90,36 @@
         map((hero) => heroes.initHero(hero, bounds$)),
         switchMap((hero: Hero) => {
           const movable = hero.getAbility('movable');
+          const attacking = hero.getAbility('attacking')
           const controller = movable.getController();
+          const movement$ = controller.movement$.pipe(switchMap((direction) => actions.updatePlayer({ id: hero.id, direction, coords: movable.coords })));
+          const attack$ = attacking.attack$.pipe(switchMap((attackingType) => actions.updatePlayer({ id: hero.id, attackingType })));;
 
-          return controller.movement$
-            .pipe(switchMap((direction) => actions.updatePlayer({id: hero.id, direction, coords: movable.coords })));
+          return merge(movement$, attack$);
         })
       ).subscribe();
+  }
+
+  function handleEnemyMovement(): void {
+    const bounds$ = combineLatest([heroes.heroesBoundaries$, level.boundaries$]).pipe(
+      map((tuple) => tuple.flat())
+    );
+
+    level.enemiesCoords$
+      .pipe(
+        tap(() => enemies.clearEnemies()),
+        concatAll(),
+        map((coords, index) => enemies.initEnemy({ coords, id: index }, bounds$)),
+      )
+      .subscribe()
   }
 
   function handleUpdatedPlayers(): void {
     actions.updatePlayerListener()
       .subscribe((player) => {
-        const existingPlayer = heroes.getHero(player);
+        if (!player.id) return;
+
+        const existingPlayer = heroes.getHero(player.id);
 
         if (existingPlayer) return;
 
@@ -136,12 +130,13 @@
   const gameResources = new HeroResourcesBar([new Resource({type: ResourcesType.GOLD, quantity: 0}), new Resource({type: ResourcesType.WOOD, quantity: 0})])
 
   const buyImprovements = (resources: { type: ResourcesType; price: number }, type: string):void => {
-    if(type === 'life' && heroHealthBar.lives.blockedLives) {
+    if(type === 'life' && heroHealthBar.healthBar.blockedLives) {
       gameResources.spend(resources);
       heroHealthBar.unblockLive()
     }
 
   };
+
   const availableResourcesCheck = (resources: { type: ResourcesType, price: number}):boolean => gameResources.availableResourcesCheck(resources);
 
   function handleUpdatedLevel(): void {
@@ -155,7 +150,8 @@
   }
 
   onMount(async () => {
-    handleUpdatedLevel()
+    handleEnemyMovement();
+    handleUpdatedLevel();
     handleUpdatedPlayers();
     /**
      * Рендер статичной карты
@@ -212,7 +208,7 @@
     // ...
 
     // Это надо будет наверное вынести куда то
-    function checkCollisions(character: IMovableCharacter & ICollectingCharacter, nextLevelTile: TPixelsCoords): void {
+    function checkCollisions(character: Hero, nextLevelTile: TPixelsCoords): void {
       const movable = character.getAbility('movable');
       const collecting = character.getAbility('collecting');
 
@@ -248,9 +244,7 @@
         }
       }
 
-      const enemies = enemies$.getValue();
-
-      for (const enemy of enemies) {
+      for (const enemy of enemies.enemies) {
         const enemyAttacking = enemy.getAbility('attacking');
 
         const enemyHasAttackCollision = collisions.hasCollision(
@@ -260,15 +254,22 @@
 
         if (enemyHasAttackCollision) {
           enemyAttacking.attack();
+
+          if (heroes.isMainHero(character.id)) {
+            heroHealthBar.removeLive();
+
+            if (heroHealthBar.isDead) {
+              heroes.removeHero(character.id);
+            }
+          }
         }
       }
     }
 
     function checkAttackCollisions(hero: IAttackingCharacter, type: AttackingType) {
       const attacking = hero.getAbility('attacking');
-      const enemies = enemies$.getValue();
 
-      for (const enemy of enemies) {
+      for (const enemy of enemies.enemies) {
         const enemyMovable = enemy.getAbility('movable');
         const hasAttackCollision = collisions.hasCollision(
           attacking.getAffectedArea(),
@@ -276,11 +277,7 @@
         );
 
         if (hasAttackCollision) {
-          /**
-           * Вот тут мы попали по одному из врагов. Нужно что-то с ним сделать.
-           */
-
-          console.log('DIE!!');
+          enemies.removeEnemy(enemy.id)
 
           break;
         }
@@ -299,7 +296,7 @@
     frames$.subscribe((timeStamp = 0) => {
       const deltaTime = timeStamp - lastTime;
 
-      for (const enemy of enemies$.getValue()) {
+      for (const enemy of enemies.enemies) {
         interactiveScene.renderMovable(enemy, deltaTime);
       }
 

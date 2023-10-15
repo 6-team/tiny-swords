@@ -1,9 +1,9 @@
-import { SoundType } from './sounds.types';
-import { MovingDirection } from '@shared';
+import { SoundType, SoundsProps } from './sounds.types';
+import { MovingDirection, AttackingType } from '@shared';
 import { HeroSoundsType } from './sounds.const';
 import { filter } from 'rxjs';
 import { ResourcesType } from '../../entities/resource';
-import { AttackingType } from '../../abilities/abilities.const';
+import { IResource } from '../../common/common.types';
 
 export class Sounds {
   private sounds: SoundType;
@@ -52,7 +52,7 @@ export class Sounds {
 }
 
 export class HeroSounds extends Sounds {
-  constructor({ controller, collecting }) {
+  constructor({ movable, attacking, collecting }: SoundsProps) {
     super();
 
     this.addSound(HeroSoundsType.MOVEMENT, 'sounds/running.mp3');
@@ -62,6 +62,8 @@ export class HeroSounds extends Sounds {
     this.addSound(HeroSoundsType.HIT_ATTACK, 'sounds/hit_attack.mp3');
     this.addSound(HeroSoundsType.HITTING, 'sounds/hitting.mp3');
 
+    const controller = movable.getController();
+
     controller.movement$.subscribe((direction) => {
       if (Object.values(MovingDirection).includes(direction) && !this.isPlaySound(HeroSoundsType.MOVEMENT)) {
         this.playMovementSound();
@@ -69,11 +71,11 @@ export class HeroSounds extends Sounds {
       if (direction === MovingDirection.IDLE) this.stopMovementSound();
     });
 
-    controller.attack$.subscribe((force) => {
-      if (force === AttackingType.DOWN) this.playAttackSound();
+    attacking.attack$.subscribe(() => {
+      this.playAttackSound();
     });
 
-    collecting.collection$.pipe(filter((resources: ResourcesType[]) => resources.length > 0)).subscribe((resources) => {
+    collecting.collection$.pipe(filter((resources: IResource[]) => resources.length > 0)).subscribe((resources) => {
       if (resources.length !== 0) {
         this.playResourceSelection();
       }
@@ -97,7 +99,7 @@ export class HeroSounds extends Sounds {
   }
 
   playAttackSound() {
-    this.playSound(HeroSoundsType.ATTACK);
+    this.playSound(HeroSoundsType.ATTACK, 0.3);
   }
 
   playHittingSound() {

@@ -1,8 +1,7 @@
 import { directionKeys, attackKeys } from './keyboard.conts';
 import { IController } from '../controllers.types';
-import { AttackingType } from '../../abilities/abilities.const';
-import { BehaviorSubject, Observable, Subject, fromEvent, map } from 'rxjs';
-import { MovingDirection } from '@shared';
+import { BehaviorSubject, Subject, fromEvent, map } from 'rxjs';
+import { MovingDirection, AttackingType } from '@shared';
 
 export default class KeyboardController implements IController {
   private _pushedMovementKeys$ = new BehaviorSubject<MovingDirection[]>([]);
