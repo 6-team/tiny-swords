@@ -12,7 +12,7 @@ export default class Enemy
   extends Character<EnemyType, EnemyAbilities>
   implements IMovableCharacter, IAttackingCharacter
 {
-  protected _sprite: string = './img/Factions/Goblins/Troops/Torch/Red/Torch_Red.png';
+  protected _sprite = './img/Factions/Goblins/Troops/Torch/Red/Torch_Red.png';
   protected _type = EnemyType.TORCH_RED;
   protected _size = ENEMY_SIZE;
 
@@ -32,10 +32,7 @@ export default class Enemy
       },
     });
 
-    this._setAbilities({
-      movable,
-      attacking,
-    });
+    this._setAbilities({ movable, attacking });
 
     const controller = controllerCreator(this);
 

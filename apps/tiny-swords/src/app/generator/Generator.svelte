@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
-  import { Observable, combineLatest, concatAll, concatMap, filter, from, map, merge, switchMap, tap, withLatestFrom } from "rxjs";
+  import { Observable, combineLatest, concatAll, concatMap, filter, first, from, map, merge, switchMap, tap, withLatestFrom } from "rxjs";
   import { Hero } from '../entities/hero'
   import { Resource, ResourcesType } from '../entities/resource/index';
   import { TILE_SIZE, SCALE } from '../common/common.const'
@@ -22,7 +22,7 @@
 
   const level = new Level();
   const heroes = new Heroes(level.startCoords);
-  const heroHealthBar = new HeroHealthBar({ totalLives: 3, availableLives: 2, blockedLives: 1 });
+  const heroHealthBar = new HeroHealthBar({ totalLives: 3, availableLives: 1, blockedLives: 2 });
 
   const nextLevelTile$ = level.endCoords$.pipe(map(([x, y]) => grid64.transformToPixels(x, y, 1, 1)));
 
@@ -253,15 +253,16 @@
         );
 
         if (enemyHasAttackCollision) {
-          enemyAttacking.attack();
+          enemyAttacking.attack().isAttacking$.pipe(filter(isAttacking => !isAttacking), first())
+            .subscribe(() => {
+              if (heroes.isMainHero(character.id)) {
+                heroHealthBar.removeLive();
 
-          if (heroes.isMainHero(character.id)) {
-            heroHealthBar.removeLive();
-
-            if (heroHealthBar.isDead) {
-              heroes.removeHero(character.id);
-            }
-          }
+                if (heroHealthBar.isDead) {
+                  heroes.removeHero(character.id);
+                }
+              }
+            })
         }
       }
     }
@@ -277,7 +278,7 @@
         );
 
         if (hasAttackCollision) {
-          enemies.removeEnemy(enemy.id)
+          attacking.isAttacking$.pipe(filter(isAttacking => !isAttacking), first()).subscribe(() => enemies.removeEnemy(enemy.id));
 
           break;
         }
