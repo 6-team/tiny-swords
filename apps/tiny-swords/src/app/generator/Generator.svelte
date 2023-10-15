@@ -91,7 +91,8 @@
         switchMap((hero: Hero) => {
           const movable = hero.getAbility('movable');
           const attacking = hero.getAbility('attacking')
-          const movement$ = movable.movement$.pipe(switchMap((direction) => actions.updatePlayer({ id: hero.id, direction, coords: movable.coords })));
+          const controller = movable.getController();
+          const movement$ = controller.movement$.pipe(switchMap((direction) => actions.updatePlayer({ id: hero.id, direction, coords: movable.coords })));
           const attack$ = attacking.attack$.pipe(switchMap((attackingType) => actions.updatePlayer({ id: hero.id, attackingType })));;
 
           return merge(movement$, attack$);
@@ -115,7 +116,6 @@
 
   function handleUpdatedPlayers(): void {
     actions.updatePlayerListener()
-      .pipe(tap((player) => console.log('Update player', player)))
       .subscribe((player) => {
         if (!player.id) return;
 
