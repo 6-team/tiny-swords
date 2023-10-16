@@ -187,4 +187,4 @@
 }
 </style>
 
-<svelte:window on:keydown|preventDefault={keyboardHandler} />
+<svelte:window on:keydown={keyboardHandler} />
