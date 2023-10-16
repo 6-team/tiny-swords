@@ -11,6 +11,8 @@ import { LevelType } from './level.types';
 
 export class Level {
   #levelCounter = 1;
+  #currentLevelType;
+  #nextLevelType;
 
   readonly #boundariesSubject = new BehaviorSubject<[number, number][]>([]);
   readonly #gridXSubject = new BehaviorSubject<number>(0);
@@ -79,21 +81,26 @@ export class Level {
   }
 
   next(): Observable<LevelData<LayersMap>> {
-    console.time();
+    // console.time();
+    const levels = [LevelType.Ground, LevelType.Sand, LevelType.Stones];
+    
+    this.#currentLevelType = typeof this.#nextLevelType === 'number'
+      ? this.#nextLevelType
+      : randomElement(levels);
 
-    const currentLevelType = randomElement([LevelType.Ground, LevelType.Sand]);
-    const nextLevelType = randomElement([LevelType.Ground, LevelType.Sand]);
-    const border = randomElement([1, 2]);
+    this.#nextLevelType = randomElement(levels.filter((level) => level !== this.#currentLevelType));
+
+    const border = this.#currentLevelType === LevelType.Stones ? 2 : randomElement([1, 2]);
 
     const { gridX, gridY, startCoords, endCoords, maps, boundaries, resources, enemies } = new Layers(
-      currentLevelType,
-      nextLevelType,
+      this.#currentLevelType,
+      this.#nextLevelType,
       SIZE_X,
       SIZE_Y,
       border,
     );
 
-    console.timeEnd();
+    // console.timeEnd();
 
     this.updateLevel({ gridX, gridY, startCoords, endCoords, maps, boundaries, resources, enemies });
 

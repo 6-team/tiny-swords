@@ -14,7 +14,7 @@ export const leftHouseConditions = (enter: [number, number]): LayerCondition[] =
 }
 
 /**
- * Шаблон для дорисовки левого здания
+ * Шаблон для дорисовки правого здания
  */
 export const rightHouseConditions = (exit: [number, number]): LayerCondition[] => {
   return [
@@ -48,7 +48,7 @@ export const treeBottomConditions = (layer): LayerCondition[] => {
 }
 
 /**
- * Шаблон для дорисовки здания
+ * Шаблон для дорисовки шахты
  */
 export const goldMineConditions = (exit: [number, number]): LayerCondition[] => {
   return [
@@ -58,5 +58,29 @@ export const goldMineConditions = (exit: [number, number]): LayerCondition[] => 
     { tile: TileName.GOLDMINE_TOP_LEFT, coords: [exit[0] - 1, exit[1] - 2], boundary: true },
     { tile: TileName.GOLDMINE_TOP_MIDDLE, coords: [exit[0], exit[1] - 2], boundary: true },
     { tile: TileName.GOLDMINE_TOP_RIGHT, coords: [exit[0] + 1, exit[1] - 2 ], boundary: true },
+  ];
+}
+
+/**
+ * Шаблон для дорисовки левой башни
+ */
+export const leftTowerConditions = (enter: [number, number]): LayerCondition[] => {
+  return [
+    { tile: TileName.TOWER_BOTTOM_LEFT, coords: [enter[0] - 1, enter[1] - 1], boundary: true },
+    { tile: TileName.TOWER_BOTTOM_RIGHT, coords: [enter[0], enter[1] - 1], boundary: true },
+    { tile: TileName.TOWER_MIDDLE_LEFT, coords: [enter[0] - 1, enter[1] - 2], boundary: true },
+    { tile: TileName.TOWER_MIDDLE_RIGHT, coords: [enter[0], enter[1] - 2 ], boundary: true },
+  ];
+}
+
+/**
+ * Шаблон для дорисовки правой башни
+ */
+export const rightTowerConditions = (exit: [number, number]): LayerCondition[] => {
+  return [
+    { tile: TileName.TOWER_BOTTOM_LEFT, coords: [exit[0], exit[1] - 1], boundary: true },
+    { tile: TileName.TOWER_BOTTOM_RIGHT, coords: [exit[0] + 1, exit[1] - 1], boundary: true },
+    { tile: TileName.TOWER_MIDDLE_LEFT, coords: [exit[0], exit[1] - 2], boundary: true },
+    { tile: TileName.TOWER_MIDDLE_RIGHT, coords: [exit[0] + 1, exit[1] - 2 ], boundary: true },
   ];
 }

@@ -14,6 +14,8 @@ import { Resource } from '../../entities/resource';
 import { grid64 } from '../grid';
 import { ResourcesLayer } from './kinds/resources-layer/resurces-layer';
 import { EnemiesLayer } from './kinds/enemies-layer/enemies-layer';
+import { StonesLayer } from './kinds/stones-layer/stones-layer';
+import { ElevationLayer } from './kinds/elevation-layer/elevation-layer';
 
 export class Layers {
   #layers;
@@ -32,10 +34,19 @@ export class Layers {
     this.startCoords = startCoords;
     this.endCoords = endCoords;
 
-    const terrainLayer =
-      level === LevelType.Ground
-        ? new GroundLayer(gridX, gridY, border, startCoords, endCoords)
-        : new SandLayer(gridX, gridY, border, startCoords, endCoords);
+    let terrainLayer;
+
+    switch(level) {
+      case LevelType.Ground:
+        terrainLayer = new GroundLayer(gridX, gridY, border, startCoords, endCoords);
+        break;
+      case LevelType.Sand:
+        terrainLayer = new SandLayer(gridX, gridY, border, startCoords, endCoords);
+        break;
+      case LevelType.Stones:
+        terrainLayer = new StonesLayer(gridX, gridY, border, startCoords, endCoords);
+        break;
+    }
 
     const buildingsLayer = new BuildingsLayer(gridX, gridY, level, nextLevel, startCoords, endCoords, terrainLayer);
     const signLayer = new SignLayer(gridX, gridY, startCoords, endCoords);
@@ -75,12 +86,17 @@ export class Layers {
       // {
       //   layer: new BoundaryLayer(gridX, gridY, [terrainLayer, buildingsLayer, signLayer]),
       //   type: LayersRenderType.Background,
-      //   renderOrder: 6,
+      //   renderOrder: 7,
       // },
+      {
+        layer: new ElevationLayer(gridX, gridY, level, terrainLayer),
+        type: LayersRenderType.Background,
+        renderOrder: 6,
+      },
       {
         layer: new ForegroundLayer(gridX, gridY, level, nextLevel, startCoords, endCoords, terrainLayer),
         type: LayersRenderType.Foreground,
-        renderOrder: 7,
+        renderOrder: 8,
       },
     ];
 
