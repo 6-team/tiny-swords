@@ -3,7 +3,6 @@ import { IController } from '../controllers.types';
 import { BehaviorSubject, Subject, filter, fromEvent, map } from 'rxjs';
 import { MovingDirection, AttackingType } from '@shared';
 import { actions } from '../../core';
-import { CoordsTuple } from '../../entities/tile/tile.types';
 
 export default class KeyboardController implements IController {
   private _pushedMovementKeys$ = new BehaviorSubject<MovingDirection[]>([]);
@@ -11,12 +10,10 @@ export default class KeyboardController implements IController {
   private _movement$ = new Subject<MovingDirection>();
   private _animation$ = new Subject<MovingDirection>();
   private _attack$ = new Subject<AttackingType>();
-  private _coords$ = new Subject<CoordsTuple>();
 
   readonly movement$ = this._movement$.asObservable();
   readonly animation$ = this._animation$.asObservable();
   readonly attack$ = this._attack$.asObservable();
-  readonly coords$ = this._coords$.asObservable();
   readonly pushedMovementKeys$ = this._pushedMovementKeys$
     .asObservable()
     .pipe(map((directions) => directions.at(-1) ?? MovingDirection.IDLE));
