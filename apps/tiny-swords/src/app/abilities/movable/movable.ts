@@ -2,7 +2,7 @@ import { IMovable, TCollisionArea } from '../abilities.types';
 import { IMovableCharacter, TNumberOfPixels, TPixelsPosition } from '../../common/common.types';
 import { MovingError, PIXELS_PER_FRAME, movementSetters, nextMoveCoordsGetters } from './movable.const';
 import { MovableProps } from './movable.types';
-import { BehaviorSubject, Observable, combineLatest, filter, map, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, debounceTime, filter, map, tap, withLatestFrom } from 'rxjs';
 import { HeroActionAnimation } from '../../entities/hero/hero.const';
 import { frames$ } from '../../tools/observables';
 import { grid64 } from '../../core/grid';
@@ -17,7 +17,7 @@ export class Movable implements IMovable {
   #sizes: [height: TNumberOfPixels, width: TNumberOfPixels];
   #isRightDirection = true;
   #movingProgressRemaining = 0;
-  #breakpointReached: boolean = true;
+  #breakpointReached = true;
   #getCollisionAreaFunc?: MovableProps['getCollisionArea'];
   #context?: IMovableCharacter;
 
@@ -56,6 +56,14 @@ export class Movable implements IMovable {
     this._controller = controller;
 
     combineLatest([frames$, this._controller.movement$]).subscribe(this.#handleFrameChange);
+    this._controller.coords$
+      .pipe(
+        tap((coords) => console.log(coords, this.coords)),
+        filter(([x, y]) => x !== this.coords[0] || y !== this.coords[1]),
+        debounceTime(200),
+      )
+      .subscribe((coords) => this.#coords$.next(coords));
+
     controller.animation$.subscribe(this.#handleAnimationChange);
 
     return this;
@@ -66,7 +74,7 @@ export class Movable implements IMovable {
    *
    * @returns Контроллер
    */
-  getController() {
+  getController(): IController {
     return this._controller;
   }
 
