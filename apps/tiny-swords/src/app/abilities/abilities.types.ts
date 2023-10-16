@@ -110,7 +110,7 @@ export interface IMovable extends IAbility<IMovableCharacter> {
    *
    * @returns Контроллер
    */
-  getController(): IController;
+  getController<C extends IController>(): C;
 
   /**
    * Принудительно устанавливает координаты персонажу
