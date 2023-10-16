@@ -1,7 +1,7 @@
 import { LevelData } from '@shared';
 import { Layers } from '../layers/layers';
 import { randomElement } from '../layers/layers.utils';
-import { SIZE_X, SIZE_Y } from './level.const';
+import { SIZE_X, SIZE_Y } from '../../common/common.const';
 import { LayersMap } from '../layers/layers.types';
 import { BehaviorSubject, Observable, map, of } from 'rxjs';
 import { grid64 } from '../grid';
