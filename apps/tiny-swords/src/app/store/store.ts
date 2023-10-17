@@ -6,4 +6,16 @@ const nextLevelMenu = writable(false);
 const isMainMenuStore = writable(true);
 const isMuttedStore = writable(false);
 
-export { isActiveCloseButtonStore, isActiveMenuItemStore, nextLevelMenu, isMainMenuStore, isMuttedStore };
+const endGameMenuStore = writable(false);
+
+const multiplayerStore = writable(false);
+
+export {
+  multiplayerStore,
+  isActiveCloseButtonStore,
+  isActiveMenuItemStore,
+  nextLevelMenu,
+  isMainMenuStore,
+  isMuttedStore,
+  endGameMenuStore,
+};

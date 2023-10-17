@@ -1,3 +1,5 @@
+import { IAttacking } from './../../abilities/abilities.types';
+import { EnemySound } from './../../core/sounds/enemy-sounds';
 import { Attacking } from '../../abilities/attacking';
 import { Movable } from '../../abilities/movable';
 import { IAttackingCharacter, IMovableCharacter } from '../../common/common.types';
@@ -5,6 +7,8 @@ import { grid64 } from '../../core/grid';
 import { Character } from '../character';
 import { EnemyType, mapEnemyTypeToCoords } from './enemy.const';
 import { EnemyAbilities, EnemyConfig } from './enemy.types';
+import { isMuttedStore } from '../../store';
+import { IEnemySounds } from '../../core/sounds/enemy-sounds.types';
 
 const ENEMY_SIZE = 192;
 
@@ -15,6 +19,7 @@ export default class Enemy
   protected _sprite = './img/Factions/Goblins/Troops/Torch/Red/Torch_Red.png';
   protected _type = EnemyType.TORCH_RED;
   protected _size = ENEMY_SIZE;
+  enemySounds: IEnemySounds;
 
   constructor({ controllerCreator, height, width, initialX, initialY, id }: EnemyConfig) {
     super({ id });
@@ -38,6 +43,19 @@ export default class Enemy
 
     movable.setController(controller);
     attacking.setController(controller);
+    this.#initSounds(attacking);
+  }
+
+  #initSounds(attacking: IAttacking): void {
+    this.enemySounds = new EnemySound({ attacking });
+
+    isMuttedStore.subscribe((value) => {
+      if (value) {
+        this.enemySounds.muteSound();
+      } else {
+        this.enemySounds.unmuteSound();
+      }
+    });
   }
 
   protected _getCoordsMap() {

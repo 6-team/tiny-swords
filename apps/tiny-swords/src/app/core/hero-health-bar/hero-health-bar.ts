@@ -2,8 +2,10 @@ import { IHeroHealthBar, IHeroHealthBarConfig } from './hero-health-bar.types';
 import { HealthBar } from '../../entities/health-bar';
 
 export class HeroHealthBar extends HealthBar<IHeroHealthBarConfig> implements IHeroHealthBar {
+  private readonly initialHealthBarConfig: IHeroHealthBarConfig;
   constructor(healthBar: IHeroHealthBarConfig) {
     super();
+    this.initialHealthBarConfig = healthBar;
     this.updateHealthBar(healthBar);
   }
 
@@ -21,5 +23,9 @@ export class HeroHealthBar extends HealthBar<IHeroHealthBarConfig> implements IH
     if (availableLives + blockedLives < totalLives) {
       this.updateHealthBar({ availableLives: availableLives + 1 });
     }
+  }
+
+  resetHealthBar() {
+    this.updateHealthBar(this.initialHealthBarConfig);
   }
 }

@@ -26,6 +26,10 @@ export class Heroes {
     return this.#heroesSubject.getValue();
   }
 
+  get mainHero(): Hero {
+    return this.#mainHero;
+  }
+
   initHero({ id }: IPlayer, bounds$: Observable<Array<TCollisionArea>>): Hero {
     const [x, y] = this.#startCoords;
     const [initialX, initialY, height, width] = grid64.transformToPixels(x - 1, y - 1, 3, 3);
