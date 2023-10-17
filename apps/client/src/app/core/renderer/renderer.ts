@@ -1,4 +1,4 @@
-import { IResource } from './../../common/common.types';
+import { IResource } from '../../common/common.types';
 import { IGrid, IMovableCharacter, ITile } from '../../common/common.types';
 import { Maybe } from '../../tools/monads/maybe';
 import { TileName, mapTileNameToClass } from './renderer.const';

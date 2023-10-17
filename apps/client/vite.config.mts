@@ -5,7 +5,7 @@ import { svelte } from '@sveltejs/vite-plugin-svelte';
 import viteTsConfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
-  cacheDir: '../../node_modules/.vite/tiny-swords',
+  cacheDir: '../../node_modules/.vite/client',
 
   plugins: [svelte(), viteTsConfigPaths({ loose: true, root: '../../' })],
 
