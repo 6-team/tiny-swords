@@ -1,4 +1,4 @@
-name: Tiny Swords CD
+name: Deploy build code to release branch
 
 on:
   pull_request:
@@ -16,14 +16,15 @@ jobs:
     runs-on: ubuntu-latest
     concurrency: ci-${{ github.ref }}
     steps:
-      - name: Checkout 🛎️
+      - name: Checkout repository for accessing workflow and affected projects 🛎
         uses: actions/checkout@v3
 
-      - name: Install Dependencies
+      - name: Install Dependencies ⤵️
         run: yarn install --frozen-lockfile
 
-      - name: Build
+      - name: Build 🛠️
         run: npx nx run-many -t build -p tiny-swords
+
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
