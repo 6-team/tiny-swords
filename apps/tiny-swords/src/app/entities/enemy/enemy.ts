@@ -16,7 +16,7 @@ export default class Enemy
   protected _type = EnemyType.TORCH_RED;
   protected _size = ENEMY_SIZE;
 
-  constructor({ controllerCreator, height, width, initialX, initialY, id }: EnemyConfig) {
+  constructor({ controllerCreator, height, width, initialX, initialY, initialAnimation, id }: EnemyConfig) {
     super({ id });
 
     const attacking = new Attacking();
@@ -38,6 +38,10 @@ export default class Enemy
 
     movable.setController(controller);
     attacking.setController(controller);
+
+    if (initialAnimation) {
+      this.setAnimation(initialAnimation);
+    }
   }
 
   protected _getCoordsMap() {
