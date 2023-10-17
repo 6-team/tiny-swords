@@ -1,12 +1,12 @@
-import { Subject, filter } from 'rxjs';
+import { BehaviorSubject, Subject, filter } from 'rxjs';
 import { IController } from '../controllers.types';
 import { MovingDirection, AttackingType } from '@shared';
 import { actions } from '../../core';
 import { IMovableCharacter, IAttackingCharacter } from '../../common/common.types';
 
 export default class ServerController implements IController {
-  private _movement$ = new Subject<MovingDirection>();
-  private _animation$ = new Subject<MovingDirection>();
+  private _movement$ = new BehaviorSubject<MovingDirection>(MovingDirection.IDLE);
+  private _animation$ = new BehaviorSubject<MovingDirection>(MovingDirection.IDLE);
   private _attack$ = new Subject<AttackingType>();
   private _character: IMovableCharacter & IAttackingCharacter;
 
