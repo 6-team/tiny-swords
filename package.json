@@ -3,11 +3,11 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "start:client": "nx serve tiny-swords",
+    "start:client": "nx serve client",
     "start:backend": "nx serve backend",
     "graph": "npx nx graph",
     "start": "node dist/apps/backend/main.js",
-    "build": "yarn nx run-many --target=build --projects=tiny-swords,backend --parallel=true"
+    "build": "yarn nx run-many --target=build --projects=client,backend --parallel=true"
   },
   "private": true,
   "dependencies": {

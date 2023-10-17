@@ -1,0 +1,371 @@
+<script lang="ts">
+  import { onDestroy, onMount } from "svelte";
+  import { Observable, combineLatest, concatAll, concatMap, filter, first, from, map, merge, switchMap, tap, withLatestFrom } from "rxjs";
+  import { Hero } from '../entities/hero'
+  import { Resource, ResourcesType } from '../entities/resource/index';
+  import { TILE_SIZE, SCALE } from '../common/common.const'
+  import { actions, Heroes, Grid, Renderer, grid64, HeroHealthBar, HeroResourcesBar, enemies } from "../core";
+  import { Level } from "../core/level/level";
+  import { nextLevelMenu, isMainMenuStore, isMuttedStore } from "../store";
+  import MainMenu from "../components/mainMenu/MainMenu.svelte";
+  import NextLevelMenu from "../components/nextLevelMenu/NextLevelMenu.svelte";
+  import { frames$ } from "../tools/observables";
+  import { collisions } from "../core/collisions";
+  import { LayersRenderType } from "../core/layers/layers.types"
+
+  import type { AttackingType, IPlayer } from "@shared";
+  import type { TPixelsCoords } from "../abilities/abilities.types";
+  import type { IAttackingCharacter } from "../common/common.types";
+  import { KeyboardController } from "../controllers/keyboard";
+
+  let staticScene: Renderer;
+  let foregroundScene: Renderer;
+
+  const level = new Level();
+  const heroes = new Heroes(level.startCoords);
+  const heroHealthBar = new HeroHealthBar({ totalLives: 3, availableLives: 1, blockedLives: 2 });
+
+  const nextLevelTile$ = level.endCoords$.pipe(map(([x, y]) => grid64.transformToPixels(x, y, 1, 1)));
+
+  let isNextLevelMenu = false;
+  let isMainMenu = true;
+  let isMuttedValue = false;
+
+  nextLevelMenu.subscribe(value => isNextLevelMenu = value);
+  isMainMenuStore.subscribe(value => isMainMenu = value);
+  isMuttedStore.subscribe( value => isMuttedValue = value);
+
+  level.startCoords$.subscribe(([startX, startY]) => {
+    /**
+     * Выставляем зависимость: герои должны перемещаться в новую позицию, когда стартовые координаты поменялись.
+     * А меняются они, когда герои переходят на новый уровень.
+     */
+     heroes.heroes$.forEach(heroes => {
+      for (const hero of heroes) {
+
+        const movable = hero.getAbility('movable');
+        const [x, y] = grid64.transformToPixels(startX - 1, startY - 1, 3, 3);
+
+        movable.setCoords([x, y]);
+      }
+    });
+  });
+
+  function renderLayers(): void {
+    level.maps$
+      .pipe(
+        tap(() => [staticScene, foregroundScene].forEach((scene) => scene.clear())),
+        concatAll(),
+        concatMap(({ map, type }) => {
+          if (type === LayersRenderType.Background) return from(staticScene.renderStaticLayer(map));
+
+          return from(foregroundScene.renderStaticLayer(map));
+        })
+      )
+      .subscribe();
+  }
+
+  function createNewLevel(): void {
+    level.next().pipe(switchMap(() => actions.updateLevel(level.data))).subscribe();
+  }
+
+  const initGame = (): void => {
+    const action$ = actions.initGame(level.data).pipe(filter(Boolean), tap(() => console.log('The game was created')));
+
+    handleHeroMovement(action$);
+  }
+
+  const connectToMultipleGame = (): void => {
+    const action$ = actions.connectToMultipleGame().pipe(tap(() => console.log('You connected to multiple game')));
+
+    handleHeroMovement(action$);
+  }
+
+  function handleHeroMovement(action$: Observable<IPlayer>): void {
+    const bounds$ = combineLatest([enemies.enemiesBoundaries$, level.boundaries$]).pipe(
+      map((tuple) => tuple.flat())
+    );
+
+    action$
+      .pipe(
+        map((hero) => heroes.initHero(hero, bounds$)),
+        switchMap((hero: Hero) => {
+          const movable = hero.getAbility('movable');
+          const attacking = hero.getAbility('attacking')
+          const controller = movable.getController<KeyboardController>();
+          const movement$ = controller.pushedMovementKeys$.pipe(switchMap((direction) => actions.updatePlayer({ id: hero.id, direction, coords: movable.coords })));
+          const attack$ = attacking.attack$.pipe(switchMap((attackingType) => actions.updatePlayer({ id: hero.id, attackingType })));;
+
+          return merge(attack$, movement$);
+        })
+      ).subscribe();
+  }
+
+  function handleEnemyMovement(): void {
+    const bounds$ = combineLatest([heroes.heroesBoundaries$, level.boundaries$]).pipe(
+      map((tuple) => tuple.flat())
+    );
+
+    level.enemiesCoords$
+      .pipe(
+        tap(() => enemies.clearEnemies()),
+        concatAll(),
+        map((coords, index) => enemies.initEnemy({ coords, id: index }, bounds$)),
+      )
+      .subscribe()
+  }
+
+  function handleUpdatedPlayers(): void {
+    actions.updatePlayerListener()
+      .subscribe((player) => {
+        if (!player.id) return;
+
+        const existingPlayer = heroes.getHero(player.id);
+
+        if (existingPlayer) return;
+
+        heroes.initConnectedHero(player);
+      });
+  }
+
+  const gameResources = new HeroResourcesBar([new Resource({type: ResourcesType.GOLD, quantity: 0}), new Resource({type: ResourcesType.WOOD, quantity: 0})])
+
+  const buyImprovements = (resources: { type: ResourcesType; price: number }, type: string):void => {
+    if(type === 'life' && heroHealthBar.healthBar.blockedLives) {
+      gameResources.spend(resources);
+      heroHealthBar.unblockLive()
+    }
+
+  };
+
+  const availableResourcesCheck = (resources: { type: ResourcesType, price: number}):boolean => gameResources.availableResourcesCheck(resources);
+
+  function handleUpdatedLevel(): void {
+    actions.updateLevelListener()
+      .pipe(tap(() => console.log('Update level')))
+      .subscribe((data) => {
+        level.updateLevel(data);
+
+        if (isNextLevelMenu) nextLevelMenu.set(false);
+      })
+  }
+
+  onMount(async () => {
+    handleEnemyMovement();
+    handleUpdatedLevel();
+    handleUpdatedPlayers();
+    /**
+     * Рендер статичной карты
+     */
+    const grid64 = new Grid({ tileSize: TILE_SIZE, maxX: level.gridX, maxY: level.gridY });
+
+     staticScene = new Renderer({
+      canvas: document.getElementById('canvas') as HTMLCanvasElement,
+      scale: SCALE,
+      grid: grid64,
+    });
+
+    /**
+     * Рендер слоя с объектами переднего плана
+     */
+    foregroundScene = new Renderer({
+      canvas: document.getElementById('canvas_foreground') as HTMLCanvasElement,
+      scale: SCALE,
+      grid: grid64,
+    });
+
+    renderLayers();
+
+    /**
+     * Рендер интерактивных элементов, которые будут в движении
+     */
+    const interactiveScene = new Renderer({
+      canvas: document.getElementById('canvas_interactive') as HTMLCanvasElement,
+      scale: SCALE,
+      grid: grid64,
+    });
+
+    const resourcesScene = new Renderer({
+      canvas: document.getElementById('canvas_resources') as HTMLCanvasElement,
+      scale: SCALE,
+      grid: grid64,
+    });
+
+    const heroBarsScene = new Renderer({
+      canvas: document.getElementById('canvas_hero_bar') as HTMLCanvasElement,
+      scale: SCALE,
+      grid: grid64,
+    });
+
+    const heroHealthBarScene = new Renderer({
+      canvas: document.getElementById('canvas_hero_health-bar') as HTMLCanvasElement,
+      scale: SCALE,
+      grid: grid64,
+    });
+
+    await heroBarsScene.renderResourcesBar(gameResources.getResources())
+
+    // Дальше проверка: если перс повернут к врагу и они в соседних клетках, то удар засчитан
+    // ...
+
+    // Это надо будет наверное вынести куда то
+    function checkCollisions(character: Hero, nextLevelTile: TPixelsCoords): void {
+      const movable = character.getAbility('movable');
+      const collecting = character.getAbility('collecting');
+
+      const hasCollisionWithNextLevelArea = collisions.hasCollision(
+        movable.getCollisionArea(),
+        nextLevelTile
+      );
+
+      if (hasCollisionWithNextLevelArea) {
+        nextLevelMenu.set(true);
+
+        return;
+      }
+
+      const resources = level.resources;
+
+      for (const resource of resources) {
+        const hasCollision = collisions.hasCollision(
+          movable.getCollisionArea(),
+          resource.coords
+        );
+
+        if (hasCollision) {
+
+          if(resource.resourceType === ResourcesType.MEAT) {
+            heroHealthBar.addLive();
+          }
+          collecting.collect(resource);
+
+          const updatedResources = resources.filter((original) => original !== resource);
+          gameResources.addResource(resource.resourceType)
+          level.updateResources(updatedResources)
+        }
+      }
+
+      for (const enemy of enemies.enemies) {
+        const enemyAttacking = enemy.getAbility('attacking');
+
+        const enemyHasAttackCollision = collisions.hasCollision(
+          enemyAttacking.getAffectedArea(),
+          movable.getCollisionArea()
+        );
+
+        if (enemyHasAttackCollision) {
+          enemyAttacking.attack().isAttacking$.pipe(filter(isAttacking => !isAttacking), first())
+            .subscribe(() => {
+              if (heroes.isMainHero(character.id)) {
+                heroHealthBar.removeLive();
+
+                if (heroHealthBar.isDead) {
+                  heroes.removeHero(character.id);
+                }
+              }
+            })
+        }
+      }
+    }
+
+    function checkAttackCollisions(hero: IAttackingCharacter, type: AttackingType) {
+      const attacking = hero.getAbility('attacking');
+
+      for (const enemy of enemies.enemies) {
+        const enemyMovable = enemy.getAbility('movable');
+        const hasAttackCollision = collisions.hasCollision(
+          attacking.getAffectedArea(),
+          enemyMovable.getCollisionArea()
+        );
+
+        if (hasAttackCollision) {
+          attacking.isAttacking$.pipe(filter(isAttacking => !isAttacking), first()).subscribe(() => enemies.removeEnemy(enemy.id));
+
+          break;
+        }
+      }
+    }
+
+    let lastTime = 0;
+
+    level.resources$.subscribe((resources) => {
+      resourcesScene.clear();
+      resources.forEach((resource) => {
+        resourcesScene.render(resource.coords, resource);
+      });
+    });
+
+    frames$.subscribe((timeStamp = 0) => {
+      const deltaTime = timeStamp - lastTime;
+
+      for (const enemy of enemies.enemies) {
+        interactiveScene.renderMovable(enemy, deltaTime);
+      }
+
+      interactiveScene.renderMovableLayer(heroes.heroes, deltaTime);
+      lastTime = timeStamp
+    });
+
+    heroes.heroes$.subscribe((heroes) => {
+      for (const hero of heroes) {
+        const movable = hero.getAbility('movable');
+        const attacking = hero.getAbility('attacking');
+
+        movable.breakpoints$.pipe(withLatestFrom(nextLevelTile$)).subscribe(([_, nextLevelTile]) => {
+          checkCollisions(hero, nextLevelTile);
+        });
+
+        attacking.attack$.subscribe((type) => {
+          checkAttackCollisions(hero, type);
+        });
+      }
+    });
+
+    gameResources.resources$.subscribe(() => {
+    heroBarsScene.clear()
+    heroBarsScene.renderResourcesBar(gameResources.getResources())
+  }
+    )
+    heroHealthBar.healthBar$.subscribe(lives => {
+      heroHealthBarScene.clear();
+      heroHealthBarScene.renderHealthBar(lives)
+    })
+
+  });
+
+  onDestroy(() => {
+    actions.closeGame();
+  })
+</script>
+
+<div>
+  <canvas id="canvas" width="1280" height="832" style="position: absolute; left: 50%; top: 120px; transform: translateX(-50%);"></canvas>
+  <canvas id="canvas_resources" width="1280" height="832" style="position: absolute; left: 50%; top: 120px; transform: translateX(-50%);"></canvas>
+  <canvas id="canvas_interactive" width="1280" height="832" style="position: absolute; left: 50%; top: 120px; transform: translateX(-50%);"></canvas>
+  <canvas id="canvas_foreground" width="1280" height="832" style="position: absolute; left: 50%; top: 120px; transform: translateX(-50%);"></canvas>
+  <canvas id="canvas_hero_bar" width="1280" height="120px" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%);"></canvas>
+  <canvas id="canvas_hero_health-bar" width="1280" height="120px" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%);"></canvas>
+  {#if isMainMenu}
+    <MainMenu {initGame} {connectToMultipleGame}/>
+  {/if}
+  {#if isNextLevelMenu}
+    <NextLevelMenu {createNewLevel} {buyImprovements} {availableResourcesCheck}/>
+  {/if}
+  <button class="volume-btn" on:click={()=> {
+    isMuttedStore.set(!isMuttedValue)}}>
+    <img src = {isMuttedValue ? './img/UI/Disable_03.png' : './img/UI/Regular_03.png'} alt= 'volume-img'/>
+  </button>
+</div>
+
+<style lang="scss">
+  button.volume-btn {
+    border: none;
+    background: transparent;
+    outline: none;
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    transform: translate(-100%, -50%);
+    img:hover {scale: 1.2}
+  }
+</style>

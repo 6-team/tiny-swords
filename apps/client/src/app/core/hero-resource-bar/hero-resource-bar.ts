@@ -1,6 +1,6 @@
 import { quantityResources } from './hero-resource-bar.const';
 import { IHeroResourcesBar } from './hero-resource-bar.types';
-import { Resource } from './../../entities/resource/resource';
+import { Resource } from '../../entities/resource/resource';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ResourcesType } from '../../entities/resource';
 

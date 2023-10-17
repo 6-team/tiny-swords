@@ -1,7 +1,7 @@
 {
-  "name": "tiny-swords",
+  "name": "client",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/tiny-swords/src",
+  "sourceRoot": "apps/client/src",
   "projectType": "application",
   "targets": {
     "build": {
@@ -9,8 +9,8 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/tiny-swords",
-        "assets": [{ "glob": "**/*", "input": "apps/tiny-swords/public", "output": "{options.outputPath}" }]
+        "outputPath": "dist/apps/client",
+        "assets": [{ "glob": "**/*", "input": "apps/client/public", "output": "{options.outputPath}" }]
       },
       "configurations": {
         "development": {
@@ -26,15 +26,15 @@
       "executor": "@nx/vite:dev-server",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "tiny-swords:build"
+        "buildTarget": "client:build"
       },
       "configurations": {
         "development": {
-          "buildTarget": "tiny-swords:build:development",
+          "buildTarget": "client:build:development",
           "hmr": true
         },
         "production": {
-          "buildTarget": "tiny-swords:build:production",
+          "buildTarget": "client:build:production",
           "hmr": false
         }
       }
@@ -43,7 +43,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "apps/tiny-swords/jest.config.ts",
+        "jestConfig": "apps/client/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {

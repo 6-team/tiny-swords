@@ -23,8 +23,8 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Build
-        run: npx nx run-many -t build -p tiny-swords
+        run: npx nx run-many -t build -p client
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: dist/apps/tiny-swords
+          folder: dist/apps/client

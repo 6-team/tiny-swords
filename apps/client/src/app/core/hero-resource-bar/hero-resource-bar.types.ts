@@ -1,5 +1,5 @@
 import { ResourcesType } from '../../entities/resource';
-import { Resource } from './../../entities/resource/resource';
+import { Resource } from '../../entities/resource/resource';
 export interface IHeroResourcesBar {
   getResources(): Array<Resource>;
   getResource(type: ResourcesType): Resource;
