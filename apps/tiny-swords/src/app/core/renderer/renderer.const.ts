@@ -23,6 +23,8 @@ import { GoldMineTile } from '../../entities/gold-mine/gold-mine';
 import { GoldMineType } from '../../entities/gold-mine/gold-mine.const';
 import { SheepType } from '../../entities/sheep/sheep.const';
 import { SheepTile } from '../../entities/sheep/sheep';
+import { TowerTile } from '../../entities/tower/tower';
+import { TowerType } from '../../entities/tower/tower.const';
 
 export const enum TileName {
   WATER_MIDDLE_MIDDLE,
@@ -113,6 +115,8 @@ export const enum TileName {
   DECO_SIGH_RIGHT_TOP,
   DECO_SIGH_RIGHT_BOTTOM,
   DECO_SCARECROW,
+  DECO_SKULL_RIGHT,
+  DECO_SKULL_LEFT,
 
   ROCKS_S,
   ROCKS_M,
@@ -138,6 +142,13 @@ export const enum TileName {
   HOUSE_MIDDLE_RIGHT,
   HOUSE_BOTTOM_LEFT,
   HOUSE_BOTTOM_RIGHT,
+
+  TOWER_TOP_LEFT,
+  TOWER_TOP_RIGHT,
+  TOWER_MIDDLE_LEFT,
+  TOWER_MIDDLE_RIGHT,
+  TOWER_BOTTOM_LEFT,
+  TOWER_BOTTOM_RIGHT,
 
   GOLDMINE_TOP_LEFT,
   GOLDMINE_TOP_MIDDLE,
@@ -184,11 +195,6 @@ export const mapTileNameToClass: Partial<Record<TileName, { constructor: any; ar
   [TileName.GROUND_VERTICAL_MIDDLE]: { constructor: GroundTile, args: [GroundType.VERTICAL_MIDDLE] },
   [TileName.GROUND_VERTICAL_BOTTOM]: { constructor: GroundTile, args: [GroundType.VERTICAL_BOTTOM] },
 
-  [TileName.BRIDGE_LEFT]: { constructor: BridgeTile, args: [BridgeType.LEFT] },
-  [TileName.BRIDGE_MIDDLE]: { constructor: BridgeTile, args: [BridgeType.MIDDLE] },
-  [TileName.BRIDGE_RIGHT]: { constructor: BridgeTile, args: [BridgeType.RIGHT] },
-  [TileName.BRIDGE_SHADOW]: { constructor: BridgeTile, args: [BridgeType.SHADOW] },
-
   [TileName.ELEVATION_TOP_LEFT]: { constructor: ElevationTile, args: [ElevationType.TOP_LEFT] },
   [TileName.ELEVATION_TOP_MIDDLE]: { constructor: ElevationTile, args: [ElevationType.TOP_MIDDLE] },
   [TileName.ELEVATION_TOP_RIGHT]: { constructor: ElevationTile, args: [ElevationType.TOP_RIGHT] },
@@ -208,6 +214,11 @@ export const mapTileNameToClass: Partial<Record<TileName, { constructor: any; ar
   [TileName.ELEVATION_EDGE_LEFT]: { constructor: ElevationTile, args: [ElevationType.EDGE_LEFT] },
   [TileName.ELEVATION_EDGE_MIDDLE]: { constructor: ElevationTile, args: [ElevationType.EDGE_MIDDLE] },
   [TileName.ELEVATION_EDGE_RIGHT]: { constructor: ElevationTile, args: [ElevationType.EDGE_RIGHT] },
+
+  [TileName.BRIDGE_LEFT]: { constructor: BridgeTile, args: [BridgeType.LEFT] },
+  [TileName.BRIDGE_MIDDLE]: { constructor: BridgeTile, args: [BridgeType.MIDDLE] },
+  [TileName.BRIDGE_RIGHT]: { constructor: BridgeTile, args: [BridgeType.RIGHT] },
+  [TileName.BRIDGE_SHADOW]: { constructor: BridgeTile, args: [BridgeType.SHADOW] },
 
   [TileName.FOAM_TOP]: { constructor: FoamTile, args: [FoamType.TOP] },
   [TileName.FOAM_LEFT]: { constructor: FoamTile, args: [FoamType.LEFT] },
@@ -237,6 +248,8 @@ export const mapTileNameToClass: Partial<Record<TileName, { constructor: any; ar
   [TileName.DECO_SIGH_RIGHT_TOP]: { constructor: DecoTile, args: [DecoType.SIGH_RIGHT_TOP] },
   [TileName.DECO_SIGH_RIGHT_BOTTOM]: { constructor: DecoTile, args: [DecoType.SIGH_RIGHT_BOTTOM] },
   [TileName.DECO_SCARECROW]: { constructor: DecoTile, args: [DecoType.SCARECROW] },
+  [TileName.DECO_SKULL_RIGHT]: { constructor: DecoTile, args: [DecoType.SKULL_RIGHT] },
+  [TileName.DECO_SKULL_LEFT]: { constructor: DecoTile, args: [DecoType.SKULL_LEFT] },
 
   [TileName.ROCKS_S]: { constructor: RocksTile, args: [RocksType.ROCKS_S] },
   [TileName.ROCKS_M]: { constructor: RocksTile, args: [RocksType.ROCKS_M] },
@@ -262,6 +275,13 @@ export const mapTileNameToClass: Partial<Record<TileName, { constructor: any; ar
   [TileName.HOUSE_MIDDLE_RIGHT]: { constructor: HouseTile, args: [HouseType.MIDDLE_RIGHT] },
   [TileName.HOUSE_BOTTOM_LEFT]: { constructor: HouseTile, args: [HouseType.BOTTOM_LEFT] },
   [TileName.HOUSE_BOTTOM_RIGHT]: { constructor: HouseTile, args: [HouseType.BOTTOM_RIGHT] },
+
+  [TileName.TOWER_TOP_LEFT]: { constructor: TowerTile, args: [TowerType.TOP_LEFT] },
+  [TileName.TOWER_TOP_RIGHT]: { constructor: TowerTile, args: [TowerType.TOP_RIGHT] },
+  [TileName.TOWER_MIDDLE_LEFT]: { constructor: TowerTile, args: [TowerType.MIDDLE_LEFT] },
+  [TileName.TOWER_MIDDLE_RIGHT]: { constructor: TowerTile, args: [TowerType.MIDDLE_RIGHT] },
+  [TileName.TOWER_BOTTOM_LEFT]: { constructor: TowerTile, args: [TowerType.BOTTOM_LEFT] },
+  [TileName.TOWER_BOTTOM_RIGHT]: { constructor: TowerTile, args: [TowerType.BOTTOM_RIGHT] },
 
   [TileName.GOLDMINE_TOP_LEFT]: { constructor: GoldMineTile, args: [GoldMineType.TOP_LEFT] },
   [TileName.GOLDMINE_TOP_MIDDLE]: { constructor: GoldMineTile, args: [GoldMineType.TOP_MIDDLE] },

@@ -38,6 +38,19 @@ const getSandConditions = (tile, coords) => {
   }
 }
 
+const getStonesConditions = (tile, coords) => {
+  switch(tile) {
+    // песок под основаниями моста
+    case TileName.BRIDGE_LEFT:
+      return [{ tile: TileName.ELEVATION_MIDDLE_RIGHT, coords }];
+    case TileName.BRIDGE_RIGHT:
+      return [{ tile: TileName.ELEVATION_MIDDLE_LEFT, coords }];
+
+    default:
+      return [];
+  }
+}
+
 /**
  * Шаблон для дополнительных слоев:
  * - тень под мостами
@@ -46,8 +59,19 @@ const getSandConditions = (tile, coords) => {
  */
 export const shadowConditions = (level: LevelType, layer): LayerCondition[] => {
   let conditions = [];
-
-  const getConditions = level === LevelType.Ground ? getGroundConditions : getSandConditions;
+  let getConditions;
+  
+  switch(level) {
+    case LevelType.Ground:
+      getConditions = getGroundConditions;
+      break;
+    case LevelType.Sand:
+      getConditions = getSandConditions;
+      break;
+    case LevelType.Stones:
+      getConditions = getStonesConditions;
+      break;
+  }
 
   layer.array.forEach(({ coords, options }) => {
     const conditionsCell = getConditions(options[0], coords);
