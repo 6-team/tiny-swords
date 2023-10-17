@@ -48,6 +48,14 @@ export default class Hero
 
     movable.setController(controller);
     attacking.setController(controller);
+
+    /**
+     * @TODO Убрать это безобразие, когда будем прокидывать персонажа в контроллер, а не наоборот
+     */
+    if (controller.setCharacter) {
+      controller.setCharacter(this);
+    }
+
     this.#initSounds(movable, attacking, collecting);
   }
 

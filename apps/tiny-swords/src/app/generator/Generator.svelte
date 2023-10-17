@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
-  import { Observable, combineLatest, concatAll, concatMap, filter, first, from, map, merge, switchMap, tap, withLatestFrom } from "rxjs";
+  import { Observable, combineLatest, concatAll, concatMap, filter, first, from, map, merge, skip, switchMap, tap, withLatestFrom } from "rxjs";
   import { Hero } from '../entities/hero'
   import { Resource, ResourcesType } from '../entities/resource';
   import { SCALE } from '../common/common.const'
@@ -119,8 +119,11 @@
           const controller = movable.getController();
           const movement$ = controller.movement$.pipe(switchMap((direction) => actions.updatePlayer({ id: hero.id, direction, coords: movable.coords })));
           const attack$ = attacking.attack$.pipe(switchMap((attackingType) => actions.updatePlayer({ id: hero.id, attackingType })));;
+          const breakpoint$ = movable.breakpoints$.pipe(skip(1),switchMap((breakpoint) => {
+            return actions.updatePlayer({ id: hero.id, breakpoint });
+          }));
 
-          return merge(movement$, attack$);
+          return merge(movement$, attack$, breakpoint$);
         })
       ).subscribe();
   }
