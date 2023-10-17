@@ -57,7 +57,8 @@ connection.listen<LevelData>(ActionType.UpdateLevel).subscribe(({ client, data: 
 connection.listen<Player>(ActionType.UpdatePlayer).subscribe(({ client, data: currentPlayer }) => {
   game.setPlayer(currentPlayer);
 
-  notifyOtherPlayersAboutUpdatedPlayer(client, currentPlayer);
+  client.emit(ActionType.UpdatePlayer, currentPlayer);
+  game.players.forEach((player) => client.broadcast.to(player.id).emit(ActionType.UpdatePlayer, currentPlayer));
 });
 
 function notifyCurrentPlayerAboutOtherPlayers(client: Socket, player: Player): void {

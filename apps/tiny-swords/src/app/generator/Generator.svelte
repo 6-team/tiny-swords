@@ -21,6 +21,7 @@
   import type { AttackingType, IPlayer } from "@shared";
   import type { TPixelsCoords } from "../abilities/abilities.types";
   import type { IAttackingCharacter } from "../common/common.types";
+  import { KeyboardController } from "../controllers/keyboard";
 
   let staticScene: Renderer;
   let foregroundScene: Renderer;
@@ -116,11 +117,11 @@
         switchMap((hero: Hero) => {
           const movable = hero.getAbility('movable');
           const attacking = hero.getAbility('attacking')
-          const controller = movable.getController();
-          const movement$ = controller.movement$.pipe(switchMap((direction) => actions.updatePlayer({ id: hero.id, direction, coords: movable.coords })));
+          const controller = movable.getController<KeyboardController>();
+          const movement$ = controller.pushedMovementKeys$.pipe(switchMap((direction) => actions.updatePlayer({ id: hero.id, direction, coords: movable.coords })));
           const attack$ = attacking.attack$.pipe(switchMap((attackingType) => actions.updatePlayer({ id: hero.id, attackingType })));;
 
-          return merge(movement$, attack$);
+          return merge(attack$, movement$);
         })
       ).subscribe();
   }

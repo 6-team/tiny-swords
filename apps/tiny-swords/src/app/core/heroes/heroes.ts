@@ -35,7 +35,7 @@ export class Heroes {
     const [initialX, initialY, height, width] = grid64.transformToPixels(x - 1, y - 1, 3, 3);
 
     const hero = new Hero({
-      controllerCreator: (hero) => collisions.decorateController(hero, bounds$, new KeyboardController()),
+      controllerCreator: (hero) => collisions.decorateController(hero, bounds$, new KeyboardController({ id })),
       initialX,
       initialY,
       height,
@@ -49,7 +49,7 @@ export class Heroes {
     return hero;
   }
 
-  initConnectedHero({ id, coords: [startX, startY] }: IPlayer): Hero {
+  initConnectedHero({ id, coords: [startX, startY] = this.#startCoords }: IPlayer): Hero {
     const [initialX, initialY, height, width] = grid64.transformToPixels(startX - 1, startY - 1, 3, 3);
     const type = this.#getUniqueType();
 

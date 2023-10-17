@@ -1,7 +1,8 @@
 import { directionKeys, attackKeys } from './keyboard.conts';
 import { IController } from '../controllers.types';
-import { BehaviorSubject, Subject, fromEvent, map } from 'rxjs';
+import { BehaviorSubject, Subject, filter, fromEvent, map } from 'rxjs';
 import { MovingDirection, AttackingType } from '@shared';
+import { actions } from '../../core';
 
 export default class KeyboardController implements IController {
   private _pushedMovementKeys$ = new BehaviorSubject<MovingDirection[]>([]);
@@ -13,16 +14,22 @@ export default class KeyboardController implements IController {
   readonly movement$ = this._movement$.asObservable();
   readonly animation$ = this._animation$.asObservable();
   readonly attack$ = this._attack$.asObservable();
+  readonly pushedMovementKeys$ = this._pushedMovementKeys$
+    .asObservable()
+    .pipe(map((directions) => directions.at(-1) ?? MovingDirection.IDLE));
 
-  constructor() {
+  constructor({ id }: { id: string | number }) {
+    actions
+      .updatePlayerListener()
+      .pipe(filter((player) => player.id === id))
+      .subscribe((player) => {
+        if (player.direction) {
+          this._movement$.next(player.direction);
+          this._animation$.next(player.direction);
+        }
+      });
+
     this._addListeners();
-
-    this._pushedMovementKeys$.pipe(map((directions) => directions.at(-1))).subscribe((direction) => {
-      const next = direction ?? MovingDirection.IDLE;
-
-      this._movement$.next(next);
-      this._animation$.next(next);
-    });
 
     this._pushedAttackKeys$.pipe(map((attacks) => attacks.at(-1))).subscribe((attack) => {
       this._attack$.next(attack);
