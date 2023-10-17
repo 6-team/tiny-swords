@@ -36,6 +36,7 @@
   let endGameMenu = true;
   let isMuttedValue = false;
   let isMultiplayer = false;
+  let uniq = {}
 
   nextLevelMenu.subscribe(value => isNextLevelMenu = value);
   isMainMenuStore.subscribe(value => isMainMenu = value);
@@ -151,12 +152,17 @@
       });
   }
 
+  const rerenderComponent = () => {
+    uniq = {}
+  }
+
   const gameResources = new HeroResourcesBar([new Resource({type: ResourcesType.GOLD, quantity: 0}), new Resource({type: ResourcesType.WOOD, quantity: 0})])
 
   const buyImprovements = (resources: { type: ResourcesType; price: number }, type: string):void => {
     if(type === 'life' && heroHealthBar.healthBar.blockedLives) {
       gameResources.spend(resources);
       heroHealthBar.unblockLive()
+      rerenderComponent()
     }
 
   };
@@ -276,12 +282,17 @@
         );
 
         if (enemyHasAttackCollision) {
+          const hero = heroes.getHero(character.id)
+          if (heroes.isMainHero(character.id)) {
+                hero?.heroSounds.playHittingSound()
+              }
           enemyAttacking.attack().isAttacking$.pipe(filter(isAttacking => !isAttacking), first())
             .subscribe(() => {
               if (heroes.isMainHero(character.id)) {
                 heroHealthBar.removeLive();
 
                 if (heroHealthBar.isDead) {
+                  hero?.heroSounds.playGameOverSound()
                   endGameMenuStore.set(true)
                 }
               }
@@ -301,7 +312,8 @@
         );
 
         if (hasAttackCollision) {
-          attacking.isAttacking$.pipe(filter(isAttacking => !isAttacking), first()).subscribe(() => enemies.removeEnemy(enemy.id));
+          enemy.enemySounds.playHittingSound();
+          attacking.isAttacking$.pipe(filter(isAttacking => !isAttacking), first()).subscribe(() => {enemies.removeEnemy( enemy.id) });
 
           break;
         }
@@ -373,7 +385,9 @@
     <MainMenu {initGame} {connectToMultipleGame}/>
   {/if}
   {#if isNextLevelMenu}
+   {#key uniq}
     <NextLevelMenu {createNewLevel} {buyImprovements} {availableResourcesCheck}/>
+   {/key}
   {/if}
   {#if endGameMenu}
     <EndGameMenu isMultiplayer={isMultiplayer} onClick={restartGame} />

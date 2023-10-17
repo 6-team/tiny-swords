@@ -2,12 +2,12 @@
   import { ResourcesType } from "../../entities/resource";
   export let buyImprovements: (resource: { type: ResourcesType; price: number }, type: string) => void;
   export let availableResourcesCheck: (resource: { type: ResourcesType, price: number}) => boolean;
-  export let item: {name: string, type: string, icon: string, cost: {type: ResourcesType, price: number}, styles?: {icon?:string, icon_wrapper?: string}}
+  export let item: {name: string, type: string, icon: string, cost: {type: ResourcesType, price: number}, styles?: {icon?:string, icon_wrapper?: string}, available: boolean}
 
-  const  {name, cost, icon, styles={}, type} = item
+  const  {name, cost, icon, styles={}, type, available} = item
 
 
-  let isEnoughResources = availableResourcesCheck(cost);
+  let isAvailableItem = availableResourcesCheck(cost) && available
 
   const priceIcon: {[key in ResourcesType]?: string} = {
     [ResourcesType.WOOD]: './img/Resources/W_Idle.png',
@@ -18,7 +18,7 @@
 
 
   <div class="power-up-wrapper">
-    <button class="power-up" class:available={isEnoughResources} on:click={()=>buyImprovements(cost, type)}>
+    <button class="power-up" class:available={isAvailableItem} on:click={()=>buyImprovements(cost, type)}>
       <div class="power-up__ribbon">
         <img class="power-up__ribbon-img" src="./img/UI/Ribbon_Blue_3Slides_1.png" alt="ribbon-img"/>
         <span class="power-up__ribbon-text">{name}</span>
@@ -28,7 +28,7 @@
         <div class="power-up__sign" style={styles?.icon_wrapper}>
           <img class="power-up__sign-img" src={icon} alt="item-img" style={styles.icon}/>
         </div>
-        {#if !isEnoughResources}
+        {#if !isAvailableItem}
         <img class='power-up__lock' src="./img/UI/Regular_10.png" alt="lock-img"/>
       {/if}
       </div>

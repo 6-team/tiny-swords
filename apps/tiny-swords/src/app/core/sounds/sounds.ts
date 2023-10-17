@@ -1,6 +1,6 @@
-import { SoundType } from './sounds.types';
+import { ISounds, SoundType } from './sounds.types';
 
-export class Sounds {
+export class Sounds implements ISounds {
   private sounds: SoundType = {};
 
   addSound(name: string, url: string): void {
