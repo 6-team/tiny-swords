@@ -1,6 +1,7 @@
 <script lang="ts">
   import { isActiveMenuItemStore, isMainMenuStore, isMuttedStore } from '../../store/store';
   import {Sounds, SystemSoundsType} from '../../core/sounds'
+  import { Button } from '../Button'
 
   let showModal = false;
   let menuIndex = 0;
@@ -99,34 +100,34 @@
 
   isActiveMenuItemStore.subscribe( value => isActiveMenuItem = value);
 
-  </script>
+</script>
 
-    <div class="wrapper">
-        <div class="container">
-          <div class="background-substrate">
-            {#each expandedBg as row }
-              <div class="bg-row">
-                {#each row as col }
-                  <img src={col} alt='bg-tile'/>
-                {/each}
-              </div>
-            {/each}
-            <div class="menu-wrapper">
-              {#each menuLink as { title, value } }
-                <button class={`menu-btn ${isActiveMenuItem === value ? 'active': ''}`}
-                on:click={()=>handleClick(value)}
-                on:mouseenter={()=> {
-                  playSystemSoundMenuClick()
-                  isActiveMenuItemStore.set(value)
-                  }}
-                on:mouseleave={()=>isActiveMenuItemStore.set('') }>
-                  <span class="menu-title"> {title}</span>
-                </button>
-              {/each}
-            </div>
-          </div>
+<div class="wrapper">
+  <div class="container">
+    <div class="background-substrate">
+      {#each expandedBg as row }
+        <div class="bg-row">
+          {#each row as col }
+            <img src={col} alt='bg-tile'/>
+          {/each}
         </div>
-        </div>
+      {/each}
+      <div class="menu-wrapper">
+        {#each menuLink as { title, value } }
+          <Button
+            className={`${isActiveMenuItem === value ? 'active': ''}`}
+            title={title}
+            onClick={()=>handleClick(value)}
+            onMouseEnter={() => {
+              playSystemSoundMenuClick()
+              isActiveMenuItemStore.set(value)
+            }}
+            onMouseLeave={() => isActiveMenuItemStore.set('')} />
+        {/each}
+      </div>
+    </div>
+  </div>
+</div>
 
 <style lang="scss">
   div.wrapper {
@@ -144,47 +145,19 @@
       top: 51%;
       left: 50%;
       transform: translate(-50%,-50%);
+    }
 
-      button {
-      background: no-repeat url(/img/UI/Button_Blue_3Slides_Pressed.png);
-      background-size: cover;
-      width: 128px;
-      height: 43px;
-      position: relative;
-      border: none;
+    .background-substrate {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
 
-      .menu-title {
-        position: absolute;
-        top: 20%;
-        left: 50%;
-        font-family: "Vinque", serif;
-        font-size: 16px;
-        transform: translate(-50%, 0);
-        text-wrap: nowrap;
-      }
-
-      &.active {
-        background: no-repeat url(/img/UI/Button_Blue_3Slides.png);
-        background-size: cover;
-
-        .menu-title {
-          top:15%
-        }
+      .bg-row {
+        display: flex;
       }
     }
   }
-
-  .background-substrate {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-
-    .bg-row {
-      display: flex;
-    }
-  }
-}
 </style>
 
-<svelte:window on:keydown|preventDefault={keyboardHandler} />
+<svelte:window on:keydown={keyboardHandler} />

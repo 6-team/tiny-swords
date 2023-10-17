@@ -54,7 +54,7 @@ export class Collisions {
     character: IMovableCharacter,
     bounds$: Observable<Array<TCollisionArea>>,
     controller: IController,
-  ) {
+  ): IController {
     const movable = character.getAbility('movable');
 
     return {
@@ -75,6 +75,7 @@ export class Collisions {
         }),
         distinctUntilChanged(),
       ),
+      animation$: controller.movement$,
     };
   }
 }

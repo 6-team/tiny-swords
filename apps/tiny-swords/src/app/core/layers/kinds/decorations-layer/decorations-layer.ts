@@ -1,6 +1,7 @@
-import { decorationsTerrainConditions, decorationsWaterConditions } from "./decorations-conditions";
+import { decorationsTerrainConditions } from "./deco-ground-conditions";
 import { Layer } from "../../../layer/layer";
 import { LevelType } from "../../../level/level.types";
+import { decorationsWaterConditions } from "./deco-water-conditions";
 
 export class DecoLayer {
   constructor(gridX: number, gridY: number, level: LevelType, layers) {

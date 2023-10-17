@@ -7,17 +7,22 @@ export default class KeyboardController implements IController {
   private _pushedMovementKeys$ = new BehaviorSubject<MovingDirection[]>([]);
   private _pushedAttackKeys$ = new BehaviorSubject<AttackingType[]>([]);
   private _movement$ = new Subject<MovingDirection>();
+  private _animation$ = new Subject<MovingDirection>();
   private _attack$ = new Subject<AttackingType>();
 
   readonly movement$ = this._movement$.asObservable();
+  readonly animation$ = this._animation$.asObservable();
   readonly attack$ = this._attack$.asObservable();
 
   constructor() {
     this._addListeners();
 
-    this._pushedMovementKeys$
-      .pipe(map((directions) => directions.at(-1)))
-      .subscribe((direction) => this._movement$.next(direction ?? MovingDirection.IDLE));
+    this._pushedMovementKeys$.pipe(map((directions) => directions.at(-1))).subscribe((direction) => {
+      const next = direction ?? MovingDirection.IDLE;
+
+      this._movement$.next(next);
+      this._animation$.next(next);
+    });
 
     this._pushedAttackKeys$.pipe(map((attacks) => attacks.at(-1))).subscribe((attack) => {
       this._attack$.next(attack);

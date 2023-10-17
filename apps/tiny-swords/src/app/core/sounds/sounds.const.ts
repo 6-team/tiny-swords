@@ -3,7 +3,7 @@ export const enum SystemSoundsType {
   MENU_CLICK = 'menuClick',
 }
 
-export const enum HeroSoundsType {
+export const enum СharacterSoundsType {
   MOVEMENT = 'movement',
   GAME_OVER = 'gameOver',
   RESOURCE = 'resource',

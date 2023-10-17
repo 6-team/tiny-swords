@@ -3,23 +3,25 @@ import { filter } from 'rxjs';
 import { MovingDirection } from '@shared';
 
 import { Sounds } from './sounds';
-import { HeroSoundsType } from './sounds.const';
+import { СharacterSoundsType } from './sounds.const';
 import { IResource } from '../../common/common.types';
-import { HeroSoundsConfig } from './hero-sounds.types';
+import { HeroSoundsConfig, IHeroSounds } from './hero-sounds.types';
 
-export class HeroSounds extends Sounds {
+export class HeroSounds extends Sounds implements IHeroSounds {
   constructor({ movable, attacking, collecting }: HeroSoundsConfig) {
     super();
 
-    this.addSound(HeroSoundsType.MOVEMENT, 'sounds/running.mp3');
-    this.addSound(HeroSoundsType.GAME_OVER, 'sounds/game_over_sound.wav');
-    this.addSound(HeroSoundsType.RESOURCE, 'sounds/resource.wav');
-    this.addSound(HeroSoundsType.ATTACK, 'sounds/sword.mp3');
-    this.addSound(HeroSoundsType.HIT_ATTACK, 'sounds/hit_attack.mp3');
-    this.addSound(HeroSoundsType.HITTING, 'sounds/hitting.mp3');
+    this.addSound(СharacterSoundsType.MOVEMENT, 'sounds/running.mp3');
+    this.addSound(СharacterSoundsType.GAME_OVER, 'sounds/game_over_sound.wav');
+    this.addSound(СharacterSoundsType.RESOURCE, 'sounds/resource.wav');
+    this.addSound(СharacterSoundsType.ATTACK, 'sounds/sword.mp3');
+    this.addSound(СharacterSoundsType.HIT_ATTACK, 'sounds/hit_attack.mp3');
+    this.addSound(СharacterSoundsType.HITTING, 'sounds/hitting.mp3');
 
-    movable.movement$.subscribe((direction) => {
-      if (Object.values(MovingDirection).includes(direction) && !this.isPlaySound(HeroSoundsType.MOVEMENT)) {
+    const controller = movable.getController();
+
+    controller.movement$.subscribe((direction) => {
+      if (Object.values(MovingDirection).includes(direction) && !this.isPlaySound(СharacterSoundsType.MOVEMENT)) {
         this.playMovementSound();
       }
 
@@ -36,26 +38,26 @@ export class HeroSounds extends Sounds {
   }
 
   playMovementSound() {
-    this.playSound(HeroSoundsType.MOVEMENT);
+    this.playSound(СharacterSoundsType.MOVEMENT);
   }
 
   stopMovementSound() {
-    this.stopSound(HeroSoundsType.MOVEMENT);
+    this.stopSound(СharacterSoundsType.MOVEMENT);
   }
 
   playGameOverSound() {
-    this.playSound(HeroSoundsType.GAME_OVER);
+    setTimeout(() => this.playSound(СharacterSoundsType.GAME_OVER), 500);
   }
 
   playResourceSelection() {
-    this.playSound(HeroSoundsType.RESOURCE);
+    this.playSound(СharacterSoundsType.RESOURCE);
   }
 
   playAttackSound() {
-    this.playSound(HeroSoundsType.ATTACK, 0.3);
+    this.playSound(СharacterSoundsType.ATTACK, 0.3);
   }
 
   playHittingSound() {
-    this.playSound(HeroSoundsType.HITTING);
+    this.playSound(СharacterSoundsType.HITTING);
   }
 }

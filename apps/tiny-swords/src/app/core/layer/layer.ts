@@ -90,7 +90,7 @@ export class Layer {
 
       // Прерываем цикл
       if (this.#layer.array.every(({ collapsed }) => collapsed)) {
-        console.log('Всего итераций: ', j);
+        // console.log('Всего итераций: ', j);
         break;
       }
 

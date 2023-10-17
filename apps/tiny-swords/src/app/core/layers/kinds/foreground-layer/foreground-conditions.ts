@@ -45,3 +45,25 @@ export const foregroundTreeTopConditions = (layer): LayerCondition[] => {
 
   return conditions;
 }
+
+/**
+ * Шаблон для верхней части левой башни
+ */
+export const foregroundLeftTowerConditions = (enter: [number, number]): LayerCondition[] => {
+  return [
+    // правый дом
+    { tile: TileName.TOWER_TOP_LEFT, coords: [enter[0] - 1, enter[1] - 3] },
+    { tile: TileName.TOWER_TOP_RIGHT, coords: [enter[0], enter[1] - 3] },
+  ];
+}
+
+/**
+ * Шаблон для верхней части правой башни
+ */
+export const foregroundRightTowerConditions = (exit: [number, number]): LayerCondition[] => {
+  return [
+    // правый дом
+    { tile: TileName.TOWER_TOP_LEFT, coords: [exit[0], exit[1] - 3] },
+    { tile: TileName.TOWER_TOP_RIGHT, coords: [exit[0] + 1, exit[1] - 3] },
+  ];
+}
