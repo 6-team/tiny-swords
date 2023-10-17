@@ -6,8 +6,8 @@ import { MovingDirection, AttackingType } from '@shared';
 export default class KeyboardController implements IController {
   private _pushedMovementKeys$ = new BehaviorSubject<MovingDirection[]>([]);
   private _pushedAttackKeys$ = new BehaviorSubject<AttackingType[]>([]);
-  private _movement$ = new Subject<MovingDirection>();
-  private _animation$ = new Subject<MovingDirection>();
+  private _movement$ = new BehaviorSubject<MovingDirection>(MovingDirection.IDLE);
+  private _animation$ = new BehaviorSubject<MovingDirection>(MovingDirection.IDLE);
   private _attack$ = new Subject<AttackingType>();
 
   readonly movement$ = this._movement$.asObservable();
