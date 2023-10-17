@@ -2,13 +2,18 @@
   import { onDestroy, onMount } from "svelte";
   import { Observable, combineLatest, concatAll, concatMap, filter, first, from, map, merge, switchMap, tap, withLatestFrom } from "rxjs";
   import { Hero } from '../entities/hero'
-  import { Resource, ResourcesType } from '../entities/resource/index';
-  import { TILE_SIZE, SCALE } from '../common/common.const'
-  import { actions, Heroes, Grid, Renderer, grid64, HeroHealthBar, HeroResourcesBar, enemies } from "../core";
+  import { Resource, ResourcesType } from '../entities/resource';
+  import { SCALE } from '../common/common.const'
+  import { actions, Heroes, Renderer, grid64, HeroHealthBar, HeroResourcesBar, enemies } from "../core";
   import { Level } from "../core/level/level";
-  import { nextLevelMenu, isMainMenuStore, isMuttedStore } from "../store";
-  import MainMenu from "../components/mainMenu/MainMenu.svelte";
-  import NextLevelMenu from "../components/nextLevelMenu/NextLevelMenu.svelte";
+  import {
+    nextLevelMenu,
+    isMainMenuStore,
+    isMuttedStore,
+    endGameMenuStore,
+    multiplayerStore,
+  } from "../store";
+  import { MainMenu, NextLevelMenu, EndGameMenu } from "../components";
   import { frames$ } from "../tools/observables";
   import { collisions } from "../core/collisions";
   import { LayersRenderType } from "../core/layers/layers.types"
@@ -28,12 +33,17 @@
 
   let isNextLevelMenu = false;
   let isMainMenu = true;
+  let endGameMenu = true;
   let isMuttedValue = false;
+  let isMultiplayer = false;
   let uniq = {}
 
   nextLevelMenu.subscribe(value => isNextLevelMenu = value);
   isMainMenuStore.subscribe(value => isMainMenu = value);
   isMuttedStore.subscribe( value => isMuttedValue = value);
+  endGameMenuStore.subscribe(value => endGameMenu = value)
+  multiplayerStore.subscribe(value => isMultiplayer = value)
+
 
   level.startCoords$.subscribe(([startX, startY]) => {
     /**
@@ -79,6 +89,20 @@
     const action$ = actions.connectToMultipleGame().pipe(tap(() => console.log('You connected to multiple game')));
 
     handleHeroMovement(action$);
+  }
+
+  function restartGame() {
+    endGameMenuStore.set(false)
+    heroHealthBar.resetHealthBar()
+
+    if(isMultiplayer) {
+      const movable = heroes.mainHero.getAbility('movable');
+      const [startX, startY] = level.startCoords;
+      const [x, y] = grid64.transformToPixels(startX - 1, startY - 1, 3, 3);
+      movable.setCoords([x, y])
+    } else {
+      createNewLevel();
+    }
   }
 
   function handleHeroMovement(action$: Observable<IPlayer>): void {
@@ -162,7 +186,6 @@
     /**
      * Рендер статичной карты
      */
-    const grid64 = new Grid({ tileSize: TILE_SIZE, maxX: level.gridX, maxY: level.gridY });
 
      staticScene = new Renderer({
       canvas: document.getElementById('canvas') as HTMLCanvasElement,
@@ -270,7 +293,7 @@
 
                 if (heroHealthBar.isDead) {
                   hero?.heroSounds.playGameOverSound()
-                  heroes.removeHero(character.id);
+                  endGameMenuStore.set(true)
                 }
               }
             })
@@ -330,6 +353,8 @@
           checkAttackCollisions(hero, type);
         });
       }
+
+      multiplayerStore.set(heroes.length > 1)
     });
 
     gameResources.resources$.subscribe(() => {
@@ -363,6 +388,9 @@
    {#key uniq}
     <NextLevelMenu {createNewLevel} {buyImprovements} {availableResourcesCheck}/>
    {/key}
+  {/if}
+  {#if endGameMenu}
+    <EndGameMenu isMultiplayer={isMultiplayer} onClick={restartGame} />
   {/if}
   <button class="volume-btn" on:click={()=> {
     isMuttedStore.set(!isMuttedValue)}}>

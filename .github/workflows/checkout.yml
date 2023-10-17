@@ -1,4 +1,4 @@
-name: Tiny Swords CI
+name: Checkout (lint,test,build)
 
 on:
   workflow_dispatch:
@@ -11,18 +11,22 @@ jobs:
     runs-on: ubuntu-latest
     concurrency: ci-${{github.ref}}
     steps:
-      - name: Checkout 🛎
+      - name: Checkout repository for accessing workflow 🛎
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - uses: nrwl/nx-set-shas@v3
-      - name: Install Dependencies
+      - name: Checkout affected projects ☑️
+        uses: nrwl/nx-set-shas@v3
+
+      - name: Install Dependencies ⤵️
         run: yarn install --frozen-lockfile
 
-      - name: Lint
+      - name: Lint 📋
         run: npx nx affected -t lint --parallel=3
-      - name: Test
+
+      - name: Test 🧪
         run: npx nx affected -t test --parallel=3
-      - name: Build
-        run: npx nx run-many -t build -p backend tiny-swords
+
+      - name: Build 🛠️
+        run: npx nx run-many -t build -p backend tiny-swords --parallel=3
