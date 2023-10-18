@@ -47,3 +47,12 @@ export type IMovableCharacter = ICharacter<{ movable: IMovable }>;
 export type IAttackingCharacter = ICharacter<{ attacking: IAttacking }>;
 
 export type ICollectingCharacter = ICharacter<{ collecting: ICollecting }>;
+
+export enum IImprovementsType {
+  LIFE,
+  LIFE_SLOT,
+  SHIELD,
+  ARCHER_BOW,
+  ARCHER,
+  TNT,
+}

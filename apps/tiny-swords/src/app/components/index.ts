@@ -1,4 +1,4 @@
 export * from './EndGameMenu';
-export * from './nextLevelMenu';
-export * from './mainMenu';
+export * from './NextLevelMenu';
+export * from './MainMenu';
 export * from './Button';

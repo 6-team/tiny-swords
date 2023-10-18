@@ -3,10 +3,11 @@
     import { nextLevelMenu } from "../../store/store";
     import { ResourcesType } from "../../entities/resource";
     import {Button} from '../Button'
+  import { IImprovementsType } from "../../common/common.types";
 
     export let createNewLevel: () => void;
     export let buyImprovements: (resource: { type: ResourcesType; price: number }, type: string) => void;
-    export let availableResourcesCheck: (resource: { type: ResourcesType, price: number}) => boolean;
+    export let availableResourcesCheck: (resource: { type: ResourcesType, price: number}, improvementType: string) => boolean;
 
     function next() {
         createNewLevel();
@@ -14,12 +15,12 @@
     }
 
     const items = [
-        {name: "Жизнь", type: 'life', cost: {type: ResourcesType.WOOD, price: 1}, icon: './img/UI/1.png', available: true},
-        {name: "Жизнь", type: 'life', cost: {type: ResourcesType.GOLD, price: 100}, icon: './img/UI/1.png', available: true},
-        {name: "Щит", type: 'shield',cost: {type: ResourcesType.GOLD, price: 300}, icon: './img/UI/shield.png', styles: {icon_wrapper: 'top: 34%'}, available: false },
-        {name: "Оружие", type: 'archer_bow',cost: {type: ResourcesType.WOOD, price: 20}, icon: './img/UI/archer_bow.png', styles: {icon: 'scale: 1.2'}, available: false },
-        {name: "Помощник", type: 'archer',cost: {type: ResourcesType.GOLD, price: 1000}, icon: './img/UI/archer.png', styles: {icon: 'scale: 1.2'}, available: false },
-        {name: "Динамит", type: 'tnt',cost: {type: ResourcesType.WOOD, price: 30}, icon: './img/UI/tnt.png',styles: {icon_wrapper: 'top: 32%'}, available: false },
+        {name: "Жизнь", type: IImprovementsType.LIFE, cost: {type: ResourcesType.WOOD, price: 1}, icon: './img/UI/1.png', available: true},
+        {name: "Слот", type: IImprovementsType.LIFE_SLOT, cost: {type: ResourcesType.GOLD, price: 100}, icon: './img/UI/Regular_10.png', available: true},
+        {name: "Щит", type: IImprovementsType.SHIELD, cost: {type: ResourcesType.GOLD, price: 300}, icon: './img/UI/shield.png', styles: {icon_wrapper: 'top: 34%'}, available: false },
+        {name: "Оружие", type: IImprovementsType.ARCHER_BOW, cost: {type: ResourcesType.WOOD, price: 20}, icon: './img/UI/archer_bow.png', styles: {icon: 'scale: 1.2'}, available: false },
+        {name: "Помощник", type: IImprovementsType.ARCHER, cost: {type: ResourcesType.GOLD, price: 1000}, icon: './img/UI/archer.png', styles: {icon: 'scale: 1.2'}, available: false },
+        {name: "Динамит", type: IImprovementsType.TNT, cost: {type: ResourcesType.WOOD, price: 30}, icon: './img/UI/tnt.png',styles: {icon_wrapper: 'top: 32%'}, available: false },
     ]
 </script>
 

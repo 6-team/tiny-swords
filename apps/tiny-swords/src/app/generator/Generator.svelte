@@ -20,7 +20,7 @@
 
   import type { AttackingType, IPlayer } from "@shared";
   import type { TPixelsCoords } from "../abilities/abilities.types";
-  import type { IAttackingCharacter } from "../common/common.types";
+  import { IImprovementsType, type IAttackingCharacter } from "../common/common.types";
 
   let staticScene: Renderer;
   let foregroundScene: Renderer;
@@ -161,16 +161,39 @@
 
   const gameResources = new HeroResourcesBar([new Resource({type: ResourcesType.GOLD, quantity: 0}), new Resource({type: ResourcesType.WOOD, quantity: 0})])
 
-  const buyImprovements = (resources: { type: ResourcesType; price: number }, type: string):void => {
-    if(type === 'life' && heroHealthBar.healthBar.blockedLives) {
-      gameResources.spend(resources);
-      heroHealthBar.unblockLive()
-      rerenderComponent()
-    }
+  const buyImprovements = (resources: { type: ResourcesType; price: number }, type: IImprovementsType):void => {
+  if(availableResourcesCheck(resources, type)){
+    gameResources.spend(resources);
+    applyActionOnResource(type);
+    rerenderComponent();
+  }
+};
 
+  const applyActionOnResource = (type: IImprovementsType) => {
+    switch(type){
+      case IImprovementsType.LIFE:
+        heroHealthBar.addLive();
+        break;
+      case IImprovementsType.LIFE_SLOT:
+        heroHealthBar.unblockLive();
+        break;
+      default:
+        break;
+    }
   };
 
-  const availableResourcesCheck = (resources: { type: ResourcesType, price: number}):boolean => gameResources.availableResourcesCheck(resources);
+  const availableResourcesCheck = (resources: { type: ResourcesType, price: number}, improvementType: IImprovementsType):boolean => {
+    const isEnoughResources = gameResources.availableResourcesCheck(resources);
+    switch(improvementType){
+      case IImprovementsType.LIFE:
+        return isEnoughResources && heroHealthBar.checkAddLive();
+      case IImprovementsType.LIFE_SLOT:
+        return isEnoughResources && heroHealthBar.checkUnblockLive();
+      default:
+        return isEnoughResources;
+    }
+  };
+
 
   function handleUpdatedLevel(): void {
     actions.updateLevelListener()

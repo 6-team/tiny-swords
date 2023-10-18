@@ -28,4 +28,15 @@ export class HeroHealthBar extends HealthBar<IHeroHealthBarConfig> implements IH
   resetHealthBar() {
     this.updateHealthBar(this.initialHealthBarConfig);
   }
+
+  checkAddLive(): boolean {
+    const { blockedLives, availableLives, totalLives } = this.healthBar;
+
+    return availableLives + blockedLives < totalLives;
+  }
+
+  checkUnblockLive(): boolean {
+    const { blockedLives } = this.healthBar;
+    return !!blockedLives;
+  }
 }

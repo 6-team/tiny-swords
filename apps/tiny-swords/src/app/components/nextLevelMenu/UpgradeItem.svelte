@@ -1,24 +1,30 @@
 <script lang="ts">
   import { ResourcesType } from "../../entities/resource";
   export let buyImprovements: (resource: { type: ResourcesType; price: number }, type: string) => void;
-  export let availableResourcesCheck: (resource: { type: ResourcesType, price: number}) => boolean;
+  export let availableResourcesCheck: (resource: { type: ResourcesType, price: number}, improvementType: string) => boolean;
   export let item: {name: string, type: string, icon: string, cost: {type: ResourcesType, price: number}, styles?: {icon?:string, icon_wrapper?: string}, available: boolean}
 
   const  {name, cost, icon, styles={}, type, available} = item
 
 
-  let isAvailableItem = availableResourcesCheck(cost) && available
+  let isAvailableItem = availableResourcesCheck(cost, type) && available
 
   const priceIcon: {[key in ResourcesType]?: string} = {
     [ResourcesType.WOOD]: './img/Resources/W_Idle.png',
     [ResourcesType.GOLD]: './img/Resources/G_Idle.png',
+  }
 
+  const onClickHandler = () => {
+    if(!isAvailableItem) {
+      return
+    }
+    buyImprovements(cost, type)
   }
 </script>
 
 
   <div class="power-up-wrapper">
-    <button class="power-up" class:available={isAvailableItem} on:click={()=>buyImprovements(cost, type)}>
+    <button class="power-up" class:available={isAvailableItem} on:click={onClickHandler}>
       <div class="power-up__ribbon">
         <img class="power-up__ribbon-img" src="./img/UI/Ribbon_Blue_3Slides_1.png" alt="ribbon-img"/>
         <span class="power-up__ribbon-text">{name}</span>
