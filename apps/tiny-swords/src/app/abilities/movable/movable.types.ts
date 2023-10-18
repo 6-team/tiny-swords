@@ -1,3 +1,4 @@
+import { MovingDirection } from '@shared';
 import { TNumberOfPixels } from '../../common/common.types';
 import { IMovable, TCollisionArea } from '../abilities.types';
 

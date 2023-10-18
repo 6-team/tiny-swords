@@ -25,11 +25,11 @@ export class Attacking implements IAttacking {
   }
 
   /**
-   * Вычисляет зону, куда будет атаковать персонаж и которая будет считаться зоной поражения для других.
+   * Вычисляет зону перед персонажем, куда будет атаковать персонаж и которая будет считаться зоной поражения для других.
    *
    * @returns Зона поражения в виде кортежа пикселей
    */
-  getAffectedArea(): TCollisionArea {
+  getFrontAffectedArea(): TCollisionArea {
     if (!this.#context) {
       throw new Error(AttackingError.PERSONAGE_NOT_SET);
     }

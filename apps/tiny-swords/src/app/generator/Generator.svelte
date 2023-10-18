@@ -280,26 +280,28 @@
         const enemyAttacking = enemy.getAbility('attacking');
 
         const enemyHasAttackCollision = collisions.hasCollision(
-          enemyAttacking.getAffectedArea(),
+          enemyAttacking.getFrontAffectedArea(),
           movable.getCollisionArea()
         );
 
         if (enemyHasAttackCollision) {
-          const hero = heroes.getHero(character.id)
+          const hero = heroes.getHero(character.id);
+
           if (heroes.isMainHero(character.id)) {
-                hero?.heroSounds.playHittingSound()
-              }
+            hero?.heroSounds.playHittingSound();
+          }
+
           enemyAttacking.attack().isAttacking$.pipe(filter(isAttacking => !isAttacking), first())
             .subscribe(() => {
               if (heroes.isMainHero(character.id)) {
                 heroHealthBar.removeLive();
 
                 if (heroHealthBar.isDead) {
-                  hero?.heroSounds.playGameOverSound()
-                  endGameMenuStore.set(true)
+                  hero?.heroSounds.playGameOverSound();
+                  endGameMenuStore.set(true);
                 }
               }
-            })
+            });
         }
       }
     }
@@ -310,7 +312,7 @@
       for (const enemy of enemies.enemies) {
         const enemyMovable = enemy.getAbility('movable');
         const hasAttackCollision = collisions.hasCollision(
-          attacking.getAffectedArea(),
+          attacking.getFrontAffectedArea(),
           enemyMovable.getCollisionArea()
         );
 
