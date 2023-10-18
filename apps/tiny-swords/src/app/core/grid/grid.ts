@@ -1,4 +1,4 @@
-import { TILE_SIZE } from '../../common/common.const';
+import { SIZE_X, SIZE_Y, TILE_SIZE } from '../../common/common.const';
 import { IGrid, TNumberOfTiles, TTilePosition } from '../../common/common.types';
 
 export class Grid implements IGrid {
@@ -26,4 +26,4 @@ export class Grid implements IGrid {
   }
 }
 
-export const grid64 = new Grid({ tileSize: TILE_SIZE, maxX: 20, maxY: 20 });
+export const grid64 = new Grid({ tileSize: TILE_SIZE, maxX: SIZE_X, maxY: SIZE_Y });

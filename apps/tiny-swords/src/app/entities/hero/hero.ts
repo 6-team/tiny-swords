@@ -1,3 +1,4 @@
+import { IHeroSounds } from './../../core/sounds/hero-sounds.types';
 import { Attacking } from '../../abilities/attacking';
 import { Collecting } from '../../abilities/collecting';
 import { Movable } from '../../abilities/movable';
@@ -19,6 +20,7 @@ export default class Hero
   protected _sprite: string;
   protected _type: HeroType;
   protected _size = HERO_SIZE;
+  heroSounds: IHeroSounds;
 
   constructor({ controllerCreator, height, width, initialX, initialY, id, type = HeroType.WARRIOR_BLUE }: HeroConfig) {
     super({ id });
@@ -46,17 +48,24 @@ export default class Hero
 
     movable.setController(controller);
     attacking.setController(controller);
+
+    /**
+     * @TODO Убрать это безобразие, когда будем прокидывать персонажа в контроллер, а не наоборот
+     */
+    if (controller.setCharacter) {
+      controller.setCharacter(this);
+    }
+
     this.#initSounds(movable, attacking, collecting);
   }
 
   #initSounds(movable: IMovable, attacking: IAttacking, collecting: ICollecting): void {
-    const heroSounds = new HeroSounds({ movable, attacking, collecting });
-
+    this.heroSounds = new HeroSounds({ movable, attacking, collecting });
     isMuttedStore.subscribe((value) => {
       if (value) {
-        heroSounds.muteSound();
+        this.heroSounds.muteSound();
       } else {
-        heroSounds.unmuteSound();
+        this.heroSounds.unmuteSound();
       }
     });
   }

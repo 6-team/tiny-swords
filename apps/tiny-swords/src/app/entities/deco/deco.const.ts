@@ -23,6 +23,8 @@ export const enum DecoType {
   SIGH_RIGHT_TOP,
   SIGH_RIGHT_BOTTOM,
   SCARECROW,
+  SKULL_RIGHT,
+  SKULL_LEFT,
 }
 
 export const enum DecoAnimation {
@@ -55,4 +57,6 @@ export const mapTerrainToCoords: Record<DecoType, CoordsTuple> = {
   [DecoType.SIGH_RIGHT_TOP]: [0, 0],
   [DecoType.SIGH_RIGHT_BOTTOM]: [0, 64],
   [DecoType.SCARECROW]: [0, 0],
+  [DecoType.SKULL_RIGHT]: [0, 0],
+  [DecoType.SKULL_LEFT]: [64, 0],
 };
