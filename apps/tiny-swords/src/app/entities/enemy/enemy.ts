@@ -44,10 +44,24 @@ export default class Enemy
     movable.setController(controller);
     attacking.setController(controller);
 
+    /**
+     * @TODO Убрать это безобразие, когда будем прокидывать персонажа в контроллер, а не наоборот
+     */
+    if (controller.setCharacter) {
+      controller.setCharacter(this);
+    }
+
+    /**
+     * @TODO Убрать это безобразие, когда будем прокидывать персонажа в контроллер, а не наоборот
+     */
+    if (controller.init) {
+      controller.init();
+    }
+
     if (initialAnimation) {
       this.setAnimation(initialAnimation);
     }
-    
+
     this.#initSounds(attacking);
   }
 

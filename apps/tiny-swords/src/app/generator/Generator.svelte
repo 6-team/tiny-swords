@@ -123,21 +123,29 @@
             return actions.updatePlayer({ id: hero.id, breakpoint });
           }));
 
+          if (heroes.isMainHero(hero.id)) {
+            attacking.isHitted$.subscribe(() => {
+              hero.heroSounds.playHittingSound();
+              heroHealthBar.removeLive();
+            });
+
+            attacking.isDied$.pipe(filter(Boolean)).subscribe(() => {
+              hero.heroSounds.playGameOverSound();
+              endGameMenuStore.set(true);
+            });
+          }
+
           return merge(movement$, attack$, breakpoint$);
         })
       ).subscribe();
   }
 
   function handleEnemyMovement(): void {
-    const bounds$ = combineLatest([heroes.heroesBoundaries$, level.boundaries$]).pipe(
-      map((tuple) => tuple.flat())
-    );
-
     level.enemiesCoords$
       .pipe(
         tap(() => enemies.clearEnemies()),
         concatAll(),
-        map((coords, index) => enemies.initEnemy({ coords, id: index }, bounds$)),
+        map((coords, index) => enemies.initEnemy({ coords, id: index }, heroes.heroes$)),
       )
       .subscribe()
   }
@@ -273,33 +281,6 @@
           const updatedResources = resources.filter((original) => original !== resource);
           gameResources.addResource(resource.resourceType)
           level.updateResources(updatedResources)
-        }
-      }
-
-      for (const enemy of enemies.enemies) {
-        const enemyAttacking = enemy.getAbility('attacking');
-
-        const enemyHasAttackCollision = collisions.hasCollision(
-          enemyAttacking.getAffectedArea(),
-          movable.getCollisionArea()
-        );
-
-        if (enemyHasAttackCollision) {
-          const hero = heroes.getHero(character.id)
-          if (heroes.isMainHero(character.id)) {
-                hero?.heroSounds.playHittingSound()
-              }
-          enemyAttacking.attack().isAttacking$.pipe(filter(isAttacking => !isAttacking), first())
-            .subscribe(() => {
-              if (heroes.isMainHero(character.id)) {
-                heroHealthBar.removeLive();
-
-                if (heroHealthBar.isDead) {
-                  hero?.heroSounds.playGameOverSound()
-                  endGameMenuStore.set(true)
-                }
-              }
-            })
         }
       }
     }

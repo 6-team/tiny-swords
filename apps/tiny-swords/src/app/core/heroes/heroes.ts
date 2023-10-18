@@ -85,7 +85,7 @@ export class Heroes {
   }
 
   isMainHero(id: string | number): boolean {
-    return this.#mainHero.id === id;
+    return this.#mainHero?.id === id;
   }
 
   #getUniqueType(): HeroType {

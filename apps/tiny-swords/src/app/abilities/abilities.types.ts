@@ -45,6 +45,10 @@ export interface IAttacking extends IAbility<IAttackingCharacter> {
 
   isAttacking$: Observable<boolean>;
 
+  isDied$: Observable<boolean>;
+
+  isHitted$: Observable<boolean>;
+
   /**
    * Атакует ли персонаж прямо сейчас
    */
@@ -57,6 +61,13 @@ export interface IAttacking extends IAbility<IAttackingCharacter> {
    * @returns Объект способности
    */
   attack(type?: AttackingType): this;
+
+  /**
+   * Метод для получения урона
+   *
+   * @returns Объект способности
+   */
+  takeDamage(): this;
 
   /**
    * Вычисляет зону, куда будет атаковать персонаж и которая будет считаться зоной поражения для других.

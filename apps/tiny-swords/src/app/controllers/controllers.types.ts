@@ -11,4 +11,9 @@ export interface IController {
    * @TODO Убрать это безобразие, когда будем прокидывать персонажа в контроллер, а не наоборот
    */
   setCharacter?(character: IMovableCharacter & IAttackingCharacter): this;
+
+  /**
+   * @TODO Убрать это безобразие, когда будем прокидывать персонажа в контроллер, а не наоборот
+   */
+  init?(): this;
 }

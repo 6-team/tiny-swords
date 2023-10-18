@@ -1,7 +1,7 @@
 import { IAttacking, TCollisionArea } from '../abilities.types';
 import { IAttackingCharacter, IMovableCharacter } from '../../common/common.types';
 import { AttackingError } from './attacking.const';
-import { BehaviorSubject, Subject, filter, noop } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, filter, map, noop, skip } from 'rxjs';
 import { IController } from '../../controllers';
 import { HeroActionAnimation } from '../../entities/hero/hero.const';
 import { AttackingProps } from './attacking.types';
@@ -16,9 +16,21 @@ export class Attacking implements IAttacking {
 
   private _attack$ = new Subject<AttackingType>();
   private _isAttacking$ = new BehaviorSubject<boolean>(false);
+  private _livesCount$ = new BehaviorSubject<number>(3);
 
   readonly attack$ = this._attack$.asObservable();
   readonly isAttacking$ = this._isAttacking$.asObservable();
+
+  readonly isDied$ = this._livesCount$.pipe(
+    map((count) => count <= 0),
+    filter(Boolean),
+  );
+
+  readonly isHitted$ = this._livesCount$.pipe(
+    skip(1),
+    filter((count) => count > 0),
+    map(() => true),
+  );
 
   constructor({ getAffectedArea }: AttackingProps = {}) {
     this.#getAffectedAreaFunc = getAffectedArea;
@@ -105,6 +117,17 @@ export class Attacking implements IAttacking {
         })
         .catch(noop);
     }
+
+    return this;
+  }
+
+  /**
+   * Метод для получения урона
+   *
+   * @returns Объект способности
+   */
+  takeDamage() {
+    this._livesCount$.next(this._livesCount$.getValue() - 1);
 
     return this;
   }
