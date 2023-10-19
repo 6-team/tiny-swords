@@ -7,6 +7,11 @@ import { HeroActionAnimation } from '../../entities/hero/hero.const';
 import { AttackingProps } from './attacking.types';
 import { AttackingType } from '@shared';
 
+const isNotPositiveNumber = (count: number) => count <= 0;
+
+const TOTAL_LIVES = 3;
+const INITIAL_CONFIG = { availibleLives: 1, blockedLives: 2 };
+
 /**
  * Класс способности атаковать
  */
@@ -14,26 +19,32 @@ export class Attacking implements IAttacking {
   #context?: IAttackingCharacter & IMovableCharacter;
   #getAffectedAreaFunc: AttackingProps['getAffectedArea'];
 
+  private _initialConfig: AttackingProps;
   private _attack$ = new Subject<AttackingType>();
   private _isAttacking$ = new BehaviorSubject<boolean>(false);
-  private _livesCount$ = new BehaviorSubject<number>(3);
+  private _isHitted$ = new Subject<boolean>();
+  private _livesCount$: BehaviorSubject<number>;
+  private _blockedLivesCount$: BehaviorSubject<number>;
 
   readonly attack$ = this._attack$.asObservable();
   readonly isAttacking$ = this._isAttacking$.asObservable();
+  readonly isHitted$ = this._isHitted$.asObservable();
 
-  readonly isDied$ = this._livesCount$.pipe(
-    map((count) => count <= 0),
-    filter(Boolean),
-  );
+  readonly livesCount$: Observable<number>;
+  readonly blockedLivesCount$: Observable<number>;
+  readonly isDied$: Observable<boolean>;
 
-  readonly isHitted$ = this._livesCount$.pipe(
-    skip(1),
-    filter((count) => count > 0),
-    map(() => true),
-  );
+  constructor(config: AttackingProps = INITIAL_CONFIG) {
+    this.#getAffectedAreaFunc = config.getAffectedArea;
 
-  constructor({ getAffectedArea }: AttackingProps = {}) {
-    this.#getAffectedAreaFunc = getAffectedArea;
+    this._livesCount$ = new BehaviorSubject(config.availibleLives);
+    this._blockedLivesCount$ = new BehaviorSubject(config.blockedLives);
+
+    this.livesCount$ = this._livesCount$.asObservable();
+    this.blockedLivesCount$ = this._blockedLivesCount$.asObservable();
+    this.isDied$ = this._livesCount$.pipe(map(isNotPositiveNumber), filter(Boolean));
+
+    this._initialConfig = config;
   }
 
   /**
@@ -122,12 +133,57 @@ export class Attacking implements IAttacking {
   }
 
   /**
-   * Метод для получения урона
+   * Метод для получения урона. Отнимает одну жизнь.
    *
    * @returns Объект способности
    */
   takeDamage() {
     this._livesCount$.next(this._livesCount$.getValue() - 1);
+    this._isHitted$.next(true);
+
+    return this;
+  }
+
+  /**
+   * Метод добавления одной жизни
+   *
+   * @returns Объект способности
+   */
+  addLive() {
+    const lives = this._livesCount$.getValue();
+    const blockedLives = this._blockedLivesCount$.getValue();
+
+    if (lives + blockedLives < TOTAL_LIVES) {
+      this._livesCount$.next(lives + 1);
+    }
+
+    return this;
+  }
+
+  /**
+   * Метод для разблокировки одной жизни
+   *
+   * @returns Объект способности
+   */
+  unblockLive() {
+    const prev = this._blockedLivesCount$.getValue();
+
+    if (prev > 0) {
+      this._blockedLivesCount$.next(prev);
+      this.addLive();
+    }
+
+    return this;
+  }
+
+  /**
+   * Метод для сброса состояния способности
+   *
+   * @returns Объект способности
+   */
+  reset() {
+    this._livesCount$.next(this._initialConfig.availibleLives);
+    this._blockedLivesCount$.next(this._initialConfig.blockedLives);
 
     return this;
   }

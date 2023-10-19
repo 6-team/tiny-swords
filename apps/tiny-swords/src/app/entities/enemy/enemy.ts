@@ -65,6 +65,17 @@ export default class Enemy
     this.#initSounds(attacking);
   }
 
+  /**
+   * @TODO Описать эти типы в интерфейсах
+   */
+  get moving() {
+    return this.getAbility('movable');
+  }
+
+  get fighting() {
+    return this.getAbility('attacking');
+  }
+
   #initSounds(attacking: IAttacking): void {
     this.enemySounds = new EnemySound({ attacking });
 

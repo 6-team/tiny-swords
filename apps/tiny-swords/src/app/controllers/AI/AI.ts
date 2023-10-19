@@ -29,29 +29,16 @@ export class AIController implements IController {
    * @TODO Убрать это безобразие, когда будем прокидывать персонажа в контроллер, а не наоборот
    */
   init() {
-    const enemyAttacking = this._character.getAbility('attacking');
-
     this._heroes$.subscribe((heroes) => {
       for (const hero of heroes) {
-        const heroMovable = hero.getAbility('movable');
-        const heroAttacking = hero.getAbility('attacking');
-
-        heroMovable.breakpoints$.subscribe(() => {
+        hero.moving.breakpoints$.subscribe(() => {
           const enemyHasAttackCollision = collisions.hasCollision(
-            enemyAttacking.getAffectedArea(),
-            heroMovable.getCollisionArea(),
+            this._character.fighting.getAffectedArea(),
+            hero.moving.getCollisionArea(),
           );
 
           if (enemyHasAttackCollision) {
-            enemyAttacking
-              .attack()
-              .isAttacking$.pipe(
-                filter((isAttacking) => !isAttacking),
-                first(),
-              )
-              .subscribe(() => {
-                heroAttacking.takeDamage();
-              });
+            this._character.fighting.attack();
           }
         });
       }

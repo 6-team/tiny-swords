@@ -4,7 +4,7 @@
   import { Hero } from '../entities/hero'
   import { Resource, ResourcesType } from '../entities/resource';
   import { SCALE } from '../common/common.const'
-  import { actions, Heroes, Renderer, grid64, HeroHealthBar, HeroResourcesBar, enemies } from "../core";
+  import { actions, Heroes, Renderer, grid64, HeroResourcesBar, enemies } from "../core";
   import { Level } from "../core/level/level";
   import {
     nextLevelMenu,
@@ -27,7 +27,6 @@
 
   const level = new Level();
   const heroes = new Heroes(level.startCoords);
-  const heroHealthBar = new HeroHealthBar({ totalLives: 3, availableLives: 1, blockedLives: 2 });
 
   const nextLevelTile$ = level.endCoords$.pipe(map(([x, y]) => grid64.transformToPixels(x, y, 1, 1)));
 
@@ -92,8 +91,8 @@
   }
 
   function restartGame() {
-    endGameMenuStore.set(false)
-    heroHealthBar.resetHealthBar()
+    endGameMenuStore.set(false);
+    heroes.mainHero.fighting.reset();
 
     if(isMultiplayer) {
       const movable = heroes.mainHero.getAbility('movable');
@@ -126,7 +125,6 @@
           if (heroes.isMainHero(hero.id)) {
             attacking.isHitted$.subscribe(() => {
               hero.heroSounds.playHittingSound();
-              heroHealthBar.removeLive();
             });
 
             attacking.isDied$.pipe(filter(Boolean)).subscribe(() => {
@@ -163,6 +161,9 @@
       });
   }
 
+  /**
+   * @TODO Что это? Отрефакторить!
+   */
   const rerenderComponent = () => {
     uniq = {}
   }
@@ -170,10 +171,10 @@
   const gameResources = new HeroResourcesBar([new Resource({type: ResourcesType.GOLD, quantity: 0}), new Resource({type: ResourcesType.WOOD, quantity: 0})])
 
   const buyImprovements = (resources: { type: ResourcesType; price: number }, type: string):void => {
-    if(type === 'life' && heroHealthBar.healthBar.blockedLives) {
+    if (type === 'life') {
       gameResources.spend(resources);
-      heroHealthBar.unblockLive()
-      rerenderComponent()
+      heroes.mainHero.fighting.unblockLive();
+      rerenderComponent();
     }
 
   };
@@ -272,13 +273,14 @@
         );
 
         if (hasCollision) {
-
           if(resource.resourceType === ResourcesType.MEAT) {
-            heroHealthBar.addLive();
+            character.fighting.addLive();
           }
+
           collecting.collect(resource);
 
           const updatedResources = resources.filter((original) => original !== resource);
+
           gameResources.addResource(resource.resourceType)
           level.updateResources(updatedResources)
         }
@@ -341,16 +343,39 @@
       multiplayerStore.set(heroes.length > 1)
     });
 
-    gameResources.resources$.subscribe(() => {
-    heroBarsScene.clear()
-    heroBarsScene.renderResourcesBar(gameResources.getResources())
-  }
-    )
-    heroHealthBar.healthBar$.subscribe(lives => {
-      heroHealthBarScene.clear();
-      heroHealthBarScene.renderHealthBar(lives)
+    combineLatest([enemies.enemies$, heroes.heroes$]).subscribe(([enemies, heroes]) => {
+      for (const enemy of enemies) {
+        enemy.fighting.isAttacking$
+          .pipe(filter((isAttacking) => !isAttacking))
+          .subscribe(() => {
+            for (const hero of heroes) {
+              const hasCollision = collisions.hasCollision(
+                enemy.fighting.getAffectedArea(),
+                hero.moving.getCollisionArea()
+              );
+
+              if (hasCollision) {
+                hero.fighting.takeDamage();
+              }
+            }
+          });
+      }
     })
 
+    gameResources.resources$.subscribe(() => {
+      heroBarsScene.clear()
+      heroBarsScene.renderResourcesBar(gameResources.getResources())
+    });
+
+    heroes.mainHero$.pipe(filter(Boolean)).subscribe((hero) => {
+      combineLatest([
+        hero.fighting.livesCount$,
+        hero.fighting.blockedLivesCount$
+      ]).subscribe(([availableLives, blockedLives,]) => {
+        heroHealthBarScene.clear();
+        heroHealthBarScene.renderHealthBar({ availableLives, blockedLives, totalLives: availableLives + blockedLives });
+      });
+    });
   });
 
   onDestroy(() => {

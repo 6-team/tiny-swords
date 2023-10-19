@@ -59,6 +59,21 @@ export default class Hero
     this.#initSounds(movable, attacking, collecting);
   }
 
+  /**
+   * @TODO Описать эти типы в интерфейсах
+   */
+  get moving() {
+    return this.getAbility('movable');
+  }
+
+  get fighting() {
+    return this.getAbility('attacking');
+  }
+
+  get collecting() {
+    return this.getAbility('collecting');
+  }
+
   #initSounds(movable: IMovable, attacking: IAttacking, collecting: ICollecting): void {
     this.heroSounds = new HeroSounds({ movable, attacking, collecting });
     isMuttedStore.subscribe((value) => {

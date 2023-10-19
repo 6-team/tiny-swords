@@ -43,11 +43,30 @@ export interface IAttacking extends IAbility<IAttackingCharacter> {
    */
   attack$: Observable<AttackingType>;
 
+  /**
+   * Поток состояний атаки: атака началась, атака закончилась
+   */
   isAttacking$: Observable<boolean>;
 
+  /**
+   * Поток состояния смерти
+   */
   isDied$: Observable<boolean>;
 
+  /**
+   * Поток уменьшения жизней
+   */
   isHitted$: Observable<boolean>;
+
+  /**
+   * Поток количества имеющихся жизней
+   */
+  livesCount$: Observable<number>;
+
+  /**
+   * Поток количества заблокированных жизней
+   */
+  blockedLivesCount$: Observable<number>;
 
   /**
    * Атакует ли персонаж прямо сейчас
@@ -68,6 +87,27 @@ export interface IAttacking extends IAbility<IAttackingCharacter> {
    * @returns Объект способности
    */
   takeDamage(): this;
+
+  /**
+   * Метод для сброса состояния способности
+   *
+   * @returns Объект способности
+   */
+  reset(): this;
+
+  /**
+   * Метод добавления одной жизни
+   *
+   * @returns Объект способности
+   */
+  addLive(): this;
+
+  /**
+   * Метод для разблокировки одной жизни
+   *
+   * @returns Объект способности
+   */
+  unblockLive(): this;
 
   /**
    * Вычисляет зону, куда будет атаковать персонаж и которая будет считаться зоной поражения для других.
