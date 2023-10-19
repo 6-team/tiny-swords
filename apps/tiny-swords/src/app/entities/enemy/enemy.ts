@@ -19,7 +19,7 @@ export default class Enemy
   protected _sprite = './img/Factions/Goblins/Troops/Torch/Red/Torch_Red.png';
   protected _type = EnemyType.TORCH_RED;
   protected _size = ENEMY_SIZE;
-  enemySounds: IEnemySounds;
+  sounds: IEnemySounds;
 
   constructor({ controllerCreator, height, width, initialX, initialY, initialAnimation, id }: EnemyConfig) {
     super({ id });
@@ -77,13 +77,13 @@ export default class Enemy
   }
 
   #initSounds(attacking: IAttacking): void {
-    this.enemySounds = new EnemySound({ attacking });
+    this.sounds = new EnemySound({ attacking });
 
     isMuttedStore.subscribe((value) => {
       if (value) {
-        this.enemySounds.muteSound();
+        this.sounds.muteSound();
       } else {
-        this.enemySounds.unmuteSound();
+        this.sounds.unmuteSound();
       }
     });
   }

@@ -122,17 +122,6 @@
             return actions.updatePlayer({ id: hero.id, breakpoint });
           }));
 
-          if (heroes.isMainHero(hero.id)) {
-            attacking.isHitted$.subscribe(() => {
-              hero.heroSounds.playHittingSound();
-            });
-
-            attacking.isDied$.pipe(filter(Boolean)).subscribe(() => {
-              hero.heroSounds.playGameOverSound();
-              endGameMenuStore.set(true);
-            });
-          }
-
           return merge(movement$, attack$, breakpoint$);
         })
       ).subscribe();
@@ -298,8 +287,11 @@
         );
 
         if (hasAttackCollision) {
-          enemy.enemySounds.playHittingSound();
-          attacking.isAttacking$.pipe(filter(isAttacking => !isAttacking), first()).subscribe(() => {enemies.removeEnemy( enemy.id) });
+          attacking.isAttacking$
+            .pipe(filter(isAttacking => !isAttacking), first()).subscribe(() => {
+              enemy.fighting.takeDamage();
+              enemies.removeEnemy(enemy.id); // @TODO Подписаться на isDied$ и удалять там
+            });
 
           break;
         }
@@ -374,6 +366,11 @@
       ]).subscribe(([availableLives, blockedLives,]) => {
         heroHealthBarScene.clear();
         heroHealthBarScene.renderHealthBar({ availableLives, blockedLives, totalLives: availableLives + blockedLives });
+      });
+
+      hero.fighting.isDied$.pipe(filter(Boolean)).subscribe(() => {
+        hero.sounds.playGameOverSound(); // @TODO Вынести в gameSounds, вместо heroSounds
+        endGameMenuStore.set(true);
       });
     });
   });

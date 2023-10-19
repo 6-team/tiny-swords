@@ -20,7 +20,7 @@ export default class Hero
   protected _sprite: string;
   protected _type: HeroType;
   protected _size = HERO_SIZE;
-  heroSounds: IHeroSounds;
+  sounds: IHeroSounds;
 
   constructor({ controllerCreator, height, width, initialX, initialY, id, type = HeroType.WARRIOR_BLUE }: HeroConfig) {
     super({ id });
@@ -75,12 +75,13 @@ export default class Hero
   }
 
   #initSounds(movable: IMovable, attacking: IAttacking, collecting: ICollecting): void {
-    this.heroSounds = new HeroSounds({ movable, attacking, collecting });
+    this.sounds = new HeroSounds({ movable, attacking, collecting });
+
     isMuttedStore.subscribe((value) => {
       if (value) {
-        this.heroSounds.muteSound();
+        this.sounds.muteSound();
       } else {
-        this.heroSounds.unmuteSound();
+        this.sounds.unmuteSound();
       }
     });
   }
