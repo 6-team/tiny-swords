@@ -99,6 +99,7 @@
       const [startX, startY] = level.startCoords;
       const [x, y] = grid64.transformToPixels(startX - 1, startY - 1, 3, 3);
       movable.setCoords([x, y])
+      actions.updatePlayer({ id: heroes.mainHero.id, breakpoint: [x, y]}).subscribe()
     } else {
       createNewLevel();
     }
@@ -372,6 +373,8 @@
       hero.fighting.isDied$.pipe(filter(Boolean)).subscribe(() => {
         hero.sounds.playGameOverSound(); // @TODO Вынести в gameSounds, вместо heroSounds
         endGameMenuStore.set(true);
+        hero.moving.setCoords([innerWidth, innerHeight])
+        actions.updatePlayer({ id: hero.id, breakpoint: [innerWidth, innerHeight]}).subscribe()
       });
     });
   });
