@@ -204,6 +204,27 @@
       })
   }
 
+  enemies.newEnemy$.subscribe((enemy) => {
+    enemy.fighting.isAttacking$
+      .pipe(filter((isAttacking) => !isAttacking), withLatestFrom(heroes.mainHero$))
+      .subscribe(([_, hero]) => {
+        if (!hero) {
+          return;
+        }
+
+        const hasCollision = collisions.hasCollision(
+          enemy.fighting.getAffectedArea(),
+          hero.moving.getCollisionArea()
+        );
+
+        if (hasCollision) {
+          hero.fighting.takeDamage();
+        }
+      });
+
+    enemy.fighting.isDied$.pipe(first()).subscribe(() => enemies.removeEnemy(enemy.id));
+  });
+
   onMount(async () => {
     handleEnemyMovement();
     handleUpdatedLevel();
@@ -346,27 +367,6 @@
 
       multiplayerStore.set(heroes.length > 1)
     });
-
-    combineLatest([enemies.enemies$, heroes.heroes$]).subscribe(([enemiesArray, heroesArray]) => {
-      for (const enemy of enemiesArray) {
-        enemy.fighting.isAttacking$
-          .pipe(filter((isAttacking) => !isAttacking))
-          .subscribe(() => {
-            for (const hero of heroesArray) {
-              const hasCollision = collisions.hasCollision(
-                enemy.fighting.getAffectedArea(),
-                hero.moving.getCollisionArea()
-              );
-
-              if (hasCollision) {
-                hero.fighting.takeDamage();
-              }
-            }
-          });
-
-        enemy.fighting.isDied$.subscribe(() => enemies.removeEnemy(enemy.id));
-      }
-    })
 
     gameResources.resources$.subscribe(() => {
       heroBarsScene.clear()
