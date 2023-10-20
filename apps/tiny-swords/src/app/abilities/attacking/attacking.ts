@@ -1,11 +1,12 @@
 import { IAttacking, TCollisionArea } from '../abilities.types';
 import { IAttackingCharacter, IMovableCharacter } from '../../common/common.types';
 import { AttackingError } from './attacking.const';
-import { BehaviorSubject, Observable, Subject, filter, map, noop, skip } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, filter, map, noop, skip, tap } from 'rxjs';
 import { IController } from '../../controllers';
 import { HeroActionAnimation } from '../../entities/hero/hero.const';
 import { AttackingProps } from './attacking.types';
 import { AttackingType } from '@shared';
+import { TOTAL_LIVES } from '../../common/common.const';
 
 const isNotPositiveNumber = (count: number) => count <= 0;
 
@@ -149,7 +150,7 @@ export class Attacking implements IAttacking {
   addLive() {
     const lives = this._livesCount$.getValue();
 
-    this._livesCount$.next(lives + 1);
+    if (this.checkAddLive()) this._livesCount$.next(lives + 1);
 
     return this;
   }
@@ -162,9 +163,8 @@ export class Attacking implements IAttacking {
   unblockLive() {
     const prev = this._blockedLivesCount$.getValue();
 
-    if (prev > 0) {
-      this._blockedLivesCount$.next(prev);
-      this.addLive();
+    if (prev >= 1) {
+      this._blockedLivesCount$.next(prev - 1);
     }
 
     return this;
@@ -180,6 +180,26 @@ export class Attacking implements IAttacking {
     this._blockedLivesCount$.next(this._initialConfig.blockedLives);
 
     return this;
+  }
+
+  /**
+   * Метод для проверки возможности добавления жизни
+   *
+   */
+
+  checkAddLive(): boolean {
+    const blockedLives = this._blockedLivesCount$.getValue();
+    const availableLives = this._livesCount$.getValue();
+    return availableLives + blockedLives < TOTAL_LIVES;
+  }
+
+  /**
+   * Метод для проверки возможности разблокировки жизни
+   *
+   */
+
+  checkUnblockLive(): boolean {
+    return !!this._blockedLivesCount$.getValue();
   }
 
   /**

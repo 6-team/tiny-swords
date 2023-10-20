@@ -1,5 +1,5 @@
 import { IPlayer, StandingDirection } from '@shared';
-import { BehaviorSubject, Observable, concatAll, filter, map, merge, mergeMap, tap } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, concatAll, filter, map, merge, mergeMap, tap } from 'rxjs';
 import { TPixelsCoords } from '../../abilities/abilities.types';
 import { grid64 } from '../grid';
 import { Enemy } from '../../entities/enemy';
@@ -8,9 +8,11 @@ import { IAttackingCharacter, IMovableCharacter } from '../../common/common.type
 
 class Enemies {
   readonly #enemiesSubject = new BehaviorSubject<Enemy[]>([]);
+  readonly #newEnemy = new Subject<Enemy>();
 
   readonly enemies$ = this.#enemiesSubject.asObservable();
   readonly enemiesBoundaries$ = this.#initEnemiesBoundaries();
+  readonly newEnemy$ = this.#newEnemy.asObservable();
 
   get enemies(): Enemy[] {
     return this.#enemiesSubject.getValue();
@@ -42,6 +44,7 @@ class Enemies {
   addEnemy(enemy: Enemy): void {
     const enemies = this.enemies.concat(enemy);
 
+    this.#newEnemy.next(enemy);
     this.#enemiesSubject.next(enemies);
   }
 

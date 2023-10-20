@@ -110,6 +110,18 @@ export interface IAttacking extends IAbility<IAttackingCharacter> {
   unblockLive(): this;
 
   /**
+   * Метод для проверки возможности добавления жизни
+   *
+   */
+  checkAddLive(): boolean;
+
+  /**
+   * Метод для проверки возможности разблокировки жизни
+   *
+   */
+  checkUnblockLive(): boolean;
+
+  /**
    * Вычисляет зону, куда будет атаковать персонаж и которая будет считаться зоной поражения для других.
    *
    * @returns Зона поражения в виде кортежа пикселей

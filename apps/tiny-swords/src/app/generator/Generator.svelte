@@ -3,7 +3,7 @@
   import { Observable, combineLatest, concatAll, concatMap, filter, first, from, map, merge, skip, switchMap, tap, withLatestFrom } from "rxjs";
   import { Hero } from '../entities/hero'
   import { Resource, ResourcesType } from '../entities/resource';
-  import { SCALE } from '../common/common.const'
+  import { SCALE, TOTAL_LIVES } from '../common/common.const'
   import { actions, Heroes, Renderer, grid64, HeroResourcesBar, enemies } from "../core";
   import { Level } from "../core/level/level";
   import {
@@ -20,7 +20,7 @@
 
   import type { AttackingType, IPlayer } from "@shared";
   import type { TPixelsCoords } from "../abilities/abilities.types";
-  import type { IAttackingCharacter } from "../common/common.types";
+  import { type IAttackingCharacter, ImprovementTypes, type availableResourcesCheckType, type buyImprovementsType  } from "../common/common.types";
 
   let staticScene: Renderer;
   let foregroundScene: Renderer;
@@ -99,6 +99,7 @@
       const [startX, startY] = level.startCoords;
       const [x, y] = grid64.transformToPixels(startX - 1, startY - 1, 3, 3);
       movable.setCoords([x, y])
+      actions.updatePlayer({ id: heroes.mainHero.id, breakpoint: [x, y]}).subscribe()
     } else {
       createNewLevel();
     }
@@ -176,16 +177,39 @@
 
   const gameResources = new HeroResourcesBar([new Resource({type: ResourcesType.GOLD, quantity: 0}), new Resource({type: ResourcesType.WOOD, quantity: 0})])
 
-  const buyImprovements = (resources: { type: ResourcesType; price: number }, type: string):void => {
-    if (type === 'life') {
-      gameResources.spend(resources);
-      heroes.mainHero.fighting.unblockLive();
-      rerenderComponent();
-    }
+  const buyImprovements: buyImprovementsType = (resources, type):void => {
+  if(availableResourcesCheck(resources, type)){
+    gameResources.spend(resources);
+    applyActionOnResource(type);
+    rerenderComponent();
+  }
+};
 
+  const applyActionOnResource = (type: ImprovementTypes) => {
+    switch(type){
+      case ImprovementTypes.LIFE:
+        heroes.mainHero.fighting.addLive();
+        break;
+      case ImprovementTypes.LIFE_SLOT:
+      heroes.mainHero.fighting.unblockLive();
+        break;
+      default:
+        break;
+    }
   };
 
-  const availableResourcesCheck = (resources: { type: ResourcesType, price: number}):boolean => gameResources.availableResourcesCheck(resources);
+  const availableResourcesCheck: availableResourcesCheckType = (resources, improvementType):boolean => {
+    const isEnoughResources = gameResources.availableResourcesCheck(resources);
+    switch(improvementType){
+      case ImprovementTypes.LIFE:
+        return isEnoughResources && heroes.mainHero.fighting.checkAddLive();
+      case ImprovementTypes.LIFE_SLOT:
+        return isEnoughResources && heroes.mainHero.fighting.checkUnblockLive();
+      default:
+        return isEnoughResources;
+    }
+  };
+
 
   function handleUpdatedLevel(): void {
     actions.updateLevelListener()
@@ -196,6 +220,27 @@
         if (isNextLevelMenu) nextLevelMenu.set(false);
       })
   }
+
+  enemies.newEnemy$.subscribe((enemy) => {
+    enemy.fighting.isAttacking$
+      .pipe(filter((isAttacking) => !isAttacking), withLatestFrom(heroes.mainHero$))
+      .subscribe(([_, hero]) => {
+        if (!hero) {
+          return;
+        }
+
+        const hasCollision = collisions.hasCollision(
+          enemy.fighting.getAffectedArea(),
+          hero.moving.getCollisionArea()
+        );
+
+        if (hasCollision) {
+          hero.fighting.takeDamage();
+        }
+      });
+
+    enemy.fighting.isDied$.pipe(first()).subscribe(() => enemies.removeEnemy(enemy.id));
+  });
 
   onMount(async () => {
     handleEnemyMovement();
@@ -341,27 +386,6 @@
       multiplayerStore.set(heroes.length > 1)
     });
 
-    combineLatest([enemies.enemies$, heroes.heroes$]).subscribe(([enemiesArray, heroesArray]) => {
-      for (const enemy of enemiesArray) {
-        enemy.fighting.isAttacking$
-          .pipe(filter((isAttacking) => !isAttacking))
-          .subscribe(() => {
-            for (const hero of heroesArray) {
-              const hasCollision = collisions.hasCollision(
-                enemy.fighting.getAffectedArea(),
-                hero.moving.getCollisionArea()
-              );
-
-              if (hasCollision) {
-                hero.fighting.takeDamage();
-              }
-            }
-          });
-
-        enemy.fighting.isDied$.subscribe(() => enemies.removeEnemy(enemy.id));
-      }
-    })
-
     gameResources.resources$.subscribe(() => {
       heroBarsScene.clear()
       heroBarsScene.renderResourcesBar(gameResources.getResources())
@@ -373,12 +397,14 @@
         hero.fighting.blockedLivesCount$
       ]).subscribe(([availableLives, blockedLives,]) => {
         heroHealthBarScene.clear();
-        heroHealthBarScene.renderHealthBar({ availableLives, blockedLives, totalLives: availableLives + blockedLives });
+        heroHealthBarScene.renderHealthBar({ availableLives, blockedLives, totalLives: TOTAL_LIVES });
       });
 
       hero.fighting.isDied$.pipe(filter(Boolean)).subscribe(() => {
         hero.sounds.playGameOverSound(); // @TODO Вынести в gameSounds, вместо heroSounds
         endGameMenuStore.set(true);
+        hero.moving.setCoords([innerWidth, innerHeight])
+        actions.updatePlayer({ id: hero.id, breakpoint: [innerWidth, innerHeight]}).subscribe()
       });
     });
   });
