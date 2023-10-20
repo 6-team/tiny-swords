@@ -5,3 +5,8 @@ export enum MovingDirection {
   RIGHT = 'right',
   IDLE = 'idle',
 }
+
+export enum StandingDirection {
+  LEFT = 'left',
+  RIGHT = 'right',
+}

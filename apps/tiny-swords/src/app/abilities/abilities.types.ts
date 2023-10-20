@@ -9,7 +9,7 @@ import {
   TNumberOfPixels,
   TPixelsPosition,
 } from '../common/common.types';
-import { MovingDirection, AttackingType, FightingAreaDirection } from '@shared';
+import { MovingDirection, AttackingType, FightingAreaDirection, StandingDirection } from '@shared';
 import { IController } from '../controllers';
 
 interface IAbility<Context> {
@@ -162,6 +162,14 @@ export interface IMovable extends IAbility<IMovableCharacter> {
    * @returns Контроллер
    */
   getController(): IController;
+
+  /**
+   * Устанавливает направление персонажа, пока он стоит на месте.
+   *
+   * @param direction Направление персонажа
+   * @returns Объект способности
+   */
+  setStandingDirection(direction: StandingDirection): this;
 
   /**
    * Принудительно устанавливает координаты персонажу

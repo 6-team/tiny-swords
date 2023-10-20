@@ -1,10 +1,9 @@
-import { IPlayer } from '@shared';
-import { BehaviorSubject, Observable, concatAll, filter, map, merge, mergeMap } from 'rxjs';
-import { TCollisionArea, TPixelsCoords } from '../../abilities/abilities.types';
+import { IPlayer, StandingDirection } from '@shared';
+import { BehaviorSubject, Observable, concatAll, filter, map, merge, mergeMap, tap } from 'rxjs';
+import { TPixelsCoords } from '../../abilities/abilities.types';
 import { grid64 } from '../grid';
 import { Enemy } from '../../entities/enemy';
 import { AIController } from '../../controllers/AI';
-import { EnemyActionAnimation } from '../../entities/enemy/enemy.const';
 import { IAttackingCharacter, IMovableCharacter } from '../../common/common.types';
 
 class Enemies {
@@ -23,7 +22,7 @@ class Enemies {
 
     const enemy = new Enemy({
       controllerCreator: () => new AIController({ heroes$ }),
-      initialAnimation: EnemyActionAnimation.STANDS_STILL_LEFT,
+      initialDirection: StandingDirection.LEFT,
       initialX,
       initialY,
       height,

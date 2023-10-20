@@ -1,4 +1,4 @@
-import { MovingDirection, AttackingType, FightingAreaDirection } from '@shared';
+import { MovingDirection, AttackingType, FightingAreaDirection, StandingDirection } from '@shared';
 import { BehaviorSubject, Observable, Subject, filter, first } from 'rxjs';
 import { IAttackingCharacter, IMovableCharacter } from '../../common/common.types';
 import { IController } from '../controllers.types';
@@ -50,7 +50,10 @@ export class AIController implements IController {
           );
 
           if (enemyHasBackCollision) {
-            debugger;
+            enemy.moving.setStandingDirection(
+              enemy.moving.isRightDirection ? StandingDirection.LEFT : StandingDirection.RIGHT,
+            );
+            enemy.fighting.attack();
           }
         });
       }
