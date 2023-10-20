@@ -1,8 +1,10 @@
-import { MovingDirection, AttackingType, FightingAreaDirection, StandingDirection } from '@shared';
+import { MovingDirection, AttackingType, StandingDirection } from '@shared';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { IAttackingCharacter, IMovableCharacter } from '../../common/common.types';
 import { IController } from '../controllers.types';
 import { collisions } from '../../core/collisions';
+import { grid64 } from '../../core';
+import { TPixelsCoords } from '../../abilities/abilities.types';
 
 export class AIController implements IController {
   private _movement$ = new BehaviorSubject<MovingDirection>(MovingDirection.IDLE);
@@ -44,10 +46,15 @@ export class AIController implements IController {
             return;
           }
 
-          const enemyHasBackCollision = collisions.hasCollision(
-            enemy.fighting.getAffectedArea(FightingAreaDirection.BACK),
-            hero.moving.getCollisionArea(),
-          );
+          const enemyArea = enemy.moving.getCollisionArea();
+          const enemyBackArea: TPixelsCoords = [
+            enemy.moving.isRightDirection ? grid64.getPrevPixels(enemyArea[0]) : grid64.getNextPixels(enemyArea[0]),
+            enemyArea[1],
+            enemyArea[2],
+            enemyArea[3],
+          ];
+
+          const enemyHasBackCollision = collisions.hasCollision(enemyBackArea, hero.moving.getCollisionArea());
 
           if (enemyHasBackCollision) {
             enemy.moving.setStandingDirection(
