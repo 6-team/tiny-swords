@@ -1,9 +1,9 @@
 import { MovingDirection, AttackingType, StandingDirection } from '@shared';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, filter } from 'rxjs';
 import { IAttackingCharacter, IMovableCharacter } from '../../common/common.types';
 import { IController } from '../controllers.types';
 import { collisions } from '../../core/collisions';
-import { grid64 } from '../../core';
+import { actions, grid64 } from '../../core';
 import { TPixelsCoords } from '../../abilities/abilities.types';
 
 export class AIController implements IController {
@@ -12,13 +12,29 @@ export class AIController implements IController {
   private _attack$ = new Subject<AttackingType>();
   private _character: IMovableCharacter & IAttackingCharacter;
   private _heroes$: Observable<Array<IMovableCharacter & IAttackingCharacter>>;
+  private _ignoreMovements = false;
 
   readonly movement$ = this._movement$.asObservable();
   readonly animation$ = this._animation$.asObservable();
   readonly attack$ = this._attack$.asObservable();
 
-  constructor({ heroes$ }: { heroes$: Observable<Array<IMovableCharacter & IAttackingCharacter>> }) {
+  constructor({
+    heroes$,
+    id,
+  }: {
+    heroes$: Observable<Array<IMovableCharacter & IAttackingCharacter>>;
+    id: string | number;
+  }) {
     this._heroes$ = heroes$;
+
+    actions
+      .updateEnemyListener()
+      .pipe(filter((enemy) => enemy.id === id))
+      .subscribe((enemy) => {
+        if (enemy.hasOwnProperty('direction') && !this._ignoreMovements) {
+          this._movement$.next(enemy.direction);
+        }
+      });
   }
 
   setCharacter(character: IMovableCharacter & IAttackingCharacter) {
@@ -34,6 +50,8 @@ export class AIController implements IController {
     this._heroes$.subscribe((heroes) => {
       for (const hero of heroes) {
         hero.moving.breakpoints$.subscribe(() => {
+          this._ignoreMovements = false;
+
           const enemy = this._character;
           const enemyHasAttackCollision = collisions.hasCollision(
             enemy.fighting.getAffectedArea(),
@@ -41,7 +59,8 @@ export class AIController implements IController {
           );
 
           if (enemyHasAttackCollision) {
-            this._attackWithDelay(enemy, 300);
+            this._ignoreMovements = true;
+            this._attackWithDelay(enemy, 500);
 
             return;
           }
@@ -60,7 +79,8 @@ export class AIController implements IController {
             enemy.moving.setStandingDirection(
               enemy.moving.isRightDirection ? StandingDirection.LEFT : StandingDirection.RIGHT,
             );
-            this._attackWithDelay(enemy, 300);
+            this._ignoreMovements = true;
+            this._attackWithDelay(enemy, 500);
           }
         });
       }

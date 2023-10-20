@@ -6,11 +6,13 @@ export interface IPlayer<D = MovingDirection> {
   readonly breakpoint?: [number, number];
   direction?: D | null;
   attackingType?: AttackingType | null;
+  isDied?: boolean;
 }
 
 export class Player<D = MovingDirection> implements IPlayer<D> {
   direction: D | null = null;
   attackingType: AttackingType | null = null;
+  isDied: boolean = false;
 
   constructor(readonly id: string, readonly coords: [number, number]) {}
 }
