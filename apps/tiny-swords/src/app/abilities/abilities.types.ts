@@ -9,7 +9,7 @@ import {
   TNumberOfPixels,
   TPixelsPosition,
 } from '../common/common.types';
-import { MovingDirection, AttackingType } from '@shared';
+import { MovingDirection, AttackingType, StandingDirection } from '@shared';
 import { IController } from '../controllers';
 
 interface IAbility<Context> {
@@ -59,11 +59,11 @@ export interface IAttacking extends IAbility<IAttackingCharacter> {
   attack(type?: AttackingType): this;
 
   /**
-   * Вычисляет зону, куда будет атаковать персонаж и которая будет считаться зоной поражения для других.
+   * Вычисляет зону перед персонажем, куда будет атаковать персонаж и которая будет считаться зоной поражения для других.
    *
    * @returns Зона поражения в виде кортежа пикселей
    */
-  getAffectedArea(): TPixelsCoords;
+  getFrontAffectedArea(): TPixelsCoords;
 }
 
 export interface IMovable extends IAbility<IMovableCharacter> {
@@ -111,6 +111,14 @@ export interface IMovable extends IAbility<IMovableCharacter> {
    * @returns Контроллер
    */
   getController(): IController;
+
+  /**
+   * Устанавливает направление персонажа, пока он стоит на месте.
+   *
+   * @param direction Направление персонажа
+   * @returns Объект способности
+   */
+  setStandingDirection(direction: StandingDirection): this;
 
   /**
    * Принудительно устанавливает координаты персонажу

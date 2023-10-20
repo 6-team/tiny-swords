@@ -7,7 +7,7 @@ import { HeroActionAnimation } from '../../entities/hero/hero.const';
 import { frames$ } from '../../tools/observables';
 import { grid64 } from '../../core/grid';
 import { IController } from '../../controllers';
-import { MovingDirection } from '@shared';
+import { MovingDirection, StandingDirection } from '@shared';
 
 /**
  * Класс для передвигающихся элементов.
@@ -79,6 +79,21 @@ export class Movable implements IMovable {
    */
   setContext(context: IMovableCharacter) {
     this.#context = context;
+
+    return this;
+  }
+
+  /**
+   * Устанавливает направление персонажа, пока он стоит на месте.
+   *
+   * @param direction Направление персонажа
+   * @returns Объект способности
+   */
+  setStandingDirection(direction: StandingDirection) {
+    this.#setIsRightDirection(direction);
+    this.#context.setAnimation(
+      this.#isRightDirection ? HeroActionAnimation.STANDS_STILL : HeroActionAnimation.STANDS_STILL_LEFT,
+    );
 
     return this;
   }
@@ -179,12 +194,12 @@ export class Movable implements IMovable {
    * @param direction Направление движения персонажа
    * @returns Объект способности
    */
-  #setIsRightDirection(direction: MovingDirection): this {
-    if (direction === MovingDirection.LEFT) {
+  #setIsRightDirection(direction: MovingDirection | StandingDirection): this {
+    if ([MovingDirection.LEFT, StandingDirection.LEFT].includes(direction)) {
       this.#isRightDirection = false;
     }
 
-    if (direction === MovingDirection.RIGHT) {
+    if ([MovingDirection.RIGHT, StandingDirection.RIGHT].includes(direction)) {
       this.#isRightDirection = true;
     }
 

@@ -1,11 +1,10 @@
-import { IPlayer } from '@shared';
+import { IPlayer, StandingDirection } from '@shared';
 import { BehaviorSubject, Observable, concatAll, filter, map, merge, mergeMap, tap } from 'rxjs';
 import { TCollisionArea, TPixelsCoords } from '../../abilities/abilities.types';
 import { collisions } from '../collisions';
 import { grid64 } from '../grid';
 import { Enemy } from '../../entities/enemy';
 import { AIController } from '../../controllers/AI';
-import { EnemyActionAnimation } from '../../entities/enemy/enemy.const';
 
 class Enemies {
   readonly #enemiesSubject = new BehaviorSubject<Enemy[]>([]);
@@ -23,7 +22,7 @@ class Enemies {
 
     const enemy = new Enemy({
       controllerCreator: (enemy) => collisions.decorateController(enemy, bounds$, new AIController()),
-      initialAnimation: EnemyActionAnimation.STANDS_STILL_LEFT,
+      initialDirection: StandingDirection.LEFT,
       initialX,
       initialY,
       height,
