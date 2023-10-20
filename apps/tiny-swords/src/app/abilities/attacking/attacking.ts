@@ -1,7 +1,7 @@
 import { IAttacking, TCollisionArea } from '../abilities.types';
 import { IAttackingCharacter, IMovableCharacter } from '../../common/common.types';
 import { AttackingError } from './attacking.const';
-import { BehaviorSubject, Observable, Subject, filter, map, noop, skip, tap } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, filter, map, noop } from 'rxjs';
 import { IController } from '../../controllers';
 import { HeroActionAnimation } from '../../entities/hero/hero.const';
 import { AttackingProps } from './attacking.types';
