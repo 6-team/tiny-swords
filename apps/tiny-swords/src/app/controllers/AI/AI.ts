@@ -12,18 +12,28 @@ export class AIController implements IController {
   private _attack$ = new Subject<AttackingType>();
   private _character: IMovableCharacter & IAttackingCharacter;
   private _heroes$: Observable<Array<IMovableCharacter & IAttackingCharacter>>;
+  private _ignoreMovements = false;
 
   readonly movement$ = this._movement$.asObservable();
   readonly animation$ = this._animation$.asObservable();
   readonly attack$ = this._attack$.asObservable();
 
-  constructor({ heroes$, id }: { heroes$: Observable<Array<IMovableCharacter & IAttackingCharacter>>; id: string }) {
+  constructor({
+    heroes$,
+    id,
+  }: {
+    heroes$: Observable<Array<IMovableCharacter & IAttackingCharacter>>;
+    id: string | number;
+  }) {
     this._heroes$ = heroes$;
+
+    console.log('CONSTR');
+
     actions
       .updateEnemyListener()
       .pipe(filter((enemy) => enemy.id === id))
       .subscribe((enemy) => {
-        if (enemy.hasOwnProperty('direction')) {
+        if (enemy.hasOwnProperty('direction') && !this._ignoreMovements) {
           this._movement$.next(enemy.direction);
         }
       });
@@ -42,6 +52,8 @@ export class AIController implements IController {
     this._heroes$.subscribe((heroes) => {
       for (const hero of heroes) {
         hero.moving.breakpoints$.subscribe(() => {
+          this._ignoreMovements = false;
+
           const enemy = this._character;
           const enemyHasAttackCollision = collisions.hasCollision(
             enemy.fighting.getAffectedArea(),
@@ -49,6 +61,7 @@ export class AIController implements IController {
           );
 
           if (enemyHasAttackCollision) {
+            this._ignoreMovements = true;
             this._attackWithDelay(enemy, 300);
 
             return;
@@ -68,6 +81,7 @@ export class AIController implements IController {
             enemy.moving.setStandingDirection(
               enemy.moving.isRightDirection ? StandingDirection.LEFT : StandingDirection.RIGHT,
             );
+            this._ignoreMovements = true;
             this._attackWithDelay(enemy, 300);
           }
         });

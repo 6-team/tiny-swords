@@ -17,5 +17,5 @@ export interface EnemyConfig {
   initialY: TTilePosition;
   initialDirection?: StandingDirection;
   initialAnimation?: EnemyActionAnimation;
-  id: string;
+  id: string | number;
 }

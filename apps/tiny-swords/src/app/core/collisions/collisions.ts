@@ -56,8 +56,7 @@ export class Collisions {
     controller: IController,
   ): IController {
     const movable = character.getAbility('movable');
-
-    return {
+    const enhanced = {
       ...controller,
       movement$: frames$.pipe(
         withLatestFrom(movable.breakpoints$, bounds$, controller.movement$),
@@ -77,6 +76,10 @@ export class Collisions {
       ),
       animation$: controller.movement$,
     };
+
+    Object.setPrototypeOf(enhanced, Object.getPrototypeOf(controller));
+
+    return enhanced;
   }
 }
 

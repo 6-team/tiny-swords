@@ -56,6 +56,13 @@ export default class Hero
       controller.setCharacter(this);
     }
 
+    /**
+     * @TODO Убрать это безобразие, когда будем прокидывать персонажа в контроллер, а не наоборот
+     */
+    if (controller.init) {
+      controller.init();
+    }
+
     this.#initSounds(movable, attacking, collecting);
   }
 

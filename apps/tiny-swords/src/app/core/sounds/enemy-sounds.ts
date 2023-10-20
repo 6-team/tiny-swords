@@ -22,8 +22,6 @@ export class EnemySound extends Sounds implements IEnemySounds {
   }
 
   playHittingSound() {
-    setTimeout(() => {
-      this.playSound(СharacterSoundsType.HITTING);
-    }, 200);
+    this.playSound(СharacterSoundsType.HITTING);
   }
 }

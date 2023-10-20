@@ -1,7 +1,7 @@
 import { AttackingType, MovingDirection } from '../enums';
 
 export interface IPlayer<D = MovingDirection> {
-  readonly id: string;
+  readonly id: string | number;
   readonly coords?: [number, number];
   readonly breakpoint?: [number, number];
   direction?: D | null;

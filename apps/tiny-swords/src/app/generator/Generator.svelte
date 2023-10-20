@@ -150,7 +150,7 @@
           return existingEnemy || enemy.isDied ? null : enemy;
         }),
         filter(Boolean),
-        map((enemy) => enemies.initEnemy(enemy, heroes.heroes$)),
+        map((enemy) => enemies.initEnemy(enemy, bounds$, heroes.heroes$)),
       )
       .subscribe();
   }

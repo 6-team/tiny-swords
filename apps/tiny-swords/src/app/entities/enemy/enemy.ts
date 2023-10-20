@@ -21,16 +21,7 @@ export default class Enemy
   protected _size = ENEMY_SIZE;
   sounds: IEnemySounds;
 
-  constructor({
-    controllerCreator,
-    height,
-    width,
-    initialX,
-    initialY,
-    initialDirection,
-    id,
-    initialAnimation,
-  }: EnemyConfig) {
+  constructor({ controllerCreator, height, width, initialX, initialY, initialDirection, id }: EnemyConfig) {
     super({ id });
 
     const attacking = new Attacking({ availibleLives: 1, blockedLives: 0 });
