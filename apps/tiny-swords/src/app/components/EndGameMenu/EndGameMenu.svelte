@@ -9,7 +9,7 @@
   <div class="wrapper">
     <div class="container">
       <div class="dead">
-        <img class="dead__sign" src="/img/Factions/Dead.gif" alt="Dead" />
+        <img class="dead__sign" src="./img/Factions/Dead.gif" alt="Dead" />
         <div class="dead__text">Вы пали смертью храбрых!</div>
       </div>
       <div class="button-container">
