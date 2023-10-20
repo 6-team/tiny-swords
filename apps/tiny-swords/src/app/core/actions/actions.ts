@@ -7,7 +7,7 @@ import { LayersMap } from '../layers/layers.types';
 import { Resource } from '../../entities/resource';
 
 // TODO: need to move
-const ENDPOINT = 'ws://localhost:3000';
+const ENDPOINT = 'ws://localhost:3016';
 
 class Actions<T extends IPlayer<MovingDirection>, L extends LevelData<LayersMap, Resource>> {
   #socketSubject = new BehaviorSubject<WebSocket>(null);
