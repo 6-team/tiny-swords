@@ -2,7 +2,7 @@ import { server } from './server';
 import { Connection } from './connection';
 import { ActionType, Game, LevelData, MovingDirection, Player } from '@shared';
 import { Socket } from 'socket.io';
-import { Subject, takeUntil, timer } from 'rxjs';
+import { Subject, filter, takeUntil, timer } from 'rxjs';
 
 const port = Number(process.env.PORT) || 3016;
 const destroy$ = new Subject<void>();
@@ -104,15 +104,16 @@ function triggerEnemiesMovemenet(client: Socket): void {
 
   const directions = Object.values(MovingDirection);
 
-  let isInitAllEnemy = false;
-
   timer(0, 1000)
-    .pipe(takeUntil(destroy$))
+    .pipe(
+      filter((value) => !value || value > 5),
+      takeUntil(destroy$),
+    )
     .subscribe((value) => {
       const otherPlayerIds = game.getOtherPlayerIds(client.id);
 
       game.enemies.forEach((enemy) => {
-        if (Math.random() > 0.6 || !isInitAllEnemy) {
+        if (Math.random() > 0.6 || !value) {
           const random = Math.floor(Math.random() * directions.length);
           const direction = !value ? MovingDirection.IDLE : directions[random];
           const currentEnemy = { ...enemy, direction };
@@ -124,9 +125,5 @@ function triggerEnemiesMovemenet(client: Socket): void {
           otherPlayerIds.forEach((id: string) => client.broadcast.to(id).emit(ActionType.UpdateEnemy, currentEnemy));
         }
       });
-
-      if (!isInitAllEnemy) {
-        isInitAllEnemy = true;
-      }
     });
 }
