@@ -4,7 +4,7 @@ import { ActionType, Game, LevelData, MovingDirection, Player } from '@shared';
 import { Socket } from 'socket.io';
 import { Subject, takeUntil, timer } from 'rxjs';
 
-const port = Number(process.env.PORT) || 3000;
+const port = Number(process.env.PORT) || 3016;
 const destroy$ = new Subject<void>();
 
 server.listen(port);
@@ -104,21 +104,29 @@ function triggerEnemiesMovemenet(client: Socket): void {
 
   const directions = Object.values(MovingDirection);
 
-  timer(0, 5000)
+  let isInitAllEnemy = false;
+
+  timer(0, 1000)
     .pipe(takeUntil(destroy$))
     .subscribe((value) => {
       const otherPlayerIds = game.getOtherPlayerIds(client.id);
 
       game.enemies.forEach((enemy) => {
-        const random = Math.floor(Math.random() * directions.length);
-        const direction = !value ? MovingDirection.IDLE : directions[random];
-        const currentEnemy = { ...enemy, direction };
+        if (Math.random() > 0.6 || !isInitAllEnemy) {
+          const random = Math.floor(Math.random() * directions.length);
+          const direction = !value ? MovingDirection.IDLE : directions[random];
+          const currentEnemy = { ...enemy, direction };
 
-        game.setEnemy(currentEnemy);
+          game.setEnemy(currentEnemy);
 
-        client.emit(ActionType.UpdateEnemy, currentEnemy);
+          client.emit(ActionType.UpdateEnemy, currentEnemy);
 
-        otherPlayerIds.forEach((id: string) => client.broadcast.to(id).emit(ActionType.UpdateEnemy, currentEnemy));
+          otherPlayerIds.forEach((id: string) => client.broadcast.to(id).emit(ActionType.UpdateEnemy, currentEnemy));
+        }
       });
+
+      if (!isInitAllEnemy) {
+        isInitAllEnemy = true;
+      }
     });
 }
