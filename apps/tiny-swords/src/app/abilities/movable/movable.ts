@@ -186,7 +186,6 @@ export class Movable implements IMovable {
    * @returns Объект способности
    */
   #handleMovementChange = (direction: MovingDirection) => {
-    console.log(direction);
     this.#setIsRightDirection(direction);
     this.#setAnimation(direction);
 
