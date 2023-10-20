@@ -32,6 +32,10 @@ export class HeroSounds extends Sounds implements IHeroSounds {
       this.playAttackSound();
     });
 
+    attacking.isHitted$.subscribe(() => this.playHittingSound());
+
+    attacking.isDied$.subscribe(() => this.playGameOverSound());
+
     collecting.collection$.pipe(filter((resources: IResource[]) => !!resources.length)).subscribe(() => {
       this.playResourceSelection();
     });

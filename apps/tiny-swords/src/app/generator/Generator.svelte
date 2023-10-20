@@ -4,7 +4,7 @@
   import { Hero } from '../entities/hero'
   import { Resource, ResourcesType } from '../entities/resource';
   import { SCALE } from '../common/common.const'
-  import { actions, Heroes, Renderer, grid64, HeroHealthBar, HeroResourcesBar, enemies } from "../core";
+  import { actions, Heroes, Renderer, grid64, HeroResourcesBar, enemies } from "../core";
   import { Level } from "../core/level/level";
   import {
     nextLevelMenu,
@@ -27,7 +27,6 @@
 
   const level = new Level();
   const heroes = new Heroes(level.startCoords);
-  const heroHealthBar = new HeroHealthBar({ totalLives: 3, availableLives: 1, blockedLives: 2 });
 
   const nextLevelTile$ = level.endCoords$.pipe(map(([x, y]) => grid64.transformToPixels(x, y, 1, 1)));
 
@@ -92,8 +91,8 @@
   }
 
   function restartGame() {
-    endGameMenuStore.set(false)
-    heroHealthBar.resetHealthBar()
+    endGameMenuStore.set(false);
+    heroes.mainHero.fighting.reset();
 
     if (isMultiplayer) {
       const movable = heroes.mainHero.getAbility('movable');
@@ -150,7 +149,7 @@
           return existingEnemy || enemy.isDied ? null : enemy;
         }),
         filter(Boolean),
-        map((enemy) => enemies.initEnemy(enemy, bounds$)),
+        map((enemy) => enemies.initEnemy(enemy, heroes.heroes$)),
       )
       .subscribe();
   }
@@ -168,6 +167,9 @@
       });
   }
 
+  /**
+   * @TODO Что это? Отрефакторить!
+   */
   const rerenderComponent = () => {
     uniq = {}
   }
@@ -175,10 +177,10 @@
   const gameResources = new HeroResourcesBar([new Resource({type: ResourcesType.GOLD, quantity: 0}), new Resource({type: ResourcesType.WOOD, quantity: 0})])
 
   const buyImprovements = (resources: { type: ResourcesType; price: number }, type: string):void => {
-    if(type === 'life' && heroHealthBar.healthBar.blockedLives) {
+    if (type === 'life') {
       gameResources.spend(resources);
-      heroHealthBar.unblockLive()
-      rerenderComponent()
+      heroes.mainHero.fighting.unblockLive();
+      rerenderComponent();
     }
 
   };
@@ -278,44 +280,16 @@
         );
 
         if (hasCollision) {
-
           if(resource.resourceType === ResourcesType.MEAT) {
-            heroHealthBar.addLive();
+            character.fighting.addLive();
           }
+
           collecting.collect(resource);
 
           const updatedResources = resources.filter((original) => original !== resource);
+
           gameResources.addResource(resource.resourceType)
           level.updateResources(updatedResources)
-        }
-      }
-
-      for (const enemy of enemies.enemies) {
-        const enemyAttacking = enemy.getAbility('attacking');
-
-        const enemyHasAttackCollision = collisions.hasCollision(
-          enemyAttacking.getFrontAffectedArea(),
-          movable.getCollisionArea()
-        );
-
-        if (enemyHasAttackCollision) {
-          const hero = heroes.getHero(character.id);
-
-          if (heroes.isMainHero(character.id)) {
-            hero?.heroSounds.playHittingSound();
-          }
-
-          enemyAttacking.attack().isAttacking$.pipe(filter(isAttacking => !isAttacking), first())
-            .subscribe(() => {
-              if (heroes.isMainHero(character.id)) {
-                heroHealthBar.removeLive();
-
-                if (heroHealthBar.isDead) {
-                  hero?.heroSounds.playGameOverSound();
-                  endGameMenuStore.set(true);
-                }
-              }
-            });
         }
       }
     }
@@ -326,25 +300,20 @@
       for (const enemy of enemies.enemies) {
         const enemyMovable = enemy.getAbility('movable');
         const hasAttackCollision = collisions.hasCollision(
-          attacking.getFrontAffectedArea(),
+          attacking.getAffectedArea(),
           enemyMovable.getCollisionArea()
         );
 
         if (hasAttackCollision) {
-          enemy.enemySounds.playHittingSound();
-          attacking.isAttacking$.pipe(
-            filter(isAttacking => !isAttacking),
-            first(),
-            switchMap(() => actions.updateEnemy({ id: enemy.id, isDied: true }))
-          )
-          .subscribe(() => enemies.removeEnemy(enemy.id));
+          attacking.isAttacking$
+            .pipe(filter(isAttacking => !isAttacking), first(), switchMap(() => actions.updateEnemy({ id: enemy.id, isDied: true }))).subscribe(() => {
+              enemy.fighting.takeDamage();
+            });
 
           break;
         }
       }
     }
-
-    let lastTime = 0;
 
     level.resources$.subscribe((resources) => {
       resourcesScene.clear();
@@ -353,18 +322,9 @@
       });
     });
 
-    frames$.subscribe((timeStamp = 0) => {
-      const deltaTime = timeStamp - lastTime;
+    combineLatest([heroes.heroes$, enemies.enemies$]).subscribe(([heroes, enemies]) => {
+      interactiveScene.renderMovableLayer([...enemies, ...heroes]);
 
-      for (const enemy of enemies.enemies) {
-        interactiveScene.renderMovable(enemy, deltaTime);
-      }
-
-      interactiveScene.renderMovableLayer(heroes.heroes, deltaTime);
-      lastTime = timeStamp
-    });
-
-    heroes.heroes$.subscribe((heroes) => {
       for (const hero of heroes) {
         const movable = hero.getAbility('movable');
         const attacking = hero.getAbility('attacking');
@@ -381,16 +341,46 @@
       multiplayerStore.set(heroes.length > 1)
     });
 
-    gameResources.resources$.subscribe(() => {
-    heroBarsScene.clear()
-    heroBarsScene.renderResourcesBar(gameResources.getResources())
-  }
-    )
-    heroHealthBar.healthBar$.subscribe(lives => {
-      heroHealthBarScene.clear();
-      heroHealthBarScene.renderHealthBar(lives)
+    combineLatest([enemies.enemies$, heroes.heroes$]).subscribe(([enemiesArray, heroesArray]) => {
+      for (const enemy of enemiesArray) {
+        enemy.fighting.isAttacking$
+          .pipe(filter((isAttacking) => !isAttacking))
+          .subscribe(() => {
+            for (const hero of heroesArray) {
+              const hasCollision = collisions.hasCollision(
+                enemy.fighting.getAffectedArea(),
+                hero.moving.getCollisionArea()
+              );
+
+              if (hasCollision) {
+                hero.fighting.takeDamage();
+              }
+            }
+          });
+
+        enemy.fighting.isDied$.subscribe(() => enemies.removeEnemy(enemy.id));
+      }
     })
 
+    gameResources.resources$.subscribe(() => {
+      heroBarsScene.clear()
+      heroBarsScene.renderResourcesBar(gameResources.getResources())
+    });
+
+    heroes.mainHero$.pipe(filter(Boolean)).subscribe((hero) => {
+      combineLatest([
+        hero.fighting.livesCount$,
+        hero.fighting.blockedLivesCount$
+      ]).subscribe(([availableLives, blockedLives,]) => {
+        heroHealthBarScene.clear();
+        heroHealthBarScene.renderHealthBar({ availableLives, blockedLives, totalLives: availableLives + blockedLives });
+      });
+
+      hero.fighting.isDied$.pipe(filter(Boolean)).subscribe(() => {
+        hero.sounds.playGameOverSound(); // @TODO Вынести в gameSounds, вместо heroSounds
+        endGameMenuStore.set(true);
+      });
+    });
   });
 
   onDestroy(() => {

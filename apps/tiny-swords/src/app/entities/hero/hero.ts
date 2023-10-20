@@ -20,7 +20,7 @@ export default class Hero
   protected _sprite: string;
   protected _type: HeroType;
   protected _size = HERO_SIZE;
-  heroSounds: IHeroSounds;
+  sounds: IHeroSounds;
 
   constructor({ controllerCreator, height, width, initialX, initialY, id, type = HeroType.WARRIOR_BLUE }: HeroConfig) {
     super({ id });
@@ -28,7 +28,7 @@ export default class Hero
     this._type = type;
     this._sprite = mapHeroImages[type];
 
-    const attacking = new Attacking();
+    const attacking = new Attacking({ availibleLives: 1, blockedLives: 2 });
     const collecting = new Collecting();
     const movable = new Movable({
       height,
@@ -59,13 +59,29 @@ export default class Hero
     this.#initSounds(movable, attacking, collecting);
   }
 
+  /**
+   * @TODO Описать эти типы в интерфейсах
+   */
+  get moving() {
+    return this.getAbility('movable');
+  }
+
+  get fighting() {
+    return this.getAbility('attacking');
+  }
+
+  get collecting() {
+    return this.getAbility('collecting');
+  }
+
   #initSounds(movable: IMovable, attacking: IAttacking, collecting: ICollecting): void {
-    this.heroSounds = new HeroSounds({ movable, attacking, collecting });
+    this.sounds = new HeroSounds({ movable, attacking, collecting });
+
     isMuttedStore.subscribe((value) => {
       if (value) {
-        this.heroSounds.muteSound();
+        this.sounds.muteSound();
       } else {
-        this.heroSounds.unmuteSound();
+        this.sounds.unmuteSound();
       }
     });
   }

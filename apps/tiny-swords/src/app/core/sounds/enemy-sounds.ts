@@ -13,6 +13,8 @@ export class EnemySound extends Sounds implements IEnemySounds {
     attacking.isAttacking$.pipe(filter(Boolean)).subscribe(() => {
       this.playAttackSound();
     });
+
+    attacking.isHitted$.subscribe(() => this.playHittingSound());
   }
 
   playAttackSound() {

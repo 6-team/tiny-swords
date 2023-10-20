@@ -27,7 +27,7 @@ export interface ITile {
   }>;
   setAnimation(row: number): void;
   setAnimationOnce(row: number): Promise<void>;
-  initAnimation(deltaTime: number): void;
+  switchAnimationFrame(deltaTime: number): void;
 }
 
 export interface ICharacter<Abilities extends Record<string | symbol | number, WithSetPersonageContext>> extends ITile {
@@ -42,8 +42,14 @@ export interface IResource {
   resourceImage: string;
 }
 
-export type IMovableCharacter = ICharacter<{ movable: IMovable }>;
+export type IMovableCharacter = ICharacter<{ movable: IMovable }> & {
+  moving: IMovable;
+};
 
-export type IAttackingCharacter = ICharacter<{ attacking: IAttacking }>;
+export type IAttackingCharacter = ICharacter<{ attacking: IAttacking }> & {
+  fighting: IAttacking;
+};
 
-export type ICollectingCharacter = ICharacter<{ collecting: ICollecting }>;
+export type ICollectingCharacter = ICharacter<{ collecting: ICollecting }> & {
+  collecting: ICollecting;
+};

@@ -3,6 +3,8 @@ import { IGrid, IMovableCharacter, ITile } from '../../common/common.types';
 import { Maybe } from '../../tools/monads/maybe';
 import { TileName, mapTileNameToClass } from './renderer.const';
 import { RendererConfig } from './renderer.types';
+import { frames$ } from '../../tools/observables';
+import { Subscription } from 'rxjs';
 
 function* enumerate<T>(iterable: Iterable<T>): Iterable<[number, T]> {
   let index = 0;
@@ -29,6 +31,7 @@ export class Renderer {
   #context: CanvasRenderingContext2D;
   #grid: IGrid;
   #scale: number;
+  #framesSubscription?: Subscription;
 
   constructor({ canvas, grid, scale }: RendererConfig) {
     this.#canvas = canvas;
@@ -100,7 +103,7 @@ export class Renderer {
     //   }
     // }
 
-    tile.initAnimation(deltaTime);
+    tile.switchAnimationFrame(deltaTime);
 
     return this;
   }
@@ -126,14 +129,29 @@ export class Renderer {
     }
   }
 
-  async renderMovableLayer(movables: Array<IMovableCharacter>, deltaTime: number) {
-    this.clear();
+  async renderMovableLayer(movables: Array<IMovableCharacter>) {
+    let lastTime = 0;
 
-    for (const movable of movables) {
-      new Maybe(movable).map((tile) => this.renderMovable(tile, deltaTime));
+    if (this.#framesSubscription) {
+      this.#framesSubscription.unsubscribe();
     }
+
+    this.#framesSubscription = frames$.subscribe((timeStamp = 0) => {
+      const deltaTime = timeStamp - lastTime;
+
+      this.clear();
+
+      for (const movable of movables) {
+        new Maybe(movable).map((tile) => this.renderMovable(tile, deltaTime));
+      }
+
+      lastTime = timeStamp;
+    });
   }
 
+  /**
+   * @TODO Вынести в отдельный класс, а этот использовать только для рендера
+   */
   async renderHealthBar(lives: { totalLives: number; availableLives: number; blockedLives: number }) {
     const { totalLives, availableLives, blockedLives } = lives;
     const heartWidth = 20;
@@ -152,7 +170,7 @@ export class Renderer {
 
     this.#context.drawImage(backgroundImage, barPositionX, barPositionY, backgroundWidth, backgroundHeight);
 
-    const available = new Array(availableLives).fill(heartImage);
+    const available = availableLives ? new Array(availableLives).fill(heartImage) : [];
     const wasted = new Array(totalLives - availableLives - blockedLives);
     const blocked = blockedLives >= 1 ? new Array(blockedLives).fill(lockedHeartImage) : [];
 
