@@ -131,7 +131,6 @@
   function handleEnemyMovement(): void {
     level.enemiesCoords$
       .pipe(
-        tap((coords) => console.log(coords)),
         tap(() => enemies.clearEnemies()),
       )
       .subscribe()
