@@ -9,7 +9,7 @@ import {
   TNumberOfPixels,
   TPixelsPosition,
 } from '../common/common.types';
-import { MovingDirection, AttackingType } from '@shared';
+import { MovingDirection, AttackingType, FightingAreaDirection } from '@shared';
 import { IController } from '../controllers';
 
 interface IAbility<Context> {
@@ -114,7 +114,7 @@ export interface IAttacking extends IAbility<IAttackingCharacter> {
    *
    * @returns Зона поражения в виде кортежа пикселей
    */
-  getAffectedArea(): TPixelsCoords;
+  getAffectedArea(direction?: FightingAreaDirection): TPixelsCoords;
 }
 
 export interface IMovable extends IAbility<IMovableCharacter> {

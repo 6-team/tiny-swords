@@ -5,7 +5,7 @@ import { BehaviorSubject, Observable, Subject, filter, map, noop, skip } from 'r
 import { IController } from '../../controllers';
 import { HeroActionAnimation } from '../../entities/hero/hero.const';
 import { AttackingProps } from './attacking.types';
-import { AttackingType } from '@shared';
+import { AttackingType, FightingAreaDirection } from '@shared';
 
 const isNotPositiveNumber = (count: number) => count <= 0;
 
@@ -52,7 +52,7 @@ export class Attacking implements IAttacking {
    *
    * @returns Зона поражения в виде кортежа пикселей
    */
-  getAffectedArea(): TCollisionArea {
+  getAffectedArea(direction: FightingAreaDirection = FightingAreaDirection.FRONT): TCollisionArea {
     if (!this.#context) {
       throw new Error(AttackingError.PERSONAGE_NOT_SET);
     }
@@ -61,7 +61,13 @@ export class Attacking implements IAttacking {
     const collisionArea = movable.getCollisionArea();
 
     if (this.#getAffectedAreaFunc) {
-      return this.#getAffectedAreaFunc(this);
+      return this.#getAffectedAreaFunc(this, direction);
+    }
+
+    if (direction === FightingAreaDirection.BACK) {
+      return movable.isRightDirection
+        ? this.#getLeftAffectedArea(collisionArea)
+        : this.#getRightAffectedArea(collisionArea);
     }
 
     return movable.isRightDirection

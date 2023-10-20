@@ -1,4 +1,4 @@
-import { MovingDirection, AttackingType } from '@shared';
+import { MovingDirection, AttackingType, FightingAreaDirection } from '@shared';
 import { BehaviorSubject, Observable, Subject, filter, first } from 'rxjs';
 import { IAttackingCharacter, IMovableCharacter } from '../../common/common.types';
 import { IController } from '../controllers.types';
@@ -32,13 +32,25 @@ export class AIController implements IController {
     this._heroes$.subscribe((heroes) => {
       for (const hero of heroes) {
         hero.moving.breakpoints$.subscribe(() => {
+          const enemy = this._character;
           const enemyHasAttackCollision = collisions.hasCollision(
-            this._character.fighting.getAffectedArea(),
+            enemy.fighting.getAffectedArea(),
             hero.moving.getCollisionArea(),
           );
 
           if (enemyHasAttackCollision) {
-            this._character.fighting.attack();
+            enemy.fighting.attack();
+
+            return;
+          }
+
+          const enemyHasBackCollision = collisions.hasCollision(
+            enemy.fighting.getAffectedArea(FightingAreaDirection.BACK),
+            hero.moving.getCollisionArea(),
+          );
+
+          if (enemyHasBackCollision) {
+            debugger;
           }
         });
       }
