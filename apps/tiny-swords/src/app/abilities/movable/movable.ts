@@ -2,7 +2,7 @@ import { IMovable, TCollisionArea } from '../abilities.types';
 import { IMovableCharacter, TNumberOfPixels, TPixelsPosition } from '../../common/common.types';
 import { MovingError, PIXELS_PER_FRAME, movementSetters, nextMoveCoordsGetters } from './movable.const';
 import { MovableProps } from './movable.types';
-import { BehaviorSubject, Observable, combineLatest, filter, map, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, distinctUntilChanged, filter, map, withLatestFrom } from 'rxjs';
 import { HeroActionAnimation } from '../../entities/hero/hero.const';
 import { frames$ } from '../../tools/observables';
 import { grid64 } from '../../core/grid';
@@ -42,7 +42,12 @@ export class Movable implements IMovable {
       map(([_, coords]) => coords),
     );
 
-    this.breakpoints$.pipe(map(() => this._lastDirection)).subscribe(this.#handleMovementChange);
+    this.breakpoints$
+      .pipe(
+        map(() => this._lastDirection),
+        distinctUntilChanged(),
+      )
+      .subscribe(this.#handleMovementChange);
   }
 
   /**
@@ -181,6 +186,7 @@ export class Movable implements IMovable {
    * @returns Объект способности
    */
   #handleMovementChange = (direction: MovingDirection) => {
+    console.log(direction);
     this.#setIsRightDirection(direction);
     this.#setAnimation(direction);
 

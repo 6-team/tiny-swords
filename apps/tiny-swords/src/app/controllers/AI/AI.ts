@@ -1,5 +1,5 @@
 import { MovingDirection, AttackingType, StandingDirection } from '@shared';
-import { BehaviorSubject, Observable, Subject, filter } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription, filter, first } from 'rxjs';
 import { IAttackingCharacter, IMovableCharacter } from '../../common/common.types';
 import { IController } from '../controllers.types';
 import { collisions } from '../../core/collisions';
@@ -13,6 +13,7 @@ export class AIController implements IController {
   private _character: IMovableCharacter & IAttackingCharacter;
   private _heroes$: Observable<Array<IMovableCharacter & IAttackingCharacter>>;
   private _ignoreMovements = false;
+  private _subscription: Subscription;
 
   readonly movement$ = this._movement$.asObservable();
   readonly animation$ = this._animation$.asObservable();
@@ -26,8 +27,7 @@ export class AIController implements IController {
     id: string | number;
   }) {
     this._heroes$ = heroes$;
-
-    actions
+    this._subscription = actions
       .updateEnemyListener()
       .pipe(filter((enemy) => enemy.id === id))
       .subscribe((enemy) => {
@@ -47,6 +47,7 @@ export class AIController implements IController {
    * @TODO Убрать это безобразие, когда будем прокидывать персонажа в контроллер, а не наоборот
    */
   init() {
+    this._character.fighting.isDied$.pipe(first()).subscribe(() => this._subscription.unsubscribe());
     this._heroes$.subscribe((heroes) => {
       for (const hero of heroes) {
         hero.moving.breakpoints$.subscribe(() => {
