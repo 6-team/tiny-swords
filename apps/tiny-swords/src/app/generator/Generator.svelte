@@ -95,7 +95,7 @@
     endGameMenuStore.set(false)
     heroHealthBar.resetHealthBar()
 
-    if(isMultiplayer) {
+    if (isMultiplayer) {
       const movable = heroes.mainHero.getAbility('movable');
       const [startX, startY] = level.startCoords;
       const [x, y] = grid64.transformToPixels(startX - 1, startY - 1, 3, 3);
@@ -129,17 +129,31 @@
   }
 
   function handleEnemyMovement(): void {
+    level.enemiesCoords$
+      .pipe(
+        tap((coords) => console.log(coords)),
+        tap(() => enemies.clearEnemies()),
+      )
+      .subscribe()
+  }
+
+  function handleUpdatedEnemies(): void {
     const bounds$ = combineLatest([heroes.heroesBoundaries$, level.boundaries$]).pipe(
       map((tuple) => tuple.flat())
     );
 
-    level.enemiesCoords$
+    actions.updateEnemyListener()
       .pipe(
-        tap(() => enemies.clearEnemies()),
-        concatAll(),
-        map((coords, index) => enemies.initEnemy({ coords, id: index }, bounds$)),
+        filter((enemy) => !!enemy.id),
+        map((enemy) => {
+          const existingEnemy = enemies.getEnemy(enemy.id);
+
+          return existingEnemy || enemy.isDied ? null : enemy;
+        }),
+        filter(Boolean),
+        map((enemy) => enemies.initEnemy(enemy, bounds$)),
       )
-      .subscribe()
+      .subscribe();
   }
 
   function handleUpdatedPlayers(): void {
@@ -186,6 +200,7 @@
     handleEnemyMovement();
     handleUpdatedLevel();
     handleUpdatedPlayers();
+    handleUpdatedEnemies();
     /**
      * Рендер статичной карты
      */
@@ -318,7 +333,12 @@
 
         if (hasAttackCollision) {
           enemy.enemySounds.playHittingSound();
-          attacking.isAttacking$.pipe(filter(isAttacking => !isAttacking), first()).subscribe(() => {enemies.removeEnemy( enemy.id) });
+          attacking.isAttacking$.pipe(
+            filter(isAttacking => !isAttacking),
+            first(),
+            switchMap(() => actions.updateEnemy({ id: enemy.id, isDied: true }))
+          )
+          .subscribe(() => enemies.removeEnemy(enemy.id));
 
           break;
         }

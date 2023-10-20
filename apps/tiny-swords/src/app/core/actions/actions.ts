@@ -7,7 +7,7 @@ import { LayersMap } from '../layers/layers.types';
 import { Resource } from '../../entities/resource';
 
 // TODO: need to move
-const ENDPOINT = 'https://tiny-swords-b4d29a0600f2.herokuapp.com/';
+const ENDPOINT = 'ws://localhost:3000';
 
 class Actions<T extends IPlayer<MovingDirection>, L extends LevelData<LayersMap, Resource>> {
   #socketSubject = new BehaviorSubject<WebSocket>(null);
@@ -49,8 +49,16 @@ class Actions<T extends IPlayer<MovingDirection>, L extends LevelData<LayersMap,
     return this.emit(ActionType.UpdatePlayer, character);
   }
 
+  updateEnemy(character: T): Observable<WebSocket> {
+    return this.emit(ActionType.UpdateEnemy, character);
+  }
+
   updatePlayerListener(): Observable<T> {
     return this.listen<T>(ActionType.UpdatePlayer);
+  }
+
+  updateEnemyListener(): Observable<T> {
+    return this.listen<T>(ActionType.UpdateEnemy);
   }
 
   updateLevel(level: L): Observable<WebSocket> {

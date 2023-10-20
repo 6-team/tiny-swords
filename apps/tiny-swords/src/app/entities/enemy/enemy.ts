@@ -21,7 +21,16 @@ export default class Enemy
   protected _size = ENEMY_SIZE;
   enemySounds: IEnemySounds;
 
-  constructor({ controllerCreator, height, width, initialX, initialY, initialDirection, id }: EnemyConfig) {
+  constructor({
+    controllerCreator,
+    height,
+    width,
+    initialX,
+    initialY,
+    initialDirection,
+    id,
+    initialAnimation,
+  }: EnemyConfig) {
     super({ id });
 
     const attacking = new Attacking();
@@ -44,6 +53,10 @@ export default class Enemy
     movable.setController(controller);
     movable.setStandingDirection(initialDirection);
     attacking.setController(controller);
+
+    if (initialAnimation) {
+      this.setAnimation(initialAnimation);
+    }
 
     this.#initSounds(attacking);
   }

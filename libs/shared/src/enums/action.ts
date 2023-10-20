@@ -3,4 +3,5 @@ export enum ActionType {
   ConnectToGame = 'connectToGame',
   UpdatePlayer = 'updatePlayer',
   UpdateLevel = 'updateLevel',
+  UpdateEnemy = 'updateEnemy',
 }
