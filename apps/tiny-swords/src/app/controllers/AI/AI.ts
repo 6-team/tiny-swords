@@ -27,8 +27,6 @@ export class AIController implements IController {
   }) {
     this._heroes$ = heroes$;
 
-    console.log('CONSTR');
-
     actions
       .updateEnemyListener()
       .pipe(filter((enemy) => enemy.id === id))
@@ -62,7 +60,7 @@ export class AIController implements IController {
 
           if (enemyHasAttackCollision) {
             this._ignoreMovements = true;
-            this._attackWithDelay(enemy, 300);
+            this._attackWithDelay(enemy, 500);
 
             return;
           }
@@ -82,7 +80,7 @@ export class AIController implements IController {
               enemy.moving.isRightDirection ? StandingDirection.LEFT : StandingDirection.RIGHT,
             );
             this._ignoreMovements = true;
-            this._attackWithDelay(enemy, 300);
+            this._attackWithDelay(enemy, 500);
           }
         });
       }
