@@ -20,7 +20,7 @@
 
   import type { AttackingType, IPlayer } from "@shared";
   import type { TPixelsCoords } from "../abilities/abilities.types";
-  import { IImprovementsType, type IAttackingCharacter } from "../common/common.types";
+  import { type IAttackingCharacter, ImprovementTypes, type availableResourcesCheckType, type buyImprovementsType  } from "../common/common.types";
 
   let staticScene: Renderer;
   let foregroundScene: Renderer;
@@ -159,7 +159,7 @@
 
   const gameResources = new HeroResourcesBar([new Resource({type: ResourcesType.GOLD, quantity: 0}), new Resource({type: ResourcesType.WOOD, quantity: 0})])
 
-  const buyImprovements = (resources: { type: ResourcesType; price: number }, type: IImprovementsType):void => {
+  const buyImprovements: buyImprovementsType = (resources, type):void => {
   if(availableResourcesCheck(resources, type)){
     gameResources.spend(resources);
     applyActionOnResource(type);
@@ -167,12 +167,12 @@
   }
 };
 
-  const applyActionOnResource = (type: IImprovementsType) => {
+  const applyActionOnResource = (type: ImprovementTypes) => {
     switch(type){
-      case IImprovementsType.LIFE:
+      case ImprovementTypes.LIFE:
         heroes.mainHero.fighting.addLive();
         break;
-      case IImprovementsType.LIFE_SLOT:
+      case ImprovementTypes.LIFE_SLOT:
       heroes.mainHero.fighting.unblockLive();
         break;
       default:
@@ -180,12 +180,12 @@
     }
   };
 
-  const availableResourcesCheck = (resources: { type: ResourcesType, price: number}, improvementType: IImprovementsType):boolean => {
+  const availableResourcesCheck: availableResourcesCheckType = (resources, improvementType):boolean => {
     const isEnoughResources = gameResources.availableResourcesCheck(resources);
     switch(improvementType){
-      case IImprovementsType.LIFE:
+      case ImprovementTypes.LIFE:
         return isEnoughResources && heroes.mainHero.fighting.checkAddLive();
-      case IImprovementsType.LIFE_SLOT:
+      case ImprovementTypes.LIFE_SLOT:
         return isEnoughResources && heroes.mainHero.fighting.checkUnblockLive();
       default:
         return isEnoughResources;

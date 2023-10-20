@@ -1,4 +1,5 @@
 import { IAttacking, ICollecting, IMovable, WithSetPersonageContext } from '../abilities/abilities.types';
+import { ResourcesType } from '../entities/resource';
 
 export type TNumberOfTiles = number;
 
@@ -54,7 +55,7 @@ export type ICollectingCharacter = ICharacter<{ collecting: ICollecting }> & {
   collecting: ICollecting;
 };
 
-export enum IImprovementsType {
+export enum ImprovementTypes {
   LIFE,
   LIFE_SLOT,
   SHIELD,
@@ -62,3 +63,19 @@ export enum IImprovementsType {
   ARCHER,
   TNT,
 }
+
+export type ImprovementItemType = {
+  name: string;
+  type: ImprovementTypes;
+  icon: string;
+  cost: { type: ResourcesType; price: number };
+  styles?: { icon?: string; icon_wrapper?: string };
+  available: boolean;
+};
+
+export type buyImprovementsType = (resource: { type: ResourcesType; price: number }, type: ImprovementTypes) => void;
+
+export type availableResourcesCheckType = (
+  resource: { type: ResourcesType; price: number },
+  improvementType: ImprovementTypes,
+) => boolean;

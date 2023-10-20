@@ -3,24 +3,24 @@
     import { nextLevelMenu } from "../../store/store";
     import { ResourcesType } from "../../entities/resource";
     import {Button} from '../Button'
-  import { IImprovementsType } from "../../common/common.types";
+    import {  type ImprovementItemType, ImprovementTypes, type availableResourcesCheckType, type buyImprovementsType } from "../../common/common.types";
 
-    export let createNewLevel: () => void;
-    export let buyImprovements: (resource: { type: ResourcesType; price: number }, type: IImprovementsType) => void;
-    export let availableResourcesCheck: (resource: { type: ResourcesType, price: number}, improvementType: IImprovementsType) => boolean;
+  export let createNewLevel: () => void;
+    export let buyImprovements: buyImprovementsType;
+    export let availableResourcesCheck: availableResourcesCheckType;
 
     function next() {
         createNewLevel();
         nextLevelMenu.set(false)
     }
 
-    const items = [
-        {name: "Жизнь", type: IImprovementsType.LIFE, cost: {type: ResourcesType.WOOD, price: 1}, icon: './img/UI/1.png', available: true},
-        {name: "Слот", type: IImprovementsType.LIFE_SLOT, cost: {type: ResourcesType.GOLD, price: 100}, icon: './img/UI/Regular_10.png', available: true},
-        {name: "Щит", type: IImprovementsType.SHIELD, cost: {type: ResourcesType.GOLD, price: 300}, icon: './img/UI/shield.png', styles: {icon_wrapper: 'top: 34%'}, available: false },
-        {name: "Оружие", type: IImprovementsType.ARCHER_BOW, cost: {type: ResourcesType.WOOD, price: 20}, icon: './img/UI/archer_bow.png', styles: {icon: 'scale: 1.2'}, available: false },
-        {name: "Помощник", type: IImprovementsType.ARCHER, cost: {type: ResourcesType.GOLD, price: 1000}, icon: './img/UI/archer.png', styles: {icon: 'scale: 1.2'}, available: false },
-        {name: "Динамит", type: IImprovementsType.TNT, cost: {type: ResourcesType.WOOD, price: 30}, icon: './img/UI/tnt.png',styles: {icon_wrapper: 'top: 32%'}, available: false },
+    const items: Array<ImprovementItemType> = [
+        {name: "Жизнь", type: ImprovementTypes.LIFE, cost: {type: ResourcesType.WOOD, price: 1}, icon: './img/UI/1.png', available: true},
+        {name: "Слот", type: ImprovementTypes.LIFE_SLOT, cost: {type: ResourcesType.GOLD, price: 100}, icon: './img/UI/Regular_10.png', available: true},
+        {name: "Щит", type: ImprovementTypes.SHIELD, cost: {type: ResourcesType.GOLD, price: 300}, icon: './img/UI/shield.png', styles: {icon_wrapper: 'top: 34%'}, available: false },
+        {name: "Оружие", type: ImprovementTypes.ARCHER_BOW, cost: {type: ResourcesType.WOOD, price: 20}, icon: './img/UI/archer_bow.png', styles: {icon: 'scale: 1.2'}, available: false },
+        {name: "Помощник", type: ImprovementTypes.ARCHER, cost: {type: ResourcesType.GOLD, price: 1000}, icon: './img/UI/archer.png', styles: {icon: 'scale: 1.2'}, available: false },
+        {name: "Динамит", type: ImprovementTypes.TNT, cost: {type: ResourcesType.WOOD, price: 30}, icon: './img/UI/tnt.png',styles: {icon_wrapper: 'top: 32%'}, available: false },
     ]
 </script>
 
@@ -29,7 +29,6 @@
     <div class="next-level-menu-wrapper">
         <div class="next-level-menu">
             {#each items as item}
-            
                 <UpgradeItem  {buyImprovements} {availableResourcesCheck} {item}/>
             {/each}
         </div>
