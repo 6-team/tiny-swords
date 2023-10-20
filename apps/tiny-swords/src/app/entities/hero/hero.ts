@@ -28,7 +28,7 @@ export default class Hero
     this._type = type;
     this._sprite = mapHeroImages[type];
 
-    const attacking = new Attacking();
+    const attacking = new Attacking({ availibleLives: 1, blockedLives: 2 });
     const collecting = new Collecting();
     const movable = new Movable({
       height,

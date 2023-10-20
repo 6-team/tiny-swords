@@ -24,7 +24,7 @@ export default class Enemy
   constructor({ controllerCreator, height, width, initialX, initialY, initialDirection, id }: EnemyConfig) {
     super({ id });
 
-    const attacking = new Attacking();
+    const attacking = new Attacking({ availibleLives: 1, blockedLives: 0 });
     const movable = new Movable({
       height,
       width,

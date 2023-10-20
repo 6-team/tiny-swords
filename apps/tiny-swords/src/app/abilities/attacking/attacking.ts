@@ -9,9 +9,6 @@ import { AttackingType, FightingAreaDirection } from '@shared';
 
 const isNotPositiveNumber = (count: number) => count <= 0;
 
-const TOTAL_LIVES = 3;
-const INITIAL_CONFIG = { availibleLives: 1, blockedLives: 2 };
-
 /**
  * Класс способности атаковать
  */
@@ -34,7 +31,7 @@ export class Attacking implements IAttacking {
   readonly blockedLivesCount$: Observable<number>;
   readonly isDied$: Observable<boolean>;
 
-  constructor(config: AttackingProps = INITIAL_CONFIG) {
+  constructor(config: AttackingProps) {
     this.#getAffectedAreaFunc = config.getAffectedArea;
 
     this._livesCount$ = new BehaviorSubject(config.availibleLives);
@@ -157,11 +154,8 @@ export class Attacking implements IAttacking {
    */
   addLive() {
     const lives = this._livesCount$.getValue();
-    const blockedLives = this._blockedLivesCount$.getValue();
 
-    if (lives + blockedLives < TOTAL_LIVES) {
-      this._livesCount$.next(lives + 1);
-    }
+    this._livesCount$.next(lives + 1);
 
     return this;
   }

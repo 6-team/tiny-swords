@@ -290,7 +290,6 @@
           attacking.isAttacking$
             .pipe(filter(isAttacking => !isAttacking), first()).subscribe(() => {
               enemy.fighting.takeDamage();
-              enemies.removeEnemy(enemy.id); // @TODO Подписаться на isDied$ и удалять там
             });
 
           break;
@@ -335,12 +334,12 @@
       multiplayerStore.set(heroes.length > 1)
     });
 
-    combineLatest([enemies.enemies$, heroes.heroes$]).subscribe(([enemies, heroes]) => {
-      for (const enemy of enemies) {
+    combineLatest([enemies.enemies$, heroes.heroes$]).subscribe(([enemiesArray, heroesArray]) => {
+      for (const enemy of enemiesArray) {
         enemy.fighting.isAttacking$
           .pipe(filter((isAttacking) => !isAttacking))
           .subscribe(() => {
-            for (const hero of heroes) {
+            for (const hero of heroesArray) {
               const hasCollision = collisions.hasCollision(
                 enemy.fighting.getAffectedArea(),
                 hero.moving.getCollisionArea()
@@ -351,6 +350,8 @@
               }
             }
           });
+
+        enemy.fighting.isDied$.subscribe(() => enemies.removeEnemy(enemy.id));
       }
     })
 

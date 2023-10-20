@@ -1,5 +1,5 @@
 import { MovingDirection, AttackingType, FightingAreaDirection, StandingDirection } from '@shared';
-import { BehaviorSubject, Observable, Subject, filter, first } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { IAttackingCharacter, IMovableCharacter } from '../../common/common.types';
 import { IController } from '../controllers.types';
 import { collisions } from '../../core/collisions';
@@ -39,7 +39,7 @@ export class AIController implements IController {
           );
 
           if (enemyHasAttackCollision) {
-            enemy.fighting.attack();
+            this._attackWithDelay(enemy, 300);
 
             return;
           }
@@ -53,12 +53,16 @@ export class AIController implements IController {
             enemy.moving.setStandingDirection(
               enemy.moving.isRightDirection ? StandingDirection.LEFT : StandingDirection.RIGHT,
             );
-            enemy.fighting.attack();
+            this._attackWithDelay(enemy, 300);
           }
         });
       }
     });
 
     return this;
+  }
+
+  private _attackWithDelay(enemy: IAttackingCharacter, ms: number) {
+    setTimeout(() => enemy.fighting.attack(), ms);
   }
 }
