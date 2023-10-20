@@ -19,12 +19,12 @@ export default class Enemy
   protected _sprite = './img/Factions/Goblins/Troops/Torch/Red/Torch_Red.png';
   protected _type = EnemyType.TORCH_RED;
   protected _size = ENEMY_SIZE;
-  enemySounds: IEnemySounds;
+  sounds: IEnemySounds;
 
   constructor({ controllerCreator, height, width, initialX, initialY, initialDirection, id }: EnemyConfig) {
     super({ id });
 
-    const attacking = new Attacking();
+    const attacking = new Attacking({ availibleLives: 1, blockedLives: 0 });
     const movable = new Movable({
       height,
       width,
@@ -45,17 +45,42 @@ export default class Enemy
     movable.setStandingDirection(initialDirection);
     attacking.setController(controller);
 
+    /**
+     * @TODO Убрать это безобразие, когда будем прокидывать персонажа в контроллер, а не наоборот
+     */
+    if (controller.setCharacter) {
+      controller.setCharacter(this);
+    }
+
+    /**
+     * @TODO Убрать это безобразие, когда будем прокидывать персонажа в контроллер, а не наоборот
+     */
+    if (controller.init) {
+      controller.init();
+    }
+
     this.#initSounds(attacking);
   }
 
+  /**
+   * @TODO Описать эти типы в интерфейсах
+   */
+  get moving() {
+    return this.getAbility('movable');
+  }
+
+  get fighting() {
+    return this.getAbility('attacking');
+  }
+
   #initSounds(attacking: IAttacking): void {
-    this.enemySounds = new EnemySound({ attacking });
+    this.sounds = new EnemySound({ attacking });
 
     isMuttedStore.subscribe((value) => {
       if (value) {
-        this.enemySounds.muteSound();
+        this.sounds.muteSound();
       } else {
-        this.enemySounds.unmuteSound();
+        this.sounds.unmuteSound();
       }
     });
   }

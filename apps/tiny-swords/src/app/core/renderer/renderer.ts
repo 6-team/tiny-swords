@@ -134,6 +134,9 @@ export class Renderer {
     }
   }
 
+  /**
+   * @TODO Вынести в отдельный класс, а этот использовать только для рендера
+   */
   async renderHealthBar(lives: { totalLives: number; availableLives: number; blockedLives: number }) {
     const { totalLives, availableLives, blockedLives } = lives;
     const heartWidth = 20;
@@ -152,7 +155,7 @@ export class Renderer {
 
     this.#context.drawImage(backgroundImage, barPositionX, barPositionY, backgroundWidth, backgroundHeight);
 
-    const available = new Array(availableLives).fill(heartImage);
+    const available = availableLives ? new Array(availableLives).fill(heartImage) : [];
     const wasted = new Array(totalLives - availableLives - blockedLives);
     const blocked = blockedLives >= 1 ? new Array(blockedLives).fill(lockedHeartImage) : [];
 

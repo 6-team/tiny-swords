@@ -1,10 +1,10 @@
 import { IPlayer, StandingDirection } from '@shared';
 import { BehaviorSubject, Observable, concatAll, filter, map, merge, mergeMap, tap } from 'rxjs';
-import { TCollisionArea, TPixelsCoords } from '../../abilities/abilities.types';
-import { collisions } from '../collisions';
+import { TPixelsCoords } from '../../abilities/abilities.types';
 import { grid64 } from '../grid';
 import { Enemy } from '../../entities/enemy';
 import { AIController } from '../../controllers/AI';
+import { IAttackingCharacter, IMovableCharacter } from '../../common/common.types';
 
 class Enemies {
   readonly #enemiesSubject = new BehaviorSubject<Enemy[]>([]);
@@ -16,12 +16,12 @@ class Enemies {
     return this.#enemiesSubject.getValue();
   }
 
-  initEnemy({ id, coords }: IPlayer, bounds$: Observable<Array<TCollisionArea>>): Enemy {
+  initEnemy({ id, coords }: IPlayer, heroes$: Observable<Array<IMovableCharacter & IAttackingCharacter>>): Enemy {
     const [x, y] = coords;
     const [initialX, initialY, height, width] = grid64.transformToPixels(x - 1, y - 1, 3, 3);
 
     const enemy = new Enemy({
-      controllerCreator: (enemy) => collisions.decorateController(enemy, bounds$, new AIController()),
+      controllerCreator: () => new AIController({ heroes$ }),
       initialDirection: StandingDirection.LEFT,
       initialX,
       initialY,

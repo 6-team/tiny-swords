@@ -42,8 +42,14 @@ export interface IResource {
   resourceImage: string;
 }
 
-export type IMovableCharacter = ICharacter<{ movable: IMovable }>;
+export type IMovableCharacter = ICharacter<{ movable: IMovable }> & {
+  moving: IMovable;
+};
 
-export type IAttackingCharacter = ICharacter<{ attacking: IAttacking }>;
+export type IAttackingCharacter = ICharacter<{ attacking: IAttacking }> & {
+  fighting: IAttacking;
+};
 
-export type ICollectingCharacter = ICharacter<{ collecting: ICollecting }>;
+export type ICollectingCharacter = ICharacter<{ collecting: ICollecting }> & {
+  collecting: ICollecting;
+};

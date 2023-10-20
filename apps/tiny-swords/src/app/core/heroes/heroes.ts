@@ -10,13 +10,15 @@ import { CoordsTuple } from '../../entities/tile/tile.types';
 import { HeroType } from '../../entities/hero/hero.const';
 
 export class Heroes {
+  private _mainHero$ = new BehaviorSubject<Hero | null>(null);
+
   readonly #heroesSubject = new BehaviorSubject<Hero[]>([]);
 
   readonly heroes$ = this.#heroesSubject.asObservable();
   readonly heroesBoundaries$ = this.#initHeroesBoundaries();
+  readonly mainHero$ = this._mainHero$.asObservable();
 
   #startCoords: CoordsTuple;
-  #mainHero: Hero;
 
   constructor(startCoords: CoordsTuple) {
     this.#startCoords = startCoords;
@@ -27,7 +29,7 @@ export class Heroes {
   }
 
   get mainHero(): Hero {
-    return this.#mainHero;
+    return this._mainHero$.getValue();
   }
 
   initHero({ id }: IPlayer, bounds$: Observable<Array<TCollisionArea>>): Hero {
@@ -44,7 +46,7 @@ export class Heroes {
     });
 
     this.addHero(hero);
-    this.#mainHero = hero;
+    this._mainHero$.next(hero);
 
     return hero;
   }
@@ -85,7 +87,7 @@ export class Heroes {
   }
 
   isMainHero(id: string | number): boolean {
-    return this.#mainHero.id === id;
+    return this.mainHero?.id === id;
   }
 
   #getUniqueType(): HeroType {
