@@ -1,5 +1,6 @@
+import { TPixelsCoords } from '../../abilities/abilities.types';
 import { SIZE_X, SIZE_Y, TILE_SIZE } from '../../common/common.const';
-import { IGrid, TNumberOfTiles, TTilePosition } from '../../common/common.types';
+import { IGrid, TNumberOfTiles, TPixelsPosition, TTilePosition } from '../../common/common.types';
 
 export class Grid implements IGrid {
   #tileSize: number;
@@ -23,6 +24,18 @@ export class Grid implements IGrid {
     width: number,
   ): [pxX: number, pxY: number, pxHeight: number, pxWidth: number] {
     return [x, y, height, width].map((dimention) => dimention * this.#tileSize) as [number, number, number, number];
+  }
+
+  transformToTiles(x: TPixelsPosition, y: TPixelsPosition, height: number, width: number): TPixelsCoords {
+    return [x, y, height, width].map((dimention) => dimention / this.#tileSize) as TPixelsCoords;
+  }
+
+  getPrevPixels(dimention: TPixelsPosition): TPixelsPosition {
+    return dimention - this.#tileSize;
+  }
+
+  getNextPixels(dimention: TPixelsPosition): TPixelsPosition {
+    return dimention + this.#tileSize;
   }
 }
 

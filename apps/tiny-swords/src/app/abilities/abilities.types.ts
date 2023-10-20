@@ -9,7 +9,7 @@ import {
   TNumberOfPixels,
   TPixelsPosition,
 } from '../common/common.types';
-import { MovingDirection, AttackingType } from '@shared';
+import { MovingDirection, AttackingType, StandingDirection } from '@shared';
 import { IController } from '../controllers';
 
 interface IAbility<Context> {
@@ -43,7 +43,30 @@ export interface IAttacking extends IAbility<IAttackingCharacter> {
    */
   attack$: Observable<AttackingType>;
 
+  /**
+   * Поток состояний атаки: атака началась, атака закончилась
+   */
   isAttacking$: Observable<boolean>;
+
+  /**
+   * Поток состояния смерти
+   */
+  isDied$: Observable<boolean>;
+
+  /**
+   * Поток уменьшения жизней
+   */
+  isHitted$: Observable<boolean>;
+
+  /**
+   * Поток количества имеющихся жизней
+   */
+  livesCount$: Observable<number>;
+
+  /**
+   * Поток количества заблокированных жизней
+   */
+  blockedLivesCount$: Observable<number>;
 
   /**
    * Атакует ли персонаж прямо сейчас
@@ -57,6 +80,34 @@ export interface IAttacking extends IAbility<IAttackingCharacter> {
    * @returns Объект способности
    */
   attack(type?: AttackingType): this;
+
+  /**
+   * Метод для получения урона
+   *
+   * @returns Объект способности
+   */
+  takeDamage(): this;
+
+  /**
+   * Метод для сброса состояния способности
+   *
+   * @returns Объект способности
+   */
+  reset(): this;
+
+  /**
+   * Метод добавления одной жизни
+   *
+   * @returns Объект способности
+   */
+  addLive(): this;
+
+  /**
+   * Метод для разблокировки одной жизни
+   *
+   * @returns Объект способности
+   */
+  unblockLive(): this;
 
   /**
    * Вычисляет зону, куда будет атаковать персонаж и которая будет считаться зоной поражения для других.
@@ -111,6 +162,14 @@ export interface IMovable extends IAbility<IMovableCharacter> {
    * @returns Контроллер
    */
   getController(): IController;
+
+  /**
+   * Устанавливает направление персонажа, пока он стоит на месте.
+   *
+   * @param direction Направление персонажа
+   * @returns Объект способности
+   */
+  setStandingDirection(direction: StandingDirection): this;
 
   /**
    * Принудительно устанавливает координаты персонажу
