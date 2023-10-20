@@ -6,8 +6,8 @@
   import { IImprovementsType } from "../../common/common.types";
 
     export let createNewLevel: () => void;
-    export let buyImprovements: (resource: { type: ResourcesType; price: number }, type: string) => void;
-    export let availableResourcesCheck: (resource: { type: ResourcesType, price: number}, improvementType: string) => boolean;
+    export let buyImprovements: (resource: { type: ResourcesType; price: number }, type: IImprovementsType) => void;
+    export let availableResourcesCheck: (resource: { type: ResourcesType, price: number}, improvementType: IImprovementsType) => boolean;
 
     function next() {
         createNewLevel();
@@ -29,7 +29,7 @@
     <div class="next-level-menu-wrapper">
         <div class="next-level-menu">
             {#each items as item}
-
+            
                 <UpgradeItem  {buyImprovements} {availableResourcesCheck} {item}/>
             {/each}
         </div>

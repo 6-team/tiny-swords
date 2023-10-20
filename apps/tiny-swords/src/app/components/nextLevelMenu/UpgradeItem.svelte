@@ -1,8 +1,9 @@
 <script lang="ts">
+  import { IImprovementsType } from "../../common/common.types";
   import { ResourcesType } from "../../entities/resource";
-  export let buyImprovements: (resource: { type: ResourcesType; price: number }, type: string) => void;
-  export let availableResourcesCheck: (resource: { type: ResourcesType, price: number}, improvementType: string) => boolean;
-  export let item: {name: string, type: string, icon: string, cost: {type: ResourcesType, price: number}, styles?: {icon?:string, icon_wrapper?: string}, available: boolean}
+  export let buyImprovements: (resource: { type: ResourcesType; price: number }, type: IImprovementsType) => void;
+  export let availableResourcesCheck: (resource: { type: ResourcesType, price: number}, improvementType: IImprovementsType) => boolean;
+  export let item: {name: string, type: IImprovementsType, icon: string, cost: {type: ResourcesType, price: number}, styles?: {icon?:string, icon_wrapper?: string}, available: boolean}
 
   const  {name, cost, icon, styles={}, type, available} = item
 

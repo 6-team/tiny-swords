@@ -3,7 +3,7 @@
   import { Observable, combineLatest, concatAll, concatMap, filter, first, from, map, merge, skip, switchMap, tap, withLatestFrom } from "rxjs";
   import { Hero } from '../entities/hero'
   import { Resource, ResourcesType } from '../entities/resource';
-  import { SCALE } from '../common/common.const'
+  import { SCALE, TOTAL_LIVES } from '../common/common.const'
   import { actions, Heroes, Renderer, grid64, HeroResourcesBar, enemies } from "../core";
   import { Level } from "../core/level/level";
   import {
@@ -184,9 +184,9 @@
     const isEnoughResources = gameResources.availableResourcesCheck(resources);
     switch(improvementType){
       case IImprovementsType.LIFE:
-        return isEnoughResources && heroHealthBar.checkAddLive();
+        return isEnoughResources && heroes.mainHero.fighting.checkAddLive();
       case IImprovementsType.LIFE_SLOT:
-        return isEnoughResources && heroHealthBar.checkUnblockLive();
+        return isEnoughResources && heroes.mainHero.fighting.checkUnblockLive();
       default:
         return isEnoughResources;
     }
@@ -378,7 +378,7 @@
         hero.fighting.blockedLivesCount$
       ]).subscribe(([availableLives, blockedLives,]) => {
         heroHealthBarScene.clear();
-        heroHealthBarScene.renderHealthBar({ availableLives, blockedLives, totalLives: availableLives + blockedLives });
+        heroHealthBarScene.renderHealthBar({ availableLives, blockedLives, totalLives: TOTAL_LIVES });
       });
 
       hero.fighting.isDied$.pipe(filter(Boolean)).subscribe(() => {
