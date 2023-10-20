@@ -297,8 +297,6 @@
       }
     }
 
-    let lastTime = 0;
-
     level.resources$.subscribe((resources) => {
       resourcesScene.clear();
       resources.forEach((resource) => {
@@ -306,18 +304,9 @@
       });
     });
 
-    frames$.subscribe((timeStamp = 0) => {
-      const deltaTime = timeStamp - lastTime;
+    combineLatest([heroes.heroes$, enemies.enemies$]).subscribe(([heroes, enemies]) => {
+      interactiveScene.renderMovableLayer([...enemies, ...heroes]);
 
-      for (const enemy of enemies.enemies) {
-        interactiveScene.renderMovable(enemy, deltaTime);
-      }
-
-      interactiveScene.renderMovableLayer(heroes.heroes, deltaTime);
-      lastTime = timeStamp
-    });
-
-    heroes.heroes$.subscribe((heroes) => {
       for (const hero of heroes) {
         const movable = hero.getAbility('movable');
         const attacking = hero.getAbility('attacking');

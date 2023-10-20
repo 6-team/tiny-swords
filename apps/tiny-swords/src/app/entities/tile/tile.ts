@@ -82,7 +82,12 @@ export abstract class Tile<T extends string | number | symbol> implements ITile 
     this._type = type;
   }
 
-  initAnimation(deltaTime: number) {
+  /**
+   * Перключает кадр анимации, если последний кадр был показан достаточное количество времени
+   *
+   * @param deltaTime Время, которое прошло с показа предыдущего фрейма
+   */
+  switchAnimationFrame(deltaTime: number) {
     if (this._framePerTime > 1000 / this._fps) {
       this._framePerTime = 0;
       this._col = (this._col + 1) % this._spriteFramesCount;

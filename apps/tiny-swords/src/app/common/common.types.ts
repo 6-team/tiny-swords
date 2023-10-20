@@ -27,7 +27,7 @@ export interface ITile {
   }>;
   setAnimation(row: number): void;
   setAnimationOnce(row: number): Promise<void>;
-  initAnimation(deltaTime: number): void;
+  switchAnimationFrame(deltaTime: number): void;
 }
 
 export interface ICharacter<Abilities extends Record<string | symbol | number, WithSetPersonageContext>> extends ITile {
