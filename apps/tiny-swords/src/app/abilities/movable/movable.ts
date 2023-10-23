@@ -48,6 +48,7 @@ export class Movable implements IMovable {
         distinctUntilChanged(),
       )
       .subscribe(this._handleMovementChange);
+
     this._animationStream$.pipe(filter(this._hasContext)).subscribe(this._handleAnimationChange);
 
     combineLatest([animationInterval$, this._moveStream$])

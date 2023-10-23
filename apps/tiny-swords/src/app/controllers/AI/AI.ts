@@ -1,5 +1,5 @@
 import { MovingDirection, CharacterDirection } from '@shared';
-import { Observable, filter, map } from 'rxjs';
+import { Observable, Subscription, filter, first, map } from 'rxjs';
 import { IAttackingCharacter, IMovableCharacter } from '../../common/common.types';
 import { collisions } from '../../core/collisions';
 import { actions, grid64 } from '../../core';
@@ -10,6 +10,7 @@ export class AIController {
   private _character: IMovableCharacter & IAttackingCharacter;
   private _heroes$: Observable<Array<IMovableCharacter & IAttackingCharacter>>;
   private _ignoreMovements = false;
+  private _subscription: Subscription;
 
   constructor({
     heroes$,
@@ -31,9 +32,11 @@ export class AIController {
       map((enemy) => enemy.direction),
     );
 
-    streamDecorator(movements$).subscribe((direction: MovingDirection) => {
+    this._subscription = streamDecorator(movements$).subscribe((direction: MovingDirection) => {
       this._character.moving.moveTo(direction);
     });
+
+    this._character.fighting.isDied$.pipe(first()).subscribe(() => this._subscription.unsubscribe());
   }
 
   private _handleHeroCreation(hero: IMovableCharacter & IAttackingCharacter) {
