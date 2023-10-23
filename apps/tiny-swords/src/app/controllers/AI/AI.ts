@@ -1,92 +1,78 @@
-import { MovingDirection, AttackingType, StandingDirection } from '@shared';
-import { BehaviorSubject, Observable, Subject, filter } from 'rxjs';
+import { MovingDirection, CharacterDirection } from '@shared';
+import { Observable, filter, map } from 'rxjs';
 import { IAttackingCharacter, IMovableCharacter } from '../../common/common.types';
 import { IController } from '../controllers.types';
 import { collisions } from '../../core/collisions';
 import { actions, grid64 } from '../../core';
 import { TPixelsCoords } from '../../abilities/abilities.types';
+import { IAIControllerProps } from './AI.types';
 
 export class AIController implements IController {
-  private _movement$ = new BehaviorSubject<MovingDirection>(MovingDirection.IDLE);
-  private _animation$ = new BehaviorSubject<MovingDirection>(MovingDirection.IDLE);
-  private _attack$ = new Subject<AttackingType>();
   private _character: IMovableCharacter & IAttackingCharacter;
   private _heroes$: Observable<Array<IMovableCharacter & IAttackingCharacter>>;
   private _ignoreMovements = false;
 
-  readonly movement$ = this._movement$.asObservable();
-  readonly animation$ = this._animation$.asObservable();
-  readonly attack$ = this._attack$.asObservable();
-
   constructor({
     heroes$,
     id,
-  }: {
-    heroes$: Observable<Array<IMovableCharacter & IAttackingCharacter>>;
-    id: string | number;
-  }) {
+    character,
+    streamDecorator = (movements$: Observable<MovingDirection>) => movements$,
+  }: IAIControllerProps) {
     this._heroes$ = heroes$;
-
-    actions
-      .updateEnemyListener()
-      .pipe(filter((enemy) => enemy.id === id))
-      .subscribe((enemy) => {
-        if (enemy.hasOwnProperty('direction') && !this._ignoreMovements) {
-          this._movement$.next(enemy.direction);
-        }
-      });
-  }
-
-  setCharacter(character: IMovableCharacter & IAttackingCharacter) {
     this._character = character;
 
-    return this;
-  }
-
-  /**
-   * @TODO Убрать это безобразие, когда будем прокидывать персонажа в контроллер, а не наоборот
-   */
-  init() {
     this._heroes$.subscribe((heroes) => {
       for (const hero of heroes) {
-        hero.moving.breakpoints$.subscribe(() => {
-          this._ignoreMovements = false;
-
-          const enemy = this._character;
-          const enemyHasAttackCollision = collisions.hasCollision(
-            enemy.fighting.getAffectedArea(),
-            hero.moving.getCollisionArea(),
-          );
-
-          if (enemyHasAttackCollision) {
-            this._ignoreMovements = true;
-            this._attackWithDelay(enemy, 500);
-
-            return;
-          }
-
-          const enemyArea = enemy.moving.getCollisionArea();
-          const enemyBackArea: TPixelsCoords = [
-            enemy.moving.isRightDirection ? grid64.getPrevPixels(enemyArea[0]) : grid64.getNextPixels(enemyArea[0]),
-            enemyArea[1],
-            enemyArea[2],
-            enemyArea[3],
-          ];
-
-          const enemyHasBackCollision = collisions.hasCollision(enemyBackArea, hero.moving.getCollisionArea());
-
-          if (enemyHasBackCollision) {
-            enemy.moving.setStandingDirection(
-              enemy.moving.isRightDirection ? StandingDirection.LEFT : StandingDirection.RIGHT,
-            );
-            this._ignoreMovements = true;
-            this._attackWithDelay(enemy, 500);
-          }
-        });
+        this._handleHeroCreation(hero);
       }
     });
 
-    return this;
+    const movements$ = actions.updateEnemyListener().pipe(
+      filter((enemy) => enemy.id === id && enemy.hasOwnProperty('direction') && !this._ignoreMovements),
+      map((enemy) => enemy.direction),
+    );
+
+    streamDecorator(movements$).subscribe((direction: MovingDirection) => {
+      this._character.moving.moveTo(direction);
+    });
+  }
+
+  private _handleHeroCreation(hero: IMovableCharacter & IAttackingCharacter) {
+    hero.moving.breakpoints$.subscribe(() => {
+      this._ignoreMovements = false;
+
+      const enemy = this._character;
+      const enemyHasAttackCollision = collisions.hasCollision(
+        enemy.fighting.getAffectedArea(),
+        hero.moving.getCollisionArea(),
+      );
+
+      if (enemyHasAttackCollision) {
+        this._ignoreMovements = true;
+        this._attackWithDelay(enemy, 500);
+
+        return;
+      }
+
+      const enemyArea = enemy.moving.getCollisionArea();
+      const enemyBackArea: TPixelsCoords = [
+        enemy.moving.isRightDirection ? grid64.getPrevPixels(enemyArea[0]) : grid64.getNextPixels(enemyArea[0]),
+        enemyArea[1],
+        enemyArea[2],
+        enemyArea[3],
+      ];
+
+      const enemyHasBackCollision = collisions.hasCollision(enemyBackArea, hero.moving.getCollisionArea());
+
+      if (enemyHasBackCollision) {
+        this._character.moving.moveTo(MovingDirection.IDLE);
+        enemy.moving.setCharacterDirection(
+          enemy.moving.isRightDirection ? CharacterDirection.LEFT : CharacterDirection.RIGHT,
+        );
+        this._ignoreMovements = true;
+        this._attackWithDelay(enemy, 500);
+      }
+    });
   }
 
   private _attackWithDelay(enemy: IAttackingCharacter, ms: number) {

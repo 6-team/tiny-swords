@@ -91,13 +91,14 @@ export class Attacking implements IAttacking {
    * Устанавливает контроллер для управления способностью.
    * Для установки понадобился отдельный метод, чтобы была возможность использовать декораторы для контроллера с передачей this
    *
+   * @deprecated
    * @param controller Контроллер
    * @returns Объект способности
    */
   setController(controller: IController): this {
-    controller.attack$.pipe(filter(() => Boolean(this.#context))).subscribe((type) => {
-      this.attack(type);
-    });
+    // controller.attack$.pipe(filter(() => Boolean(this.#context))).subscribe((type) => {
+    //   this.attack(type);
+    // });
 
     return this;
   }

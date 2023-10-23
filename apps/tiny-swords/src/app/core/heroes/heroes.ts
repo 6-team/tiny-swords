@@ -1,13 +1,14 @@
 import { KeyboardController } from '../../controllers/keyboard';
 import { ServerController } from '../../controllers/server';
 import { Hero } from '../../entities/hero';
-import { IPlayer } from '@shared';
+import { IPlayer, MovingDirection } from '@shared';
 import { BehaviorSubject, Observable, concatAll, filter, map, merge, mergeMap } from 'rxjs';
 import { TCollisionArea, TPixelsCoords } from '../../abilities/abilities.types';
 import { collisions } from '../collisions';
 import { grid64 } from '../grid';
 import { CoordsTuple } from '../../entities/tile/tile.types';
 import { HeroType } from '../../entities/hero/hero.const';
+import { IMovableCharacter } from '../../common/common.types';
 
 export class Heroes {
   private _mainHero$ = new BehaviorSubject<Hero | null>(null);
@@ -32,17 +33,26 @@ export class Heroes {
     return this._mainHero$.getValue();
   }
 
-  initHero({ id }: IPlayer, bounds$: Observable<Array<TCollisionArea>>): Hero {
+  initHero(
+    { id }: IPlayer,
+    bounds$: Observable<Array<TCollisionArea>>,
+    enemies$: Observable<Array<IMovableCharacter>>,
+  ): Hero {
     const [x, y] = this.#startCoords;
     const [initialX, initialY, height, width] = grid64.transformToPixels(x - 1, y - 1, 3, 3);
 
     const hero = new Hero({
-      controllerCreator: (hero) => collisions.decorateController(hero, bounds$, new KeyboardController()),
       initialX,
       initialY,
       height,
       width,
       id,
+    });
+
+    new KeyboardController({
+      character: hero,
+      streamDecorator: (originalStream$: Observable<MovingDirection>) =>
+        collisions.preventBoundsDecorator({ character: hero, otherCharacters$: enemies$, bounds$, originalStream$ }),
     });
 
     this.addHero(hero);
@@ -56,7 +66,6 @@ export class Heroes {
     const type = this.#getUniqueType();
 
     const hero = new Hero({
-      controllerCreator: () => new ServerController({ id }),
       initialX,
       initialY,
       height,
@@ -64,6 +73,8 @@ export class Heroes {
       id,
       type,
     });
+
+    new ServerController({ id, character: hero });
 
     this.addHero(hero);
 

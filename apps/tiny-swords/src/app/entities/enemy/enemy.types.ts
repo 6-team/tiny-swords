@@ -1,8 +1,6 @@
-import { StandingDirection } from '@shared';
+import { CharacterDirection } from '@shared';
 import { IAttacking, IMovable } from '../../abilities';
-import { IAttackingCharacter, IMovableCharacter, TNumberOfPixels, TTilePosition } from '../../common/common.types';
-import { IController } from '../../controllers';
-import { EnemyActionAnimation } from './enemy.const';
+import { TNumberOfPixels, TTilePosition } from '../../common/common.types';
 
 export type EnemyAbilities = {
   movable: IMovable;
@@ -10,11 +8,10 @@ export type EnemyAbilities = {
 };
 
 export interface EnemyConfig {
-  controllerCreator: (enemy: IMovableCharacter & IAttackingCharacter) => IController;
   height: TNumberOfPixels;
   width: TNumberOfPixels;
   initialX: TTilePosition;
   initialY: TTilePosition;
-  initialDirection?: StandingDirection;
+  initialDirection?: CharacterDirection;
   id: string | number;
 }

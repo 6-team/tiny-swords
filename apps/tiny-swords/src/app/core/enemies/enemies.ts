@@ -1,5 +1,5 @@
-import { IPlayer, StandingDirection } from '@shared';
-import { BehaviorSubject, Observable, Subject, concatAll, filter, map, merge, mergeMap, tap } from 'rxjs';
+import { IPlayer, CharacterDirection, MovingDirection } from '@shared';
+import { BehaviorSubject, Observable, Subject, concatAll, filter, map, merge, mergeMap } from 'rxjs';
 import { TCollisionArea, TPixelsCoords } from '../../abilities/abilities.types';
 import { grid64 } from '../grid';
 import { Enemy } from '../../entities/enemy';
@@ -28,13 +28,20 @@ class Enemies {
     const [initialX, initialY, height, width] = grid64.transformToPixels(x - 1, y - 1, 3, 3);
 
     const enemy = new Enemy({
-      controllerCreator: (enemy) => collisions.decorateController(enemy, bounds$, new AIController({ id, heroes$ })),
-      initialDirection: StandingDirection.LEFT,
+      initialDirection: CharacterDirection.LEFT,
       initialX,
       initialY,
       height,
       width,
       id,
+    });
+
+    new AIController({
+      id,
+      heroes$,
+      character: enemy,
+      streamDecorator: (originalStream$: Observable<MovingDirection>) =>
+        collisions.preventBoundsDecorator({ character: enemy, otherCharacters$: heroes$, bounds$, originalStream$ }),
     });
 
     this.addEnemy(enemy);

@@ -22,7 +22,7 @@ export default class Hero
   protected _size = HERO_SIZE;
   sounds: IHeroSounds;
 
-  constructor({ controllerCreator, height, width, initialX, initialY, id, type = HeroType.WARRIOR_BLUE }: HeroConfig) {
+  constructor({ height, width, initialX, initialY, id, type = HeroType.WARRIOR_BLUE }: HeroConfig) {
     super({ id });
 
     this._type = type;
@@ -43,27 +43,7 @@ export default class Hero
     });
 
     this._setAbilities({ movable, attacking, collecting });
-
-    const controller = controllerCreator(this);
-
-    movable.setController(controller);
-    attacking.setController(controller);
-
-    /**
-     * @TODO Убрать это безобразие, когда будем прокидывать персонажа в контроллер, а не наоборот
-     */
-    if (controller.setCharacter) {
-      controller.setCharacter(this);
-    }
-
-    /**
-     * @TODO Убрать это безобразие, когда будем прокидывать персонажа в контроллер, а не наоборот
-     */
-    if (controller.init) {
-      controller.init();
-    }
-
-    this.#initSounds(movable, attacking, collecting);
+    this._initSounds({ movable, attacking, collecting });
   }
 
   /**
@@ -81,7 +61,15 @@ export default class Hero
     return this.getAbility('collecting');
   }
 
-  #initSounds(movable: IMovable, attacking: IAttacking, collecting: ICollecting): void {
+  private _initSounds({
+    movable,
+    attacking,
+    collecting,
+  }: {
+    movable: IMovable;
+    attacking: IAttacking;
+    collecting: ICollecting;
+  }): void {
     this.sounds = new HeroSounds({ movable, attacking, collecting });
 
     isMuttedStore.subscribe((value) => {

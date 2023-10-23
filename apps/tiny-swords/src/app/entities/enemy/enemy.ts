@@ -21,7 +21,7 @@ export default class Enemy
   protected _size = ENEMY_SIZE;
   sounds: IEnemySounds;
 
-  constructor({ controllerCreator, height, width, initialX, initialY, initialDirection, id }: EnemyConfig) {
+  constructor({ height, width, initialX, initialY, initialDirection, id }: EnemyConfig) {
     super({ id });
 
     const attacking = new Attacking({ availibleLives: 1, blockedLives: 0 });
@@ -38,28 +38,9 @@ export default class Enemy
     });
 
     this._setAbilities({ movable, attacking });
+    this._initSounds({ attacking });
 
-    const controller = controllerCreator(this);
-
-    movable.setController(controller);
-    movable.setStandingDirection(initialDirection);
-    attacking.setController(controller);
-
-    /**
-     * @TODO Убрать это безобразие, когда будем прокидывать персонажа в контроллер, а не наоборот
-     */
-    if (controller.setCharacter) {
-      controller.setCharacter(this);
-    }
-
-    /**
-     * @TODO Убрать это безобразие, когда будем прокидывать персонажа в контроллер, а не наоборот
-     */
-    if (controller.init) {
-      controller.init();
-    }
-
-    this.#initSounds(attacking);
+    movable.setCharacterDirection(initialDirection);
   }
 
   /**
@@ -73,7 +54,7 @@ export default class Enemy
     return this.getAbility('attacking');
   }
 
-  #initSounds(attacking: IAttacking): void {
+  private _initSounds({ attacking }: { attacking: IAttacking }): void {
     this.sounds = new EnemySound({ attacking });
 
     isMuttedStore.subscribe((value) => {
