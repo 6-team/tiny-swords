@@ -9,6 +9,7 @@ import { grid64 } from '../grid';
 import { CoordsTuple } from '../../entities/tile/tile.types';
 import { HeroType } from '../../entities/hero/hero.const';
 import { IMovableCharacter } from '../../common/common.types';
+import { MouseController } from '../../controllers/mouse';
 
 export class Heroes {
   private _mainHero$ = new BehaviorSubject<Hero | null>(null);
@@ -49,6 +50,7 @@ export class Heroes {
       id,
     });
 
+    new MouseController({ character: hero });
     new KeyboardController({
       character: hero,
       streamDecorator: (originalStream$: Observable<MovingDirection>) =>

@@ -1,13 +1,12 @@
 import { MovingDirection, CharacterDirection } from '@shared';
 import { Observable, filter, map } from 'rxjs';
 import { IAttackingCharacter, IMovableCharacter } from '../../common/common.types';
-import { IController } from '../controllers.types';
 import { collisions } from '../../core/collisions';
 import { actions, grid64 } from '../../core';
 import { TPixelsCoords } from '../../abilities/abilities.types';
 import { IAIControllerProps } from './AI.types';
 
-export class AIController implements IController {
+export class AIController {
   private _character: IMovableCharacter & IAttackingCharacter;
   private _heroes$: Observable<Array<IMovableCharacter & IAttackingCharacter>>;
   private _ignoreMovements = false;

@@ -1,10 +1,9 @@
 import { filter } from 'rxjs';
-import { IController } from '../controllers.types';
 import { actions } from '../../core';
 import { IMovableCharacter, IAttackingCharacter } from '../../common/common.types';
 import { IServerControllerProps } from './server.types';
 
-export default class ServerController implements IController {
+export default class ServerController {
   private _character: IMovableCharacter & IAttackingCharacter;
 
   constructor({ id, character }: IServerControllerProps) {

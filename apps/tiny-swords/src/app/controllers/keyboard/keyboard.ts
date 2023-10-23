@@ -1,11 +1,10 @@
 import { directionKeys, attackKeys } from './keyboard.conts';
-import { IController } from '../controllers.types';
 import { BehaviorSubject, Observable, fromEvent, map } from 'rxjs';
 import { MovingDirection, AttackingType } from '@shared';
 import { IKeyboardControllerProps } from './keyboard.types';
 import { IAttackingCharacter, IMovableCharacter } from '../../common/common.types';
 
-export default class KeyboardController implements IController {
+export default class KeyboardController {
   private _pushedMovementKeys$ = new BehaviorSubject<MovingDirection[]>([]);
   private _lastPushedMovementKey$ = this._pushedMovementKeys$.pipe(map((directions) => directions.at(-1)));
   private _character: IMovableCharacter & IAttackingCharacter;
