@@ -8,8 +8,8 @@ import { collisions } from '../collisions';
 import { grid64 } from '../grid';
 import { CoordsTuple } from '../../entities/tile/tile.types';
 import { HeroType } from '../../entities/hero/hero.const';
-import { IMovableCharacter } from '../../common/common.types';
 import { MouseController } from '../../controllers/mouse';
+import { IMovingCharacter } from '../../abilities/moving/moving.types';
 
 export class Heroes {
   private _mainHero$ = new BehaviorSubject<Hero | null>(null);
@@ -37,7 +37,7 @@ export class Heroes {
   initHero(
     { id }: IPlayer,
     bounds$: Observable<Array<TCollisionArea>>,
-    enemies$: Observable<Array<IMovableCharacter>>,
+    enemies$: Observable<Array<IMovingCharacter>>,
   ): Hero {
     const [x, y] = this.#startCoords;
     const [initialX, initialY, height, width] = grid64.transformToPixels(x - 1, y - 1, 3, 3);

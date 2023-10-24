@@ -1,7 +1,7 @@
-import { IMovable, TCollisionArea } from '../abilities.types';
-import { IMovableCharacter, TNumberOfPixels, TPixelsPosition } from '../../common/common.types';
-import { MovingError, PIXELS_PER_FRAME, movementSetters, nextMoveCoordsGetters } from './movable.const';
-import { MovableProps } from './movable.types';
+import { TCollisionArea } from '../abilities.types';
+import { TNumberOfPixels, TPixelsPosition } from '../../common/common.types';
+import { MovingError, PIXELS_PER_FRAME, movementSetters, nextMoveCoordsGetters } from './moving.const';
+import { IMoving, IMovingCharacter, IMovingProps } from './moving.types';
 import { BehaviorSubject, Observable, combineLatest, distinctUntilChanged, filter, map, withLatestFrom } from 'rxjs';
 import { HeroActionAnimation } from '../../entities/hero/hero.const';
 import { grid64 } from '../../core/grid';
@@ -12,7 +12,7 @@ import { animationInterval$ } from '../../tools/observables/interval';
  * Класс для передвигающихся элементов.
  * Координаты задаются в тайлах, а выбранная система координат уже переводит значения в пиксели
  */
-export class Movable implements IMovable {
+export class Moving implements IMoving {
   private _breakpoints$ = new BehaviorSubject<boolean>(true);
   private _moveStream$ = new BehaviorSubject(MovingDirection.IDLE);
   private _animationStream$ = new BehaviorSubject(MovingDirection.IDLE);
@@ -22,15 +22,15 @@ export class Movable implements IMovable {
   private _direction = CharacterDirection.RIGHT;
   private _movingProgressRemaining = 0;
   private _breakpointReached: boolean = true;
-  private _getCollisionAreaFunc?: MovableProps['getCollisionArea'];
+  private _getCollisionAreaFunc?: IMovingProps['getCollisionArea'];
   private _coords$: BehaviorSubject<[TPixelsPosition, TPixelsPosition]>;
-  private _context?: IMovableCharacter;
+  private _context?: IMovingCharacter;
 
   readonly coords$: Observable<[TPixelsPosition, TPixelsPosition]>;
   readonly breakpoints$: Observable<[TPixelsPosition, TPixelsPosition]>;
   readonly movements$: Observable<MovingDirection> = this._moveStream$.asObservable();
 
-  constructor({ height, width, initialX, initialY, getCollisionArea }: MovableProps) {
+  constructor({ height, width, initialX, initialY, getCollisionArea }: IMovingProps) {
     this._sizes = [height, width || height];
     this._getCollisionAreaFunc = getCollisionArea;
 
@@ -63,7 +63,7 @@ export class Movable implements IMovable {
    * @param context Контекст
    * @returns Объект способности
    */
-  setContext(context: IMovableCharacter) {
+  setContext(context: IMovingCharacter) {
     this._context = context;
 
     return this;

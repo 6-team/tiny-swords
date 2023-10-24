@@ -1,1 +1,0 @@
-export { Movable } from './movable';

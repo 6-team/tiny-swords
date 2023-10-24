@@ -1,10 +1,11 @@
 import { filter } from 'rxjs';
 import { actions } from '../../core';
-import { IMovableCharacter, IAttackingCharacter } from '../../common/common.types';
 import { IServerControllerProps } from './server.types';
+import { IMovingCharacter } from '../../abilities/moving/moving.types';
+import { IFightingCharacter } from '../../abilities/fighting/fighting.types';
 
 export default class ServerController {
-  private _character: IMovableCharacter & IAttackingCharacter;
+  private _character: IMovingCharacter & IFightingCharacter;
 
   constructor({ id, character }: IServerControllerProps) {
     this._character = character;

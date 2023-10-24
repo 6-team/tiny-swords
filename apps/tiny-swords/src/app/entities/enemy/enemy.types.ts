@@ -1,10 +1,11 @@
 import { CharacterDirection } from '@shared';
-import { IAttacking, IMovable } from '../../abilities';
 import { TNumberOfPixels, TTilePosition } from '../../common/common.types';
+import { IMoving } from '../../abilities/moving/moving.types';
+import { IFighting } from '../../abilities/fighting/fighting.types';
 
 export type EnemyAbilities = {
-  movable: IMovable;
-  attacking: IAttacking;
+  moving: IMoving;
+  fighting: IFighting;
 };
 
 export interface EnemyConfig {

@@ -1,6 +1,7 @@
-import { IAttackingCharacter, IMovableCharacter } from '../../common/common.types';
+import { IFightingCharacter } from '../../abilities/fighting/fighting.types';
+import { IMovingCharacter } from '../../abilities/moving/moving.types';
 
 export interface IServerControllerProps {
   id: number | string;
-  character: IMovableCharacter & IAttackingCharacter;
+  character: IMovingCharacter & IFightingCharacter;
 }
