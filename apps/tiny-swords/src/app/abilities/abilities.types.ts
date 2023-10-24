@@ -1,7 +1,6 @@
 import { Observable } from 'rxjs';
 import {
   IAttackingCharacter,
-  ICharacter,
   ICollectingCharacter,
   IMovableCharacter,
   IResource,
@@ -10,7 +9,6 @@ import {
   TPixelsPosition,
 } from '../common/common.types';
 import { MovingDirection, AttackingType, CharacterDirection } from '@shared';
-import { IController } from '../controllers';
 
 export interface IAbility<Context> {
   /**
