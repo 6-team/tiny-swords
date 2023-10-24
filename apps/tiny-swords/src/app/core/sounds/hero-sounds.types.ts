@@ -1,4 +1,4 @@
-import { IAttacking, ICollecting, IMovable } from '../../abilities';
+import { IAttacking, ICollecting, IMovable } from '@abilities';
 import { ISounds } from './sounds.types';
 
 export interface HeroSoundsConfig {

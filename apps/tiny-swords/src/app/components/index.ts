@@ -1,4 +1,5 @@
-export * from './EndGameMenu';
+export * from './endGameMenu';
 export * from './nextLevelMenu';
 export * from './mainMenu';
-export * from './Button';
+export * from './button';
+export * from './hero-resource-bar';

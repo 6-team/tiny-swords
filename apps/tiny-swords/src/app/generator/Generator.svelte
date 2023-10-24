@@ -4,7 +4,7 @@
   import { Hero } from '../entities/hero'
   import { Resource, ResourcesType } from '../entities/resource';
   import { SCALE, TOTAL_LIVES } from '../common/common.const'
-  import { actions, Heroes, Renderer, grid64, HeroResourcesBar, enemies } from "../core";
+  import { actions, Heroes, Renderer, grid64, enemies } from "../core";
   import { Level } from "../core/level/level";
   import {
     nextLevelMenu,
@@ -13,7 +13,7 @@
     endGameMenuStore,
     multiplayerStore,
   } from "../store";
-  import { MainMenu, NextLevelMenu, EndGameMenu } from "../components";
+  import { MainMenu, NextLevelMenu, EndGameMenu, HeroResourcesBar } from "@components";
   import { frames$ } from "../tools/observables";
   import { collisions } from "../core/collisions";
   import { LayersRenderType } from "../core/layers/layers.types"

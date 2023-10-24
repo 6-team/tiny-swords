@@ -1,6 +1,6 @@
 <script lang="ts">
-  import {  type ImprovementItemType, type availableResourcesCheckType, type buyImprovementsType } from "../../common/common.types";
-  import { ResourcesType } from "../../entities/resource";
+  import {  type ImprovementItemType, type availableResourcesCheckType, type buyImprovementsType } from "@common/common.types";
+  import { ResourcesType } from "@entities/resource";
 
   export let buyImprovements: buyImprovementsType;
   export let availableResourcesCheck: availableResourcesCheckType;

@@ -4,9 +4,12 @@ import { MovingDirection } from '@shared';
 
 import { Sounds } from './sounds';
 import { СharacterSoundsType } from './sounds.const';
-import { IResource } from '../../common/common.types';
+import { IResource } from '@common/common.types';
 import { HeroSoundsConfig, IHeroSounds } from './hero-sounds.types';
 
+/**
+ * Класс для работы со свуками героя
+ */
 export class HeroSounds extends Sounds implements IHeroSounds {
   constructor({ movable, attacking, collecting }: HeroSoundsConfig) {
     super();
@@ -41,26 +44,44 @@ export class HeroSounds extends Sounds implements IHeroSounds {
     });
   }
 
+  /**
+   * Воспроизведение звука ходьбы
+   */
   playMovementSound() {
     this.playSound(СharacterSoundsType.MOVEMENT);
   }
 
+  /**
+   * Остановка звука ходьбы
+   */
   stopMovementSound() {
     this.stopSound(СharacterSoundsType.MOVEMENT);
   }
 
+  /**
+   * Воспроизведение звука когда герой погиб
+   */
   playGameOverSound() {
     setTimeout(() => this.playSound(СharacterSoundsType.GAME_OVER), 500);
   }
 
+  /**
+   * Воспроизведение звука подбора ресурсов
+   */
   playResourceSelection() {
     this.playSound(СharacterSoundsType.RESOURCE);
   }
 
+  /**
+   * Воспроизведение звука атаки
+   */
   playAttackSound() {
     this.playSound(СharacterSoundsType.ATTACK, 0.3);
   }
 
+  /**
+   * Воспроизведение звука когда по герою попадают
+   */
   playHittingSound() {
     this.playSound(СharacterSoundsType.HITTING);
   }

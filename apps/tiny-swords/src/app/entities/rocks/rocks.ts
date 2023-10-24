@@ -1,9 +1,9 @@
-import { Tile } from "../tile/tile";
-import { RocksType, mapTerrainToCoords } from "./rocks.const";
+import { Tile } from '../tile/tile';
+import { RocksType, mapTerrainToCoords } from './rocks.const';
 
 export class RocksTile extends Tile<RocksType> {
-  protected _type: RocksType;
-  protected _sprite;
+  protected _type: RocksType = RocksType.ROCKS_M;
+  protected _sprite = './img/Terrain/Water/Rocks/Rocks_02.png';
 
   constructor(type: RocksType = RocksType.ROCKS_M) {
     super();

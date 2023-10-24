@@ -1,8 +1,8 @@
-import { Tile } from "../tile/tile";
-import { HouseType, mapTerrainToCoords } from "./house.const";
+import { Tile } from '../tile/tile';
+import { HouseType, mapTerrainToCoords } from './house.const';
 
 export class HouseTile extends Tile<HouseType> {
-  protected _type: HouseType;
+  protected _type: HouseType = HouseType.TOP_LEFT;
   protected _sprite = './img/Factions/Knights/Buildings/House/House_Blue.png';
 
   constructor(type: HouseType = HouseType.TOP_LEFT) {
@@ -16,6 +16,6 @@ export class HouseTile extends Tile<HouseType> {
   }
 
   protected _getCoordsMap() {
-      return mapTerrainToCoords;
+    return mapTerrainToCoords;
   }
 }

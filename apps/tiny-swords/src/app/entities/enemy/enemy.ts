@@ -8,7 +8,7 @@ import { Character } from '../character';
 import { EnemyType, mapEnemyTypeToCoords } from './enemy.const';
 import { EnemyAbilities, EnemyConfig } from './enemy.types';
 import { isMuttedStore } from '../../store';
-import { IEnemySounds } from '../../core/sounds/enemy-sounds.types';
+import { IEnemySounds } from '../../core/sounds/enemy-sounds/enemy-sounds.types';
 
 const ENEMY_SIZE = 192;
 

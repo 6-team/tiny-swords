@@ -4,6 +4,9 @@ import { filter } from 'rxjs';
 import { Sounds } from './sounds';
 import { СharacterSoundsType } from './sounds.const';
 
+/**
+ * Класс для работы со звукаки врага
+ */
 export class EnemySound extends Sounds implements IEnemySounds {
   constructor({ attacking }: EnemySoundsConfig) {
     super();
@@ -17,11 +20,17 @@ export class EnemySound extends Sounds implements IEnemySounds {
     attacking.isHitted$.subscribe(() => this.playHittingSound());
   }
 
-  playAttackSound() {
+  /**
+   * Воспроизедение звука атаки
+   */
+  playAttackSound(): void {
     this.playSound(СharacterSoundsType.ATTACK, 0.3);
   }
 
-  playHittingSound() {
+  /**
+   * Воспроизведение звука когда попадаем по гоблину
+   */
+  playHittingSound(): void {
     this.playSound(СharacterSoundsType.HITTING);
   }
 }

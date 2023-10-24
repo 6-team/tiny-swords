@@ -1,5 +1,5 @@
 <script lang="ts">
-  import {Button} from '../../components'
+  import { Button } from '@components';
   export let onClick: () => void;
   export let isMultiplayer: boolean;
 </script>

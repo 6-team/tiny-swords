@@ -15,7 +15,13 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@shared": ["libs/shared/src/index.ts"]
+      "@shared": ["libs/shared/src/index.ts"],
+      "@components": ["apps/tiny-swords/src/app/components/index.ts"],
+      "@store": ["apps/tiny-swords/src/app/store/index.ts"],
+      "@entities/*": ["apps/tiny-swords/src/app/entities/*"],
+      "@abilities": ["apps/tiny-swords/src/app/abilities/index.ts"],
+      "@common/*": ["apps/tiny-swords/src/app/common/*"],
+      "@core/*": ["apps/tiny-swords/src/app/core/*"],
     }
   },
   "exclude": ["node_modules", "tmp"]
