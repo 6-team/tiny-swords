@@ -2,7 +2,6 @@ import { IAttacking, TCollisionArea } from '../abilities.types';
 import { IAttackingCharacter, IMovableCharacter } from '../../common/common.types';
 import { AttackingError } from './attacking.const';
 import { BehaviorSubject, Observable, Subject, filter, map, noop } from 'rxjs';
-import { IController } from '../../controllers';
 import { HeroActionAnimation } from '../../entities/hero/hero.const';
 import { AttackingProps } from './attacking.types';
 import { AttackingType } from '@shared';
@@ -83,21 +82,6 @@ export class Attacking implements IAttacking {
    */
   setContext(context: IAttackingCharacter & IMovableCharacter): this {
     this.#context = context;
-
-    return this;
-  }
-
-  /**
-   * Устанавливает контроллер для управления способностью.
-   * Для установки понадобился отдельный метод, чтобы была возможность использовать декораторы для контроллера с передачей this
-   *
-   * @param controller Контроллер
-   * @returns Объект способности
-   */
-  setController(controller: IController): this {
-    controller.attack$.pipe(filter(() => Boolean(this.#context))).subscribe((type) => {
-      this.attack(type);
-    });
 
     return this;
   }

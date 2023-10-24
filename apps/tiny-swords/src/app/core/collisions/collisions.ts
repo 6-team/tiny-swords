@@ -1,9 +1,9 @@
-import { Observable, distinctUntilChanged, map, withLatestFrom } from 'rxjs';
+import { Observable, combineLatest, distinctUntilChanged, map } from 'rxjs';
 import { TCollisionArea } from '../../abilities/abilities.types';
 import { IMovableCharacter } from '../../common/common.types';
-import { IController } from '../../controllers';
-import { frames$ } from '../../tools/observables';
 import { MovingDirection } from '@shared';
+import { animationInterval$ } from '../../tools/observables/interval';
+import { IPreventBoundsDecoratorProps } from './collisions.types';
 
 export class Collisions {
   static _instance: Collisions;
@@ -42,44 +42,46 @@ export class Collisions {
   }
 
   /**
-   * Декоратор контроллера: фильтрует поток движений, не пропуская движения в сторону элементов, на которые нельзя зайти
+   * Декоратор для потока движений, который фильтрует поток, запрещая наступать на границы карты и других персонажей
    *
-   * @param character Персонаж
-   * @param bounds Observable массив с границами, на которые персонажу заступать нельзя
-   * @param controller Контроллер, предоставляющий поток движений, который нужно фильтровать
+   * @param props.character Персонаж
+   * @param props.otherCharacters$ Поток с массивом других персонажей, с которыми тоже нельзя допускать коллизии
+   * @param props.bounds$ Поток массивов координат, на которые персонажу заступать нельзя
+   * @param props.originalStream$ Оригинальный поток движений, который нужно модифицировать
    *
-   * @returns Новый контроллер
+   * @returns Направление движения: либо IDLE, если нельзя, либо изначальное полученное значение
    */
-  decorateController(
-    character: IMovableCharacter,
-    bounds$: Observable<Array<TCollisionArea>>,
-    controller: IController,
-  ): IController {
-    const movable = character.getAbility('movable');
-    const enhanced = {
-      ...controller,
-      movement$: frames$.pipe(
-        withLatestFrom(movable.breakpoints$, bounds$, controller.movement$),
-        map(([_f, _b, bounds, direction]) => {
-          for (const bound of bounds) {
-            const nextCollisionArea = movable.getNextCollisionArea(direction);
-            const hasCollision = collisions.hasCollision(bound, nextCollisionArea);
+  preventBoundsDecorator({
+    character,
+    otherCharacters$,
+    bounds$,
+    originalStream$,
+  }: IPreventBoundsDecoratorProps): Observable<MovingDirection> {
+    return combineLatest([animationInterval$, originalStream$, otherCharacters$, bounds$]).pipe(
+      map((streams: [number, MovingDirection, Array<IMovableCharacter>, Array<TCollisionArea>]) => {
+        const direction = streams[1] ?? MovingDirection.IDLE;
+        const nextCollisionArea = character.moving.getNextCollisionArea(direction);
 
-            if (hasCollision) {
-              return MovingDirection.IDLE;
-            }
+        for (const otherCharacter of streams[2]) {
+          const hasCollision = collisions.hasCollision(otherCharacter.moving.getCollisionArea(), nextCollisionArea);
+
+          if (hasCollision) {
+            return MovingDirection.IDLE;
           }
+        }
 
-          return direction;
-        }),
-        distinctUntilChanged(),
-      ),
-      animation$: controller.movement$,
-    };
+        for (const bound of streams[3]) {
+          const hasCollision = collisions.hasCollision(bound, nextCollisionArea);
 
-    Object.setPrototypeOf(enhanced, Object.getPrototypeOf(controller));
+          if (hasCollision) {
+            return MovingDirection.IDLE;
+          }
+        }
 
-    return enhanced;
+        return direction;
+      }),
+      distinctUntilChanged(),
+    );
   }
 }
 

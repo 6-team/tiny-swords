@@ -4,41 +4,41 @@ import { MovingError, PIXELS_PER_FRAME, movementSetters, nextMoveCoordsGetters }
 import { MovableProps } from './movable.types';
 import { BehaviorSubject, Observable, combineLatest, distinctUntilChanged, filter, map, withLatestFrom } from 'rxjs';
 import { HeroActionAnimation } from '../../entities/hero/hero.const';
-import { frames$ } from '../../tools/observables';
 import { grid64 } from '../../core/grid';
-import { IController } from '../../controllers';
-import { MovingDirection, StandingDirection } from '@shared';
+import { MovingDirection, CharacterDirection } from '@shared';
+import { animationInterval$ } from '../../tools/observables/interval';
 
 /**
  * Класс для передвигающихся элементов.
  * Координаты задаются в тайлах, а выбранная система координат уже переводит значения в пиксели
  */
 export class Movable implements IMovable {
-  #sizes: [height: TNumberOfPixels, width: TNumberOfPixels];
-  #isRightDirection = true;
-  #movingProgressRemaining = 0;
-  #breakpointReached: boolean = true;
-  #getCollisionAreaFunc?: MovableProps['getCollisionArea'];
-  #context?: IMovableCharacter;
-
-  private _controller: IController;
-  private _lastDirection = MovingDirection.IDLE;
   private _breakpoints$ = new BehaviorSubject<boolean>(true);
+  private _moveStream$ = new BehaviorSubject(MovingDirection.IDLE);
+  private _animationStream$ = new BehaviorSubject(MovingDirection.IDLE);
+  private _lastDirection = MovingDirection.IDLE;
 
-  #coords$: BehaviorSubject<[TPixelsPosition, TPixelsPosition]>;
+  private _sizes: [height: TNumberOfPixels, width: TNumberOfPixels];
+  private _direction = CharacterDirection.RIGHT;
+  private _movingProgressRemaining = 0;
+  private _breakpointReached: boolean = true;
+  private _getCollisionAreaFunc?: MovableProps['getCollisionArea'];
+  private _coords$: BehaviorSubject<[TPixelsPosition, TPixelsPosition]>;
+  private _context?: IMovableCharacter;
 
   readonly coords$: Observable<[TPixelsPosition, TPixelsPosition]>;
   readonly breakpoints$: Observable<[TPixelsPosition, TPixelsPosition]>;
+  readonly movements$: Observable<MovingDirection> = this._moveStream$.asObservable();
 
   constructor({ height, width, initialX, initialY, getCollisionArea }: MovableProps) {
-    this.#sizes = [height, width || height];
-    this.#getCollisionAreaFunc = getCollisionArea;
+    this._sizes = [height, width || height];
+    this._getCollisionAreaFunc = getCollisionArea;
 
-    this.#coords$ = new BehaviorSubject<[TPixelsPosition, TPixelsPosition]>([initialX, initialY]);
-    this.coords$ = this.#coords$.asObservable();
+    this._coords$ = new BehaviorSubject<[TPixelsPosition, TPixelsPosition]>([initialX, initialY]);
+    this.coords$ = this._coords$.asObservable();
     this.breakpoints$ = this._breakpoints$.pipe(
-      filter(this.#hasContext),
-      withLatestFrom(this.#coords$),
+      filter(this._hasContext),
+      withLatestFrom(this._coords$),
       map(([_, coords]) => coords),
     );
 
@@ -47,32 +47,13 @@ export class Movable implements IMovable {
         map(() => this._lastDirection),
         distinctUntilChanged(),
       )
-      .subscribe(this.#handleMovementChange);
-  }
+      .subscribe(this._handleMovementChange);
 
-  /**
-   * Устанавливает контроллер для управления способностью.
-   * Для установки понадобился отдельный метод, чтобы была возможность использовать декораторы для контроллера с передачей this
-   *
-   * @param controller Контроллер
-   * @returns Объект способности
-   */
-  setController(controller: IController) {
-    this._controller = controller;
+    this._animationStream$.pipe(filter(this._hasContext)).subscribe(this._handleAnimationChange);
 
-    combineLatest([frames$, this._controller.movement$]).subscribe(this.#handleFrameChange);
-    controller.animation$.subscribe(this.#handleAnimationChange);
-
-    return this;
-  }
-
-  /**
-   * Возвращает объект контроллера, который управляет текущим персонажем
-   *
-   * @returns Контроллер
-   */
-  getController() {
-    return this._controller;
+    combineLatest([animationInterval$, this._moveStream$])
+      .pipe(filter(this._hasContext))
+      .subscribe(this._handleFrameChange);
   }
 
   /**
@@ -83,7 +64,7 @@ export class Movable implements IMovable {
    * @returns Объект способности
    */
   setContext(context: IMovableCharacter) {
-    this.#context = context;
+    this._context = context;
 
     return this;
   }
@@ -94,10 +75,10 @@ export class Movable implements IMovable {
    * @param direction Направление персонажа
    * @returns Объект способности
    */
-  setStandingDirection(direction: StandingDirection) {
-    this.#setIsRightDirection(direction);
-    this.#context.setAnimation(
-      this.#isRightDirection ? HeroActionAnimation.STANDS_STILL : HeroActionAnimation.STANDS_STILL_LEFT,
+  setCharacterDirection(direction: CharacterDirection) {
+    this._setCharacterDirection(direction);
+    this._context.setAnimation(
+      this.isRightDirection ? HeroActionAnimation.STANDS_STILL : HeroActionAnimation.STANDS_STILL_LEFT,
     );
 
     return this;
@@ -110,7 +91,7 @@ export class Movable implements IMovable {
    * @returns Объект способности
    */
   setCoords(coords: [TPixelsPosition, TPixelsPosition]) {
-    this.#coords$.next(coords);
+    this._coords$.next(coords);
 
     return this;
   }
@@ -120,16 +101,16 @@ export class Movable implements IMovable {
    *
    * @returns Доступен ли контекст
    */
-  #hasContext = () => {
-    return Boolean(this.#context);
+  private _hasContext = () => {
+    return Boolean(this._context);
   };
 
-  #handleAnimationChange = (direction: MovingDirection) => {
+  private _handleAnimationChange = (direction: MovingDirection): this => {
     if (this.isMoving) {
       return this;
     }
 
-    this.#handleMovementChange(direction);
+    this._handleMovementChange(direction);
 
     return this;
   };
@@ -143,14 +124,14 @@ export class Movable implements IMovable {
    * @param param0 [time, direction, movement, coords]
    * @returns Объект способности
    */
-  #handleFrameChange = ([_, direction]) => {
+  private _handleFrameChange = ([_, direction]): this => {
     /**
      * Если вручную не остановлен и остались еще непройденные пиксели, то продолжаем двигать
      */
-    if (this.#movingProgressRemaining > 0) {
-      this.#movingProgressRemaining -= PIXELS_PER_FRAME;
-      this.#breakpointReached = false;
-      this.#coords$.next(movementSetters[this._lastDirection](this.#coords$.getValue()));
+    if (this._movingProgressRemaining > 0) {
+      this._movingProgressRemaining -= PIXELS_PER_FRAME;
+      this._breakpointReached = false;
+      this._coords$.next(movementSetters[this._lastDirection](this._coords$.getValue()));
 
       return this;
     }
@@ -158,8 +139,8 @@ export class Movable implements IMovable {
     /**
      * Если движение закончилось, но команда на движение не была прекращена
      */
-    if (this.#movingProgressRemaining === 0 && direction !== MovingDirection.IDLE) {
-      this.#movingProgressRemaining = grid64.tileSize;
+    if (this._movingProgressRemaining === 0 && direction !== MovingDirection.IDLE) {
+      this._movingProgressRemaining = grid64.tileSize;
       this._lastDirection = direction;
       this._breakpoints$.next(true);
 
@@ -169,9 +150,9 @@ export class Movable implements IMovable {
     /**
      * Если движение закончилось, и последняя команда не требует нового движения
      */
-    if (this.#movingProgressRemaining === 0 && direction === MovingDirection.IDLE && !this.#breakpointReached) {
+    if (this._movingProgressRemaining === 0 && direction === MovingDirection.IDLE && !this._breakpointReached) {
       this._lastDirection = direction;
-      this.#breakpointReached = true;
+      this._breakpointReached = true;
       this._breakpoints$.next(true);
     }
 
@@ -185,9 +166,9 @@ export class Movable implements IMovable {
    * @param direction Направление движения
    * @returns Объект способности
    */
-  #handleMovementChange = (direction: MovingDirection) => {
-    this.#setIsRightDirection(direction);
-    this.#setAnimation(direction);
+  private _handleMovementChange = (direction: MovingDirection): this => {
+    this._setCharacterDirection(direction);
+    this._setAnimation(direction);
 
     return this;
   };
@@ -199,13 +180,13 @@ export class Movable implements IMovable {
    * @param direction Направление движения персонажа
    * @returns Объект способности
    */
-  #setIsRightDirection(direction: MovingDirection | StandingDirection): this {
-    if ([MovingDirection.LEFT, StandingDirection.LEFT].includes(direction)) {
-      this.#isRightDirection = false;
+  private _setCharacterDirection(direction: MovingDirection | CharacterDirection): this {
+    if ([MovingDirection.LEFT, CharacterDirection.LEFT].includes(direction)) {
+      this._direction = CharacterDirection.LEFT;
     }
 
-    if ([MovingDirection.RIGHT, StandingDirection.RIGHT].includes(direction)) {
-      this.#isRightDirection = true;
+    if ([MovingDirection.RIGHT, CharacterDirection.RIGHT].includes(direction)) {
+      this._direction = CharacterDirection.RIGHT;
     }
 
     return this;
@@ -218,34 +199,28 @@ export class Movable implements IMovable {
    * @param direction Направление движения персонажа
    * @returns Объект способности
    */
-  #setAnimation(direction: MovingDirection): this {
-    if (!this.#context) {
+  private _setAnimation(direction: MovingDirection): this {
+    if (!this._context) {
       throw new Error(MovingError.PERSONAGE_NOT_SET);
     }
 
-    switch (direction) {
-      case MovingDirection.LEFT:
-        this.#context.setAnimation(HeroActionAnimation.RUN_LEFT);
+    const mapDirectionToAnimation = {
+      [MovingDirection.IDLE]: () =>
+        this._context.setAnimation(
+          this.isRightDirection ? HeroActionAnimation.STANDS_STILL : HeroActionAnimation.STANDS_STILL_LEFT,
+        ),
+      [MovingDirection.LEFT]: () => this._context.setAnimation(HeroActionAnimation.RUN_LEFT),
+      [MovingDirection.RIGHT]: () => this._context.setAnimation(HeroActionAnimation.RUN),
+      [MovingDirection.UP]: () =>
+        this._context.setAnimation(this.isRightDirection ? HeroActionAnimation.RUN : HeroActionAnimation.RUN_LEFT),
+      [MovingDirection.DOWN]: () =>
+        this._context.setAnimation(this.isRightDirection ? HeroActionAnimation.RUN : HeroActionAnimation.RUN_LEFT),
+    };
 
-        break;
-      case MovingDirection.RIGHT:
-        this.#context.setAnimation(HeroActionAnimation.RUN);
+    const animate = mapDirectionToAnimation[direction];
 
-        break;
-      case MovingDirection.UP:
-        this.#context.setAnimation(this.#isRightDirection ? HeroActionAnimation.RUN : HeroActionAnimation.RUN_LEFT);
-
-        break;
-      case MovingDirection.DOWN:
-        this.#context.setAnimation(this.#isRightDirection ? HeroActionAnimation.RUN : HeroActionAnimation.RUN_LEFT);
-
-        break;
-      case MovingDirection.IDLE:
-        this.#context.setAnimation(
-          this.#isRightDirection ? HeroActionAnimation.STANDS_STILL : HeroActionAnimation.STANDS_STILL_LEFT,
-        );
-
-        break;
+    if (animate) {
+      animate();
     }
 
     return this;
@@ -271,28 +246,41 @@ export class Movable implements IMovable {
    *
    * @returns Зона для сравнения коллизий
    */
-  getCollisionArea() {
-    return this.#getCollisionAreaFunc
-      ? this.#getCollisionAreaFunc(this)
-      : ([this.coords[0], this.coords[1], this.#sizes[0], this.#sizes[1]] as TCollisionArea);
+  getCollisionArea(): TCollisionArea {
+    return this._getCollisionAreaFunc
+      ? this._getCollisionAreaFunc(this)
+      : [this.coords[0], this.coords[1], this._sizes[0], this._sizes[1]];
   }
 
-  /**
-   * @deprecated Для обратной совместимости, пока не научились рендерить реактивно
-   */
+  moveTo(direction: MovingDirection): this {
+    this._moveStream$.next(direction);
+
+    return this;
+  }
+
+  animate(direction: MovingDirection): this {
+    this._animationStream$.next(direction);
+
+    return this;
+  }
+
   get coords() {
-    return this.#coords$.getValue();
+    return this._coords$.getValue();
   }
 
   get isMoving() {
-    return !this.#breakpointReached;
+    return !this._breakpointReached;
   }
 
   get isRightDirection() {
-    return this.#isRightDirection;
+    return this._direction === CharacterDirection.RIGHT;
+  }
+
+  get isLeftDirection() {
+    return this._direction === CharacterDirection.LEFT;
   }
 
   get sizes() {
-    return this.#sizes;
+    return this._sizes;
   }
 }

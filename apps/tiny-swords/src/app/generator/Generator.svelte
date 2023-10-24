@@ -14,7 +14,6 @@
     multiplayerStore,
   } from "../store";
   import { MainMenu, NextLevelMenu, EndGameMenu } from "../components";
-  import { frames$ } from "../tools/observables";
   import { collisions } from "../core/collisions";
   import { LayersRenderType } from "../core/layers/layers.types"
 
@@ -106,20 +105,13 @@
   }
 
   function handleHeroMovement(action$: Observable<IPlayer>): void {
-    const bounds$ = combineLatest([enemies.enemiesBoundaries$, level.boundaries$]).pipe(
-      map((tuple) => tuple.flat())
-    );
-
     action$
       .pipe(
-        map((hero) => heroes.initHero(hero, bounds$)),
+        map((hero) => heroes.initHero(hero, level.boundaries$, enemies.enemies$)),
         switchMap((hero: Hero) => {
-          const movable = hero.getAbility('movable');
-          const attacking = hero.getAbility('attacking')
-          const controller = movable.getController();
-          const movement$ = controller.movement$.pipe(switchMap((direction) => actions.updatePlayer({ id: hero.id, direction, coords: movable.coords })));
-          const attack$ = attacking.attack$.pipe(switchMap((attackingType) => actions.updatePlayer({ id: hero.id, attackingType })));;
-          const breakpoint$ = movable.breakpoints$.pipe(skip(1),switchMap((breakpoint) => {
+          const movement$ = hero.moving.movements$.pipe(switchMap((direction) => actions.updatePlayer({ id: hero.id, direction, coords: hero.moving.coords })));
+          const attack$ = hero.fighting.attack$.pipe(switchMap((attackingType) => actions.updatePlayer({ id: hero.id, attackingType })));;
+          const breakpoint$ = hero.moving.breakpoints$.pipe(skip(1),switchMap((breakpoint) => {
             return actions.updatePlayer({ id: hero.id, breakpoint });
           }));
 
@@ -137,10 +129,6 @@
   }
 
   function handleUpdatedEnemies(): void {
-    const bounds$ = combineLatest([heroes.heroesBoundaries$, level.boundaries$]).pipe(
-      map((tuple) => tuple.flat())
-    );
-
     actions.updateEnemyListener()
       .pipe(
         filter((enemy) => !!enemy.id),
@@ -150,7 +138,7 @@
           return existingEnemy || enemy.isDied ? null : enemy;
         }),
         filter(Boolean),
-        map((enemy) => enemies.initEnemy(enemy, bounds$, heroes.heroes$)),
+        map((enemy) => enemies.initEnemy(enemy, level.boundaries$, heroes.heroes$)),
       )
       .subscribe();
   }

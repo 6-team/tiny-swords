@@ -1,7 +1,6 @@
 import { Observable } from 'rxjs';
 import {
   IAttackingCharacter,
-  ICharacter,
   ICollectingCharacter,
   IMovableCharacter,
   IResource,
@@ -9,10 +8,9 @@ import {
   TNumberOfPixels,
   TPixelsPosition,
 } from '../common/common.types';
-import { MovingDirection, AttackingType, StandingDirection } from '@shared';
-import { IController } from '../controllers';
+import { MovingDirection, AttackingType, CharacterDirection } from '@shared';
 
-interface IAbility<Context> {
+export interface IAbility<Context> {
   /**
    * Устанавливает контекст/носителя данной способности.
    * Нужно, чтобы вызывать его методы, такие как показ анимации, изменение изображения и т.п.
@@ -136,7 +134,7 @@ export interface IMovable extends IAbility<IMovableCharacter> {
   sizes: [height: number, width: number];
 
   /**
-   * @deprecated Для обратной совместимости, пока не научились рендерить реактивно
+   * Поток координат персонажа
    */
   coords: [x: TNumberOfPixels, y: TNumberOfPixels];
 
@@ -151,37 +149,12 @@ export interface IMovable extends IAbility<IMovableCharacter> {
   isRightDirection: boolean;
 
   /**
-   * Устанавливает контекст/носителя данной способности.
-   * Нужно, чтобы вызывать его методы, такие как показ анимации, изменение изображения и т.п.
-   *
-   * @param context Контекст
-   * @returns Объект способности
-   */
-  setContext(context: ICharacter<{ movable: IMovable }>): this;
-
-  /**
-   * Устанавливает контроллер для управления способностью.
-   * Для установки понадобился отдельный метод, чтобы была возможность использовать декораторы для контроллера с передачей this
-   *
-   * @param controller Контроллер
-   * @returns Объект способности
-   */
-  setController(controller: IController): this;
-
-  /**
-   * Возвращает объект контроллера, который управляет текущим персонажем
-   *
-   * @returns Контроллер
-   */
-  getController(): IController;
-
-  /**
    * Устанавливает направление персонажа, пока он стоит на месте.
    *
    * @param direction Направление персонажа
    * @returns Объект способности
    */
-  setStandingDirection(direction: StandingDirection): this;
+  setCharacterDirection(direction: CharacterDirection): this;
 
   /**
    * Принудительно устанавливает координаты персонажу
@@ -190,6 +163,22 @@ export interface IMovable extends IAbility<IMovableCharacter> {
    * @returns Объект способности
    */
   setCoords(coords: [x: TNumberOfPixels, y: TNumberOfPixels]): this;
+
+  /**
+   * Запускает движение персонажа в указанном направлении
+   *
+   * @param direction Направление движения
+   * @returns Объект способности
+   */
+  moveTo(direction: MovingDirection): this;
+
+  /**
+   * Запускает анимацию персонажа для указанного направления
+   *
+   * @param direction Направление движения
+   * @returns Объект способности
+   */
+  animate(direction: MovingDirection): this;
 
   /**
    * Возвращает зону персонажа, которая участвует в сравнении коллизий.
@@ -210,6 +199,11 @@ export interface IMovable extends IAbility<IMovableCharacter> {
    * Поток координат персонажа
    */
   coords$: Observable<[x: TNumberOfPixels, y: TNumberOfPixels]>;
+
+  /**
+   * Поток направлений движения
+   */
+  movements$: Observable<MovingDirection>;
 
   /**
    * Поток координат, когда персонаж оказывается в очередной клетке

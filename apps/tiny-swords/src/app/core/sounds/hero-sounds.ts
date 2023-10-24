@@ -18,9 +18,7 @@ export class HeroSounds extends Sounds implements IHeroSounds {
     this.addSound(СharacterSoundsType.HIT_ATTACK, 'sounds/hit_attack.mp3');
     this.addSound(СharacterSoundsType.HITTING, 'sounds/hitting.mp3');
 
-    const controller = movable.getController();
-
-    controller.movement$.subscribe((direction) => {
+    movable.movements$.subscribe((direction) => {
       if (Object.values(MovingDirection).includes(direction) && !this.isPlaySound(СharacterSoundsType.MOVEMENT)) {
         this.playMovementSound();
       }
