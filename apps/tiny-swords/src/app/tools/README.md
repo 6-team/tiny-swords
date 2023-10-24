@@ -1,27 +1,38 @@
 # Tools
 
-Включает в себя следующие сущности:
+This library includes the following entities:
 
-- scheduleNextFrame
-- Класс Matrix
-- Класс Maybe
-- Класс Nothing
+- `scheduleNextFrame`
+- `createInterval`
+- `Matrix` class
+- `Maybe` class
+- `Nothing` class
 
----
+## `scheduleNextFrame()`
 
-## scheduleNextFrame()
+`scheduleNextFrame()` is a function that uses `setTimeout` and `requestAnimationFrame` for quick and efficient scheduling of the next animation frame. The frame is then passed into the `frames$` stream.
 
-`scheduleNextFrame()` - это функция, которая использует `setTimeout` и `requestAnimationFrame` для быстрого и эффективного планирования следующего анимационного кадра. 
-Затем данный кадр передается в поток `frames$`
+## `createInterval` function
 
----
+`createInterval` is an auxiliary function that creates an Observable that emits the current time in milliseconds at a given interval.
 
-## Класс Matrix
+### Usage example
 
-`Matrix` - это класс, представляющий двумерную матрицу. Исльпользуется для хранения ячеек слоя карты.
+```typescript
+import { createInterval } from './path/to/createInterval';
 
+const interval$ = createInterval(1000);
 
-### Пример использования
+interval$.subscribe({
+  next: time => console.log(time)
+});
+```
+
+## Matrix Class
+
+The `Matrix` is a class that represents a two-dimensional matrix. It is used to store the cells of a map layer.
+
+### Usage Example
 
 ```typescript
 import { Matrix, IPosition } from './Matrix';
@@ -31,37 +42,37 @@ const position: IPosition = { x: 1, y: 1 };
 
 matrix.set(position, 5);
 
-console.log(matrix.get(position)); // 5
-console.log(matrix.stringView); // Выведет строковое представление матрицы
+console.log(matrix.get(position)); // Outputs: 5
+console.log(matrix.stringView); // Outputs the string representation of the matrix
 ```
----
 
-## Класс Maybe
 
-Класс `Maybe` - это безопасный тип для необязательных значений. Он реализует концепцию из функционального программирования.
+## Maybe Class
 
-### Пример использования
+The `Maybe` class is a safe type for optional values. It implements a concept from functional programming.
+
+### Usage Example
 
 ```typescript
 let maybeValue = new Maybe<number>(10);
 let result = maybeValue
-  .map((value) => value * 2)
-  .map((value) => (value > 15 ? value : null))
-  .extract();
+.map((value) => value * 2)
+.map((value) => (value > 15 ? value : null))
+.extract();
 
-console.log(result); // возвращает: null
+console.log(result); // returns: null
 ```
----
 
-## Класс Nothing
 
-Класс служит обёрткой для безопасного обращения с отсутствующими значениями, избегая ошибок null или undefined.
+## Nothing Class
 
-## Как использовать
+The class serves as a wrapper for safely handling missing values, avoiding null or undefined errors.
+
+### Usage Example
 
 ```typescript
-import { Nothing } from '@tools'; // замените 'your-package' на имя вашего пакета
+import { Nothing } from '@tools/monads';
 
 const wrappedData = new Nothing(5);
-console.log(wrappedData.extract()); // Выводит: 5
+console.log(wrappedData.extract()); // Outputs: 5
 ```

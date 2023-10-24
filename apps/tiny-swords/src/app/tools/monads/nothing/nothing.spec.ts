@@ -1,4 +1,4 @@
-import { Nothing } from "@tools";
+import { Nothing } from "@tools/monads";
 
 describe('Nothing monad', () => {
    let instantiatedClass: Nothing<string>;

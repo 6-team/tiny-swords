@@ -5,7 +5,9 @@ const observable = new Subject<number>();
 const MIN_FRAME_MS = 17;
 
 /**
- * Функция, отдающая кадры в поток. Выбирается самый быстрый метод между setTimeout и requestAnimationFrame.
+ * This function provides frames to the stream. It selects the fastest method between setTimeout and requestAnimationFrame.
+ * @export
+ * @function
  */
 export function scheduleNextFrame(): void {
   const timeout = new Promise<number>((resolve) => {
@@ -23,4 +25,9 @@ export function scheduleNextFrame(): void {
 
 scheduleNextFrame();
 
+/**
+ * This is an observable stream of frames.
+ * @export
+ * @type {Observable<number>}
+ */
 export const frames$ = observable.asObservable();

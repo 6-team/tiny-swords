@@ -1,9 +1,9 @@
-import { Tile } from '../tile/tile';
+import { Tile } from '../tile';
 import { DecoType, mapTerrainToCoords } from './deco.const';
 
 export class DecoTile extends Tile<DecoType> {
   protected _type: DecoType;
-  protected _sprite;
+  protected _sprite: string;
 
   constructor(type: DecoType = DecoType.MUSHROOM_M) {
     super();

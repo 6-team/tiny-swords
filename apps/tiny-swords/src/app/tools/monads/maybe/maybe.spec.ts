@@ -1,4 +1,4 @@
-import { Maybe, Nothing } from "@tools";
+import { Maybe, Nothing } from "@tools/monads";
 
 describe('Maybe monad', () => {
   it('should map correctly', () => {

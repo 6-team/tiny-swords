@@ -1,12 +1,21 @@
-import { IResource } from './../../common/common.types';
-import { IGrid, ITile } from '../../common/common.types';
-import { Maybe } from '../../tools/monads/maybe';
+import { IResource, IGrid, ITile } from "@common/common.types";
+import { Maybe } from "@tools/monads";
 import { TileName, mapTileNameToClass } from './renderer.const';
 import { RendererConfig } from './renderer.types';
-import { frames$ } from '../../tools/observables';
+import { frames$ } from "@tools/observables";
 import { Subscription } from 'rxjs';
-import { IMovingCharacter } from '../../abilities/moving/moving.types';
+import { IMovingCharacter } from "@abilities/moving";
 
+/**
+ * Returns an iterable that yields tuples where the first element is the index and
+ * the second is the value from the provided iterable.
+ *
+ * @template T - The type of the elements in the input iterable.
+ *
+ * @param {Iterable<T>} iterable - The iterable sequence to enumerate.
+ *
+ * @yields {[number, T]} - A tuple where the first element is the index and the second is the value from the iterable.
+ */
 function* enumerate<T>(iterable: Iterable<T>): Iterable<[number, T]> {
   let index = 0;
 
@@ -15,7 +24,13 @@ function* enumerate<T>(iterable: Iterable<T>): Iterable<[number, T]> {
   }
 }
 
-async function loadImage(src: string): Promise<HTMLImageElement> {
+/**
+ * Loads an image from a given source string.
+ *
+ * @param {string} src - The source of the image to load.
+ * @returns {Promise<HTMLImageElement>} A Promise that resolves to an HTMLImageElement.
+ */
+export async function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve) => {
     const image = new Image();
     image.onload = () => resolve(image);
@@ -23,58 +38,80 @@ async function loadImage(src: string): Promise<HTMLImageElement> {
   });
 }
 
-/**
- * Класс, отвечающий за рендер элементов в canvas.
- * По идее ничего не знает про размеры тайлов и каким координатам в px соответствуют номера тайлов.
- */
 export class Renderer {
-  #canvas: HTMLCanvasElement;
-  #context: CanvasRenderingContext2D;
-  #grid: IGrid;
-  #scale: number;
-  #framesSubscription?: Subscription;
+  private _canvas: HTMLCanvasElement;
+  private _context: CanvasRenderingContext2D;
+  private _grid: IGrid;
+  private readonly _scale: number;
+  private _framesSubscription?: Subscription;
 
+  /**
+   * Constructs a new Renderer instance responsible for rendering various aspects of the game.
+   *
+   * @param {RendererConfig} config - An object containing the configuration settings for the renderer.
+   */
   constructor({ canvas, grid, scale }: RendererConfig) {
-    this.#canvas = canvas;
-    this.#context = this.#canvas.getContext('2d');
-    this.#grid = grid;
-    this.#scale = scale;
-    this.#context.imageSmoothingEnabled = false; // Отключаю сглаживание
+    this._canvas = canvas;
+    this._context = this._canvas.getContext('2d');
+    this._grid = grid;
+    this._scale = scale;
+    this._context.imageSmoothingEnabled = false; // Отключаю сглаживание
   }
 
+  /**
+   * Clears all the rendered content from the canvas.
+   */
   clear(): void {
-    this.#context.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
+    this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
   }
 
-  async render(elementPxCoords: [number, number, number, number], tile: ITile) {
+
+  /**
+   * Renders a game tile on the screen at the provided pixel coordinates.
+   *
+   * @param {[number, number, number, number]} elementPxCoords - The x and y coordinates along with height and width of the element in pixels.
+   * @param {ITile} tile - The tile to be rendered.
+   *
+   * @returns {Promise<Renderer>} A promise to the Renderer instance for chaining.
+   */
+  async render(elementPxCoords: [number, number, number, number], tile: ITile): Promise<this> {
     const [elementPxX, elementPxY, elementPxHeight, elementPxWidth] = elementPxCoords;
     const { image, coords, size } = await tile.getData();
 
-    this.#context.drawImage(
+    this._context.drawImage(
       image,
       coords[0],
       coords[1],
       size,
       size,
-      elementPxX * this.#scale,
-      elementPxY * this.#scale,
-      elementPxHeight * this.#scale,
-      elementPxWidth * this.#scale,
+      elementPxX * this._scale,
+      elementPxY * this._scale,
+      elementPxHeight * this._scale,
+      elementPxWidth * this._scale,
     );
 
     return this;
   }
 
-  async renderWithAnimation(elementPxCoords: [number, number, number, number], tile: ITile, deltaTime?: number) {
+  /**
+   * Renders a game tile on the screen at the provided pixel coordinates with an animation.
+   *
+   * @param {[number, number, number, number]} elementPxCoords - The x and y coordinates along with height and width of the element in pixels.
+   * @param {ITile} tile - The tile to be rendered.
+   * @param {number} [deltaTime] - The amount of time that should be spent rendering the animation.
+   *
+   * @returns {Promise<Renderer>} A promise to the Renderer instance for chaining.
+   */
+  async renderWithAnimation(elementPxCoords: [number, number, number, number], tile: ITile, deltaTime?: number): Promise<this> {
     const [elementPxX, elementPxY, elementPxHeight, elementPxWidth] = elementPxCoords;
     const { image, size, coords, scale } = await tile.getData();
 
     const dx =
-      this.#scale > scale ? elementPxX * this.#scale + (this.#grid.tileSize * scale) / 2 : elementPxX * this.#scale;
+      this._scale > scale ? elementPxX * this._scale + (this._grid.tileSize * scale) / 2 : elementPxX * this._scale;
     const dy =
-      this.#scale > scale ? elementPxY * this.#scale + (this.#grid.tileSize * scale) / 2 : elementPxY * this.#scale;
+      this._scale > scale ? elementPxY * this._scale + (this._grid.tileSize * scale) / 2 : elementPxY * this._scale;
 
-    this.#context.drawImage(
+    this._context.drawImage(
       image,
       coords[0],
       coords[1],
@@ -86,36 +123,34 @@ export class Renderer {
       elementPxWidth * scale,
     );
 
-    // FOR_TEST_PURPOSES:
-    // Данный функционал закоментирован для проверки движения персонажа (просто накладывается сетка 3х3 для понимания коллизий персонажа)
-
-    // const collisionArea = (tile as IMovingCharacter).getAbility('moving').collisionArea;
-
-    // for (let i = 0; i < 3; i++) {
-    //   for (let j = 0; j < 3; j++) {
-    //     this.#context.strokeRect(
-    //       elementPxX * this.#scale + this.#grid.tileSize * this.#scale * i,
-    //       elementPxY * this.#scale + this.#grid.tileSize * this.#scale * j,
-    //       this.#grid.tileSize * this.#scale,
-    //       this.#grid.tileSize * this.#scale,
-    //     );
-    //     this.#context.fillStyle = 'red';
-    //     this.#context.fillRect(collisionArea[0], collisionArea[1], collisionArea[3], collisionArea[2]);
-    //   }
-    // }
-
     tile.switchAnimationFrame(deltaTime);
 
     return this;
   }
 
-  async renderMovable(tile: IMovingCharacter, deltaTime: number) {
+
+  /**
+   * Renders a movable game character.
+   *
+   * @param {IMovingCharacter} tile - The movable character to be rendered.
+   * @param {number} deltaTime - The amount of time that should be spent rendering the animation.
+   *
+   * @returns {Promise<void>}
+   */
+  async renderMovable(tile: IMovingCharacter, deltaTime: number): Promise<void> {
     const { coords, sizes } = tile.moving;
 
-    this.renderWithAnimation([coords[0], coords[1], sizes[0], sizes[1]], tile, deltaTime);
+    await this.renderWithAnimation([coords[0], coords[1], sizes[0], sizes[1]], tile, deltaTime);
   }
 
-  async renderStaticLayer(map: Array<Array<TileName | null>>) {
+  /**
+   * Renders the static background layer of the game map.
+   *
+   * @param {Array<Array<TileName | null>>} map - 2D array representing the map to be rendered.
+   *
+   * @returns {Promise<void>}
+   */
+  async renderStaticLayer(map: Array<Array<TileName | null>>): Promise<void> {
     for (const [rowIndex, row] of enumerate(map)) {
       for (const [tileNameIndex, tileName] of enumerate(row)) {
         await new Maybe(tileName)
@@ -123,21 +158,28 @@ export class Renderer {
           .map((data) => {
             const { constructor: Constructor, args } = data;
 
-            return this.render(this.#grid.transformToPixels(tileNameIndex, rowIndex, 1, 1), new Constructor(...args));
+            return this.render(this._grid.transformToPixels(tileNameIndex, rowIndex, 1, 1), new Constructor(...args));
           })
           .extract();
       }
     }
   }
 
+  /**
+   * Renders the movable characters on the layer of the game map.
+   *
+   * @param {Array<IMovingCharacter>} movables - The movable characters to be rendered.
+   *
+   * @returns {Promise<void>}
+   */
   async renderMovableLayer(movables: Array<IMovingCharacter>) {
     let lastTime = 0;
 
-    if (this.#framesSubscription) {
-      this.#framesSubscription.unsubscribe();
+    if (this._framesSubscription) {
+      this._framesSubscription.unsubscribe();
     }
 
-    this.#framesSubscription = frames$.subscribe((timeStamp = 0) => {
+    this._framesSubscription = frames$.subscribe((timeStamp = 0) => {
       const deltaTime = timeStamp - lastTime;
 
       this.clear();
@@ -151,9 +193,16 @@ export class Renderer {
   }
 
   /**
-   * @TODO Вынести в отдельный класс, а этот использовать только для рендера
+   * Renders the health bar of a character.
+   *
+   * @param {Object} lives - Describes the character's total, available, and blocked lives.
+   * @param {number} lives.totalLives - The total number of lives the character has.
+   * @param {number} lives.availableLives - The number of lives the character currently has available.
+   * @param {number} lives.blockedLives - The number of lives the character currently has blocked.
+   *
+   * @returns {Promise<Renderer>} A promise to the Renderer instance for chaining.
    */
-  async renderHealthBar(lives: { totalLives: number; availableLives: number; blockedLives: number }) {
+  async renderHealthBar(lives: { totalLives: number; availableLives: number; blockedLives: number }): Promise<this> {
     const { totalLives, availableLives, blockedLives } = lives;
     const heartWidth = 20;
     const heartHeight = 20;
@@ -169,7 +218,7 @@ export class Renderer {
       loadImage('./img/UI/Regular_10.png'),
     ]);
 
-    this.#context.drawImage(backgroundImage, barPositionX, barPositionY, backgroundWidth, backgroundHeight);
+    this._context.drawImage(backgroundImage, barPositionX, barPositionY, backgroundWidth, backgroundHeight);
 
     const available = availableLives ? new Array(availableLives).fill(heartImage) : [];
     const wasted = new Array(totalLives - availableLives - blockedLives);
@@ -179,7 +228,7 @@ export class Renderer {
 
     hearts.forEach((heart, i) => {
       if (heart) {
-        this.#context.drawImage(
+        this._context.drawImage(
           heart,
           i * (heartWidth + heartPadding) + barPositionX + 22,
           barPositionY + 5,
@@ -191,26 +240,33 @@ export class Renderer {
     return this;
   }
 
-  async renderResourcesBar(resources: Array<IResource>) {
+  /**
+   * Renders the resources bar of a character.
+   *
+   * @param {Array<IResource>} resources - The resources to be rendered.
+   *
+   * @returns {Promise<Renderer>} A promise to the Renderer instance for chaining.
+   */
+  async renderResourcesBar(resources: Array<IResource>): Promise<this> {
     const backgroundImage = await loadImage('./img/UI/Banner_Connection_Left.png');
     const hPadding = 30;
     const vPadding = 10;
     const backgroundWidth = 85;
     const backgroundHeight = 100;
 
-    this.#context.font = '18px vinque';
-    this.#context.fillStyle = 'SaddleBrown';
+    this._context.font = '18px vinque';
+    this._context.fillStyle = 'SaddleBrown';
 
     const maxWidthText = Math.max(
-      ...resources.map((resource) => this.#context.measureText(String(resource.getQuantity())).width),
+      ...resources.map((resource) => this._context.measureText(String(resource.getQuantity())).width),
     );
-    this.#context.drawImage(backgroundImage, 0, 20, backgroundWidth + maxWidthText + 20, backgroundHeight);
+    this._context.drawImage(backgroundImage, 0, 20, backgroundWidth + maxWidthText + 20, backgroundHeight);
 
     await Promise.all(
       resources.map(async (resource, i) => {
         const resourceImage = await loadImage(resource.resourceImage);
-        this.#context.fillText(String(resource.getQuantity()), 85 + maxWidthText / 5, i * hPadding + 55);
-        this.#context.drawImage(resourceImage, vPadding + 20 + maxWidthText / 5, i * hPadding + 23, 45, 45);
+        this._context.fillText(String(resource.getQuantity()), 85 + maxWidthText / 5, i * hPadding + 55);
+        this._context.drawImage(resourceImage, vPadding + 20 + maxWidthText / 5, i * hPadding + 23, 45, 45);
       }),
     );
     return this;

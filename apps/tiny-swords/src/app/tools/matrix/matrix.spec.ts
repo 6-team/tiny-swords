@@ -1,4 +1,4 @@
-import { Matrix } from "@tools";
+import { Matrix } from '@tools/matrix';
 
 describe('Matrix', () => {
   const xLength = 3;
@@ -32,7 +32,7 @@ describe('Matrix', () => {
     matrix.set({ x: 0, y: 0 }, value);
 
     const stringView = matrix.stringView.split('\n'); // parse string view into 2D array
-    const parsedView = stringView.map(row => row.split(','));
+    const parsedView = stringView.map((row) => row.split(','));
 
     expect(parsedView[0][0]).toEqual(value.toString());
     expect(parsedView[0][1]).toEqual('_');
