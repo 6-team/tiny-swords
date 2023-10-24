@@ -74,8 +74,8 @@ class Enemies {
     const boundaries$ = this.enemies$.pipe(
       filter((enemies) => !!enemies.length),
       concatAll(),
-      mergeMap((enemy) => enemy.getAbility('movable').coords$),
-      map(() => this.enemies.map((enemy) => enemy.getAbility('movable').getCollisionArea())),
+      mergeMap((enemy) => enemy.moving.coords$),
+      map(() => this.enemies.map((enemy) => enemy.moving.getCollisionArea())),
     );
     const emptyBoundary$ = this.enemies$.pipe(
       filter((enemies) => !enemies.length),

@@ -109,7 +109,7 @@ export class Renderer {
   }
 
   async renderMovable(tile: IMovableCharacter, deltaTime: number) {
-    const { coords, sizes } = tile.getAbility('movable');
+    const { coords, sizes } = tile.moving;
 
     this.renderWithAnimation([coords[0], coords[1], sizes[0], sizes[1]], tile, deltaTime);
   }

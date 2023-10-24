@@ -54,14 +54,13 @@ export class Attacking implements IAttacking {
       throw new Error(AttackingError.PERSONAGE_NOT_SET);
     }
 
-    const movable = this.#context.getAbility('movable');
-    const collisionArea = movable.getCollisionArea();
+    const collisionArea = this.#context.moving.getCollisionArea();
 
     if (this.#getAffectedAreaFunc) {
       return this.#getAffectedAreaFunc(this);
     }
 
-    return movable.isRightDirection
+    return this.#context.moving.isRightDirection
       ? this.#getRightAffectedArea(collisionArea)
       : this.#getLeftAffectedArea(collisionArea);
   }
@@ -97,7 +96,7 @@ export class Attacking implements IAttacking {
       throw new Error(AttackingError.PERSONAGE_NOT_SET);
     }
 
-    const { isMoving, isRightDirection } = this.#context.getAbility('movable');
+    const { isMoving, isRightDirection } = this.#context.moving;
 
     if (!isMoving && !this.isAttacking) {
       this.#setIsAttacking();

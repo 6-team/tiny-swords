@@ -115,8 +115,8 @@ export class Heroes {
     const boundaries$ = this.heroes$.pipe(
       filter((heroes) => !!heroes.length),
       concatAll(),
-      mergeMap((hero) => hero.getAbility('movable').coords$),
-      map(() => this.heroes.map((enemy) => enemy.getAbility('movable').getCollisionArea())),
+      mergeMap((hero) => hero.moving.coords$),
+      map(() => this.heroes.map((enemy) => enemy.moving.getCollisionArea())),
     );
     const emptyBoundary$ = this.heroes$.pipe(
       filter((heroes) => !heroes.length),
