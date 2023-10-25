@@ -1,7 +1,7 @@
 import { KeyboardController } from '../../controllers/keyboard';
 import { ServerController } from '../../controllers/server';
 import { Hero } from '../../entities/hero';
-import { IPlayer, MovingDirection } from '@shared';
+import { IEntity, MovingDirection } from '@shared';
 import { BehaviorSubject, Observable, concatAll, filter, map, merge, mergeMap } from 'rxjs';
 import { TCollisionArea, TPixelsCoords } from '../../abilities/abilities.types';
 import { collisions } from '../collisions';
@@ -35,7 +35,7 @@ export class Heroes {
   }
 
   initHero(
-    { id }: IPlayer,
+    { id }: IEntity,
     bounds$: Observable<Array<TCollisionArea>>,
     enemies$: Observable<Array<IMovableCharacter>>,
   ): Hero {
@@ -63,7 +63,7 @@ export class Heroes {
     return hero;
   }
 
-  initConnectedHero({ id, coords: [startX, startY] }: IPlayer): Hero {
+  initConnectedHero({ id, coords: [startX, startY] }: IEntity): Hero {
     const [initialX, initialY, height, width] = grid64.transformToPixels(startX - 1, startY - 1, 3, 3);
     const type = this.#getUniqueType();
 

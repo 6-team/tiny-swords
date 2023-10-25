@@ -1,8 +1,11 @@
-import { server } from './server';
-import { Connection } from './connection';
-import { ActionType, Game, LevelData, MovingDirection, Player } from '@shared';
 import { Socket } from 'socket.io';
 import { Subject, filter, takeUntil, timer } from 'rxjs';
+
+import { ActionType, ILevelData, MovingDirection, Entity, IEntity } from '@shared';
+
+import { server } from './server';
+import { Connection } from './connection';
+import { Game } from './game';
 
 const port = Number(process.env.PORT) || 3016;
 const destroy$ = new Subject<void>();
@@ -10,93 +13,93 @@ const destroy$ = new Subject<void>();
 server.listen(port);
 
 const game = new Game();
-const connection = new Connection();
+const connection = new Connection(server);
 
 connection.connect$.subscribe(() => console.log('connect', game));
 
 connection.disconnect$.subscribe((client) => {
   console.log('disconnect');
 
-  game.removePlayer(client.id);
+  game.removeHero(client.id);
 });
 
-connection.listen<LevelData>(ActionType.InitGame).subscribe(({ client, data }) => {
+connection.listen<ILevelData>(ActionType.InitGame).subscribe(({ client, data }) => {
   const id = client.id;
 
-  const player = new Player(id, data.startCoords);
-  game.setPlayer(player);
+  const hero = new Entity({ id, coords: data.startCoords });
+  game.setHero(hero);
   game.setLevel(data);
 
-  client.emit(ActionType.InitGame, player);
+  client.emit(ActionType.InitGame, hero);
   triggerEnemiesMovemenet(client);
 });
 
 connection.listen(ActionType.ConnectToGame).subscribe(({ client }) => {
-  if (!game.playersCount) return;
+  if (!game.heroesCount) return;
 
-  const hasPlayer = game.hasPlayer(client.id);
+  const hasHero = game.hasHero(client.id);
 
-  if (hasPlayer) {
-    console.log('The current player has alredy connected to this game');
+  if (hasHero) {
+    console.log('The current hero has alredy connected to this game');
 
     return;
   }
 
-  const player = new Player(client.id, game.level.startCoords);
+  const hero = new Entity({ id: client.id, coords: game.level.startCoords });
 
-  game.setPlayer(player);
-  client.emit(ActionType.ConnectToGame, player);
+  game.setHero(hero);
+  client.emit(ActionType.ConnectToGame, hero);
   client.emit(ActionType.UpdateLevel, game.level);
 
-  notifyCurrentPlayerAboutOtherPlayers(client, player);
-  notifyCurrentPlayerAboutEnemies(client);
+  notifyCurrentHeroAboutOtherHeroes(client, hero);
+  notifyCurrentHeroAboutEnemies(client);
 });
 
-connection.listen<LevelData>(ActionType.UpdateLevel).subscribe(({ client, data: level }) => {
+connection.listen<ILevelData>(ActionType.UpdateLevel).subscribe(({ client, data: level }) => {
   game.setLevel(level);
 
-  notifyOtherPlayersAboutUpdatedLevel(client, level);
+  notifyOtherHeroesAboutUpdatedLevel(client, level);
   triggerEnemiesMovemenet(client);
 });
 
-connection.listen<Player>(ActionType.UpdatePlayer).subscribe(({ client, data: currentPlayer }) => {
-  game.setPlayer(currentPlayer);
+connection.listen<IEntity>(ActionType.UpdateHero).subscribe(({ client, data: currentHero }) => {
+  game.setHero(currentHero);
 
-  notifyOtherPlayersAboutUpdatedPlayer(client, currentPlayer);
+  notifyOtherHeroessAboutUpdatedHero(client, currentHero);
 });
 
-connection.listen<Player>(ActionType.UpdateEnemy).subscribe(({ client, data: enemy }) => {
+connection.listen<IEntity>(ActionType.UpdateEnemy).subscribe(({ client, data: enemy }) => {
   game.setEnemy(enemy);
 
-  notifyOtherPlayersAboutUpdatedEnemy(client, enemy);
+  notifyOtherHeroesAboutUpdatedEnemy(client, enemy);
 });
 
-function notifyCurrentPlayerAboutOtherPlayers(client: Socket, player: Player): void {
-  const otherPlayers = game.getOtherPlayers(player.id);
+function notifyCurrentHeroAboutOtherHeroes(client: Socket, currentHero: IEntity): void {
+  const otherHeroes = game.getOtherHeroes(currentHero.id);
 
-  otherPlayers.forEach((player: Player) => client.emit(ActionType.UpdatePlayer, player));
+  otherHeroes.forEach((hero: Entity) => client.emit(ActionType.UpdateHero, hero));
 }
 
-function notifyCurrentPlayerAboutEnemies(client: Socket): void {
+function notifyCurrentHeroAboutEnemies(client: Socket): void {
   game.enemies.forEach((enemy) => client.emit(ActionType.UpdateEnemy, enemy));
 }
 
-function notifyOtherPlayersAboutUpdatedPlayer(client: Socket, currentPlayer: Player): void {
-  const otherPlayerIds = game.getOtherPlayerIds(currentPlayer.id);
+function notifyOtherHeroessAboutUpdatedHero(client: Socket, currentHero: IEntity): void {
+  const otherHeroIds = game.getOtherHeroIds(currentHero.id);
 
-  otherPlayerIds.forEach((id: string) => client.broadcast.to(id).emit(ActionType.UpdatePlayer, currentPlayer));
+  otherHeroIds.forEach((id: string) => client.broadcast.to(id).emit(ActionType.UpdateHero, currentHero));
 }
 
-function notifyOtherPlayersAboutUpdatedEnemy(client: Socket, enemy: Player): void {
-  const otherPlayerIds = game.getOtherPlayerIds(client.id);
+function notifyOtherHeroesAboutUpdatedEnemy(client: Socket, enemy: IEntity): void {
+  const otherHeroIds = game.getOtherHeroIds(client.id);
 
-  otherPlayerIds.forEach((id: string) => client.broadcast.to(id).emit(ActionType.UpdateEnemy, enemy));
+  otherHeroIds.forEach((id: string) => client.broadcast.to(id).emit(ActionType.UpdateEnemy, enemy));
 }
 
-function notifyOtherPlayersAboutUpdatedLevel(client: Socket, level: LevelData): void {
-  const otherPlayerIds = game.getOtherPlayerIds(client.id);
+function notifyOtherHeroesAboutUpdatedLevel(client: Socket, level: ILevelData): void {
+  const otherHeroIds = game.getOtherHeroIds(client.id);
 
-  otherPlayerIds.forEach((id: string) => client.broadcast.to(id).emit(ActionType.UpdateLevel, level));
+  otherHeroIds.forEach((id: string) => client.broadcast.to(id).emit(ActionType.UpdateLevel, level));
 }
 
 function triggerEnemiesMovemenet(client: Socket): void {
@@ -110,7 +113,7 @@ function triggerEnemiesMovemenet(client: Socket): void {
       takeUntil(destroy$),
     )
     .subscribe((value) => {
-      const otherPlayerIds = game.getOtherPlayerIds(client.id);
+      const otherHeroIds = game.getOtherHeroIds(client.id);
 
       game.enemies.forEach((enemy) => {
         if (Math.random() > 0.6 || !value) {
@@ -122,7 +125,7 @@ function triggerEnemiesMovemenet(client: Socket): void {
 
           client.emit(ActionType.UpdateEnemy, currentEnemy);
 
-          otherPlayerIds.forEach((id: string) => client.broadcast.to(id).emit(ActionType.UpdateEnemy, currentEnemy));
+          otherHeroIds.forEach((id: string) => client.broadcast.to(id).emit(ActionType.UpdateEnemy, currentEnemy));
         }
       });
     });

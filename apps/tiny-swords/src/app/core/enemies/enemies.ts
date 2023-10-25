@@ -1,4 +1,4 @@
-import { IPlayer, CharacterDirection, MovingDirection } from '@shared';
+import { IEntity, CharacterDirection, MovingDirection } from '@shared';
 import { BehaviorSubject, Observable, Subject, concatAll, filter, map, merge, mergeMap } from 'rxjs';
 import { TCollisionArea, TPixelsCoords } from '../../abilities/abilities.types';
 import { grid64 } from '../grid';
@@ -20,7 +20,7 @@ class Enemies {
   }
 
   initEnemy(
-    { id, coords }: IPlayer,
+    { id, coords }: IEntity,
     bounds$: Observable<Array<TCollisionArea>>,
     heroes$: Observable<Array<IMovableCharacter & IAttackingCharacter>>,
   ): Enemy {

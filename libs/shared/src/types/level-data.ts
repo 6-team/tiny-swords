@@ -1,4 +1,4 @@
-export interface LevelData<M = unknown, R = unknown> {
+export interface ILevelData<M = unknown, R = unknown> {
   gridX: number;
   gridY: number;
   startCoords: [number, number];
