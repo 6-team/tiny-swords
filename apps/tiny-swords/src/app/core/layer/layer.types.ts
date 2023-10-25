@@ -17,6 +17,4 @@ export interface LayerRules {
   [key: number]: TileName[][];
 }
 
-export interface LayerWight {
-  [index: number]: [TileName, number, boolean]
-}
+export type TileWight = [TileName, number, boolean];

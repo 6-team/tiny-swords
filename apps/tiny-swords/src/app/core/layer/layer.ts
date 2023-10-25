@@ -1,24 +1,50 @@
 import { Matrix } from "../../tools/matrix/matrix";
 import { TileName } from "../renderer";
 import { randomElement, weightedRandomElement } from "../layers/layers.utils";
-import { LayerCell, LayerCondition } from "./layer.types";
+import { LayerCell, LayerCondition, LayerRules, TileWight } from "./layer.types";
 
+/**
+ * Represents a class for creating a layer for static rendering and filling it with tiles
+ */
 export class Layer {
-  #layer;
-  #gridX: number;
-  #gridY: number;
+  /**
+   * Matrix of a layer with cells
+   * 
+   * @type {Matrix<LayerCell>}
+   */
+  private _layer;
 
-	constructor(gridX, gridY) {
-		this.#gridX = gridX;
-    this.#gridY = gridY;
+  /**
+   * The size of the layer matrix by width
+   * 
+   * @type {number}
+   */
+  private _gridX: number;
 
-    this.#layer = new Matrix<LayerCell>(gridX, gridY);
+  /**
+   * The size of the layer matrix in height
+   * 
+   * @type {number}
+   */
+  private _gridY: number;
 
-    for (let i = 0; i < this.#layer.array.length; i++) {
-      const x = i % this.#gridX;
-      const y = Math.floor(i / this.#gridX);
+  /**
+   * Creating a layer matrix
+   * 
+   * @param {number} gridX
+   * @param {number} gridY
+   */
+	constructor(gridX: number, gridY: number) {
+		this._gridX = gridX;
+    this._gridY = gridY;
 
-      this.#layer.set({ x, y }, {
+    this._layer = new Matrix<LayerCell>(gridX, gridY);
+
+    for (let i = 0; i < this._layer.array.length; i++) {
+      const x = i % this._gridX;
+      const y = Math.floor(i / this._gridX);
+
+      this._layer.set({ x, y }, {
         collapsed: false,
         coords: [x, y],
         options: [],
@@ -27,14 +53,24 @@ export class Layer {
     }
   }
 
+  /**
+   * Getting a layer as an array
+   * 
+   * @type {Array<LayerCell>}
+   */
   get array() {
-    return this.#layer.array;
+    return this._layer.array;
   }
 
+  /**
+   * Filling in a layer by an array of conditions list
+   * 
+   * @param {LayerCondition[][]} conditionsList - Array of conditions list
+   */
   fill(conditionsList: LayerCondition[][]) {
     conditionsList.forEach((conditions: LayerCondition[]) => {
       conditions.forEach(({ tile, coords, boundary }) => {
-        this.#layer.set({ x: coords[0], y: coords[1] }, {
+        this._layer.set({ x: coords[0], y: coords[1] }, {
           collapsed: true,
           coords,
           options: [tile],
@@ -46,16 +82,20 @@ export class Layer {
     return this; 
   }
 
-  wfc(rules, tileOptions) {
-    const tileTypes = tileOptions.reduce((acc, [tile]) => [...acc, tile], []);
+  /**
+   * Filling the layer with the "Collapse of the wave function" algorithm
+   * 
+   * @param {LayerRules} rules - Array of rules
+   * @param {TileWight[]} tileOptions - Array of wighted tiles
+   */
+  wfc(rules: LayerRules, tileOptions: TileWight[]) {
+    const tileTypes: TileName[] = tileOptions.reduce((acc, [tile]) => [...acc, tile], []);
 
-    // заполняем все пустые ячейки
-    this.#layer.array.forEach(({ coords, collapsed, boundary }) => {
+    this._layer.array.forEach(({ coords, collapsed }) => {
       if (!collapsed) {
         const [x, y] = coords;
 
-        // если ячека пустая - ставим в ячейку все варианты
-        this.#layer.set({ x, y }, {
+        this._layer.set({ x, y }, {
           collapsed: false,
           coords,
           options: [...tileTypes],
@@ -64,33 +104,26 @@ export class Layer {
       }
     });
 
-    // Обновляем энтропию
-    this.#collapseCellOptions(rules, tileTypes);
+    this._collapseCellOptions(rules, tileTypes);
 
-    // Копируем стартовую сетку чтобы попробовать снова
-    const initLayer = this.#layer;
+    const initLayer = this._layer;
 
     let j = 0;
 
     while (j < 10e6) {
-      // Выбираем рандомную ячейку для коллапса по минимально возможным тайлам
-      const cell = this.#defineCellToUpdate();
+      const cell = this._defineCellToUpdate();
 
-      // Устанавливаем ячейке рандомный тайл из доступных
-      this.#setRandomTileByIndex(cell, tileOptions);
+      this._setRandomTileByIndex(cell, tileOptions);
 
       try {
-        // Обновляем энтропию
-        this.#collapseCellOptions(rules, tileTypes);
+        this._collapseCellOptions(rules, tileTypes);
       } catch (e) {
-        console.log('Ошибка генерации, итераций: ', j);
+        console.log('Generation error, iterations: ', j);
 
-        this.#layer = initLayer;
+        this._layer = initLayer;
       }
 
-      // Прерываем цикл
-      if (this.#layer.array.every(({ collapsed }) => collapsed)) {
-        // console.log('Всего итераций: ', j);
+      if (this._layer.array.every(({ collapsed }) => collapsed)) {
         break;
       }
 
@@ -100,23 +133,27 @@ export class Layer {
     return this;
   }
 
-  #collapseCellOptions(rules, tileTypes) {
-    const nextGrid = new Matrix<LayerCell>(this.#gridX, this.#gridY);
+  /**
+   * Entropy update
+   * 
+   * @param {LayerRules} rules - Array of rules
+   * @param {TileName[]} tileTypes - Array of tiles
+   */
+  _collapseCellOptions(rules: LayerRules, tileTypes: TileName[]) {
+    const nextGrid = new Matrix<LayerCell>(this._gridX, this._gridY);
 
-    for (let index = 0; index < this.#layer.array.length; index++) {
-      const cell = this.#layer.array[index];
+    for (let index = 0; index < this._layer.array.length; index++) {
+      const cell = this._layer.array[index];
       let options = [...tileTypes];
 
-      // если ячейка заполнена
       const { coords } = cell;
       const [x, y] = coords;
 
       if (cell.collapsed) {
         nextGrid.set({ x, y }, cell);
       } else {
-        // смотрим на верхнюю клетку
         if (y > 0) {
-          const up = this.#layer.get({ x, y: y - 1 });            
+          const up = this._layer.get({ x, y: y - 1 });            
           let validOptions = [];
 
           for (const option of up.options) {
@@ -124,43 +161,40 @@ export class Layer {
             validOptions = validOptions.concat(valid);
           }
 
-          options = this.#checkValid(options, validOptions);
+          options = this._checkValid(options, validOptions);
         }
 
-        // смотрим на правую клетку
-        if (x < this.#gridX - 1) {
-          const right = this.#layer.get({ x: x + 1, y });
+        if (x < this._gridX - 1) {
+          const right = this._layer.get({ x: x + 1, y });
           let validOptions = [];
 
           for (const option of right.options) {
             const valid = rules[option][3];
             validOptions = validOptions.concat(valid);
           }
-          options = this.#checkValid(options, validOptions);
+          options = this._checkValid(options, validOptions);
         }
 
-        // смотрим вниз
-        if (y < this.#gridY - 1) {
-          const down = this.#layer.get({ x, y: y + 1 });
+        if (y < this._gridY - 1) {
+          const down = this._layer.get({ x, y: y + 1 });
           let validOptions = [];
 
           for (const option of down.options) {
             const valid = rules[option][0];
             validOptions = validOptions.concat(valid);
           }
-          options = this.#checkValid(options, validOptions);
+          options = this._checkValid(options, validOptions);
         }
 
-        // смотрим влево
         if (x > 0) {
-          const left = this.#layer.get({ x: x - 1, y });
+          const left = this._layer.get({ x: x - 1, y });
           let validOptions = [];
 
           for (const option of left.options) {
             const valid = rules[option][1];
             validOptions = validOptions.concat(valid);
           }
-          options = this.#checkValid(options, validOptions);
+          options = this._checkValid(options, validOptions);
         }
 
         nextGrid.set({ x, y }, {
@@ -172,10 +206,16 @@ export class Layer {
       }
     };
 
-    this.#layer = nextGrid;
+    this._layer = nextGrid;
   }
 
-  #setRandomTileByIndex({ coords, options }: LayerCell, tileOptions) {
+  /**
+   * Set a random tile using weight
+   * 
+   * @param {LayerCell} cell - layer cell
+   * @param {TileWight[]} tileTypes - Array of weighed tiles
+   */
+  _setRandomTileByIndex({ coords, options }: LayerCell, tileOptions: TileWight[]) {
     const optionsWeight = tileOptions.filter(([tile]) => options.includes(tile));
     let tileName = null;
     
@@ -184,14 +224,14 @@ export class Layer {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const [_, __, boundary] = optionsWeight.find(([tile]) => tileName === tile);
 
-      this.#layer.set({ x: coords[0], y: coords[1] }, {
+      this._layer.set({ x: coords[0], y: coords[1] }, {
         coords,
         collapsed: true,
         options: [tileName],
         boundary,
       });
     } else {
-      this.#layer.set({ x: coords[0], y: coords[1] }, {
+      this._layer.set({ x: coords[0], y: coords[1] }, {
         coords,
         collapsed: true,
         options: [tileName],
@@ -200,9 +240,13 @@ export class Layer {
     }
   }
 
-  #defineCellToUpdate(): LayerCell {
-    // сортируем массив чтобы найти элементы с наименьшей энтропией
-    let gridCopy = this.#layer.array.slice();
+  /**
+   * Selecting a random cell for collapse by the minimum possible tiles
+   * 
+   * @returns {LayerCell} - Layer cell
+   */
+  _defineCellToUpdate(): LayerCell {
+    let gridCopy = this._layer.array.slice();
 
     gridCopy = gridCopy.filter((el: LayerCell) => !el.collapsed);
 
@@ -210,7 +254,6 @@ export class Layer {
       return a.options.length - b.options.length;
     });
 
-    // если этих элелементов несколько создадим новый массив только с ними
     const len = gridCopy[0].options.length;
 
     let stopIndex = 0;
@@ -221,14 +264,19 @@ export class Layer {
       }
     }
 
-    // режем массив до найденного индекса
     if (stopIndex > 0) gridCopy.splice(stopIndex);
 
-    // выбираем рандомную ячейку
     return randomElement(gridCopy);
   }
 
-  #checkValid(options: TileName[], valid: TileName[]) {  
+  /**
+   * Narrowing the list of possible tiles
+   * 
+   * @param {TileName[]} options - List of all cell tiles
+   * @param {TileName[]} valid - List of valid tiles
+   * @returns {TileName[]} - List of filtered tiles
+   */
+  _checkValid(options: TileName[], valid: TileName[]) {  
     const filteredOption = options.filter((option: number) => {
       return valid.includes(option);
     });

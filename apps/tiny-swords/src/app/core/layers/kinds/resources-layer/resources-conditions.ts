@@ -4,6 +4,7 @@ import { createCoordsLayerDict, createLayerConditions, getQuantityCells, getShuf
 import { LayerCondition } from "../../../layer/layer.types";
 import { LevelType } from "../../../level/level.types";
 import { ResourcesType } from "../../../../entities/resource";
+import { Layer } from "../../../layer/layer";
 
 const resourcesWeightedTiles = (cells: number, level: LevelType) => [{
   count: getQuantityCells(cells, randomInteger(3, 6)),
@@ -15,9 +16,14 @@ const resourcesWeightedTiles = (cells: number, level: LevelType) => [{
 }];
 
 /**
- * Шаблон для ресурсов на поверхности
+ * Generates resource conditions for surface resources.
+ *
+ * @param {LevelType} level - The level type associated with the resource conditions.
+ * @param {Layer[]} layers - An array of layers (missing type information) containing resource data.
+ *
+ * @returns {LayerCondition[]} An array of resource conditions based on the specified level and layers.
  */
-export const resourcesConditions = (level: LevelType, layers): LayerCondition[] => {
+export const resourcesConditions = (level: LevelType, layers: Layer[]): LayerCondition[] => {
   const layerBoundaryCellsDict = (layer) => createCoordsLayerDict(layer, (tile, boundary) => {
     const isNotTerrain = tile >= TileName.BRIDGE_LEFT;
     return boundary || isNotTerrain

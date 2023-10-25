@@ -1,7 +1,7 @@
-import { LayerRules, LayerWight } from "../../../layer/layer.types";
+import { LayerRules, TileWight } from "../../../layer/layer.types";
 import { TileName } from "../../../renderer";
 
-export const STONES_WEIGHT: LayerWight = [
+export const STONES_WEIGHT: TileWight[] = [
   [TileName.WATER_MIDDLE_MIDDLE,  1, true],
 
   [TileName.ELEVATION_TOP_LEFT,      1, false],

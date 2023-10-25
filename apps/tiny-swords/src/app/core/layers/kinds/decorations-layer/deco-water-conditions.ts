@@ -13,12 +13,22 @@ const waterWeightedTiles = (cells: number) => [{
 }];
 
 /**
- * Шаблон для декораций в воде
+ * Create a dictionary of water cells based on a layer.
+ * 
+ * @param {Layer} layer - The layer to analyze.
+ * @returns {Object} A dictionary of water cells.
+ */
+const layerCellsDict = (layer) => createCoordsLayerDict(layer, (tile) => {
+  return tile === TileName.WATER_MIDDLE_MIDDLE
+});
+
+/**
+ * Generate water decoration conditions based on the layers.
+ * 
+ * @param {Array<Layer>} layers - An array of layers used for decoration elements.
+ * @returns {Array<LayerCondition>} An array of decoration conditions for water.
  */
 export const decorationsWaterConditions = (layers): LayerCondition[] => {
-  const layerCellsDict = (layer) => createCoordsLayerDict(layer, (tile) => {
-    return tile === TileName.WATER_MIDDLE_MIDDLE
-  });
   const layersCellsDict = layers.reduce((acc, layer) => ({...acc, ...layerCellsDict(layer.array)}), {});
   const availableCells = getShuffleFilterCoords(layers[0], ([x, y]) => layersCellsDict[`${x}-${y}`]);  
   const weightedTiles  = waterWeightedTiles(availableCells.length);
