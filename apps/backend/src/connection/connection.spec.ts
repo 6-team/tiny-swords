@@ -1,4 +1,4 @@
-import { Connection } from './Connection';
+import { Connection } from './connection';
 import { Server } from 'socket.io';
 
 describe('Connection', () => {
