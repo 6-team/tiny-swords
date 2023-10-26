@@ -20,7 +20,7 @@ const soundsMock = {
   unmuteSound: jest.fn().mockImplementation(() => (AudioMocked.muted = false)),
 };
 
-jest.mock('./Sounds', () => {
+jest.mock('./sounds', () => {
   return {
     __esModule: true, // this property makes it work
     default: jest.fn().mockImplementation(() => {
