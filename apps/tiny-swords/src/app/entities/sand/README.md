@@ -8,8 +8,6 @@ The `SandTyle` class represents a tile with a sand entity. It extends the `Tile`
 - [Properties](#properties)
 - [Methods](#methods)
 - [Installation](#installation)
-- [Tests](#tests)
-- [License](#license)
 
 ## Usage
 

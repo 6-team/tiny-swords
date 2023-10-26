@@ -8,8 +8,6 @@ The `RocksTile` class represents a tile with a rocks entity. It extends the `Til
 - [Properties](#properties)
 - [Methods](#methods)
 - [Installation](#installation)
-- [Tests](#tests)
-- [License](#license)
 
 ## Usage
 

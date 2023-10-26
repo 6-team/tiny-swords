@@ -22,7 +22,6 @@ export class HeroResourcesBar implements IHeroResourcesBar {
    * Returns an array of all resources
    * @returns Resource Array
    */
-
   public getResources(): Array<Resource> {
     return this._resourcesSubject.getValue();
   }
@@ -32,7 +31,6 @@ export class HeroResourcesBar implements IHeroResourcesBar {
    * @param type Resource type
    * @returns requested resource object
    */
-
   public getResource(type: ResourcesType): Resource {
     const resource = this.getResources().find((r) => r.resourceType === type);
     if (resource !== undefined) {
@@ -46,7 +44,6 @@ export class HeroResourcesBar implements IHeroResourcesBar {
    * Adds a resource by type
    * @param type Resource type
    */
-
   public addResource(type: ResourcesType): void {
     const resources = this.getResources();
     const resource = this.getResource(type);
@@ -62,7 +59,6 @@ export class HeroResourcesBar implements IHeroResourcesBar {
    * @param cost Object with type and cost of improvement
    * @returns Are there enough resources
    */
-
   public availableResourcesCheck(cost: { type: ResourcesType; price: number }): boolean {
     const resources = this.getResources();
     const resource = resources.find((_resource) => _resource.resourceType === cost.type);
@@ -75,7 +71,6 @@ export class HeroResourcesBar implements IHeroResourcesBar {
    * Reducing the amount of resources after purchasing an enhancement
    * @param cost Object with type and cost of improvement
    */
-
   public spend(cost: { type: ResourcesType; price: number }): void {
     const resources = this.getResources();
     const resource = resources.find((_resource) => _resource.resourceType === cost.type);

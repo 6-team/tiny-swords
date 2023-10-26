@@ -8,8 +8,6 @@ The `EnemySound` class represents the audio behavior of an "enemy" entity in a v
 - [Constructor](#constructor)
 - [Methods](#methods)
 - [Dependencies](#dependencies)
-- [Tests](#tests)
-- [License](#license)
 
 ## Usage
 

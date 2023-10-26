@@ -8,8 +8,6 @@ The `HouseTile` class represents a tile with a house entity. It extends the `Til
 - [Properties](#properties)
 - [Methods](#methods)
 - [Installation](#installation)
-- [Tests](#tests)
-- [License](#license)
 
 ## Usage
 
