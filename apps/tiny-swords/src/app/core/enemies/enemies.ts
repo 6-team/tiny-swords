@@ -24,6 +24,7 @@ class Enemies {
     { id, coords }: IPlayer,
     bounds$: Observable<Array<TCollisionArea>>,
     heroes$: Observable<Array<IMovingCharacter & IFightingCharacter>>,
+    hero$: Observable<(IMovingCharacter & IFightingCharacter) | null>,
   ): Enemy {
     const [x, y] = coords;
     const [initialX, initialY, height, width] = grid64.transformToPixels(x - 1, y - 1, 3, 3);
@@ -37,15 +38,18 @@ class Enemies {
       id,
     });
 
+    this.addEnemy(enemy);
+
     new AIController({
       id,
       heroes$,
+      bounds$,
+      hero$,
+      chaser: this.#enemiesSubject.getValue().length === 1,
       character: enemy,
       streamDecorator: (originalStream$: Observable<MovingDirection>) =>
         collisions.preventBoundsDecorator({ character: enemy, otherCharacters$: heroes$, bounds$, originalStream$ }),
     });
-
-    this.addEnemy(enemy);
 
     return enemy;
   }

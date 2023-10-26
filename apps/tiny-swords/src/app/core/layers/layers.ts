@@ -36,7 +36,7 @@ export class Layers {
 
     let terrainLayer;
 
-    switch(level) {
+    switch (level) {
       case LevelType.Ground:
         terrainLayer = new GroundLayer(gridX, gridY, border, startCoords, endCoords);
         break;
@@ -101,7 +101,11 @@ export class Layers {
     ];
 
     this.#resources = new ResourcesLayer(gridX, gridY, level, [terrainLayer, buildingsLayer, signLayer, decoLayer]);
-    this.#enemies = new EnemiesLayer(gridX, gridY, level, startCoords, endCoords, [terrainLayer, buildingsLayer, signLayer]);
+    this.#enemies = new EnemiesLayer(gridX, gridY, level, startCoords, endCoords, [
+      terrainLayer,
+      buildingsLayer,
+      signLayer,
+    ]);
   }
 
   get boundaries() {
@@ -154,13 +158,11 @@ export class Layers {
     return this.#resources.array
       .filter(({ collapsed }) => collapsed)
       .map(({ options, coords }) => {
-        return new Resource({ type: options[0], coords: grid64.transformToPixels(coords[0], coords[1], 1, 1) })
+        return new Resource({ type: options[0], coords: grid64.transformToPixels(coords[0], coords[1], 1, 1) });
       });
   }
 
   get enemies() {
-    return this.#enemies.array
-      .filter(({ collapsed }) => collapsed)
-      .map(({ coords }) => (coords));
+    return this.#enemies.array.filter(({ collapsed }) => collapsed).map(({ coords }) => coords);
   }
 }

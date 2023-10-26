@@ -19,6 +19,7 @@ export default class Enemy
   protected _sprite = './img/Factions/Goblins/Troops/Torch/Red/Torch_Red.png';
   protected _type = EnemyType.TORCH_RED;
   protected _size = ENEMY_SIZE;
+
   sounds: IEnemySounds;
 
   constructor({ height, width, initialX, initialY, initialDirection, id }: EnemyConfig) {

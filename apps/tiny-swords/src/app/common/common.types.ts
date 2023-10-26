@@ -9,6 +9,8 @@ export type TNumberOfPixels = number;
 
 export type TPixelsPosition = number;
 
+export type TTiledCoords = [x: TTilePosition, y: TTilePosition, height: TNumberOfTiles, width: TNumberOfTiles];
+
 export interface IGrid {
   tileSize: number;
   transformToPixels(
