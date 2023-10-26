@@ -2,48 +2,48 @@ import { AttackingType, MovingDirection } from '../enums';
 import { IEntity } from './entity.types';
 
 /**
- * Класс, представляющий сущность в игре.
+ * Class representing an entity in the game.
  */
 export class Entity implements IEntity {
   /**
-   * Уникальный идентификатор сущности.
+   * Unique identifier for the entity.
    * @type {string}
    */
   id!: string;
 
   /**
-   * Координаты сущности в формате [x, y].
+   * Coordinates of the entity in the format [x, y].
    * @type {[number, number]?}
    */
   coords?: [number, number];
 
   /**
-   * Координаты остановки сущности в формате [x, y].
+   * Coordinates where the entity stops in the format [x, y].
    * @type {[number, number]?}
    */
   breakpoint?: [number, number];
 
   /**
-   * Текущее направление движения сущности.
+   * The current movement direction of the entity.
    * @type {MovingDirection | null}
    */
   direction: MovingDirection | null = null;
 
   /**
-   * Тип атаки сущности.
+   * The attacking type of the entity.
    * @type {AttackingType | null}
    */
   attackingType: AttackingType | null = null;
 
   /**
-   * Флаг, указывающий, мертва ли сущность.
+   * A flag indicating whether the entity is deceased (dead).
    * @type {boolean}
    */
   isDied: boolean = false;
 
   /**
-   * Создает новую сущность на основе предоставленных данных.
-   * @param {IEntity} entity - Объект, содержащий данные сущности.
+   * Creates a new entity based on the provided data.
+   * @param {IEntity} entity - An object containing entity data.
    */
   constructor(entity: IEntity) {
     Object.assign(this, entity);

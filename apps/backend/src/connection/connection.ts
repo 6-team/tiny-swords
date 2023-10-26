@@ -5,27 +5,27 @@ import { Server, Socket } from 'socket.io';
 import { Response } from '../types';
 
 /**
- * Представляет собой менеджер соединений для обработки подключений WebSocket.
+ * Represents a connection manager for handling WebSocket connections.
  *
  * @class Connection
  */
 export class Connection {
   /**
-   * Поток наблюдаемых данных для подключений к серверу WebSocket.
+   * An observable stream for connections to the WebSocket server.
    *
    * @type {Observable<Server>}
    */
   private readonly io$: Observable<Server>;
 
   /**
-   * Поток наблюдаемых данных для подключений клиентов WebSocket.
+   * An observable stream for client WebSocket connections.
    *
    * @type {Observable<Socket>}
    */
   readonly connect$: Observable<Socket>;
 
   /**
-   * Поток наблюдаемых данных для отключений клиентов WebSocket.
+   * An observable stream for client WebSocket disconnections.
    *
    * @type {Observable<Socket>}
    */
@@ -40,11 +40,11 @@ export class Connection {
   }
 
   /**
-   * Ожидает события на подключенных клиентах WebSocket.
+   * Listens for events on connected WebSocket clients.
    *
-   * @template T - Тип данных, ожидаемых из события.
-   * @param {string} event - Имя события для прослушивания.
-   * @returns {Observable<Response<T>>} - Поток наблюдаемых данных ответов.
+   * @template T - The type of data expected from the event.
+   * @param {string} event - The name of the event to listen for.
+   * @returns {Observable<Response<T>>} - An observable stream of response data.
    */
   listen<T>(event: string): Observable<Response<T>> {
     return this.connect$.pipe(

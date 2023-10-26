@@ -1,14 +1,14 @@
 import { Server } from 'socket.io';
 
 /**
- * Создание экземпляра сервера WebSocket.
+ * Creates an instance of a WebSocket server.
  *
  * @type {Server}
- * @param {object} options - Параметры сервера.
- * @param {object} options.cors - Параметры CORS (Cross-Origin Resource Sharing).
- * @param {string} options.cors.origin - Разрешенное источников для запросов (обычно "*").
- * @param {number} options.pingInterval - Интервал проверки активности соединения (в миллисекундах).
- * @param {number} options.pingTimeout - Таймаут для пинг-понг проверки (в миллисекундах).
+ * @param {object} options - Server parameters.
+ * @param {object} options.cors - CORS (Cross-Origin Resource Sharing) parameters.
+ * @param {string} options.cors.origin - Allowed origins for requests (usually "*").
+ * @param {number} options.pingInterval - Connection activity check interval (in milliseconds).
+ * @param {number} options.pingTimeout - Ping-pong check timeout (in milliseconds).
  */
 export const server: Server = new Server({
   cors: {

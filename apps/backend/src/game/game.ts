@@ -3,10 +3,10 @@ import { MovingDirection, ILevelData, IEntity, Entity } from '@shared';
 import { v4 as uuidv4 } from 'uuid';
 
 /**
- * Представляет класс управления игрой для обработки героев, врагов и уровней игры.
+ * Represents a game management class for handling heroes, enemies, and game levels.
  *
- * @template T - Тип сущности, обычно представляющей героев или врагов.
- * @template L - Тип для игровых уровней.
+ * @template T - The entity type, typically representing heroes or enemies.
+ * @template L - Type for game levels.
  */
 export class Game<T extends IEntity = IEntity, L extends ILevelData = ILevelData> {
   #heroesMap = new Map();
@@ -14,54 +14,54 @@ export class Game<T extends IEntity = IEntity, L extends ILevelData = ILevelData
   #level: L | null = null;
 
   /**
-   * Получает количество героев в игре.
+   * Gets the number of heroes in the game.
    *
-   * @returns {number} Количество героев в игре.
+   * @returns {number} The number of heroes in the game.
    */
   get heroesCount(): number {
     return this.#heroesMap.size;
   }
 
   /**
-   * Получает текущий уровень игры.
+   * Gets the current game level.
    *
-   * @returns {L | null} Текущий уровень игры или null, если не установлен.
+   * @returns {L | null} The current game level or null if not set.
    */
   get level(): L | null {
     return this.#level;
   }
 
   /**
-   * Получает массив героев в игре.
+   * Gets an array of heroes in the game.
    *
-   * @returns {T[]} Массив сущностей героев.
+   * @returns {T[]} An array of hero entities.
    */
   get heroes(): T[] {
     return [...this.#heroesMap.values()];
   }
 
   /**
-   * Получает массив врагов в игре.
+   * Gets an array of enemies in the game.
    *
-   * @returns {T[]} Массив сущностей врагов.
+   * @returns {T[]} An array of enemy entities.
    */
   get enemies(): T[] {
     return [...this.#enemiesMap.values()];
   }
 
   /**
-   * Добавляет героя в игру.
+   * Adds a hero to the game.
    *
-   * @param {T} hero - Герой для добавления.
+   * @param {T} hero - The hero to add.
    */
   setHero(hero: T): void {
     this.#heroesMap.set(hero.id, hero);
   }
 
   /**
-   * Добавляет врага в игру. Если враг умер, он удаляется.
+   * Adds an enemy to the game. If the enemy is dead, it will be removed.
    *
-   * @param {T} enemy - Враг для добавления.
+   * @param {T} enemy - The enemy to add.
    */
   setEnemy(enemy: T): void {
     if (enemy.isDied) {
@@ -72,9 +72,9 @@ export class Game<T extends IEntity = IEntity, L extends ILevelData = ILevelData
   }
 
   /**
-   * Устанавливает текущий уровень игры.
+   * Sets the current game level.
    *
-   * @param {L} level - Данные текущего уровня игры.
+   * @param {L} level - The data of the current game level.
    */
   setLevel(level: L): void {
     this.#level = level;
@@ -82,69 +82,69 @@ export class Game<T extends IEntity = IEntity, L extends ILevelData = ILevelData
   }
 
   /**
-   * Получает героя по ID.
+   * Gets a hero by ID.
    *
-   * @param {string} id - ID героя.
-   * @returns {T} Герой с указанным ID.
+   * @param {string} id - The ID of the hero.
+   * @returns {T} The hero with the specified ID.
    */
   getHero(id: string): T {
     return this.#heroesMap.get(id);
   }
 
   /**
-   * Проверяет наличие героя с указанным ID в игре.
+   * Checks if a hero with the specified ID exists in the game.
    *
-   * @param {string} id - ID героя для проверки.
-   * @returns {boolean} true, если герой существует, иначе false.
+   * @param {string} id - The ID of the hero to check.
+   * @returns {boolean} true if the hero exists, otherwise false.
    */
   hasHero(id: string): boolean {
     return this.#heroesMap.has(id);
   }
 
   /**
-   * Удаляет героя из игры по ID.
+   * Removes a hero from the game by ID.
    *
-   * @param {string} id - ID героя для удаления.
-   * @returns {boolean} true, если герой был успешно удален, иначе false.
+   * @param {string} id - The ID of the hero to remove.
+   * @returns {boolean} true if the hero was successfully removed, otherwise false.
    */
   removeHero(id: string): boolean {
     return this.#heroesMap.delete(id);
   }
 
   /**
-   * Удаляет врага из игры по ID.
+   * Removes an enemy from the game by ID.
    *
-   * @param {string} id - ID врага для удаления.
-   * @returns {boolean} true, если враг был успешно удален, иначе false.
+   * @param {string} id - The ID of the enemy to remove.
+   * @returns {boolean} true if the enemy was successfully removed, otherwise false.
    */
   removeEnemy(id: string): boolean {
     return this.#enemiesMap.delete(id);
   }
 
   /**
-   * Возвращает массив ID других героев в игре, исключая текущего героя.
+   * Returns an array of IDs of other heroes in the game, excluding the current hero.
    *
-   * @param {string} currentPlayerId - ID текущего героя.
-   * @returns {(string | number)[]} Массив ID других героев в игре.
+   * @param {string} currentPlayerId - The ID of the current hero.
+   * @returns {(string | number)[]} An array of IDs of other heroes in the game.
    */
   getOtherHeroIds(currentPlayerId: string): (string | number)[] {
     return this.getOtherHeroes(currentPlayerId).map(({ id }) => id);
   }
 
   /**
-   * Возвращает массив других героев в игре, исключая текущего героя.
+   * Returns an array of other heroes in the game, excluding the current hero.
    *
-   * @param {string} currentPlayerId - ID текущего героя.
-   * @returns {T[]} Массив других героев в игре.
+   * @param {string} currentPlayerId - The ID of the current hero.
+   * @returns {T[]} An array of other heroes in the game.
    */
   getOtherHeroes(currentPlayerId: string): T[] {
     return this.heroes.flatMap((hero: T) => (hero.id !== currentPlayerId ? [hero] : []));
   }
 
   /**
-   * Инициализирует врагов на основе координат из уровня игры.
+   * Initializes enemies based on coordinates from the game level.
    *
-   * @param {number[][]} enemiesCoords - Координаты врагов.
+   * @param {number[][]} enemiesCoords - Enemy coordinates.
    */
   #initEnemies(enemiesCoords: [number, number][]): void {
     this.#enemiesMap = enemiesCoords.reduce((map, coords) => {
