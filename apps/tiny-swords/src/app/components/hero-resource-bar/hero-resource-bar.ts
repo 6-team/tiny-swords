@@ -8,7 +8,6 @@ import { ResourcesType } from '@entities/resource';
  * A class for working with the hero's resources.
  *
  */
-
 export class HeroResourcesBar implements IHeroResourcesBar {
   private _resourcesSubject: BehaviorSubject<Resource[]>;
 

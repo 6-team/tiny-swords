@@ -9,7 +9,6 @@ describe('HeroSounds', () => {
   let mockCollecting: any;
 
   beforeEach(() => {
-    // Создаем моки для зависимостей
     mockMoving = {
       movements$: of({}),
     };
