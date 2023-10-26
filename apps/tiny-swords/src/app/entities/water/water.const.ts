@@ -1,9 +1,9 @@
-import { CoordsTuple } from "../tile/tile.types";
+import { CoordsTuple } from '@entities/tile';
 
 export const enum WaterType {
-    MIDDLE_MIDDLE,
+  MIDDLE_MIDDLE,
 }
 
 export const mapWaterToCoords: Record<WaterType, CoordsTuple> = {
-    [WaterType.MIDDLE_MIDDLE]: [0, 0],
+  [WaterType.MIDDLE_MIDDLE]: [0, 0],
 };
