@@ -1,9 +1,9 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
-  import { Observable, Subscription, combineLatest, concatAll, concatMap, distinctUntilChanged, filter, first, from, map, merge, skip, switchMap, tap, withLatestFrom } from "rxjs";
+  import { Observable, combineLatest, concatAll, concatMap, filter, first, from, map, merge, skip, switchMap, tap, withLatestFrom } from "rxjs";
   import { Hero } from '../entities/hero'
   import { Resource, ResourcesType } from '../entities/resource';
-  import { SCALE, SIZE_X, SIZE_Y, TOTAL_LIVES } from '../common/common.const'
+  import { SCALE, TOTAL_LIVES } from '../common/common.const'
   import { actions, Heroes, Renderer, grid64, HeroResourcesBar, enemies } from "../core";
   import { Level } from "../core/level/level";
   import {
@@ -17,13 +17,11 @@
   import { collisions } from "../core/collisions";
   import { LayersRenderType } from "../core/layers/layers.types"
 
-  import { AttackingType, type IPlayer, MovingDirection } from "@shared";
+  import { AttackingType, type IPlayer } from "@shared";
   import type { TPixelsCoords } from "../abilities/abilities.types";
   import { ImprovementTypes, type availableResourcesCheckType, type buyImprovementsType, type TNumberOfPixels, type TTiledCoords  } from "../common/common.types";
   import { HeroType } from "../entities/hero/hero.const";
-  import type { IMovingCharacter } from "../abilities/moving/moving.types";
   import type { IFightingCharacter } from "../abilities/fighting/fighting.types";
-  import { PathFinder } from '../core/pathfinder';
 
   let staticScene: Renderer;
   let foregroundScene: Renderer;
