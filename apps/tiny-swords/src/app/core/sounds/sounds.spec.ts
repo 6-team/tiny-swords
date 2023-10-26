@@ -1,5 +1,8 @@
 import { Sounds } from './sounds';
 
+global.HTMLMediaElement.prototype.play = () => {
+  return Promise.resolve();
+};
 const AudioMocked = {
   play: jest.fn(),
   pause: jest.fn(),

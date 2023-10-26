@@ -4,6 +4,9 @@ import { СharacterSoundsType } from '@core/sounds/sounds.const';
 
 import { of } from 'rxjs';
 
+global.HTMLMediaElement.prototype.play = () => {
+  return Promise.resolve();
+};
 describe('EnemySound', () => {
   let enemySound: EnemySound;
   const mockFighting: any = {

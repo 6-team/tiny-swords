@@ -3,6 +3,9 @@ import { of } from 'rxjs';
 import { СharacterSoundsType } from '@core/sounds/sounds.const';
 import { MovingDirection } from '@shared';
 
+global.HTMLMediaElement.prototype.play = () => {
+  return Promise.resolve();
+};
 describe('HeroSounds', () => {
   let mockMoving: any;
   let mockFighting: any;
