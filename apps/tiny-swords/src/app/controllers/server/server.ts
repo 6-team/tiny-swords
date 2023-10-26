@@ -1,47 +1,35 @@
-import { BehaviorSubject, Subject, filter } from 'rxjs';
-import { IController } from '../controllers.types';
-import { MovingDirection, AttackingType } from '@shared';
-import { actions } from '../../core';
-import { IMovableCharacter, IAttackingCharacter } from '../../common/common.types';
+import { filter } from 'rxjs';
 
-export default class ServerController implements IController {
-  private _movement$ = new BehaviorSubject<MovingDirection>(MovingDirection.IDLE);
-  private _animation$ = new BehaviorSubject<MovingDirection>(MovingDirection.IDLE);
-  private _attack$ = new Subject<AttackingType>();
-  private _character: IMovableCharacter & IAttackingCharacter;
+import { IMovingCharacter } from '@abilities/moving';
+import { IFightingCharacter } from '@abilities/fighting';
+import { actions } from '@core/actions';
 
-  readonly movement$ = this._movement$.asObservable();
-  readonly animation$ = this._animation$.asObservable();
-  readonly attack$ = this._attack$.asObservable();
+import { IServerControllerProps } from './server.types';
 
-  setCharacter(character: IMovableCharacter & IAttackingCharacter) {
+export default class ServerController {
+  private _character: IMovingCharacter & IFightingCharacter;
+
+  constructor({ id, character }: IServerControllerProps) {
     this._character = character;
 
-    return this;
-  }
-
-  constructor({ id }: { id: string | number }) {
     actions
       .updatePlayerListener()
       .pipe(filter((player) => player.id === id))
       .subscribe((player) => {
         if (player.hasOwnProperty('attackingType')) {
-          this._attack$.next(player.attackingType);
+          character.fighting.attack(player.attackingType);
         }
 
         if (player.hasOwnProperty('direction')) {
-          this._movement$.next(player.direction);
-          this._animation$.next(player.direction);
+          character.moving.moveTo(player.direction);
+          character.moving.animate(player.direction);
         }
 
         if (player.hasOwnProperty('breakpoint')) {
-          const movable = this._character.getAbility('movable');
+          const moving = this._character.moving;
 
-          if (movable.coords[0] !== player.breakpoint[0] || movable.coords[1] !== player.breakpoint[1]) {
-            /**
-             * @TODO Убрать это безобразие, когда будем прокидывать персонажа в контроллер, а не наоборот
-             */
-            movable.setCoords(player.breakpoint);
+          if (moving.coords[0] !== player.breakpoint[0] || moving.coords[1] !== player.breakpoint[1]) {
+            character.moving.setCoords(player.breakpoint);
           }
         }
       });

@@ -6,7 +6,7 @@ export enum MovingDirection {
   IDLE = 'idle',
 }
 
-export enum StandingDirection {
+export enum CharacterDirection {
   LEFT = 'left',
   RIGHT = 'right',
 }

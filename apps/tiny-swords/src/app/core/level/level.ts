@@ -1,4 +1,4 @@
-import { LevelData } from '@shared';
+import { ILevelData } from '@shared';
 import { Layers } from '../layers/layers';
 import { randomElement } from '../layers/layers.utils';
 import { SIZE_X, SIZE_Y } from '../../common/common.const';
@@ -32,13 +32,13 @@ export class Level {
     .asObservable()
     .pipe(map((bounds): TCollisionArea[] => bounds.map(([x, y]) => grid64.transformToPixels(x, y, 1, 1))));
 
-  #data: LevelData<LayersMap, Resource>;
+  #data: ILevelData<LayersMap, Resource>;
 
   constructor() {
     this.next();
   }
 
-  get data(): LevelData<LayersMap, Resource> {
+  get data(): ILevelData<LayersMap, Resource> {
     return this.#data;
   }
 
@@ -62,7 +62,7 @@ export class Level {
     return this.#enemiesCoordsSubject.getValue();
   }
 
-  updateLevel(levelData: LevelData<LayersMap, Resource>): void {
+  updateLevel(levelData: ILevelData<LayersMap, Resource>): void {
     const { gridX, gridY, startCoords, endCoords, maps, boundaries, resources, enemies } = levelData;
 
     this.#data = levelData;
@@ -80,13 +80,11 @@ export class Level {
     this.#resourcesSubject.next(resources);
   }
 
-  next(): Observable<LevelData<LayersMap>> {
+  next(): Observable<ILevelData<LayersMap>> {
     // console.time();
     const levels = [LevelType.Ground, LevelType.Sand, LevelType.Stones];
-    
-    this.#currentLevelType = typeof this.#nextLevelType === 'number'
-      ? this.#nextLevelType
-      : randomElement(levels);
+
+    this.#currentLevelType = typeof this.#nextLevelType === 'number' ? this.#nextLevelType : randomElement(levels);
 
     this.#nextLevelType = randomElement(levels.filter((level) => level !== this.#currentLevelType));
 

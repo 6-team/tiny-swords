@@ -1,8 +1,8 @@
-import { IAttacking } from '@abilities';
-import { ISounds } from '../sounds.types';
+import { IFighting } from '../../abilities/fighting/fighting.types';
+import { ISounds } from './sounds.types';
 
 export interface EnemySoundsConfig {
-  attacking: IAttacking;
+  fighting: IFighting;
 }
 
 export interface IEnemySounds extends ISounds {

@@ -1,9 +1,9 @@
-export const enum AttackingType {
+export enum AttackingType {
   UP,
   DOWN,
 }
 
-export const enum FightingAreaDirection {
+export enum FightingAreaDirection {
   FRONT = 'FRONT',
   BACK = 'BACK',
 }

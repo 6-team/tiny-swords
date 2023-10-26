@@ -1,88 +1,77 @@
 import { IHeroSounds } from './../../core/sounds/hero-sounds.types';
-import { Attacking } from '../../abilities/attacking';
 import { Collecting } from '../../abilities/collecting';
-import { Movable } from '../../abilities/movable';
-import { IAttackingCharacter, ICollectingCharacter, IMovableCharacter } from '../../common/common.types';
 import { grid64 } from '../../core/grid';
 import { Character } from '../character';
 import { HeroType, mapHeroImages, mapHeroTypeToCoords } from './hero.const';
 import { HeroAbilities, HeroConfig } from './hero.types';
 import { isMuttedStore } from '../../store/store';
 import { HeroSounds } from '../../core/sounds';
-import { IAttacking, ICollecting, IMovable } from '../../abilities';
+import { IMoving, IMovingCharacter } from '../../abilities/moving/moving.types';
+import { IFighting, IFightingCharacter } from '../../abilities/fighting/fighting.types';
+import { ICollecting, ICollectingCharacter } from '../../abilities/collecting/collecting.types';
+import { Fighting } from '../../abilities/fighting';
+import { Moving } from '../../abilities/moving';
 
 const HERO_SIZE = 192;
 
 export default class Hero
   extends Character<HeroType, HeroAbilities>
-  implements IMovableCharacter, IAttackingCharacter, ICollectingCharacter
+  implements IMovingCharacter, IFightingCharacter, ICollectingCharacter
 {
   protected _sprite: string;
   protected _type: HeroType;
   protected _size = HERO_SIZE;
   sounds: IHeroSounds;
 
-  constructor({ controllerCreator, height, width, initialX, initialY, id, type = HeroType.WARRIOR_BLUE }: HeroConfig) {
+  constructor({ height, width, initialX, initialY, id, type = HeroType.WARRIOR_BLUE }: HeroConfig) {
     super({ id });
 
     this._type = type;
     this._sprite = mapHeroImages[type];
 
-    const attacking = new Attacking({ availibleLives: 1, blockedLives: 2 });
+    const fighting = new Fighting({ availibleLives: 1, blockedLives: 2 });
     const collecting = new Collecting();
-    const movable = new Movable({
+    const moving = new Moving({
       height,
       width,
       initialX,
       initialY,
-      getCollisionArea: (movable) => {
-        const [x1, y1] = movable.coords;
+      getCollisionArea: (moving) => {
+        const [x1, y1] = moving.coords;
 
         return [x1 + grid64.tileSize, y1 + grid64.tileSize, grid64.tileSize, grid64.tileSize];
       },
     });
 
-    this._setAbilities({ movable, attacking, collecting });
-
-    const controller = controllerCreator(this);
-
-    movable.setController(controller);
-    attacking.setController(controller);
-
-    /**
-     * @TODO Убрать это безобразие, когда будем прокидывать персонажа в контроллер, а не наоборот
-     */
-    if (controller.setCharacter) {
-      controller.setCharacter(this);
-    }
-
-    /**
-     * @TODO Убрать это безобразие, когда будем прокидывать персонажа в контроллер, а не наоборот
-     */
-    if (controller.init) {
-      controller.init();
-    }
-
-    this.#initSounds(movable, attacking, collecting);
+    this._setAbilities({ moving, fighting, collecting });
+    this._initSounds({ moving, fighting, collecting });
   }
 
   /**
    * @TODO Описать эти типы в интерфейсах
    */
   get moving() {
-    return this.getAbility('movable');
+    return this.getAbility('moving');
   }
 
   get fighting() {
-    return this.getAbility('attacking');
+    return this.getAbility('fighting');
   }
 
   get collecting() {
     return this.getAbility('collecting');
   }
 
-  #initSounds(movable: IMovable, attacking: IAttacking, collecting: ICollecting): void {
-    this.sounds = new HeroSounds({ movable, attacking, collecting });
+  private _initSounds({
+    moving,
+    fighting,
+    collecting,
+  }: {
+    moving: IMoving;
+    fighting: IFighting;
+    collecting: ICollecting;
+  }): void {
+    this.sounds = new HeroSounds({ moving, fighting, collecting });
 
     isMuttedStore.subscribe((value) => {
       if (value) {

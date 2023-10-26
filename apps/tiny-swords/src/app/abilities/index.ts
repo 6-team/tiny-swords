@@ -1,1 +1,1 @@
-export type { IAttacking, IMovable, WithSetPersonageContext, ICollecting, TPixelsCoords } from './abilities.types';
+export type { WithSetPersonageContext, TPixelsCoords, TCollisionArea } from './abilities.types';

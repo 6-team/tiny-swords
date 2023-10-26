@@ -1,4 +1,4 @@
-import { IAttacking, ICollecting, IMovable, WithSetPersonageContext } from '../abilities/abilities.types';
+import { WithSetPersonageContext } from '../abilities/abilities.types';
 import { ResourcesType } from '../entities/resource';
 
 export type TNumberOfTiles = number;
@@ -42,18 +42,6 @@ export interface IResource {
   getQuantity: () => number;
   resourceImage: string;
 }
-
-export type IMovableCharacter = ICharacter<{ movable: IMovable }> & {
-  moving: IMovable;
-};
-
-export type IAttackingCharacter = ICharacter<{ attacking: IAttacking }> & {
-  fighting: IAttacking;
-};
-
-export type ICollectingCharacter = ICharacter<{ collecting: ICollecting }> & {
-  collecting: ICollecting;
-};
 
 export enum ImprovementTypes {
   LIFE,

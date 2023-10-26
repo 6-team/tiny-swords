@@ -18,9 +18,10 @@
   import { collisions } from "../core/collisions";
   import { LayersRenderType } from "../core/layers/layers.types"
 
-  import type { AttackingType, IPlayer } from "@shared";
+  import type { AttackingType, IEntity } from "@shared";
   import type { TPixelsCoords } from "../abilities/abilities.types";
-  import { type IAttackingCharacter, ImprovementTypes, type availableResourcesCheckType, type buyImprovementsType  } from "../common/common.types";
+  import { ImprovementTypes, type availableResourcesCheckType, type buyImprovementsType  } from "../common/common.types";
+  import type { IFightingCharacter } from "../abilities/fighting/fighting.types";
 
   let staticScene: Renderer;
   let foregroundScene: Renderer;
@@ -51,11 +52,9 @@
      */
      heroes.heroes$.forEach(heroes => {
       for (const hero of heroes) {
-
-        const movable = hero.getAbility('movable');
         const [x, y] = grid64.transformToPixels(startX - 1, startY - 1, 3, 3);
 
-        movable.setCoords([x, y]);
+        hero.moving.setCoords([x, y]);
       }
     });
   });
@@ -95,31 +94,24 @@
     heroes.mainHero.fighting.reset();
 
     if (isMultiplayer) {
-      const movable = heroes.mainHero.getAbility('movable');
       const [startX, startY] = level.startCoords;
       const [x, y] = grid64.transformToPixels(startX - 1, startY - 1, 3, 3);
-      movable.setCoords([x, y])
+
+      heroes.mainHero.moving.setCoords([x, y])
       actions.updatePlayer({ id: heroes.mainHero.id, breakpoint: [x, y]}).subscribe()
     } else {
       createNewLevel();
     }
   }
 
-  function handleHeroMovement(action$: Observable<IPlayer>): void {
-    const bounds$ = combineLatest([enemies.enemiesBoundaries$, level.boundaries$]).pipe(
-      map((tuple) => tuple.flat())
-    );
-
+  function handleHeroMovement(action$: Observable<IEntity>): void {
     action$
       .pipe(
-        map((hero) => heroes.initHero(hero, bounds$)),
+        map((hero) => heroes.initHero(hero, level.boundaries$, enemies.enemies$)),
         switchMap((hero: Hero) => {
-          const movable = hero.getAbility('movable');
-          const attacking = hero.getAbility('attacking')
-          const controller = movable.getController();
-          const movement$ = controller.movement$.pipe(switchMap((direction) => actions.updatePlayer({ id: hero.id, direction, coords: movable.coords })));
-          const attack$ = attacking.attack$.pipe(switchMap((attackingType) => actions.updatePlayer({ id: hero.id, attackingType })));;
-          const breakpoint$ = movable.breakpoints$.pipe(skip(1),switchMap((breakpoint) => {
+          const movement$ = hero.moving.movements$.pipe(switchMap((direction) => actions.updatePlayer({ id: hero.id, direction, coords: hero.moving.coords })));
+          const attack$ = hero.fighting.attack$.pipe(switchMap((attackingType) => actions.updatePlayer({ id: hero.id, attackingType })));;
+          const breakpoint$ = hero.moving.breakpoints$.pipe(skip(1),switchMap((breakpoint) => {
             return actions.updatePlayer({ id: hero.id, breakpoint });
           }));
 
@@ -137,10 +129,6 @@
   }
 
   function handleUpdatedEnemies(): void {
-    const bounds$ = combineLatest([heroes.heroesBoundaries$, level.boundaries$]).pipe(
-      map((tuple) => tuple.flat())
-    );
-
     actions.updateEnemyListener()
       .pipe(
         filter((enemy) => !!enemy.id),
@@ -150,7 +138,7 @@
           return existingEnemy || enemy.isDied ? null : enemy;
         }),
         filter(Boolean),
-        map((enemy) => enemies.initEnemy(enemy, bounds$, heroes.heroes$)),
+        map((enemy) => enemies.initEnemy(enemy, level.boundaries$, heroes.heroes$)),
       )
       .subscribe();
   }
@@ -302,11 +290,8 @@
 
     // Это надо будет наверное вынести куда то
     function checkCollisions(character: Hero, nextLevelTile: TPixelsCoords): void {
-      const movable = character.getAbility('movable');
-      const collecting = character.getAbility('collecting');
-
       const hasCollisionWithNextLevelArea = collisions.hasCollision(
-        movable.getCollisionArea(),
+        character.moving.getCollisionArea(),
         nextLevelTile
       );
 
@@ -320,7 +305,7 @@
 
       for (const resource of resources) {
         const hasCollision = collisions.hasCollision(
-          movable.getCollisionArea(),
+          character.moving.getCollisionArea(),
           resource.coords
         );
 
@@ -329,7 +314,7 @@
             character.fighting.addLive();
           }
 
-          collecting.collect(resource);
+          character.collecting.collect(resource);
 
           const updatedResources = resources.filter((original) => original !== resource);
 
@@ -339,19 +324,17 @@
       }
     }
 
-    function checkAttackCollisions(hero: IAttackingCharacter, type: AttackingType) {
-      const attacking = hero.getAbility('attacking');
-
+    function checkAttackCollisions(hero: IFightingCharacter, type: AttackingType) {
       for (const enemy of enemies.enemies) {
-        const enemyMovable = enemy.getAbility('movable');
         const hasAttackCollision = collisions.hasCollision(
-          attacking.getAffectedArea(),
-          enemyMovable.getCollisionArea()
+          hero.fighting.getAffectedArea(),
+          enemy.moving.getCollisionArea()
         );
 
         if (hasAttackCollision) {
-          attacking.isAttacking$
-            .pipe(filter(isAttacking => !isAttacking), first(), switchMap(() => actions.updateEnemy({ id: enemy.id, isDied: true }))).subscribe(() => {
+          hero.fighting.isAttacking$
+            .pipe(filter(isAttacking => !isAttacking), first(), switchMap(() => actions.updateEnemy({ id: enemy.id, isDied: true })))
+            .subscribe(() => {
               enemy.fighting.takeDamage();
             });
 
@@ -371,14 +354,11 @@
       interactiveScene.renderMovableLayer([...enemies, ...heroes]);
 
       for (const hero of heroes) {
-        const movable = hero.getAbility('movable');
-        const attacking = hero.getAbility('attacking');
-
-        movable.breakpoints$.pipe(withLatestFrom(nextLevelTile$)).subscribe(([_, nextLevelTile]) => {
+        hero.moving.breakpoints$.pipe(withLatestFrom(nextLevelTile$)).subscribe(([_, nextLevelTile]) => {
           checkCollisions(hero, nextLevelTile);
         });
 
-        attacking.attack$.subscribe((type) => {
+        hero.fighting.attack$.subscribe((type) => {
           checkAttackCollisions(hero, type);
         });
       }

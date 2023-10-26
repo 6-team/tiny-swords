@@ -1,8 +1,11 @@
 import { Observable } from 'rxjs';
-import { TPixelsCoords } from '../../abilities/abilities.types';
-import { IMovableCharacter } from '../../common/common.types';
+import { MovingDirection } from '@shared';
+import { IMovingCharacter } from '../../abilities/moving/moving.types';
+import { IFightingCharacter } from '../../abilities/fighting/fighting.types';
 
-export interface AIControllerProps {
-  bounds$: Observable<Array<TPixelsCoords>>;
-  character: IMovableCharacter;
+export interface IAIControllerProps {
+  heroes$: Observable<Array<IMovingCharacter & IFightingCharacter>>;
+  id: string | number;
+  character: IMovingCharacter & IFightingCharacter;
+  streamDecorator?: (movements$: Observable<MovingDirection>) => Observable<MovingDirection>;
 }

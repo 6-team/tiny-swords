@@ -11,7 +11,7 @@ import { HeroSoundsConfig, IHeroSounds } from './hero-sounds.types';
  * Класс для работы со свуками героя
  */
 export class HeroSounds extends Sounds implements IHeroSounds {
-  constructor({ movable, attacking, collecting }: HeroSoundsConfig) {
+  constructor({ moving, fighting, collecting }: HeroSoundsConfig) {
     super();
 
     this.addSound(СharacterSoundsType.MOVEMENT, 'sounds/running.mp3');
@@ -21,9 +21,7 @@ export class HeroSounds extends Sounds implements IHeroSounds {
     this.addSound(СharacterSoundsType.HIT_ATTACK, 'sounds/hit_attack.mp3');
     this.addSound(СharacterSoundsType.HITTING, 'sounds/hitting.mp3');
 
-    const controller = movable.getController();
-
-    controller.movement$.subscribe((direction) => {
+    moving.movements$.subscribe((direction) => {
       if (Object.values(MovingDirection).includes(direction) && !this.isPlaySound(СharacterSoundsType.MOVEMENT)) {
         this.playMovementSound();
       }
@@ -31,13 +29,13 @@ export class HeroSounds extends Sounds implements IHeroSounds {
       if (direction === MovingDirection.IDLE) this.stopMovementSound();
     });
 
-    attacking.isAttacking$.pipe(filter(Boolean)).subscribe(() => {
+    fighting.isAttacking$.pipe(filter(Boolean)).subscribe(() => {
       this.playAttackSound();
     });
 
-    attacking.isHitted$.subscribe(() => this.playHittingSound());
+    fighting.isHitted$.subscribe(() => this.playHittingSound());
 
-    attacking.isDied$.subscribe(() => this.playGameOverSound());
+    fighting.isDied$.subscribe(() => this.playGameOverSound());
 
     collecting.collection$.pipe(filter((resources: IResource[]) => !!resources.length)).subscribe(() => {
       this.playResourceSelection();

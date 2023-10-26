@@ -1,31 +1,28 @@
 import { directionKeys, attackKeys } from './keyboard.conts';
-import { IController } from '../controllers.types';
-import { BehaviorSubject, Subject, fromEvent, map } from 'rxjs';
+import { BehaviorSubject, Observable, fromEvent, map } from 'rxjs';
 import { MovingDirection, AttackingType } from '@shared';
+import { IKeyboardControllerProps } from './keyboard.types';
+import { IMovingCharacter } from '../../abilities/moving/moving.types';
+import { IFightingCharacter } from '../../abilities/fighting/fighting.types';
 
-export default class KeyboardController implements IController {
+export default class KeyboardController {
   private _pushedMovementKeys$ = new BehaviorSubject<MovingDirection[]>([]);
-  private _pushedAttackKeys$ = new BehaviorSubject<AttackingType[]>([]);
-  private _movement$ = new BehaviorSubject<MovingDirection>(MovingDirection.IDLE);
-  private _animation$ = new BehaviorSubject<MovingDirection>(MovingDirection.IDLE);
-  private _attack$ = new Subject<AttackingType>();
+  private _lastPushedMovementKey$ = this._pushedMovementKeys$.pipe(map((directions) => directions.at(-1)));
+  private _character: IMovingCharacter & IFightingCharacter;
 
-  readonly movement$ = this._movement$.asObservable();
-  readonly animation$ = this._animation$.asObservable();
-  readonly attack$ = this._attack$.asObservable();
-
-  constructor() {
+  constructor({
+    character,
+    streamDecorator = (movements$: Observable<MovingDirection>) => movements$,
+  }: IKeyboardControllerProps) {
+    this._character = character;
     this._addListeners();
 
-    this._pushedMovementKeys$.pipe(map((directions) => directions.at(-1))).subscribe((direction) => {
-      const next = direction ?? MovingDirection.IDLE;
-
-      this._movement$.next(next);
-      this._animation$.next(next);
+    streamDecorator(this._lastPushedMovementKey$).subscribe((direction: MovingDirection) => {
+      this._character.moving.moveTo(direction ?? MovingDirection.IDLE);
     });
 
-    this._pushedAttackKeys$.pipe(map((attacks) => attacks.at(-1))).subscribe((attack) => {
-      this._attack$.next(attack);
+    this._lastPushedMovementKey$.subscribe((direction: MovingDirection) => {
+      this._character.moving.animate(direction ?? MovingDirection.IDLE);
     });
   }
 
@@ -55,7 +52,7 @@ export default class KeyboardController implements IController {
       return;
     }
 
-    this._attack$.next(attack);
+    this._character.fighting.attack(attack);
   }
 
   private _addListeners(): void {
