@@ -1,4 +1,4 @@
-import { Nothing } from "./nothing";
+import { Nothing } from './nothing';
 
 export class Maybe<T> {
   #value: T;
@@ -8,13 +8,17 @@ export class Maybe<T> {
   }
 
   map<R>(mapper: (prev: T) => R): Maybe<R> | Nothing<R> {
-    const next = mapper(this.#value);
+    try {
+      const next = mapper(this.#value);
 
-    if (next === null || next === undefined) {
-      return new Nothing(next);
+      if (next === null || next === undefined) {
+        return new Nothing(next);
+      }
+
+      return new Maybe<R>(next);
+    } catch (err) {
+      return new Nothing(err);
     }
-
-    return new Maybe<R>(next);
   }
 
   extract() {
