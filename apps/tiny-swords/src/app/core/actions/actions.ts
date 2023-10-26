@@ -1,15 +1,14 @@
 import { of, fromEvent, Observable, BehaviorSubject } from 'rxjs';
 import { filter, first, map, switchMap, tap } from 'rxjs/operators';
 import io, { Socket as WebSocket } from 'socket.io-client';
-import { ActionType, IPlayer, LevelData } from '@shared';
-import { MovingDirection } from '@shared';
+import { ActionType, IEntity, ILevelData } from '@shared';
 import { LayersMap } from '../layers/layers.types';
 import { Resource } from '../../entities/resource';
 
 // TODO: need to move
 const ENDPOINT = 'https://tiny-swords-b4d29a0600f2.herokuapp.com/';
 
-class Actions<T extends IPlayer<MovingDirection>, L extends LevelData<LayersMap, Resource>> {
+class Actions<T extends IEntity, L extends ILevelData<LayersMap, Resource>> {
   #socketSubject = new BehaviorSubject<WebSocket>(null);
   #player: T = null;
 
@@ -46,7 +45,7 @@ class Actions<T extends IPlayer<MovingDirection>, L extends LevelData<LayersMap,
   }
 
   updatePlayer(character: T): Observable<WebSocket> {
-    return this.emit(ActionType.UpdatePlayer, character);
+    return this.emit(ActionType.UpdateHero, character);
   }
 
   updateEnemy(character: T): Observable<WebSocket> {
@@ -54,7 +53,7 @@ class Actions<T extends IPlayer<MovingDirection>, L extends LevelData<LayersMap,
   }
 
   updatePlayerListener(): Observable<T> {
-    return this.listen<T>(ActionType.UpdatePlayer);
+    return this.listen<T>(ActionType.UpdateHero);
   }
 
   updateEnemyListener(): Observable<T> {
