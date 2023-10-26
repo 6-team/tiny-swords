@@ -13,7 +13,7 @@
     endGameMenuStore,
     multiplayerStore,
   } from "../store";
-  import { MainMenu, NextLevelMenu, EndGameMenu } from "../components";
+  import { MainMenu, NextLevelMenu, EndGameMenu, ControlHint } from "../components";
   import { collisions } from "../core/collisions";
   import { LayersRenderType } from "../core/layers/layers.types"
 
@@ -282,8 +282,6 @@
       grid: grid64,
     });
 
-    await heroBarsScene.renderResourcesBar(gameResources.getResources())
-
     // Дальше проверка: если перс повернут к врагу и они в соседних клетках, то удар засчитан
     // ...
 
@@ -365,10 +363,6 @@
       multiplayerStore.set(heroes.length > 1)
     });
 
-    gameResources.resources$.subscribe(() => {
-      heroBarsScene.clear()
-      heroBarsScene.renderResourcesBar(gameResources.getResources())
-    });
 
     heroes.mainHero$.pipe(filter(Boolean)).subscribe((hero) => {
       combineLatest([
@@ -385,6 +379,11 @@
         hero.moving.setCoords([innerWidth, innerHeight])
         actions.updatePlayer({ id: hero.id, breakpoint: [innerWidth, innerHeight]}).subscribe()
       });
+
+      gameResources.resources$.subscribe(() => {
+      heroBarsScene.clear()
+      heroBarsScene.renderResourcesBar(gameResources.getResources())
+    });
     });
   });
 
@@ -402,6 +401,7 @@
   <canvas id="canvas_hero_health-bar" width="1280" height="120px" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%);"></canvas>
   {#if isMainMenu}
     <MainMenu {initGame} {connectToMultipleGame}/>
+    <ControlHint />
   {/if}
   {#if isNextLevelMenu}
    {#key uniq}
@@ -414,7 +414,7 @@
   <button class="volume-btn" on:click={()=> {
     isMuttedStore.set(!isMuttedValue)}}>
     <img src = {isMuttedValue ? './img/UI/Disable_03.png' : './img/UI/Regular_03.png'} alt= 'volume-img'/>
-  </button>
+  </button> 
 </div>
 
 <style lang="scss">
