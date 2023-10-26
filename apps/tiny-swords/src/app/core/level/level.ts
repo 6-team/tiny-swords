@@ -1,12 +1,12 @@
 import { ILevelData } from '@shared';
-import { Layers } from '../layers/layers';
-import { randomElement } from '../layers/layers.utils';
-import { SIZE_X, SIZE_Y } from '../../common/common.const';
-import { LayersMap } from '../layers/layers.types';
+import { Layers } from '@core/layers';
+import { randomElement } from '@core/layers';
+import { SIZE_X, SIZE_Y } from '@common/common.const';
+import { LayersMap } from '@core/layers';
 import { BehaviorSubject, Observable, map, of } from 'rxjs';
-import { grid64 } from '../grid';
-import { TCollisionArea } from '../../abilities/abilities.types';
-import { Resource } from '../../entities/resource';
+import { grid64 } from '@core/grid';
+import { TCollisionArea } from '@abilities/abilities.types';
+import { Resource } from '@entities/resource';
 import { LevelType } from './level.types';
 
 /**

@@ -1,6 +1,6 @@
-import { LayerCondition } from "../../../layer/layer.types";
-import { LevelType } from "../../../level/level.types";
-import { TileName } from "../../../renderer";
+import { LayerCondition } from "@core/layer";
+import { LevelType } from "@core/level";
+import { TileName } from "@core/renderer";
 
 /**
  * Get ground conditions based on the given tile and coordinates.

@@ -1,7 +1,7 @@
-import { Layer } from "../../../layer/layer";
-import { LayerCondition } from "../../../layer/layer.types";
-import { LevelType } from "../../../level/level.types";
-import { TileName } from "../../../renderer";
+import { Layer } from "@core/layer";
+import { LayerCondition } from "@core/layer";
+import { LevelType } from "@core/level";
+import { TileName } from "@core/renderer";
 
 /**
  * Generates elevation conditions based on the provided tile and coordinates.

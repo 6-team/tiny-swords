@@ -96,4 +96,4 @@ This class relies on the following dependencies:
 
 - `Matrix` from the `../../tools/matrix/matrix` module.
 - `TileName` from the `../renderer` module.
-- Functions `randomElement` and `weightedRandomElement` from the `../layers/layers.utils` module.
+- Functions `randomElement` and `weightedRandomElement` from the `../layers` module.

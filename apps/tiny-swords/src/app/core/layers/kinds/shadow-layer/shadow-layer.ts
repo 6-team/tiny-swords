@@ -1,4 +1,4 @@
-import { Layer } from "../../../layer/layer";
+import { Layer } from "@core/layer";
 import { shadowConditions } from "./shadow-conditions";
 
 /**

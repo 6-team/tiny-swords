@@ -1,5 +1,5 @@
 import { boundaryConditions } from "./boundary-conditions";
-import { Layer } from "../../../layer/layer";
+import { Layer } from "@core/layer";
 
 /**
  * Represents a class for creating a boundary layer that defines collisions with static map objects.

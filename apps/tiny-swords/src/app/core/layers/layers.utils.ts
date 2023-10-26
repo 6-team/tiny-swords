@@ -1,6 +1,6 @@
-import { Layer } from "../layer/layer";
-import { LayerCell, LayerCondition } from "../layer/layer.types";
-import { TileName } from "../renderer";
+import { Layer } from "@core/layer";
+import { LayerCell, LayerCondition } from "@core/layer";
+import { TileName } from "@core/renderer";
 
 /**
  * Returns a random element from an array.

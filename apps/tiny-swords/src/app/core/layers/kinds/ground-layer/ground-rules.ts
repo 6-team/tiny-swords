@@ -1,5 +1,5 @@
-import { LayerRules, TileWeight } from "../../../layer/layer.types";
-import { TileName } from "../../../renderer";
+import { LayerRules, TileWeight } from "@core/layer";
+import { TileName } from "@core/renderer";
 
 export const GROUND_WEIGHT: TileWeight[] = [
   [TileName.WATER_MIDDLE_MIDDLE,  1, true],

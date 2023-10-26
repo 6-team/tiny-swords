@@ -1,5 +1,5 @@
-import { LayerCondition } from "../../../layer/layer.types";
-import { TileName } from "../../../renderer";
+import { LayerCondition } from "@core/layer";
+import { TileName } from "@core/renderer";
 import { randomInteger } from "../../layers.utils";
 
 export const leftSandConditions = (startCoords: [number, number]): LayerCondition[] => {

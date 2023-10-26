@@ -1,6 +1,6 @@
 import { goldMineConditions, leftHouseConditions, leftTowerConditions, rightHouseConditions, rightTowerConditions, treeBottomConditions } from "./buldings-conditions";
-import { Layer } from "../../../layer/layer";
-import { LevelType } from "../../../level/level.types";
+import { Layer } from "@core/layer";
+import { LevelType } from "@core/level";
 
 /**
  * Represents a class for creating a layer that includes buildings based on the current and next level types.

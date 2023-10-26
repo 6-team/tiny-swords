@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { TileName } from "../../../renderer";
+import { TileName } from "@core/renderer";
 import { createCoordsLayerDict, createLayerConditions, getQuantityCells, getShuffleFilterCoords, randomElement, weightedRandomElement } from "../../layers.utils";
-import { LayerCondition } from "../../../layer/layer.types";
+import { LayerCondition } from "@core/layer";
 
 const waterWeightedTiles = (cells: number) => [{
   count: getQuantityCells(cells, 15),

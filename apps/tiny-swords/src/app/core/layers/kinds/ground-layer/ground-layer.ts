@@ -1,4 +1,4 @@
-import { Layer } from "../../../layer/layer";
+import { Layer } from "@core/layer";
 import { randomElement } from "../../layers.utils";
 import { borderWaterConditions, centerBridgeConditions, centerGroundConditions, leftGroundBridgeConditions, leftGroundConditions, rightGroundBridgeConditions, rightGroundConditions } from "./ground-conditions";
 import { GROUND_RULES, GROUND_WEIGHT } from "./ground-rules";

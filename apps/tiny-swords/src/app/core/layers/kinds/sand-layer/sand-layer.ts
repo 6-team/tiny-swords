@@ -1,4 +1,4 @@
-import { Layer } from "../../../layer/layer";
+import { Layer } from "@core/layer";
 import { randomElement } from "../../layers.utils";
 import { borderWaterConditions, centerBridgeConditions, centerSandConditions, leftSandBridgeConditions, leftSandConditions, rightSandBridgeConditions, rightSandConditions } from "./sand-conditions";
 import { SAND_RULES, SAND_WEIGHT } from "./sand-rules";

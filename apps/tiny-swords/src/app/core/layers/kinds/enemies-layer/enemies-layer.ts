@@ -1,6 +1,6 @@
 import { enemiesConditions } from "./enemies-conditions";
-import { Layer } from "../../../layer/layer";
-import { LevelType } from "../../../level/level.types";
+import { Layer } from "@core/layer";
+import { LevelType } from "@core/level";
 
 /**
  * Represents an EnemiesLayer class responsible for creating and populating an instance of Layer.

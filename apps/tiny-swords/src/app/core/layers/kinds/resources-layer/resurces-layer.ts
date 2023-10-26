@@ -1,6 +1,6 @@
 import { resourcesConditions } from "./resources-conditions";
-import { Layer } from "../../../layer/layer";
-import { LevelType } from "../../../level/level.types";
+import { Layer } from "@core/layer";
+import { LevelType } from "@core/level";
 
 /**
  * Represents a ResourcesLayer class responsible for creating

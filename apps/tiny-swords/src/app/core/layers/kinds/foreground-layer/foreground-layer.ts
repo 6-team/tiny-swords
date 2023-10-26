@@ -1,6 +1,6 @@
-import { CoordsTuple } from "../../../../entities/tile/tile.types";
-import { Layer } from "../../../layer/layer";
-import { LevelType } from "../../../level/level.types";
+import { CoordsTuple } from "@core/../entities/tile/tile.types";
+import { Layer } from "@core/layer";
+import { LevelType } from "@core/level";
 import { foregroundLeftHouseConditions, foregroundLeftTowerConditions, foregroundRightHouseConditions, foregroundRightTowerConditions, foregroundTreeTopConditions } from "./foreground-conditions"
 
 /**

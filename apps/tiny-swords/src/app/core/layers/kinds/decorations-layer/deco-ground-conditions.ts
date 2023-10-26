@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { TileName } from "../../../renderer";
-import { Layer } from "../../../layer/layer";
-import { createCoordsLayerDict, createLayerConditions, getQuantityCells, getShuffleFilterCoords, randomElement, randomInteger, weightedRandomElement } from "../../layers.utils";
-import { LayerCondition } from "../../../layer/layer.types";
-import { LevelType } from "../../../level/level.types";
+import { TileName } from "@core/renderer";
+import { Layer } from "@core/layer";
+import { createCoordsLayerDict, createLayerConditions, getQuantityCells, getShuffleFilterCoords } from "../../layers.utils";
+import { LayerCondition } from "@core/layer";
+import { LevelType } from "@core/level";
 
 const groundWeightedTiles = (cells: number) => [
   {

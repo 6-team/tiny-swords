@@ -1,5 +1,5 @@
-import { LayerCondition } from "../../../layer/layer.types";
-import { TileName } from "../../../renderer";
+import { LayerCondition } from "@core/layer";
+import { TileName } from "@core/renderer";
 
 /**
  * Generates an array of layer conditions for placing the left house based on the given entrance coordinates.

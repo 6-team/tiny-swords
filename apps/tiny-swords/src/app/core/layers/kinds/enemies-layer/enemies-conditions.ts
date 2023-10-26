@@ -1,8 +1,8 @@
-import { TileName } from "../../../renderer";
+import { TileName } from "@core/renderer";
 import { createCoordsLayerDict, createLayerConditions, getQuantityCells, getShuffleFilterCoords, randomInteger } from "../../layers.utils";
-import { LayerCondition } from "../../../layer/layer.types";
-import { LevelType } from "../../../level/level.types";
-import { Layer } from "../../../layer/layer";
+import { LayerCondition } from "@core/layer";
+import { LevelType } from "@core/level";
+import { Layer } from "@core/layer";
 
 const enemiesWeightedTiles = (cells: number) => [{
   count: getQuantityCells(cells, randomInteger(2, 5)),

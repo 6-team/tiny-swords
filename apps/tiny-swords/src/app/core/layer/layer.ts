@@ -1,6 +1,6 @@
-import { Matrix } from "../../tools/matrix/matrix";
-import { TileName } from "../renderer";
-import { randomElement, weightedRandomElement } from "../layers/layers.utils";
+import { Matrix } from "@tools/matrix/matrix";
+import { TileName } from "@core/renderer";
+import { randomElement, weightedRandomElement } from "../layers";
 import { LayerCell, LayerCondition, LayerRules, TileWeight } from "./layer.types";
 
 /**

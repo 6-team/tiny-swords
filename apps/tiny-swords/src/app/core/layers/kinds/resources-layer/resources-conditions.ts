@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { TileName } from "../../../renderer";
+import { TileName } from "@core/renderer";
 import { createCoordsLayerDict, createLayerConditions, getQuantityCells, getShuffleFilterCoords, randomElement, randomInteger, weightedRandomElement } from "../../layers.utils";
-import { LayerCondition } from "../../../layer/layer.types";
-import { LevelType } from "../../../level/level.types";
-import { ResourcesType } from "../../../../entities/resource";
-import { Layer } from "../../../layer/layer";
+import { LayerCondition } from "@core/layer";
+import { LevelType } from "@core/level";
+import { ResourcesType } from "@core/../entities/resource";
+import { Layer } from "@core/layer";
 
 const resourcesWeightedTiles = (cells: number, level: LevelType) => [{
   count: getQuantityCells(cells, randomInteger(3, 6)),

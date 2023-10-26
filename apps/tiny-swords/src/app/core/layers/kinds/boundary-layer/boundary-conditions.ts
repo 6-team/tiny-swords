@@ -1,6 +1,6 @@
-import { Layer } from "../../../layer/layer";
-import { LayerCondition } from "../../../layer/layer.types";
-import { TileName } from "../../../renderer";
+import { Layer } from "@core/layer";
+import { LayerCondition } from "@core/layer";
+import { TileName } from "@core/renderer";
 
 /**
  * Creates an array of layer conditions representing boundary conditions based on provided layers.

@@ -1,5 +1,5 @@
 import { signConditions } from "./sign-conditions";
-import { Layer } from "../../../layer/layer";
+import { Layer } from "@core/layer";
 
 /**
  * A class representing a layer for signs.
