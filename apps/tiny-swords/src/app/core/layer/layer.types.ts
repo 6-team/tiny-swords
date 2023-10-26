@@ -1,4 +1,4 @@
-import { TileName } from "../renderer";
+import { TileName } from "@core/renderer";
 
 export interface LayerCell {
 	collapsed: boolean,
@@ -17,6 +17,4 @@ export interface LayerRules {
   [key: number]: TileName[][];
 }
 
-export interface LayerWight {
-  [index: number]: [TileName, number, boolean]
-}
+export type TileWeight = [TileName, number, boolean];

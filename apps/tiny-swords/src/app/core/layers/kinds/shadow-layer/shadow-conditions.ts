@@ -1,14 +1,21 @@
-import { LayerCondition } from "../../../layer/layer.types";
-import { LevelType } from "../../../level/level.types";
-import { TileName } from "../../../renderer";
+import { LayerCondition } from "@core/layer";
+import { LevelType } from "@core/level";
+import { TileName } from "@core/renderer";
 
+/**
+ * Get ground conditions based on the given tile and coordinates.
+ * 
+ * @param {TileName} tile - The tile type.
+ * @param {Array<number>} coords - The coordinates [x, y] for the tile.
+ * @returns {Array<LayerCondition>} An array of ground conditions.
+ */
 const getGroundConditions = (tile, coords) => {
   switch(tile) {
-    // тень под мостом
+    // shadow bridge
     case TileName.BRIDGE_MIDDLE:
       return [{ tile: TileName.BRIDGE_SHADOW, coords }];
 
-    // трава под основаниями моста
+    // Grass under the bridge foundations
     case TileName.BRIDGE_LEFT:
       return [{ tile: TileName.GROUND_MIDDLE_RIGHT, coords }];
     case TileName.BRIDGE_RIGHT:
@@ -21,13 +28,20 @@ const getGroundConditions = (tile, coords) => {
   }
 }
 
+/**
+ * Get sand conditions based on the given tile and coordinates.
+ * 
+ * @param {TileName} tile - The tile type.
+ * @param {Array<number>} coords - The coordinates [x, y] for the tile.
+ * @returns {Array<LayerCondition>} An array of sand conditions.
+ */
 const getSandConditions = (tile, coords) => {
   switch(tile) {
-    // тень под мостом
+    // Shadow under the bridge
     case TileName.BRIDGE_MIDDLE:
       return [{ tile: TileName.BRIDGE_SHADOW, coords }];
 
-    // песок под основаниями моста
+    // Sand under the bridge foundations
     case TileName.BRIDGE_LEFT:
       return [{ tile: TileName.SAND_MIDDLE_RIGHT, coords }];
     case TileName.BRIDGE_RIGHT:
@@ -38,9 +52,16 @@ const getSandConditions = (tile, coords) => {
   }
 }
 
+/**
+ * Get stone conditions based on the given tile and coordinates.
+ * 
+ * @param {TileName} tile - The tile type.
+ * @param {Array<number>} coords - The coordinates [x, y] for the tile.
+ * @returns {Array<LayerCondition>} An array of stone conditions.
+ */
 const getStonesConditions = (tile, coords) => {
   switch(tile) {
-    // песок под основаниями моста
+    // Stone under the bridge foundations
     case TileName.BRIDGE_LEFT:
       return [{ tile: TileName.ELEVATION_MIDDLE_RIGHT, coords }];
     case TileName.BRIDGE_RIGHT:
@@ -52,10 +73,14 @@ const getStonesConditions = (tile, coords) => {
 }
 
 /**
- * Шаблон для дополнительных слоев:
- * - тень под мостами
- * - трава или песок по мостами
- * - пена
+ * Template for additional layers:
+ * - Shadows under bridges
+ * - Grass or sand on bridges
+ * - Foam
+ *
+ * @param {LevelType} level - The type of layer (Ground, Sand, Stones).
+ * @param {Layer} layer - The base layer to which conditions will be applied.
+ * @returns {Array<LayerCondition>} An array of conditions for the specified layer type.
  */
 export const shadowConditions = (level: LevelType, layer): LayerCondition[] => {
   let conditions = [];

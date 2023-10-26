@@ -1,15 +1,11 @@
-import { LayerCondition } from "../../../layer/layer.types";
-import { TileName } from "../../../renderer";
+import { LayerCondition } from "@core/layer";
+import { TileName } from "@core/renderer";
 import { randomInteger } from "../../layers.utils";
 
-/**
- * Шаблон поверхности для левого здания без моста
- */
 export const leftSandConditions = (startCoords: [number, number]): LayerCondition[] => {
   const [x, y] = startCoords;
 
   return [
-    // Под домом у нас мост и угол земли чтобы замкнуть остров
     {
       tile: TileName.SAND_MIDDLE_LEFT,
       coords: [x - 1, y],
@@ -22,7 +18,6 @@ export const leftSandConditions = (startCoords: [number, number]): LayerConditio
       tile: TileName.SAND_MIDDLE_MIDDLE,
       coords: [x + 1, y],
     },
-    // Нижняя часть земли под остров
     {
       tile: TileName.SAND_MIDDLE_LEFT,
       coords: [x - 1, y - 1],
@@ -35,7 +30,6 @@ export const leftSandConditions = (startCoords: [number, number]): LayerConditio
       tile: TileName.SAND_MIDDLE_MIDDLE,
       coords: [x + 1, y - 1],
     },
-    // Верхняя часть земли под остров
     {
       tile: TileName.SAND_MIDDLE_LEFT,
       coords: [x - 1, y - 2],
@@ -51,14 +45,10 @@ export const leftSandConditions = (startCoords: [number, number]): LayerConditio
   ];
 }
 
-/**
- * Шаблон поверхности для левого здания с мостом
- */
 export const leftSandBridgeConditions = (startCoords: [number, number]): LayerCondition[] => {
   const [x, y] = startCoords;
 
   return [
-    // Под домом у нас мост и угол земли чтобы замкнуть остров
     {
       tile: TileName.SAND_MIDDLE_LEFT,
       coords: [x - 1, y],
@@ -71,7 +61,6 @@ export const leftSandBridgeConditions = (startCoords: [number, number]): LayerCo
       tile: TileName.BRIDGE_LEFT,
       coords: [x + 1, y],
     },
-    // Нижняя часть земли под остров
     {
       tile: TileName.SAND_MIDDLE_LEFT,
       coords: [x - 1, y - 1],
@@ -84,7 +73,6 @@ export const leftSandBridgeConditions = (startCoords: [number, number]): LayerCo
       tile: TileName.SAND_MIDDLE_RIGHT,
       coords: [x + 1, y - 1],
     },
-    // Верхняя часть земли под остров
     {
       tile: TileName.SAND_TOP_LEFT,
       coords: [x - 1, y - 2],
@@ -100,14 +88,10 @@ export const leftSandBridgeConditions = (startCoords: [number, number]): LayerCo
   ];
 }
 
-/**
- * Шаблон поверхности для правого здания 3x3
- */
 export const rightSandConditions = (endCoords: [number, number]): LayerCondition[] => {
   const [x, y] = endCoords;
 
   return [
-    // Под домом у нас мост и угол земли чтобы замкнуть остров
     {
       tile: TileName.SAND_MIDDLE_MIDDLE,
       coords: [x - 1, y],
@@ -120,7 +104,6 @@ export const rightSandConditions = (endCoords: [number, number]): LayerCondition
       tile: TileName.SAND_MIDDLE_RIGHT,
       coords: [x + 1, y],
     },
-    // Нижняя часть земли под зданием
     {
       tile: TileName.SAND_MIDDLE_MIDDLE,
       coords: [x - 1, y - 1],
@@ -133,7 +116,6 @@ export const rightSandConditions = (endCoords: [number, number]): LayerCondition
       tile: TileName.SAND_MIDDLE_RIGHT,
       coords: [x + 1, y - 1],
     },
-    // Верхняя часть земли под зданием
     {
       tile: TileName.SAND_MIDDLE_MIDDLE,
       coords: [x - 1, y - 2],
@@ -149,14 +131,10 @@ export const rightSandConditions = (endCoords: [number, number]): LayerCondition
   ];
 }
 
-/**
- * Шаблон поверхности для правого здания 3x3 с мостом
- */
 export const rightSandBridgeConditions = (endCoords: [number, number]): LayerCondition[] => {
   const [x, y] = endCoords;
 
   return [
-    // Под домом у нас мост и угол земли чтобы замкнуть остров
     {
       tile: TileName.BRIDGE_RIGHT,
       coords: [x - 1, y],
@@ -169,7 +147,6 @@ export const rightSandBridgeConditions = (endCoords: [number, number]): LayerCon
       tile: TileName.SAND_MIDDLE_RIGHT,
       coords: [x + 1, y],
     },
-    // Нижняя часть земли под остров
     {
       tile: TileName.SAND_MIDDLE_LEFT,
       coords: [x - 1, y - 1],
@@ -182,7 +159,6 @@ export const rightSandBridgeConditions = (endCoords: [number, number]): LayerCon
       tile: TileName.SAND_MIDDLE_RIGHT,
       coords: [x + 1, y - 1],
     },
-    // Верхняя часть земли под остров
     {
       tile: TileName.SAND_TOP_LEFT,
       coords: [x - 1, y - 2],
@@ -198,9 +174,6 @@ export const rightSandBridgeConditions = (endCoords: [number, number]): LayerCon
   ];
 }
 
-/**
- * Шаблон рамки из воды
- */
 export const borderWaterConditions = (gridX, gridY, border): LayerCondition[] => {
   const conditions = [];
 
@@ -224,9 +197,6 @@ export const borderWaterConditions = (gridX, gridY, border): LayerCondition[] =>
   return conditions;
 }
 
-/**
- * Шаблон вертикальная река
- */
 export const centerBridgeConditions = (gridX, gridY): LayerCondition[] => {
   const centerX = Math.floor(gridX / 2);
   const centerY = Math.floor(gridY / 2);
@@ -253,9 +223,6 @@ export const centerBridgeConditions = (gridX, gridY): LayerCondition[] => {
   return conditions;
 }
 
-/**
- * Шаблон трава в середине
- */
 export const centerSandConditions = (gridX, gridY, border): LayerCondition[] => {
   const centerX = Math.floor(gridX / 2);
   const x = randomInteger(centerX - 2, centerX + 2);

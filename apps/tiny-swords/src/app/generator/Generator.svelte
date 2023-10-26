@@ -5,7 +5,7 @@
   import { Resource, ResourcesType } from '../entities/resource';
   import { SCALE, TOTAL_LIVES } from '../common/common.const'
   import { actions, Heroes, Renderer, grid64, HeroResourcesBar, enemies } from "../core";
-  import { Level } from "../core/level/level";
+  import { Level } from "@core/level";
   import {
     nextLevelMenu,
     isMainMenuStore,
@@ -15,7 +15,7 @@
   } from "../store";
   import { MainMenu, NextLevelMenu, EndGameMenu, ControlHint } from "../components";
   import { collisions } from "../core/collisions";
-  import { LayersRenderType } from "../core/layers/layers.types"
+  import { LayersRenderType } from "../core/layers"
 
   import type { AttackingType, IEntity } from "@shared";
   import type { TPixelsCoords } from "../abilities/abilities.types";

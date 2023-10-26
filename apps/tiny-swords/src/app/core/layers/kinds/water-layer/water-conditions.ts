@@ -1,8 +1,11 @@
-import { LayerCondition } from "../../../layer/layer.types";
-import { TileName } from "../../../renderer";
+import { LayerCondition } from "@core/layer";
+import { TileName } from "@core/renderer";
 
 /**
- * Шаблон для заливки всего слоя водой
+ * Generates water conditions for a given layer.
+ * 
+ * @param {Layer} layer - The layer object representing the grid.
+ * @returns {LayerCondition[]} An array of water conditions for the layer.
  */
 export const fullWaterConditions = (layer): LayerCondition[] => {
   const conditions = [];
