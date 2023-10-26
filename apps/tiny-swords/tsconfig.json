@@ -5,7 +5,18 @@
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
     "strict": true,
-    "types": ["vite/client", "vitest"]
+    "types": ["vite/client", "vitest"],
+    "paths": {
+      "@shared": ["libs/shared/src/index.ts"],
+      "@abilities/*": ["apps/tiny-swords/src/app/abilities/*"],
+      "@common/*": ["apps/tiny-swords/src/app/common/*"],
+      "@components/*": ["apps/tiny-swords/src/app/components/*"],
+      "@controllers/*": ["apps/tiny-swords/src/app/controllers/*"],
+      "@core/*": ["apps/tiny-swords/src/app/core/*"],
+      "@entities/*": ["apps/tiny-swords/src/app/entities/*"],
+      "@store/*": ["apps/tiny-swords/src/app/store/*"],
+      "@tools/*": ["apps/tiny-swords/src/app/tools/*"]
+    }
   },
   "files": [],
   "include": [],

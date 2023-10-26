@@ -15,6 +15,6 @@ export interface HeroConfig {
   width: TNumberOfPixels;
   initialX: TPixelsPosition;
   initialY: TPixelsPosition;
-  id: string | number;
+  id: string;
   type?: HeroType;
 }

@@ -1,11 +1,14 @@
-import { MovingDirection, CharacterDirection } from '@shared';
 import { Observable, Subscription, filter, first, map } from 'rxjs';
-import { collisions } from '../../core/collisions';
-import { actions, grid64 } from '../../core';
-import { TPixelsCoords } from '../../abilities/abilities.types';
+import { MovingDirection, CharacterDirection } from '@shared';
+
+import { IMovingCharacter } from '@abilities/moving';
+import { IFightingCharacter } from '@abilities/fighting';
+import { TPixelsCoords } from '@abilities/abilities.types';
+import { actions } from '@core/actions';
+import { grid64 } from '@core/grid';
+import { collisions } from '@core/collisions';
+
 import { IAIControllerProps } from './AI.types';
-import { IMovingCharacter } from '../../abilities/moving/moving.types';
-import { IFightingCharacter } from '../../abilities/fighting/fighting.types';
 
 export class AIController {
   private _character: IMovingCharacter & IFightingCharacter;

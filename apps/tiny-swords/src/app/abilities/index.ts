@@ -1,1 +1,1 @@
-export type { IAbility, TPixelsCoords, TCollisionArea, WithSetPersonageContext } from './abilities.types';
+export type { WithSetPersonageContext, TPixelsCoords, TCollisionArea } from './abilities.types';

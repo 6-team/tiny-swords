@@ -17,7 +17,7 @@
   import { collisions } from "../core/collisions";
   import { LayersRenderType } from "../core/layers/layers.types"
 
-  import type { AttackingType, IPlayer } from "@shared";
+  import type { AttackingType, IEntity } from "@shared";
   import type { TPixelsCoords } from "../abilities/abilities.types";
   import { ImprovementTypes, type availableResourcesCheckType, type buyImprovementsType  } from "../common/common.types";
   import type { IFightingCharacter } from "../abilities/fighting/fighting.types";
@@ -103,7 +103,7 @@
     }
   }
 
-  function handleHeroMovement(action$: Observable<IPlayer>): void {
+  function handleHeroMovement(action$: Observable<IEntity>): void {
     action$
       .pipe(
         map((hero) => heroes.initHero(hero, level.boundaries$, enemies.enemies$)),
