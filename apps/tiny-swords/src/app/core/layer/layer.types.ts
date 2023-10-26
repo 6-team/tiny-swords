@@ -17,4 +17,4 @@ export interface LayerRules {
   [key: number]: TileName[][];
 }
 
-export type TileWight = [TileName, number, boolean];
+export type TileWeight = [TileName, number, boolean];

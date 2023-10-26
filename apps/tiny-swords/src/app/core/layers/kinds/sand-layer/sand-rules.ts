@@ -1,7 +1,7 @@
-import { LayerRules, TileWight } from "../../../layer/layer.types";
+import { LayerRules, TileWeight } from "../../../layer/layer.types";
 import { TileName } from "../../../renderer";
 
-export const SAND_WEIGHT: TileWight[] = [
+export const SAND_WEIGHT: TileWeight[] = [
   [TileName.WATER_MIDDLE_MIDDLE,  1, true],
 
   [TileName.SAND_TOP_LEFT,      1, false],
