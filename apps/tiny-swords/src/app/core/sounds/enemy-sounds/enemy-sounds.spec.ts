@@ -1,18 +1,18 @@
 import { EnemySoundsConfig } from './enemy-sounds.types';
 import { EnemySound } from './enemy-sounds';
-import { СharacterSoundsType } from './sounds.const';
+import { СharacterSoundsType } from '@core/sounds/sounds.const';
 
 import { of } from 'rxjs';
 
 describe('EnemySound', () => {
   let enemySound: EnemySound;
-  const mockAttacking: any = {
+  const mockFighting: any = {
     isAttacking$: of(true),
     isHitted$: of(true),
   };
 
   beforeEach(() => {
-    const config: EnemySoundsConfig = { attacking: mockAttacking };
+    const config: EnemySoundsConfig = { fighting: mockFighting };
     enemySound = new EnemySound(config);
     jest.spyOn(enemySound, 'playSound');
   });

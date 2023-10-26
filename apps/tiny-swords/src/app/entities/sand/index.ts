@@ -1,2 +1,2 @@
-export { SandTile } from './sand';
-export { SandType, mapTerrainToCoords } from './sand.const';
+export * from './sand';
+export * from './sand.const';

@@ -5,7 +5,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { ResourcesType } from '@entities/resource';
 
 /**
- * Класс для работы с ресурсами героя.
+ * A class for working with the hero's resources.
  *
  */
 
@@ -19,8 +19,8 @@ export class HeroResourcesBar implements IHeroResourcesBar {
   }
 
   /**
-   * Возвращает массив всех ресурсов
-   * @returns Массив ресурсов
+   * Returns an array of all resources
+   * @returns Resource Array
    */
 
   public getResources(): Array<Resource> {
@@ -28,9 +28,9 @@ export class HeroResourcesBar implements IHeroResourcesBar {
   }
 
   /**
-   * Возвращает объект ресурса по типу
-   * @param type Тип ресурса
-   * @returns запрашиваемый объект ресурса
+   * Returns the resource object by type
+   * @param type Resource type
+   * @returns requested resource object
    */
 
   public getResource(type: ResourcesType): Resource {
@@ -43,8 +43,8 @@ export class HeroResourcesBar implements IHeroResourcesBar {
   }
 
   /**
-   * Добавляет ресурс по типу
-   * @param type Тип ресурса
+   * Adds a resource by type
+   * @param type Resource type
    */
 
   public addResource(type: ResourcesType): void {
@@ -58,9 +58,9 @@ export class HeroResourcesBar implements IHeroResourcesBar {
   }
 
   /**
-   * Проверяет хватает ли ресурсов для покупки улучшения
-   * @param cost Объект с типом и стоимостью улучшения
-   * @returns Хватает ли ресурсов
+   * Checks if there are enough resources to purchase the enhancement
+   * @param cost Object with type and cost of improvement
+   * @returns Are there enough resources
    */
 
   public availableResourcesCheck(cost: { type: ResourcesType; price: number }): boolean {
@@ -72,8 +72,8 @@ export class HeroResourcesBar implements IHeroResourcesBar {
   }
 
   /**
-   * Уменьшаем количество ресурсов после покупки улучшения
-   * @param cost Объект с типом и стоимостью улучшения
+   * Reducing the amount of resources after purchasing an enhancement
+   * @param cost Object with type and cost of improvement
    */
 
   public spend(cost: { type: ResourcesType; price: number }): void {

@@ -1,16 +1,39 @@
-import { Tile } from '../tile/tile';
+import { Tile } from '@entities/tile';
 import { RocksType, mapTerrainToCoords } from './rocks.const';
 
+/**
+ * Represents a tile with a rocks entity.
+ * @extends Tile
+ */
 export class RocksTile extends Tile<RocksType> {
-  protected _type: RocksType = RocksType.ROCKS_M;
-  protected _sprite = './img/Terrain/Water/Rocks/Rocks_02.png';
+  /**
+   * The type of the rocks.
+   * @type {RocksType}
+   * @private
+   */
+  protected _type: RocksType;
 
+  /**
+   * The sprite URL for the rocks.
+   * @type {string}
+   * @private
+   */
+  protected _sprite;
+
+  /**
+   * Creates an instance of the RocksTile.
+   * @param {RocksTile} type - The type of the rocks (default is RocksTile.ROCKS_M).
+   */
   constructor(type: RocksType = RocksType.ROCKS_M) {
     super();
 
     this.setType(type);
   }
 
+  /**
+   * Sets the type of the rocks.
+   * @param {RocksType} type - The type of the rocks (default is RocksTile.ROCKS_M).
+   */
   setType(type: RocksType = RocksType.ROCKS_M) {
     this._type = type;
 
@@ -27,6 +50,11 @@ export class RocksTile extends Tile<RocksType> {
     }
   }
 
+  /**
+   * Gets the coordinates map for rocks.
+   * @private
+   * @returns {Record<RocksType, CoordsTuple>} - The map of rocks coordinates.
+   */
   protected _getCoordsMap() {
     return mapTerrainToCoords;
   }

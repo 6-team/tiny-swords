@@ -1,16 +1,15 @@
 import { ISounds, SoundType } from './sounds.types';
 
 /**
- * Класс для работы со звуками
- * с базовыми методами воспроизведения
+ * This class provides methods to handle sound operations.
  */
 export class Sounds implements ISounds {
   private _sounds: SoundType = {};
 
   /**
-   * Добавляем звук
-   * @param name название звука
-   * @param url путь к файлу
+   * This method adds a new sound to the sounds collection.
+   * @param {string} name - The name of the sound.
+   * @param {string} url - The URL of the sound file.
    */
   addSound(name: string, url: string): void {
     const sound = new Audio(url);
@@ -18,10 +17,9 @@ export class Sounds implements ISounds {
   }
 
   /**
-   * Воспроизведение звука
-   * @param name название воспроизводимого звука
-   * @param volume установленая грокмость
-   * @returns
+   * This method plays a sound from the sounds collection.
+   * @param {string} name - The name of the sound.
+   * @param {number} [volume=1] - The volume of the sound. (Default is 1)
    */
   playSound(name: string, volume = 1): void {
     if (!this._sounds[name]) return;
@@ -33,9 +31,8 @@ export class Sounds implements ISounds {
   }
 
   /**
-   * Остановка звука
-   * @param name название звука
-   * @returns
+   * This method stops a sound from the sounds collection.
+   * @param {string} name - The name of the sound.
    */
   stopSound(name: string): void {
     if (!this._sounds[name]) return;
@@ -46,16 +43,16 @@ export class Sounds implements ISounds {
   }
 
   /**
-   * Проверка воспроизводится ли звук
-   * @param name название звука
-   * @returns воспроизводится ли звук
+   * This method checks if a given sound is currently being played.
+   * @param {string} name - The name of the sound.
+   * @returns {boolean} - Returns true if the sound is playing, otherwise false.
    */
   isPlaySound(name: string): boolean {
     return !this._sounds[name].paused;
   }
 
   /**
-   * Выключить звуки
+   * This method mutes all the sounds in the sounds collection.
    */
   muteSound(): void {
     for (const key in this._sounds) {
@@ -64,7 +61,7 @@ export class Sounds implements ISounds {
   }
 
   /**
-   * Включить звуки
+   * This method unmutes all the sounds in the sounds collection.
    */
   unmuteSound(): void {
     for (const key in this._sounds) {

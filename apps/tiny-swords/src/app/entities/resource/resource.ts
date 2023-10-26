@@ -1,53 +1,86 @@
-import { TPixelsCoords } from '@abilities';
+import { TPixelsCoords } from '@abilities/abilities.types';
 import { IResource, PowerUp } from '@common/common.types';
-import { Tile } from '../tile/tile';
+import { Tile } from '@entities/tile';
 import { ResourcesType, mapResourcesToCoords } from './resource.const';
 import { IResourceConfig } from './resource.types';
 
 /**
- * Класс для работы с ресурсами
+ * Represents a tile with a resource entity.
+ * @extends Tile
  */
 export class Resource extends Tile<ResourcesType> implements IResource {
-  protected _type: ResourcesType = ResourcesType.GOLD;
-  protected _sprite = '';
-  protected _quantity = 0;
+  /**
+   * The type of the resource.
+   * @type {ResourcesType}
+   * @private
+   */
+  protected _type: ResourcesType;
 
-  private _coords: TPixelsCoords = [0, 0, 0, 0];
+  /**
+   * The sprite URL for the resource.
+   * @type {string}
+   * @private
+   */
+  protected _sprite: string;
+
+  /**
+   * The quantity of the resource.
+   * @type {number}
+   * @private
+   */
+  protected _quantity: number;
+
+  /**
+   * @type {TPixelsCoords}
+   * The coords of the resource
+   */
+  private _coords: TPixelsCoords;
 
   powerUps: Array<PowerUp> = [];
 
+  /**
+   *
+   * @param {IResourceConfig} { type, coords, quantity } - Specifies the configuration for the resource.
+   * @property {string} type - Specifies the type of resource.
+   * @property {Object} coords - Specifies the coordinates where the resource is located.
+   * @property {number} quantity - Specifies the quantity of the resource.
+   */
   constructor({ type, coords, quantity }: IResourceConfig) {
     super();
 
     this.setType(type);
-    if (quantity !== undefined) this._quantity = quantity;
-    if (coords !== undefined) this._coords = coords;
+    this._quantity = quantity;
+    this._coords = coords;
   }
 
   /**
-   * Получение координат
+   * The coords property is a getter for the private variable _coords
+   * Returns the _coords value.
+   * @returns {TPixelsCoords} - Resources coordinates
    */
   get coords(): TPixelsCoords {
     return this._coords;
   }
 
   /**
-   * Получение типа ресурса
+   * The resource type property is a getter for the private variable _type
+   * @returns {ResourcesType} - Resources type
    */
   get resourceType(): ResourcesType {
     return this._type;
   }
 
   /**
-   * Получение изображение ресурса
+   * The rsprite property is a getter for the private variable _sprite
+   * @returns {string} - Resources sprite
    */
   get resourceImage(): string {
     return this._sprite;
   }
 
   /**
-   * Установка типа и спрайта
-   * @param type тип ресурса
+   * Sets the type of the resource.
+   * @param {ResourcesType} type - The type of the resource (default is ResourcesType.GOLD).
    */
   setType(type: ResourcesType = ResourcesType.GOLD) {
     this._type = type;
@@ -69,32 +102,33 @@ export class Resource extends Tile<ResourcesType> implements IResource {
   }
 
   /**
-   * Возвращает координаты ресурсов
-   * @returns координаты ресурсов
+   * Gets the coordinates map for resource.
+   * @private
+   * @returns {Record<SheepType, CoordsTuple>} - The map of resource coordinates.
    */
   protected _getCoordsMap() {
     return mapResourcesToCoords;
   }
 
   /**
-   * Возвращает количество ресурса
-   * @returns количество ресурса
+   * Returns the quantity of the resource
+   * @returns {number} - the quantity of the resource
    */
   public getQuantity(): number {
     return this._quantity;
   }
 
   /**
-   * Добавляет ресурсы
-   * @param quantity количество ресурса
+   * Adds resources
+   * @param quantity - the quantity of the resource
    */
   public add(quantity: number): void {
     this._quantity += quantity;
   }
 
   /**
-   * Трата ресурса
-   * @param quantity количество ресурса
+   * Resource withdrawal
+   * @param quantity - the quantity of the resource
    */
   public subtract(quantity: number): void {
     if (quantity > this._quantity) {

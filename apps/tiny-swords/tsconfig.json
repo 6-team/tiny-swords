@@ -10,11 +10,11 @@
       "@shared": ["libs/shared/src/index.ts"],
       "@abilities/*": ["apps/tiny-swords/src/app/abilities/*"],
       "@common/*": ["apps/tiny-swords/src/app/common/*"],
-      "@components/*": ["apps/tiny-swords/src/app/components/*"],
+      "@components": ["apps/tiny-swords/src/app/components/index.ts"],
       "@controllers/*": ["apps/tiny-swords/src/app/controllers/*"],
       "@core/*": ["apps/tiny-swords/src/app/core/*"],
       "@entities/*": ["apps/tiny-swords/src/app/entities/*"],
-      "@store/*": ["apps/tiny-swords/src/app/store/*"],
+      "@store": ["apps/tiny-swords/src/app/store/index.ts"],
       "@tools/*": ["apps/tiny-swords/src/app/tools/*"]
     }
   },

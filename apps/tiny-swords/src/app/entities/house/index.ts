@@ -1,2 +1,2 @@
-export { HouseTile } from './house';
-export { HouseType, mapTerrainToCoords } from './house.const';
+export * from './house';
+export * from './house.const';

@@ -1,13 +1,23 @@
 import { EnemySoundsConfig, IEnemySounds } from './enemy-sounds.types';
 import { filter } from 'rxjs';
 
-import { Sounds } from './sounds';
-import { СharacterSoundsType } from './sounds.const';
+import { Sounds } from '@core/sounds/';
+import { СharacterSoundsType } from '../sounds.const';
 
 /**
- * Класс для работы со звукаки врага
+ * EnemySound class extends the Sounds class,
+ * implementing the IEnemySounds interface, and thus providing
+ * a set of defined methods to control the sound for enemy characters.
+ *
+ * @extends {Sounds}
+ * @implements {IEnemySounds}
  */
 export class EnemySound extends Sounds implements IEnemySounds {
+  /**
+   * Creates an instance of EnemySound.
+   *
+   * @param {EnemySoundsConfig} { fighting } - fighting configuration for the enemy sounds.
+   */
   constructor({ fighting }: EnemySoundsConfig) {
     super();
     this.addSound(СharacterSoundsType.ATTACK, 'sounds/fire-attack.mp3');
@@ -21,14 +31,16 @@ export class EnemySound extends Sounds implements IEnemySounds {
   }
 
   /**
-   * Воспроизедение звука атаки
+   * Plays the attack sound for the enemy character.
+   * The `ATTACK` sound is played with a volume of `0.3`.
    */
   playAttackSound(): void {
     this.playSound(СharacterSoundsType.ATTACK, 0.3);
   }
 
   /**
-   * Воспроизведение звука когда попадаем по гоблину
+   * Plays the hitting sound for the enemy character.
+   * The `HITTING` sound is played with the default volume.
    */
   playHittingSound(): void {
     this.playSound(СharacterSoundsType.HITTING);
