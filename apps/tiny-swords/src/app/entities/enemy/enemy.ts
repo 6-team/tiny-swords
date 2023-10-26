@@ -4,7 +4,7 @@ import { Character } from '../character';
 import { EnemyType, mapEnemyTypeToCoords } from './enemy.const';
 import { EnemyAbilities, EnemyConfig } from './enemy.types';
 import { isMuttedStore } from '../../store';
-import { IEnemySounds } from '../../core/sounds/enemy-sounds.types';
+import { IEnemySounds } from '@core/sounds/enemy-sounds/enemy-sounds.types';
 import { IMovingCharacter } from '../../abilities/moving/moving.types';
 import { IFighting, IFightingCharacter } from '../../abilities/fighting/fighting.types';
 import { Fighting } from '../../abilities/fighting';

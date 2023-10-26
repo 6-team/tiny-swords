@@ -1,4 +1,4 @@
-import { IHeroSounds } from './../../core/sounds/hero-sounds.types';
+import { IHeroSounds } from '@core/sounds/hero-sounds/hero-sounds.types';
 import { Collecting } from '../../abilities/collecting';
 import { grid64 } from '../../core/grid';
 import { Character } from '../character';
