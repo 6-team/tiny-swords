@@ -19,7 +19,8 @@
 
   import type { AttackingType, IPlayer } from "@shared";
   import type { TPixelsCoords } from "../abilities/abilities.types";
-  import { type IAttackingCharacter, ImprovementTypes, type availableResourcesCheckType, type buyImprovementsType  } from "../common/common.types";
+  import { ImprovementTypes, type availableResourcesCheckType, type buyImprovementsType  } from "../common/common.types";
+  import type { IFightingCharacter } from "../abilities/fighting/fighting.types";
 
   let staticScene: Renderer;
   let foregroundScene: Renderer;
@@ -322,7 +323,7 @@
       }
     }
 
-    function checkAttackCollisions(hero: IAttackingCharacter, type: AttackingType) {
+    function checkAttackCollisions(hero: IFightingCharacter, type: AttackingType) {
       for (const enemy of enemies.enemies) {
         const hasAttackCollision = collisions.hasCollision(
           hero.fighting.getAffectedArea(),

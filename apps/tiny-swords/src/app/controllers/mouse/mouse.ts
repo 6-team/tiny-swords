@@ -1,10 +1,10 @@
 import { filter, fromEvent, map } from 'rxjs';
-import { IAttackingCharacter } from '../../common/common.types';
 import { mapButtonToAttackType } from './mouse.const';
 import { AttackingType } from '@shared';
+import { IFightingCharacter } from '../../abilities/fighting/fighting.types';
 
 export class MouseController {
-  constructor({ character }: { character: IAttackingCharacter }) {
+  constructor({ character }: { character: IFightingCharacter }) {
     fromEvent(document.body, 'click')
       .pipe(
         filter((event: Event) => event instanceof MouseEvent),
