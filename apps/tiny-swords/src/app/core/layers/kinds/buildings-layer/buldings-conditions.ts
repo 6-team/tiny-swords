@@ -1,8 +1,11 @@
-import { LayerCondition } from "../../../layer/layer.types";
-import { TileName } from "../../../renderer";
+import { LayerCondition } from "@core/layer";
+import { TileName } from "@core/renderer";
 
 /**
- * Шаблон для дорисовки левого здания
+ * Generates an array of layer conditions for placing the left house based on the given entrance coordinates.
+ *
+ * @param {[number, number]} enter - The entrance coordinates for the left house.
+ * @returns {LayerCondition[]} - An array of layer conditions for the left house placement.
  */
 export const leftHouseConditions = (enter: [number, number]): LayerCondition[] => {
   return [
@@ -14,7 +17,10 @@ export const leftHouseConditions = (enter: [number, number]): LayerCondition[] =
 }
 
 /**
- * Шаблон для дорисовки правого здания
+ * Generates an array of layer conditions for placing the right house based on the given exit coordinates.
+ *
+ * @param {[number, number]} exit - The exit coordinates for the right house.
+ * @returns {LayerCondition[]} - An array of layer conditions for the right house placement.
  */
 export const rightHouseConditions = (exit: [number, number]): LayerCondition[] => {
   return [
@@ -26,7 +32,10 @@ export const rightHouseConditions = (exit: [number, number]): LayerCondition[] =
 }
 
 /**
- * Шаблон для дорисовки нижней части дерева
+ * Generates an array of layer conditions for placing the bottom part of trees based on the provided layer.
+ *
+ * @param {object} layer - The layer used to determine tree bottom conditions.
+ * @returns {LayerCondition[]} - An array of layer conditions for tree bottom placement.
  */
 export const treeBottomConditions = (layer): LayerCondition[] => {
   let conditions = [];
@@ -48,7 +57,10 @@ export const treeBottomConditions = (layer): LayerCondition[] => {
 }
 
 /**
- * Шаблон для дорисовки шахты
+ * This function defines conditions for tiles around a gold mine exit.
+ * 
+ * @param exit - An array representing the coordinates of the exit [x, y].
+ * @returns An array of LayerCondition objects.
  */
 export const goldMineConditions = (exit: [number, number]): LayerCondition[] => {
   return [
@@ -62,7 +74,10 @@ export const goldMineConditions = (exit: [number, number]): LayerCondition[] => 
 }
 
 /**
- * Шаблон для дорисовки левой башни
+ * This function defines conditions for tiles around a left tower.
+ * 
+ * @param enter - An array representing the coordinates of the tower's entrance [x, y].
+ * @returns An array of LayerCondition objects.
  */
 export const leftTowerConditions = (enter: [number, number]): LayerCondition[] => {
   return [
@@ -74,7 +89,10 @@ export const leftTowerConditions = (enter: [number, number]): LayerCondition[] =
 }
 
 /**
- * Шаблон для дорисовки правой башни
+ * This function defines conditions for tiles around a right tower.
+ * 
+ * @param exit - An array representing the coordinates of the tower's exit [x, y].
+ * @returns An array of LayerCondition objects.
  */
 export const rightTowerConditions = (exit: [number, number]): LayerCondition[] => {
   return [
