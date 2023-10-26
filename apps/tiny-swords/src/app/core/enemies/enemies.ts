@@ -4,8 +4,9 @@ import { TCollisionArea, TPixelsCoords } from '../../abilities/abilities.types';
 import { grid64 } from '../grid';
 import { Enemy } from '../../entities/enemy';
 import { AIController } from '../../controllers/AI';
-import { IAttackingCharacter, IMovableCharacter } from '../../common/common.types';
 import { collisions } from '../collisions';
+import { IMovingCharacter } from '../../abilities/moving/moving.types';
+import { IFightingCharacter } from '../../abilities/fighting/fighting.types';
 
 class Enemies {
   readonly #enemiesSubject = new BehaviorSubject<Enemy[]>([]);
@@ -22,7 +23,7 @@ class Enemies {
   initEnemy(
     { id, coords }: IPlayer,
     bounds$: Observable<Array<TCollisionArea>>,
-    heroes$: Observable<Array<IMovableCharacter & IAttackingCharacter>>,
+    heroes$: Observable<Array<IMovingCharacter & IFightingCharacter>>,
   ): Enemy {
     const [x, y] = coords;
     const [initialX, initialY, height, width] = grid64.transformToPixels(x - 1, y - 1, 3, 3);
@@ -74,8 +75,8 @@ class Enemies {
     const boundaries$ = this.enemies$.pipe(
       filter((enemies) => !!enemies.length),
       concatAll(),
-      mergeMap((enemy) => enemy.getAbility('movable').coords$),
-      map(() => this.enemies.map((enemy) => enemy.getAbility('movable').getCollisionArea())),
+      mergeMap((enemy) => enemy.moving.coords$),
+      map(() => this.enemies.map((enemy) => enemy.moving.getCollisionArea())),
     );
     const emptyBoundary$ = this.enemies$.pipe(
       filter((enemies) => !enemies.length),

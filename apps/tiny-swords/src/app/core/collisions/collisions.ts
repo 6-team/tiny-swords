@@ -1,9 +1,9 @@
 import { Observable, combineLatest, distinctUntilChanged, map } from 'rxjs';
 import { TCollisionArea } from '../../abilities/abilities.types';
-import { IMovableCharacter } from '../../common/common.types';
 import { MovingDirection } from '@shared';
 import { animationInterval$ } from '../../tools/observables/interval';
 import { IPreventBoundsDecoratorProps } from './collisions.types';
+import { IMovingCharacter } from '../../abilities/moving/moving.types';
 
 export class Collisions {
   static _instance: Collisions;
@@ -58,7 +58,7 @@ export class Collisions {
     originalStream$,
   }: IPreventBoundsDecoratorProps): Observable<MovingDirection> {
     return combineLatest([animationInterval$, originalStream$, otherCharacters$, bounds$]).pipe(
-      map((streams: [number, MovingDirection, Array<IMovableCharacter>, Array<TCollisionArea>]) => {
+      map((streams: [number, MovingDirection, Array<IMovingCharacter>, Array<TCollisionArea>]) => {
         const direction = streams[1] ?? MovingDirection.IDLE;
         const nextCollisionArea = character.moving.getNextCollisionArea(direction);
 

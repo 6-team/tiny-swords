@@ -1,10 +1,11 @@
 import { IResource } from './../../common/common.types';
-import { IGrid, IMovableCharacter, ITile } from '../../common/common.types';
+import { IGrid, ITile } from '../../common/common.types';
 import { Maybe } from '../../tools/monads/maybe';
 import { TileName, mapTileNameToClass } from './renderer.const';
 import { RendererConfig } from './renderer.types';
 import { frames$ } from '../../tools/observables';
 import { Subscription } from 'rxjs';
+import { IMovingCharacter } from '../../abilities/moving/moving.types';
 
 function* enumerate<T>(iterable: Iterable<T>): Iterable<[number, T]> {
   let index = 0;
@@ -88,7 +89,7 @@ export class Renderer {
     // FOR_TEST_PURPOSES:
     // Данный функционал закоментирован для проверки движения персонажа (просто накладывается сетка 3х3 для понимания коллизий персонажа)
 
-    // const collisionArea = (tile as IMovableCharacter).getAbility('movable').collisionArea;
+    // const collisionArea = (tile as IMovingCharacter).getAbility('moving').collisionArea;
 
     // for (let i = 0; i < 3; i++) {
     //   for (let j = 0; j < 3; j++) {
@@ -108,8 +109,8 @@ export class Renderer {
     return this;
   }
 
-  async renderMovable(tile: IMovableCharacter, deltaTime: number) {
-    const { coords, sizes } = tile.getAbility('movable');
+  async renderMovable(tile: IMovingCharacter, deltaTime: number) {
+    const { coords, sizes } = tile.moving;
 
     this.renderWithAnimation([coords[0], coords[1], sizes[0], sizes[1]], tile, deltaTime);
   }
@@ -129,7 +130,7 @@ export class Renderer {
     }
   }
 
-  async renderMovableLayer(movables: Array<IMovableCharacter>) {
+  async renderMovableLayer(movables: Array<IMovingCharacter>) {
     let lastTime = 0;
 
     if (this.#framesSubscription) {

@@ -1,0 +1,1 @@
+export { Fighting } from './fighting';

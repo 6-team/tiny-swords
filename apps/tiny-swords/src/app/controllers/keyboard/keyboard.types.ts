@@ -1,8 +1,9 @@
 import { MovingDirection } from '@shared';
-import { IAttackingCharacter, IMovableCharacter } from '../../common/common.types';
 import { Observable } from 'rxjs';
+import { IMovingCharacter } from '../../abilities/moving/moving.types';
+import { IFightingCharacter } from '../../abilities/fighting/fighting.types';
 
 export interface IKeyboardControllerProps {
-  character: IMovableCharacter & IAttackingCharacter;
+  character: IMovingCharacter & IFightingCharacter;
   streamDecorator?: (movements$: Observable<MovingDirection>) => Observable<MovingDirection>;
 }
