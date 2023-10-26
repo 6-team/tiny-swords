@@ -1,9 +1,22 @@
-import { CoordsTuple } from "../../../../entities/tile/tile.types";
-import { Layer } from "../../../layer/layer";
-import { LevelType } from "../../../level/level.types";
+import { CoordsTuple } from "@core/../entities/tile/tile.types";
+import { Layer } from "@core/layer";
+import { LevelType } from "@core/level";
 import { foregroundLeftHouseConditions, foregroundLeftTowerConditions, foregroundRightHouseConditions, foregroundRightTowerConditions, foregroundTreeTopConditions } from "./foreground-conditions"
 
+/**
+ * A class representing a foreground layer with different conditions based on the level and next level.
+ */
 export class ForegroundLayer {
+  /**
+   * Creates a new ForegroundLayer.
+   * @param {number} gridX - The width of the grid for the foreground layer.
+   * @param {number} gridY - The height of the grid for the foreground layer.
+   * @param {LevelType} level - The level type of the current layer.
+   * @param {LevelType} nextLevel - The level type of the next layer.
+   * @param {CoordsTuple} startCoords - The starting coordinates.
+   * @param {CoordsTuple} endCoords - The ending coordinates.
+   * @param {Layer} layer - The base layer for conditions.
+   */
   constructor(gridX: number, gridY: number, level: LevelType, nextLevel: LevelType, startCoords: CoordsTuple, endCoords: CoordsTuple, layer) {
     let conditionsList = [];
 

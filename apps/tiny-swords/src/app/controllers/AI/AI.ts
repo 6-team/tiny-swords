@@ -1,4 +1,3 @@
-import { MovingDirection, CharacterDirection } from '@shared';
 import {
   Observable,
   Subscription,
@@ -11,16 +10,20 @@ import {
   switchMap,
   withLatestFrom,
 } from 'rxjs';
-import { collisions } from '../../core/collisions';
-import { actions, grid64 } from '../../core';
-import { TCollisionArea, TPixelsCoords } from '../../abilities/abilities.types';
-import { IAIControllerProps } from './AI.types';
-import { IMovingCharacter } from '../../abilities/moving/moving.types';
-import { IFightingCharacter } from '../../abilities/fighting/fighting.types';
+import { MovingDirection, CharacterDirection } from '@shared';
+
+import { actions } from '@core/actions';
+import { grid64 } from '@core/grid';
+import { collisions } from '@core/collisions';
+import { IFightingCharacter } from '@abilities/fighting';
+import { PathFinder } from '@core/pathfinder';
+import { SIZE_X, SIZE_Y } from '@common/common.const';
 import { EnemyState, Errors } from './AI.const';
-import { PathFinder } from '../../core/pathfinder';
-import { SIZE_X, SIZE_Y } from '../../common/common.const';
-import type { TTiledCoords } from '../../common/common.types';
+
+import type { IMovingCharacter } from '@abilities/moving';
+import type { TCollisionArea, TPixelsCoords } from '@abilities/abilities.types';
+import type { TTiledCoords } from '@common/common.types';
+import type { IAIControllerProps } from './AI.types';
 
 export class AIController {
   private _id: string | number;

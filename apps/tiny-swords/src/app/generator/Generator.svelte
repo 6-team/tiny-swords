@@ -5,7 +5,7 @@
   import { Resource, ResourcesType } from '../entities/resource';
   import { SCALE, TOTAL_LIVES } from '../common/common.const'
   import { actions, Heroes, Renderer, grid64, HeroResourcesBar, enemies } from "../core";
-  import { Level } from "../core/level/level";
+  import { Level } from "../core/level";
   import {
     nextLevelMenu,
     isMainMenuStore,
@@ -13,14 +13,13 @@
     endGameMenuStore,
     multiplayerStore,
   } from "../store";
-  import { MainMenu, NextLevelMenu, EndGameMenu } from "../components";
+  import { MainMenu, NextLevelMenu, EndGameMenu, ControlHint } from "../components";
   import { collisions } from "../core/collisions";
-  import { LayersRenderType } from "../core/layers/layers.types"
+  import { LayersRenderType } from "../core/layers"
 
-  import { AttackingType, type IPlayer } from "@shared";
+  import type { AttackingType, IEntity } from "@shared";
   import type { TPixelsCoords } from "../abilities/abilities.types";
-  import { ImprovementTypes, type availableResourcesCheckType, type buyImprovementsType, type TNumberOfPixels, type TTiledCoords  } from "../common/common.types";
-  import { HeroType } from "../entities/hero/hero.const";
+  import { ImprovementTypes, type availableResourcesCheckType, type buyImprovementsType  } from "../common/common.types";
   import type { IFightingCharacter } from "../abilities/fighting/fighting.types";
 
   let staticScene: Renderer;
@@ -104,7 +103,7 @@
     }
   }
 
-  function handleHeroMovement(action$: Observable<IPlayer>): void {
+  function handleHeroMovement(action$: Observable<IEntity>): void {
     action$
       .pipe(
         map((hero) => heroes.initHero(hero, level.boundaries$, enemies.enemies$)),
@@ -118,11 +117,6 @@
           return merge(movement$, attack$, breakpoint$);
         })
       ).subscribe();
-
-    const [initialX, initialY, height, width] = grid64.transformToPixels(1, 1, 3, 3);
-    const hero = new Hero({ id: 'test_hero', height, width, initialX, initialY, type: HeroType.WARRIOR_YELLOW });
-
-    heroes.addHero(hero);
   }
 
   function handleEnemyMovement(): void {
@@ -288,8 +282,6 @@
       grid: grid64,
     });
 
-    await heroBarsScene.renderResourcesBar(gameResources.getResources())
-
     // Дальше проверка: если перс повернут к врагу и они в соседних клетках, то удар засчитан
     // ...
 
@@ -371,10 +363,6 @@
       multiplayerStore.set(heroes.length > 1)
     });
 
-    gameResources.resources$.subscribe(() => {
-      heroBarsScene.clear()
-      heroBarsScene.renderResourcesBar(gameResources.getResources())
-    });
 
     heroes.mainHero$.pipe(filter(Boolean)).subscribe((hero) => {
       combineLatest([
@@ -391,6 +379,11 @@
         hero.moving.setCoords([innerWidth, innerHeight])
         actions.updatePlayer({ id: hero.id, breakpoint: [innerWidth, innerHeight]}).subscribe()
       });
+
+      gameResources.resources$.subscribe(() => {
+      heroBarsScene.clear()
+      heroBarsScene.renderResourcesBar(gameResources.getResources())
+    });
     });
   });
 
@@ -408,6 +401,7 @@
   <canvas id="canvas_hero_health-bar" width="1280" height="120px" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%);"></canvas>
   {#if isMainMenu}
     <MainMenu {initGame} {connectToMultipleGame}/>
+    <ControlHint />
   {/if}
   {#if isNextLevelMenu}
    {#key uniq}
@@ -420,7 +414,7 @@
   <button class="volume-btn" on:click={()=> {
     isMuttedStore.set(!isMuttedValue)}}>
     <img src = {isMuttedValue ? './img/UI/Disable_03.png' : './img/UI/Regular_03.png'} alt= 'volume-img'/>
-  </button>
+  </button> 
 </div>
 
 <style lang="scss">

@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { TileName } from "../../../renderer";
-import { Layer } from "../../../layer/layer";
-import { createCoordsLayerDict, createLayerConditions, getQuantityCells, getShuffleFilterCoords, randomElement, randomInteger, weightedRandomElement } from "../../layers.utils";
-import { LayerCondition } from "../../../layer/layer.types";
-import { LevelType } from "../../../level/level.types";
+import { TileName } from "@core/renderer";
+import { Layer } from "@core/layer";
+import { createCoordsLayerDict, createLayerConditions, getQuantityCells, getShuffleFilterCoords } from "../../layers.utils";
+import { LayerCondition } from "@core/layer";
+import { LevelType } from "@core/level";
 
 const groundWeightedTiles = (cells: number) => [
   {
@@ -129,13 +129,24 @@ const stonesWeightedTiles = (cells: number) => [
 ];
 
 /**
- * Шаблон для декораций на поверхности
+ * Create a dictionary of boundary cells based on a layer.
+ * 
+ * @param {Layer} layer - The layer to analyze.
+ * @returns {Object} A dictionary of boundary cells.
  */
-export const decorationsTerrainConditions = (level: LevelType, layers): LayerCondition[] => {
-  const layerBoundaryCellsDict = (layer) => createCoordsLayerDict(layer, (tile, boundary) => {
-    const isNotTerrain = tile >= TileName.BRIDGE_LEFT;
-    return boundary || isNotTerrain
-  });
+const layerBoundaryCellsDict = (layer) => createCoordsLayerDict(layer, (tile, boundary) => {
+  const isNotTerrain = tile >= TileName.BRIDGE_LEFT;
+  return boundary || isNotTerrain
+});
+
+/**
+ * Generate terrain decoration conditions based on the level and available cells.
+ * 
+ * @param {LevelType} level - The level type for the decorations.
+ * @param {Array<Layer>} layers - An array of layers used for decoration elements.
+ * @returns {Array<LayerCondition>} An array of decoration conditions for the terrain.
+ */
+export const decorationsTerrainConditions = (level: LevelType, layers: Layer[]): LayerCondition[] => {
   const layersBoundaryCellsDict = layers.reduce((acc, layer) => ({...acc, ...layerBoundaryCellsDict(layer.array)}), {});
   const availableCells = getShuffleFilterCoords(layers[0], ([x, y]) => !layersBoundaryCellsDict[`${x}-${y}`]);   
   

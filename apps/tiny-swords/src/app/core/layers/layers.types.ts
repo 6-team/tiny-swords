@@ -1,4 +1,4 @@
-import { TileName } from "../renderer";
+import { TileName } from "@core/renderer";
 
 export const enum LayersRenderType {
   Background,

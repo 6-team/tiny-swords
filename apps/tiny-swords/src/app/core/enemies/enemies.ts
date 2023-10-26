@@ -1,27 +1,39 @@
-import { IPlayer, CharacterDirection, MovingDirection } from '@shared';
 import { BehaviorSubject, Observable, Subject, concatAll, filter, map, merge, mergeMap } from 'rxjs';
-import { TCollisionArea, TPixelsCoords } from '../../abilities/abilities.types';
-import { grid64 } from '../grid';
-import { Enemy } from '../../entities/enemy';
-import { AIController } from '../../controllers/AI';
-import { collisions } from '../collisions';
-import { IMovingCharacter } from '../../abilities/moving/moving.types';
-import { IFightingCharacter } from '../../abilities/fighting/fighting.types';
 
-class Enemies {
-  readonly #enemiesSubject = new BehaviorSubject<Enemy[]>([]);
-  readonly #newEnemy = new Subject<Enemy>();
+import { IEntity, CharacterDirection, MovingDirection } from '@shared';
 
-  readonly enemies$ = this.#enemiesSubject.asObservable();
-  readonly enemiesBoundaries$ = this.#initEnemiesBoundaries();
-  readonly newEnemy$ = this.#newEnemy.asObservable();
+import { AIController } from '@controllers/AI';
+import { IMovingCharacter } from '@abilities/moving';
+import { IFightingCharacter } from '@abilities/fighting';
+import { grid64 } from '@core/grid';
+import { collisions } from '@core/collisions';
+import { TCollisionArea, TPixelsCoords } from '@abilities/abilities.types';
+import { Enemy } from '@entities/enemy';
+
+/**
+ * Represents a collection of enemy characters.
+ */
+export class Enemies {
+  private readonly _enemies = new BehaviorSubject<Enemy[]>([]);
+  private readonly _newEnemy = new Subject<Enemy>();
+
+  readonly enemies$ = this._enemies.asObservable();
+  readonly enemiesBoundaries$ = this.initEnemiesBoundaries();
+  readonly newEnemy$ = this._newEnemy.asObservable();
 
   get enemies(): Enemy[] {
-    return this.#enemiesSubject.getValue();
+    return this._enemies.getValue();
   }
 
+  /**
+   * Initializes an enemy character.
+   * @param {IEntity} entity - The entity information for the enemy.
+   * @param {Observable<Array<TCollisionArea>>} bounds$ - Observable of collision boundaries.
+   * @param {Observable<Array<IMovableCharacter & IAttackingCharacter>} heroes$ - Observable of hero characters.
+   * @returns {Enemy} - The newly initialized enemy character.
+   */
   initEnemy(
-    { id, coords }: IPlayer,
+    { id, coords }: IEntity,
     bounds$: Observable<Array<TCollisionArea>>,
     heroes$: Observable<Array<IMovingCharacter & IFightingCharacter>>,
     hero$: Observable<(IMovingCharacter & IFightingCharacter) | null>,
@@ -45,7 +57,7 @@ class Enemies {
       heroes$,
       bounds$,
       hero$,
-      chaser: this.#enemiesSubject.getValue().length === 1,
+      chaser: this._enemies.getValue().length === 1,
       character: enemy,
       streamDecorator: (originalStream$: Observable<MovingDirection>) =>
         collisions.preventBoundsDecorator({ character: enemy, otherCharacters$: heroes$, bounds$, originalStream$ }),
@@ -54,28 +66,58 @@ class Enemies {
     return enemy;
   }
 
+  /**
+   * Retrieves an enemy character by its ID.
+   * @param {string|number} id - The ID of the enemy to retrieve.
+   * @returns {Enemy|undefined} - The enemy character or undefined if not found.
+   */
   getEnemy(id: string | number): Enemy | undefined {
     return this.enemies.find((enemy) => enemy.id === id);
   }
 
+  /**
+   * Adds an enemy character to the collection.
+   * @param {Enemy} enemy - The enemy character to add.
+   */
   addEnemy(enemy: Enemy): void {
     const enemies = this.enemies.concat(enemy);
 
-    this.#newEnemy.next(enemy);
-    this.#enemiesSubject.next(enemies);
+    this._newEnemy.next(enemy);
+    this.setEnemies(enemies);
   }
 
+  /**
+   * Removes an enemy character from the collection by ID.
+   * @param {string|number} id - The ID of the enemy to remove.
+   */
   removeEnemy(id: string | number): void {
     const enemies = this.enemies.filter((enemy) => enemy.id !== id);
 
-    this.#enemiesSubject.next(enemies);
+    this.setEnemies(enemies);
   }
 
+  /**
+   * Clears all enemy characters from the collection.
+   */
   clearEnemies(): void {
-    this.#enemiesSubject.next([]);
+    this.setEnemies([]);
   }
 
-  #initEnemiesBoundaries(): Observable<TPixelsCoords[]> {
+  /**
+   * Sets the enemy collection to the provided array of enemies.
+   * @param {Enemy[]} enemies - The array of enemy characters.
+   * @private
+   */
+  private setEnemies(enemies: Enemy[]): void {
+    this._enemies.next(enemies);
+  }
+
+  /**
+   * Initializes and updates the collision boundaries of enemy characters.
+   * @returns {Observable<TPixelsCoords[]>} - An observable of pixel coordinates representing boundaries.
+   * @private
+   */
+  private initEnemiesBoundaries(): Observable<TPixelsCoords[]> {
     const boundaries$ = this.enemies$.pipe(
       filter((enemies) => !!enemies.length),
       concatAll(),
@@ -91,4 +133,8 @@ class Enemies {
   }
 }
 
+/**
+ * Represents an instance of the Enemies class for use.
+ * @type {Enemies}
+ */
 export const enemies = new Enemies();

@@ -1,9 +1,13 @@
-import { LayerCondition } from "../../../layer/layer.types";
-import { TileName } from "../../../renderer";
+import { LayerCondition } from "@core/layer";
+import { TileName } from "@core/renderer";
 import { randomInteger } from "../../layers.utils";
 
 /**
- * Шаблон поверхности для левого здания без моста
+ * Generate surface conditions for a 3x3 left building without a bridge.
+ *
+ * @param {Array<number>} startCoords - The starting coordinates [x, y] of the left building.
+ *
+ * @returns {Array<LayerCondition>} An array of surface conditions for the left building without a bridge.
  */
 export const leftGroundConditions = (startCoords: [number, number]): LayerCondition[] => {
   const [x, y] = startCoords;
@@ -52,7 +56,11 @@ export const leftGroundConditions = (startCoords: [number, number]): LayerCondit
 }
 
 /**
- * Шаблон поверхности для левого здания с мостом
+ * Generate surface conditions for a 3x3 left building with a bridge.
+ *
+ * @param {Array<number>} startCoords - The starting coordinates [x, y] of the left building.
+ *
+ * @returns {Array<LayerCondition>} An array of surface conditions for the left building with a bridge.
  */
 export const leftGroundBridgeConditions = (startCoords: [number, number]): LayerCondition[] => {
   const [x, y] = startCoords;
@@ -101,7 +109,11 @@ export const leftGroundBridgeConditions = (startCoords: [number, number]): Layer
 }
 
 /**
- * Шаблон поверхности для правого здания 3x3
+ * Generate surface conditions for a 3x3 right building.
+ *
+ * @param {Array<number>} endCoords - The ending coordinates [x, y] of the right building.
+ *
+ * @returns {Array<LayerCondition>} An array of surface conditions for the right building.
  */
 export const rightGroundConditions = (endCoords: [number, number]): LayerCondition[] => {
   const [x, y] = endCoords;
@@ -150,7 +162,11 @@ export const rightGroundConditions = (endCoords: [number, number]): LayerConditi
 }
 
 /**
- * Шаблон поверхности для правого здания 3x3 с мостом
+ * Generate surface conditions for a 3x3 right building with a bridge.
+ *
+ * @param {Array<number>} endCoords - The ending coordinates [x, y] of the right building.
+ *
+ * @returns {Array<LayerCondition>} An array of surface conditions for the right building with a bridge.
  */
 export const rightGroundBridgeConditions = (endCoords: [number, number]): LayerCondition[] => {
   const [x, y] = endCoords;
@@ -199,7 +215,13 @@ export const rightGroundBridgeConditions = (endCoords: [number, number]): LayerC
 }
 
 /**
- * Шаблон рамки из воды
+ * Generate a border of water conditions around the grid.
+ *
+ * @param {number} gridX - The width of the grid.
+ * @param {number} gridY - The height of the grid.
+ * @param {number} border - The size of the water border.
+ *
+ * @returns {Array<LayerCondition>} An array of water conditions representing a border.
  */
 export const borderWaterConditions = (gridX, gridY, border): LayerCondition[] => {
   const conditions = [];
@@ -225,7 +247,12 @@ export const borderWaterConditions = (gridX, gridY, border): LayerCondition[] =>
 }
 
 /**
- * Шаблон вертикальная река
+ * Generate vertical river conditions with a bridge in the center.
+ *
+ * @param {number} gridX - The width of the grid.
+ * @param {number} gridY - The height of the grid.
+ *
+ * @returns {Array<LayerCondition>} An array of vertical river conditions.
  */
 export const centerBridgeConditions = (gridX, gridY): LayerCondition[] => {
   const centerX = Math.floor(gridX / 2);
@@ -254,7 +281,13 @@ export const centerBridgeConditions = (gridX, gridY): LayerCondition[] => {
 }
 
 /**
- * Шаблон трава в середине
+ * Generate center ground conditions for a specified grid.
+ *
+ * @param {number} gridX - The width of the grid.
+ * @param {number} gridY - The height of the grid.
+ * @param {number} border - The border size.
+ *
+ * @returns {Array<LayerCondition>} An array of center ground conditions.
  */
 export const centerGroundConditions = (gridX, gridY, border): LayerCondition[] => {
   const centerX = Math.floor(gridX / 2);

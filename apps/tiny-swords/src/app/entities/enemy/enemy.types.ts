@@ -1,7 +1,8 @@
 import { CharacterDirection } from '@shared';
-import { TNumberOfPixels, TTilePosition } from '../../common/common.types';
-import { IMoving } from '../../abilities/moving/moving.types';
-import { IFighting } from '../../abilities/fighting/fighting.types';
+
+import { IMoving } from '@abilities/moving';
+import { IFighting } from '@abilities/fighting';
+import { TNumberOfPixels, TTilePosition } from '@common/common.types';
 
 export type EnemyAbilities = {
   moving: IMoving;
@@ -14,5 +15,5 @@ export interface EnemyConfig {
   initialX: TTilePosition;
   initialY: TTilePosition;
   initialDirection?: CharacterDirection;
-  id: string | number;
+  id: string;
 }
