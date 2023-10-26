@@ -1,4 +1,4 @@
-import { LevelData } from '@shared';
+import { ILevelData } from '@shared';
 import { Layers } from '../layers/layers';
 import { randomElement } from '../layers/layers.utils';
 import { SIZE_X, SIZE_Y } from '../../common/common.const';
@@ -15,7 +15,7 @@ import { LevelType } from './level.types';
 export class Level {
   private _currentLevelType;
   private _nextLevelType;
-  private _data: LevelData<LayersMap, Resource>;
+  private _data: ILevelData<LayersMap, Resource>;
 
   // Observables for various properties
   readonly _boundariesSubject = new BehaviorSubject<[number, number][]>([]);
@@ -49,7 +49,7 @@ export class Level {
    *
    * @returns {LevelData<LayersMap, Resource>} The current level data.
    */
-  get data(): LevelData<LayersMap, Resource> {
+  get data(): ILevelData<LayersMap, Resource> {
     return this._data;
   }
 
@@ -103,7 +103,7 @@ export class Level {
    *
    * @param {LevelData<LayersMap, Resource>} levelData - The data representing the level.
    */
-  updateLevel(levelData: LevelData<LayersMap, Resource>): void {
+  updateLevel(levelData: ILevelData<LayersMap, Resource>): void {
     const { gridX, gridY, startCoords, endCoords, maps, boundaries, resources, enemies } = levelData;
 
     this._data = levelData;
@@ -131,7 +131,7 @@ export class Level {
    *
    * @returns {Observable<LevelData<LayersMap>>} An observable that emits the next level data.
    */
-  next(): Observable<LevelData<LayersMap>> {
+  next(): Observable<ILevelData<LayersMap>> {
     const levels = [LevelType.Ground, LevelType.Sand, LevelType.Stones];
     
     this._currentLevelType = typeof this._nextLevelType === 'number'

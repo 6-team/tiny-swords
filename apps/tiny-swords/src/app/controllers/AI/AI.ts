@@ -1,14 +1,18 @@
-import { MovingDirection, CharacterDirection } from '@shared';
 import { Observable, Subscription, filter, first, map } from 'rxjs';
-import { IAttackingCharacter, IMovableCharacter } from '../../common/common.types';
-import { collisions } from '../../core/collisions';
-import { actions, grid64 } from '../../core';
-import { TPixelsCoords } from '../../abilities/abilities.types';
+import { MovingDirection, CharacterDirection } from '@shared';
+
+import { IMovingCharacter } from '@abilities/moving';
+import { IFightingCharacter } from '@abilities/fighting';
+import { TPixelsCoords } from '@abilities/abilities.types';
+import { actions } from '@core/actions';
+import { grid64 } from '@core/grid';
+import { collisions } from '@core/collisions';
+
 import { IAIControllerProps } from './AI.types';
 
 export class AIController {
-  private _character: IMovableCharacter & IAttackingCharacter;
-  private _heroes$: Observable<Array<IMovableCharacter & IAttackingCharacter>>;
+  private _character: IMovingCharacter & IFightingCharacter;
+  private _heroes$: Observable<Array<IMovingCharacter & IFightingCharacter>>;
   private _ignoreMovements = false;
   private _subscription: Subscription;
 
@@ -39,7 +43,7 @@ export class AIController {
     this._character.fighting.isDied$.pipe(first()).subscribe(() => this._subscription.unsubscribe());
   }
 
-  private _handleHeroCreation(hero: IMovableCharacter & IAttackingCharacter) {
+  private _handleHeroCreation(hero: IMovingCharacter & IFightingCharacter) {
     hero.moving.breakpoints$.subscribe(() => {
       this._ignoreMovements = false;
 
@@ -77,7 +81,7 @@ export class AIController {
     });
   }
 
-  private _attackWithDelay(enemy: IAttackingCharacter, ms: number) {
+  private _attackWithDelay(enemy: IFightingCharacter, ms: number) {
     setTimeout(() => enemy.fighting.attack(), ms);
   }
 }

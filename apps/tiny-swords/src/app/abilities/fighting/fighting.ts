@@ -1,22 +1,22 @@
-import { IAttacking, TCollisionArea } from '../abilities.types';
-import { IAttackingCharacter, IMovableCharacter } from '../../common/common.types';
-import { AttackingError } from './attacking.const';
+import { TCollisionArea } from '../abilities.types';
+import { AttackingError } from './fighting.const';
 import { BehaviorSubject, Observable, Subject, filter, map, noop } from 'rxjs';
 import { HeroActionAnimation } from '../../entities/hero/hero.const';
-import { AttackingProps } from './attacking.types';
+import { IFightingProps, IFighting, IFightingCharacter } from './fighting.types';
 import { AttackingType } from '@shared';
 import { TOTAL_LIVES } from '../../common/common.const';
+import { IMovingCharacter } from '../moving/moving.types';
 
 const isNotPositiveNumber = (count: number) => count <= 0;
 
 /**
  * Класс способности атаковать
  */
-export class Attacking implements IAttacking {
-  #context?: IAttackingCharacter & IMovableCharacter;
-  #getAffectedAreaFunc: AttackingProps['getAffectedArea'];
+export class Fighting implements IFighting {
+  #context?: IFightingCharacter & IMovingCharacter;
+  #getAffectedAreaFunc: IFightingProps['getAffectedArea'];
 
-  private _initialConfig: AttackingProps;
+  private _initialConfig: IFightingProps;
   private _attack$ = new Subject<AttackingType>();
   private _isAttacking$ = new BehaviorSubject<boolean>(false);
   private _isHitted$ = new Subject<boolean>();
@@ -31,7 +31,7 @@ export class Attacking implements IAttacking {
   readonly blockedLivesCount$: Observable<number>;
   readonly isDied$: Observable<boolean>;
 
-  constructor(config: AttackingProps) {
+  constructor(config: IFightingProps) {
     this.#getAffectedAreaFunc = config.getAffectedArea;
 
     this._livesCount$ = new BehaviorSubject(config.availibleLives);
@@ -54,14 +54,13 @@ export class Attacking implements IAttacking {
       throw new Error(AttackingError.PERSONAGE_NOT_SET);
     }
 
-    const movable = this.#context.getAbility('movable');
-    const collisionArea = movable.getCollisionArea();
+    const collisionArea = this.#context.moving.getCollisionArea();
 
     if (this.#getAffectedAreaFunc) {
       return this.#getAffectedAreaFunc(this);
     }
 
-    return movable.isRightDirection
+    return this.#context.moving.isRightDirection
       ? this.#getRightAffectedArea(collisionArea)
       : this.#getLeftAffectedArea(collisionArea);
   }
@@ -80,7 +79,7 @@ export class Attacking implements IAttacking {
    * @param context Контекст
    * @returns Объект способности
    */
-  setContext(context: IAttackingCharacter & IMovableCharacter): this {
+  setContext(context: IFightingCharacter & IMovingCharacter): this {
     this.#context = context;
 
     return this;
@@ -97,7 +96,7 @@ export class Attacking implements IAttacking {
       throw new Error(AttackingError.PERSONAGE_NOT_SET);
     }
 
-    const { isMoving, isRightDirection } = this.#context.getAbility('movable');
+    const { isMoving, isRightDirection } = this.#context.moving;
 
     if (!isMoving && !this.isAttacking) {
       this.#setIsAttacking();

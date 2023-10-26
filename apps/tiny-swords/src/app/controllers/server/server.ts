@@ -1,10 +1,13 @@
 import { filter } from 'rxjs';
-import { actions } from '../../core';
-import { IMovableCharacter, IAttackingCharacter } from '../../common/common.types';
+
+import { IMovingCharacter } from '@abilities/moving';
+import { IFightingCharacter } from '@abilities/fighting';
+import { actions } from '@core/actions';
+
 import { IServerControllerProps } from './server.types';
 
 export default class ServerController {
-  private _character: IMovableCharacter & IAttackingCharacter;
+  private _character: IMovingCharacter & IFightingCharacter;
 
   constructor({ id, character }: IServerControllerProps) {
     this._character = character;
@@ -23,9 +26,9 @@ export default class ServerController {
         }
 
         if (player.hasOwnProperty('breakpoint')) {
-          const movable = this._character.getAbility('movable');
+          const moving = this._character.moving;
 
-          if (movable.coords[0] !== player.breakpoint[0] || movable.coords[1] !== player.breakpoint[1]) {
+          if (moving.coords[0] !== player.breakpoint[0] || moving.coords[1] !== player.breakpoint[1]) {
             character.moving.setCoords(player.breakpoint);
           }
         }

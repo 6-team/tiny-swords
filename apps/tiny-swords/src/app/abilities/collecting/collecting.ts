@@ -1,6 +1,6 @@
 import { BehaviorSubject, Observable } from 'rxjs';
-import { IResource, ICollectingCharacter } from '../../common/common.types';
-import { ICollecting } from '../abilities.types';
+import { IResource } from '../../common/common.types';
+import { ICollecting, ICollectingCharacter } from './collecting.types';
 
 export class Collecting implements ICollecting {
   #context: ICollectingCharacter;

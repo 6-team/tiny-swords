@@ -1,11 +1,11 @@
 import { Observable } from 'rxjs';
-import { IMovableCharacter } from '../../common/common.types';
 import { TCollisionArea } from '../../abilities/abilities.types';
 import { MovingDirection } from '@shared';
+import { IMovingCharacter } from '../../abilities/moving/moving.types';
 
 export interface IPreventBoundsDecoratorProps {
-  character: IMovableCharacter;
-  otherCharacters$: Observable<Array<IMovableCharacter>>;
+  character: IMovingCharacter;
+  otherCharacters$: Observable<Array<IMovingCharacter>>;
   bounds$: Observable<Array<TCollisionArea>>;
   originalStream$: Observable<MovingDirection>;
 }
