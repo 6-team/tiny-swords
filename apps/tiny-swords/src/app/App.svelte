@@ -17,7 +17,7 @@
   import { LayersRenderType } from "@core/layers"
   import { collisions } from "@core/collisions";
   import { ImprovementTypes, type availableResourcesCheckType, type buyImprovementsType  } from "@common/common.types";
-  import { MainMenu,EndGameMenu, NextLevelMenu } from "@components";
+  import { MainMenu,EndGameMenu, NextLevelMenu, ControlHint } from "@components";
   import { Hero } from '@entities/hero'
   import { Resource, ResourcesType } from '@entities/resource';
   import {
@@ -334,11 +334,9 @@
         hero.moving.setCoords([innerWidth, innerHeight]);
         actions.updatePlayer({ id: hero.id, breakpoint: [innerWidth, innerHeight]}).subscribe()
       });
-    });
-  }
 
-  function renderResourcesBar(): void {
-    from(heroBarsScene.renderResourcesBar(gameResources.getResources())).subscribe();
+      handleHeroBarsScene()
+    });
   }
 
   function initScenes(): void {
@@ -367,10 +365,8 @@
     handleUpdatedEnemies();
     initScenes();
     renderStaticLayers();
-    renderResourcesBar();
     handleResourceScene();
     handleMovableLayer();
-    handleHeroBarsScene();
     handleMainHero();
   });
 
@@ -389,6 +385,7 @@
 
   {#if isMainMenu}
     <MainMenu {initGame} {connectToMultipleGame}/>
+    <ControlHint />
   {/if}
 
   {#if isNextLevelMenu}
