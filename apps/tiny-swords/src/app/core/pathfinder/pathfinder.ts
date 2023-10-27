@@ -1,22 +1,34 @@
 import { MovingDirection } from '@shared';
+import { Graph } from '@tools/graph';
 import { Errors } from './pathfinder.const';
-import { Graph } from '../../tools/graph';
-import { TNumberOfTiles, TTiledCoords } from '../../common/common.types';
+import { IPathFinderProps } from './pathfinder.types';
 
-interface IPathFinderProps {
-  width: TNumberOfTiles;
-  height: TNumberOfTiles;
-  bounds: Array<TTiledCoords>;
-}
+import type { TNumberOfTiles, TTilePosition, TTiledCoords } from '@common/common.types';
 
+/**
+ * @class Designed to find the shortest path between two coordinates on the map
+ */
 export class PathFinder {
   private _graph = new Graph<string>(null, true);
 
+  /**
+   * @constructor
+   * @param props.width — Map width
+   * @param props.height — Map height
+   * @param props.bounds — Array of map boundaries coordinates
+   */
   constructor({ width, height, bounds }: IPathFinderProps) {
     this._graph = this._createGraph(width, height, bounds);
   }
 
-  getDirections(from: TTiledCoords, to: TTiledCoords) {
+  /**
+   * Returns the sequence of commands that character need to perform to get to the destination point
+   *
+   * @param {TTiledCoords} from — Coordinates of the starting point
+   * @param {TTiledCoords} to — Coordinates of the destination point
+   * @returns {Array<MovingDirection>} The sequence of commands
+   */
+  getDirections(from: TTiledCoords, to: TTiledCoords): Array<MovingDirection> {
     const [_, path] = this._graph.getShortPath(
       this.createVertexName(from[0], from[1]),
       this.createVertexName(to[0], to[1]),
@@ -25,18 +37,37 @@ export class PathFinder {
     return this.pathToDirections(path);
   }
 
-  createVertexName(x: number, y: number): string {
+  /**
+   * Creates vertex name from coordinates
+   *
+   * @param {TTilePosition} x — X-axis coordinate
+   * @param {TTilePosition} y — Y-axis coordinate
+   * @returns Vertex name
+   */
+  createVertexName(x: TTilePosition, y: TTilePosition): string {
     return `${x}_${y}`;
   }
 
-  extractCoords(name: string): [x: number, y: number] {
+  /**
+   * Return vertex coordinates on map
+   *
+   * @param name Vertex name
+   * @returns Coordinates
+   */
+  extractCoords(name: string): [x: TTilePosition, y: TTilePosition] {
     if (!/^\d+_\d+$/.test(name)) {
       throw new Error(Errors.WRONG_VERTEX_NAME);
     }
 
-    return name.split('_').map((num: string) => Number(num)) as [number, number];
+    return name.split('_').map((num: string) => Number(num)) as [TTilePosition, TTilePosition];
   }
 
+  /**
+   * Transforms a sequence of vertices into a sequence of commands for movement
+   *
+   * @param {Array<string>} path — Sequence of vertices names
+   * @returns The sequence of commands
+   */
   pathToDirections = (path: Array<string>): Array<MovingDirection> => {
     const commands: Array<MovingDirection> = [];
 
@@ -72,6 +103,15 @@ export class PathFinder {
     return commands;
   };
 
+  /**
+   * Creates a graph representation of the map
+   *
+   * @private
+   * @param {TNumberOfTiles} maxX Map width in tiles
+   * @param {TNumberOfTiles} maxY Map height in tiles
+   * @param {Array<TTiledCoords>} bounds Map boundaries
+   * @returns Graph representation of the map
+   */
   private _createGraph(maxX: TNumberOfTiles, maxY: TNumberOfTiles, bounds: Array<TTiledCoords>): Graph<string> {
     const boundsSet = new Set(bounds.map((coords: TTiledCoords) => this.createVertexName(coords[0], coords[1])));
     const graph = new Graph<string>(null, true);
