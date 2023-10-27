@@ -1,6 +1,5 @@
 import { HeroResourcesBar } from './hero-resource-bar';
-import { ResourcesType } from '@entities/resource';
-import { Resource } from '@entities/resource/resource';
+import { ResourcesType, Resource } from '@entities/resource';
 import { quantityResources } from './hero-resource-bar.const';
 
 describe('Hero Resources Bar', () => {

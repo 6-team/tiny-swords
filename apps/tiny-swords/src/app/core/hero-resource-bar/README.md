@@ -17,7 +17,7 @@ You can create a `HeroResourcesBar` instance with a specified resources array.
 
 ```javascript
 import { HeroResourcesBar } from './hero-resource-bar';
-import { Resource } from '@entities/resource/resource';
+import { Resource } from '@entities/resource';
 
 // Create a HeroResourcesBar with a specific resources array
 const heroResourcesBar = new HeroResourcesBar([

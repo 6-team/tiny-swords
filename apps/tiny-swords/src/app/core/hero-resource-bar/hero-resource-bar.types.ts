@@ -1,4 +1,4 @@
-import { ResourcesType, Resource } from '@entities/resource/index';
+import { ResourcesType, Resource } from '@entities/resource';
 
 export interface IHeroResourcesBar {
   getResources(): Array<Resource>;
