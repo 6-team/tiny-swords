@@ -1,4 +1,4 @@
-import Hero from './Hero';
+import Hero from './hero';
 import { HeroType } from './hero.const';
 import { Moving } from '@abilities/moving';
 import { Fighting } from '@abilities/fighting';
