@@ -1,27 +1,17 @@
-import { ElevationSprite } from '../../entities/elevation/elevation';
-import { ElevationType } from '../../entities/elevation/elevation.const';
+import { ElevationSprite, ElevationType } from '@entities/elevation';
 import { GroundSprite, GroundType } from '@entities/ground';
-import { SandSprite } from '../../entities/sand/sand';
-import { SandType } from '../../entities/sand/sand.const';
+import { SandSprite, SandType } from '@entities/sand';
 import { FoamSprite, FoamType } from '@entities/foam';
-import { WaterSprite } from '../../entities/water/water';
-import { BridgeSprite } from '../../entities/bridge/bridge';
-import { BridgeType } from '../../entities/bridge/bridge.const';
-import { DecoSprite } from '../../entities/deco/deco';
-import { DecoType } from '../../entities/deco/deco.const';
-import { RocksSprite } from '../../entities/rocks/rocks';
-import { TreeSprite } from '../../entities/tree/tree';
-import { HouseSprite } from '../../entities/house/house';
-import { TreeType } from '../../entities/tree/tree.const';
-import { RocksType } from '../../entities/rocks/rocks.const';
-import { HouseType } from '../../entities/house/house.const';
-import { BoundarySprite } from '../../entities/boundary/boundary';
-import { BoundaryType } from '../../entities/boundary/boundary.const';
+import { WaterSprite } from '@entities/water';
+import { BridgeSprite, BridgeType } from '@entities/bridge';
+import { DecoSprite, DecoType } from '@entities/deco';
+import { RocksSprite, RocksType } from '@entities/rocks';
+import { TreeSprite, TreeType } from '@entities/tree';
+import { HouseSprite, HouseType } from '@entities/house';
+import { BoundarySprite, BoundaryType } from '@entities/boundary';
 import { GoldMineSprite, GoldMineType } from '@entities/gold-mine';
-import { SheepType } from '../../entities/sheep/sheep.const';
-import { SheepSprite } from '../../entities/sheep/sheep';
-import { TowerSprite } from '../../entities/tower/tower';
-import { TowerType } from '../../entities/tower/tower.const';
+import { SheepSprite, SheepType } from '@entities/sheep';
+import { TowerSprite, TowerType } from '@entities/tower';
 
 export const enum SpriteName {
   WATER_MIDDLE_MIDDLE,

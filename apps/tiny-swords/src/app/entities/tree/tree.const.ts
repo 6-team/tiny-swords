@@ -1,4 +1,4 @@
-import { CoordsTuple } from "../sprite/sprite.types";
+import { CoordsTuple } from '@entities/sprite';
 
 export const enum TreeType {
   TOP_LEFT,

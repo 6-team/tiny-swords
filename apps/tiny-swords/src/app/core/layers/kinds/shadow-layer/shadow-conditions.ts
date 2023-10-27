@@ -1,16 +1,16 @@
-import { LayerCondition } from "@core/layer";
-import { LevelType } from "@core/level";
-import { SpriteName } from "@core/renderer";
+import { Layer, LayerCondition } from '@core/layer';
+import { LevelType } from '@core/level';
+import { SpriteName } from '@core/renderer';
 
 /**
  * Get ground conditions based on the given sprite and coordinates.
- * 
+ *
  * @param {SpriteName} sprite - The sprite type.
  * @param {Array<number>} coords - The coordinates [x, y] for the sprite.
  * @returns {Array<LayerCondition>} An array of ground conditions.
  */
-const getGroundConditions = (sprite, coords) => {
-  switch(sprite) {
+const getGroundConditions = (sprite: SpriteName, coords: [number, number]): LayerCondition[] => {
+  switch (sprite) {
     // shadow bridge
     case SpriteName.BRIDGE_MIDDLE:
       return [{ sprite: SpriteName.BRIDGE_SHADOW, coords }];
@@ -26,17 +26,17 @@ const getGroundConditions = (sprite, coords) => {
     default:
       return [];
   }
-}
+};
 
 /**
  * Get sand conditions based on the given sprite and coordinates.
- * 
+ *
  * @param {SpriteName} sprite - The sprite type.
  * @param {Array<number>} coords - The coordinates [x, y] for the sprite.
  * @returns {Array<LayerCondition>} An array of sand conditions.
  */
-const getSandConditions = (sprite, coords) => {
-  switch(sprite) {
+const getSandConditions = (sprite: SpriteName, coords: [number, number]): LayerCondition[] => {
+  switch (sprite) {
     // Shadow under the bridge
     case SpriteName.BRIDGE_MIDDLE:
       return [{ sprite: SpriteName.BRIDGE_SHADOW, coords }];
@@ -50,17 +50,17 @@ const getSandConditions = (sprite, coords) => {
     default:
       return [];
   }
-}
+};
 
 /**
  * Get stone conditions based on the given sprite and coordinates.
- * 
+ *
  * @param {SpriteName} sprite - The sprite type.
  * @param {Array<number>} coords - The coordinates [x, y] for the sprite.
  * @returns {Array<LayerCondition>} An array of stone conditions.
  */
-const getStonesConditions = (sprite, coords) => {
-  switch(sprite) {
+const getStonesConditions = (sprite: SpriteName, coords: [number, number]): LayerCondition[] => {
+  switch (sprite) {
     // Stone under the bridge foundations
     case SpriteName.BRIDGE_LEFT:
       return [{ sprite: SpriteName.ELEVATION_MIDDLE_RIGHT, coords }];
@@ -70,7 +70,7 @@ const getStonesConditions = (sprite, coords) => {
     default:
       return [];
   }
-}
+};
 
 /**
  * Template for additional layers:
@@ -82,11 +82,11 @@ const getStonesConditions = (sprite, coords) => {
  * @param {Layer} layer - The base layer to which conditions will be applied.
  * @returns {Array<LayerCondition>} An array of conditions for the specified layer type.
  */
-export const shadowConditions = (level: LevelType, layer): LayerCondition[] => {
+export const shadowConditions = (level: LevelType, layer: Layer): LayerCondition[] => {
   let conditions = [];
   let getConditions;
-  
-  switch(level) {
+
+  switch (level) {
     case LevelType.Ground:
       getConditions = getGroundConditions;
       break;
@@ -102,12 +102,9 @@ export const shadowConditions = (level: LevelType, layer): LayerCondition[] => {
     const conditionsCell = getConditions(options[0], coords);
 
     if (conditionsCell.length) {
-      conditions = [
-        ...conditions,
-        ...conditionsCell,
-      ];
+      conditions = [...conditions, ...conditionsCell];
     }
   });
 
   return conditions;
-}
+};

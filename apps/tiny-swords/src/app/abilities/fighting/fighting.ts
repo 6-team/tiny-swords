@@ -1,20 +1,30 @@
-import { TCollisionArea } from '../abilities.types';
+import { TCollisionArea } from '@abilities/abilities.types';
 import { AttackingError } from './fighting.const';
 import { BehaviorSubject, Observable, Subject, filter, map, noop } from 'rxjs';
-import { HeroActionAnimation } from '../../entities/hero/hero.const';
+import { HeroActionAnimation } from '@entities/hero/hero.const';
 import { IFightingProps, IFighting, IFightingCharacter } from './fighting.types';
 import { AttackingType } from '@shared';
-import { TOTAL_LIVES } from '../../common/common.const';
-import { IMovingCharacter } from '../moving/moving.types';
+import { TOTAL_LIVES } from '@common/common.const';
+import { IMovingCharacter } from '@abilities/moving/moving.types';
 
 const isNotPositiveNumber = (count: number) => count <= 0;
 
 /**
- * Класс способности атаковать
+ * Defines a class responsible for all fighting related logics of a character.
+ * This class manages the acts like attack, taking damages, adding lives, life blocking and unblocking.
+ *
+ * @implements IFighting
+ *
+ * @property {Observable<AttackingType>} attack$ - Observable stream of attack events.
+ * @property {Observable<boolean>} isAttacking$ - Observable stream indicating if the character is currently attacking.
+ * @property {Observable<boolean>} isHitted$ - Observable stream indicating if the character is hit.
+ * @property {Observable<number>} livesCount$ - Observable stream for the count of current lives.
+ * @property {Observable<number>} blockedLivesCount$ - Observable stream for the count of currently blocked lives.
+ * @property {Observable<boolean>} isDied$ - Observable stream indicating if the character has died.
  */
 export class Fighting implements IFighting {
-  #context?: IFightingCharacter & IMovingCharacter;
-  #getAffectedAreaFunc: IFightingProps['getAffectedArea'];
+  private _context?: IFightingCharacter & IMovingCharacter;
+  private _getAffectedAreaFunc: IFightingProps['getAffectedArea'];
 
   private _initialConfig: IFightingProps;
   private _attack$ = new Subject<AttackingType>();
@@ -32,7 +42,7 @@ export class Fighting implements IFighting {
   readonly isDied$: Observable<boolean>;
 
   constructor(config: IFightingProps) {
-    this.#getAffectedAreaFunc = config.getAffectedArea;
+    this._getAffectedAreaFunc = config.getAffectedArea;
 
     this._livesCount$ = new BehaviorSubject(config.availibleLives);
     this._blockedLivesCount$ = new BehaviorSubject(config.blockedLives);
@@ -45,67 +55,71 @@ export class Fighting implements IFighting {
   }
 
   /**
-   * Вычисляет зону перед персонажем, куда будет атаковать персонаж и которая будет считаться зоной поражения для других.
+   * Calculates the area in front of the character where the character will attack and which will be considered a kill zone for others.
    *
-   * @returns Зона поражения в виде кортежа пикселей
+   * @throws {Error} if personage is not set.
+   * @returns {TCollisionArea}  The affected area as a tuple of pixels
    */
   getAffectedArea(): TCollisionArea {
-    if (!this.#context) {
+    if (!this._context) {
       throw new Error(AttackingError.PERSONAGE_NOT_SET);
     }
 
-    const collisionArea = this.#context.moving.getCollisionArea();
+    const collisionArea = this._context.moving.getCollisionArea();
 
-    if (this.#getAffectedAreaFunc) {
-      return this.#getAffectedAreaFunc(this);
+    if (this._getAffectedAreaFunc) {
+      return this._getAffectedAreaFunc(this);
     }
 
-    return this.#context.moving.isRightDirection
-      ? this.#getRightAffectedArea(collisionArea)
-      : this.#getLeftAffectedArea(collisionArea);
+    return this._context.moving.isRightDirection
+      ? this._getRightAffectedArea(collisionArea)
+      : this._getLeftAffectedArea(collisionArea);
   }
 
   /**
-   * Атакует ли персонаж прямо сейчас
+   * Checks if the character is attacking.
+   *
+   * @returns {boolean}
    */
   get isAttacking(): boolean {
     return this._isAttacking$.getValue();
   }
 
   /**
-   * Устанавливает контекст/носителя данной способности.
-   * Нужно, чтобы вызывать его методы, такие как показ анимации, изменение изображения и т.п.
+   * Sets the context/carrier of this ability.
+   * Need it to call its methods, such as showing animations, changing the image, etc.
    *
-   * @param context Контекст
-   * @returns Объект способности
+   * @param context {IFightingCharacter & IMovingCharacter} - The context
+   * @returns {this}
    */
   setContext(context: IFightingCharacter & IMovingCharacter): this {
-    this.#context = context;
+    this._context = context;
 
     return this;
   }
 
   /**
-   * Метод для атаки.
+   * Method to attack.
    *
-   * @param type Тип удара
-   * @returns Объект способности
+   *  @param type {AttackingType} - The type of attack
+   *  @throws {Error} if personage is not set.
+   *  @returns {this}
    */
   attack(type: AttackingType = AttackingType.DOWN): this {
-    if (!this.#context) {
+    if (!this._context) {
       throw new Error(AttackingError.PERSONAGE_NOT_SET);
     }
 
-    const { isMoving, isRightDirection } = this.#context.moving;
+    const { isMoving, isRightDirection } = this._context.moving;
 
     if (!isMoving && !this.isAttacking) {
-      this.#setIsAttacking();
+      this._setIsAttacking();
       this._attack$.next(type);
 
-      this.#context
-        .setAnimationOnce(this.#getAnimationWithDirection(type, isRightDirection))
+      this._context
+        .setAnimationOnce(this._getAnimationWithDirection(type, isRightDirection))
         .then(() => {
-          this.#setIsAttacking(false);
+          this._setIsAttacking(false);
         })
         .catch(noop);
     }
@@ -114,11 +128,11 @@ export class Fighting implements IFighting {
   }
 
   /**
-   * Метод для получения урона. Отнимает одну жизнь.
+   * Method for taking damage. Takes one life
    *
-   * @returns Объект способности
+   * @returns {this}
    */
-  takeDamage() {
+  takeDamage(): this {
     this._livesCount$.next(this._livesCount$.getValue() - 1);
     this._isHitted$.next(true);
 
@@ -126,11 +140,11 @@ export class Fighting implements IFighting {
   }
 
   /**
-   * Метод добавления одной жизни
+   * Method of adding one life
    *
-   * @returns Объект способности
+   * @returns {this}
    */
-  addLive() {
+  addLive(): this {
     const lives = this._livesCount$.getValue();
 
     if (this.checkAddLive()) this._livesCount$.next(lives + 1);
@@ -139,11 +153,11 @@ export class Fighting implements IFighting {
   }
 
   /**
-   * Метод для разблокировки одной жизни
+   * Unblocks a life if possible.
    *
-   * @returns Объект способности
+   * @returns {this}
    */
-  unblockLive() {
+  unblockLive(): this {
     const prev = this._blockedLivesCount$.getValue();
 
     if (prev >= 1) {
@@ -154,11 +168,11 @@ export class Fighting implements IFighting {
   }
 
   /**
-   * Метод для сброса состояния способности
+   * Resets the state of the ability.
    *
-   * @returns Объект способности
+   * @returns {this}
    */
-  reset() {
+  reset(): this {
     this._livesCount$.next(this._initialConfig.availibleLives);
     this._blockedLivesCount$.next(this._initialConfig.blockedLives);
 
@@ -166,10 +180,10 @@ export class Fighting implements IFighting {
   }
 
   /**
-   * Метод для проверки возможности добавления жизни
+   * Checks if it's possible to add a life.
    *
+   * @returns {boolean}
    */
-
   checkAddLive(): boolean {
     const blockedLives = this._blockedLivesCount$.getValue();
     const availableLives = this._livesCount$.getValue();
@@ -177,22 +191,22 @@ export class Fighting implements IFighting {
   }
 
   /**
-   * Метод для проверки возможности разблокировки жизни
+   * Method to check if life can be unlocked
    *
+   * @returns {boolean}
    */
-
   checkUnblockLive(): boolean {
     return !!this._blockedLivesCount$.getValue();
   }
 
   /**
-   * Возвращает номер анимации в зависимости от типа удара и направления движения
+   * Returns the animation number based on the type of impact and direction of movement
    *
-   * @param type Тип удара
-   * @param isRightDirection Направление персонажа
-   * @returns Анимация
+   * @param type Attack's type
+   * @param isRightDirection Character direction
+   * @returns Animation
    */
-  #getAnimationWithDirection(type: AttackingType, isRightDirection: boolean) {
+  private _getAnimationWithDirection(type: AttackingType, isRightDirection: boolean): HeroActionAnimation {
     switch (type) {
       case AttackingType.DOWN:
         return isRightDirection ? HeroActionAnimation.RIGHT_ATTACK_DOWN : HeroActionAnimation.LEFT_ATTACK_DOWN;
@@ -200,22 +214,29 @@ export class Fighting implements IFighting {
         return isRightDirection ? HeroActionAnimation.RIGHT_ATTACK_UP : HeroActionAnimation.LEFT_ATTACK_UP;
     }
   }
-
-  #getRightAffectedArea(area: TCollisionArea): TCollisionArea {
-    /**
-     * @TODO Переписать 64 на spriteSize, или может вообще вынести отсюда, чтобы не зависеть тут от Grid
-     */
+  /**
+   * Getting the right affected area
+   * @param area
+   * @returns {TCollisionArea}
+   */
+  private _getRightAffectedArea(area: TCollisionArea): TCollisionArea {
     return [area[0] + 64, area[1], area[2], area[3]];
   }
 
-  #getLeftAffectedArea(area: TCollisionArea): TCollisionArea {
-    /**
-     * @TODO Переписать 64 на spriteSize, или может вообще вынести отсюда, чтобы не зависеть тут от Grid
-     */
+  /**
+   * Getting the left affected area
+   * @param area
+   * @returns {TCollisionArea}
+   */
+  private _getLeftAffectedArea(area: TCollisionArea): TCollisionArea {
     return [area[0] - 64, area[1], area[2], area[3]];
   }
 
-  #setIsAttacking(isAttacking = true): void {
+  /**
+   * Sets up an attack
+   * @param isAttacking
+   */
+  private _setIsAttacking(isAttacking = true): void {
     this._isAttacking$.next(isAttacking);
   }
 }

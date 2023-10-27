@@ -1,9 +1,26 @@
-import { Sprite } from '../sprite';
+import { CoordsTuple, Sprite } from '@entities/sprite';
 import { DecoType, mapTerrainToCoords } from './deco.const';
 
+/**
+ * Represents a DecoSprite, a specific type of Sprite with decoration-related information.
+ */
 export class DecoSprite extends Sprite<DecoType> {
+  /**
+   * The type of the decoration sprite.
+   * @type {DecoType}
+   */
   protected _type: DecoType;
+
+  /**
+   * The sprite URL for the decoration sprite.
+   * @type {string}
+   */
   protected _sprite: string;
+
+  /**
+   * Creates a new DecoSprite instance.
+   * @param {DecoType} type - The type of the decoration sprite (default: DecoType.MUSHROOM_M).
+   */
 
   constructor(type: DecoType = DecoType.MUSHROOM_M) {
     super();
@@ -11,7 +28,12 @@ export class DecoSprite extends Sprite<DecoType> {
     this.setType(type);
   }
 
-  setType(type: DecoType = DecoType.MUSHROOM_M) {
+  /**
+   * Sets the type of the decoration sprite and determines the corresponding sprite URL.
+   * @param {DecoType} type - The type of the decoration sprite to set (default: DecoType.MUSHROOM_M).
+   * @returns {void}
+   */
+  setType(type: DecoType = DecoType.MUSHROOM_M): void {
     this._type = type;
 
     switch (type) {
@@ -88,7 +110,11 @@ export class DecoSprite extends Sprite<DecoType> {
     }
   }
 
-  protected _getCoordsMap() {
+  /**
+   * Retrieves the coordinate mapping for the decoration sprite.
+   * @returns {object} A mapping of decoration types to coordinate values.
+   */
+  protected _getCoordsMap(): Record<DecoType, CoordsTuple> {
     return mapTerrainToCoords;
   }
 }

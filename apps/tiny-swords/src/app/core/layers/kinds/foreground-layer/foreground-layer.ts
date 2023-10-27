@@ -1,7 +1,13 @@
-import { CoordsTuple } from "@core/../entities/sprite/sprite.types";
-import { Layer } from "@core/layer";
-import { LevelType } from "@core/level";
-import { foregroundLeftHouseConditions, foregroundLeftTowerConditions, foregroundRightHouseConditions, foregroundRightTowerConditions, foregroundTreeTopConditions } from "./foreground-conditions"
+import { CoordsTuple } from '@entities/sprite';
+import { Layer } from '@core/layer';
+import { LevelType } from '@core/level';
+import {
+  foregroundLeftHouseConditions,
+  foregroundLeftTowerConditions,
+  foregroundRightHouseConditions,
+  foregroundRightTowerConditions,
+  foregroundTreeTopConditions,
+} from './foreground-conditions';
 
 /**
  * A class representing a foreground layer with different conditions based on the level and next level.
@@ -17,18 +23,21 @@ export class ForegroundLayer {
    * @param {CoordsTuple} endCoords - The ending coordinates.
    * @param {Layer} layer - The base layer for conditions.
    */
-  constructor(gridX: number, gridY: number, level: LevelType, nextLevel: LevelType, startCoords: CoordsTuple, endCoords: CoordsTuple, layer) {
+  constructor(
+    gridX: number,
+    gridY: number,
+    level: LevelType,
+    nextLevel: LevelType,
+    startCoords: CoordsTuple,
+    endCoords: CoordsTuple,
+    layer,
+  ) {
     let conditionsList = [];
 
     if (level === LevelType.Ground) {
-      conditionsList = [
-        foregroundLeftHouseConditions(startCoords),
-        foregroundTreeTopConditions(layer),
-      ]
+      conditionsList = [foregroundLeftHouseConditions(startCoords), foregroundTreeTopConditions(layer)];
     } else if (level === LevelType.Stones) {
-      conditionsList = [
-        foregroundLeftTowerConditions(startCoords),
-      ]
+      conditionsList = [foregroundLeftTowerConditions(startCoords)];
     }
 
     if (nextLevel === LevelType.Ground) {

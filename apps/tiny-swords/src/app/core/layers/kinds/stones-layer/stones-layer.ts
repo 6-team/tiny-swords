@@ -1,7 +1,15 @@
-import { Layer } from "@core/layer";
-import { randomElement } from "../../layers.utils";
-import { borderWaterConditions, centerBridgeConditions, centerStonesConditions, leftGroundBridgeConditions, leftGroundConditions, rightGroundBridgeConditions, rightGroundConditions } from "./stones-conditions";
-import { STONES_RULES, STONES_WEIGHT } from "./stones-rules";
+import { Layer } from '@core/layer';
+import { randomElement } from '@core/layers';
+import {
+  borderWaterConditions,
+  centerBridgeConditions,
+  centerStonesConditions,
+  leftGroundBridgeConditions,
+  leftGroundConditions,
+  rightGroundBridgeConditions,
+  rightGroundConditions,
+} from './stones-conditions';
+import { STONES_RULES, STONES_WEIGHT } from './stones-rules';
 
 /**
  * Represents a StonesLayer class responsible for creating
@@ -19,10 +27,15 @@ export class StonesLayer {
    *
    * @returns {Layer} A new Layer instance filled with stone-related conditions based on the provided parameters.
    */
-  constructor(gridX: number, gridY: number, border: number, startCoords: [number, number], endCoords: [number, number]) {
-
+  constructor(
+    gridX: number,
+    gridY: number,
+    border: number,
+    startCoords: [number, number],
+    endCoords: [number, number],
+  ) {
     const leftBuild = randomElement([leftGroundConditions, leftGroundBridgeConditions]);
-    const rightBuild = randomElement([rightGroundConditions, rightGroundBridgeConditions])
+    const rightBuild = randomElement([rightGroundConditions, rightGroundBridgeConditions]);
 
     const feature = randomElement([centerBridgeConditions, centerStonesConditions]);
 

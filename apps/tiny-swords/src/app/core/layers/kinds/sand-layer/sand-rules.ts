@@ -1,22 +1,22 @@
-import { LayerRules, SpriteWeight } from "@core/layer";
-import { SpriteName } from "@core/renderer";
+import { LayerRules, SpriteWeight } from '@core/layer';
+import { SpriteName } from '@core/renderer';
 
 export const SAND_WEIGHT: SpriteWeight[] = [
-  [SpriteName.WATER_MIDDLE_MIDDLE,  1, true],
+  [SpriteName.WATER_MIDDLE_MIDDLE, 1, true],
 
-  [SpriteName.SAND_TOP_LEFT,      1, false],
-  [SpriteName.SAND_TOP_MIDDLE,    10, false],
-  [SpriteName.SAND_TOP_RIGHT,     1, false],
-  [SpriteName.SAND_MIDDLE_LEFT,   10, false],
+  [SpriteName.SAND_TOP_LEFT, 1, false],
+  [SpriteName.SAND_TOP_MIDDLE, 10, false],
+  [SpriteName.SAND_TOP_RIGHT, 1, false],
+  [SpriteName.SAND_MIDDLE_LEFT, 10, false],
   [SpriteName.SAND_MIDDLE_MIDDLE, 100, false],
-  [SpriteName.SAND_MIDDLE_RIGHT,  10, false],
-  [SpriteName.SAND_BOTTOM_LEFT,   1, false],
+  [SpriteName.SAND_MIDDLE_RIGHT, 10, false],
+  [SpriteName.SAND_BOTTOM_LEFT, 1, false],
   [SpriteName.SAND_BOTTOM_MIDDLE, 10, false],
-  [SpriteName.SAND_BOTTOM_RIGHT,  1, false],
+  [SpriteName.SAND_BOTTOM_RIGHT, 1, false],
 
-  [SpriteName.BRIDGE_LEFT,          1, false],
-  [SpriteName.BRIDGE_MIDDLE,        1, false],
-  [SpriteName.BRIDGE_RIGHT,         1, false],
+  [SpriteName.BRIDGE_LEFT, 1, false],
+  [SpriteName.BRIDGE_MIDDLE, 1, false],
+  [SpriteName.BRIDGE_RIGHT, 1, false],
 ];
 
 export const SAND_RULES: LayerRules = {
@@ -28,12 +28,7 @@ export const SAND_RULES: LayerRules = {
       SpriteName.SAND_BOTTOM_RIGHT,
       SpriteName.BRIDGE_MIDDLE,
     ],
-    [
-      SpriteName.WATER_MIDDLE_MIDDLE,
-      SpriteName.SAND_TOP_LEFT,
-      SpriteName.SAND_MIDDLE_LEFT,
-      SpriteName.SAND_BOTTOM_LEFT,
-    ],
+    [SpriteName.WATER_MIDDLE_MIDDLE, SpriteName.SAND_TOP_LEFT, SpriteName.SAND_MIDDLE_LEFT, SpriteName.SAND_BOTTOM_LEFT],
     [
       SpriteName.WATER_MIDDLE_MIDDLE,
       SpriteName.SAND_TOP_LEFT,
@@ -41,12 +36,7 @@ export const SAND_RULES: LayerRules = {
       SpriteName.SAND_TOP_RIGHT,
       SpriteName.BRIDGE_MIDDLE,
     ],
-    [
-      SpriteName.WATER_MIDDLE_MIDDLE,
-      SpriteName.SAND_TOP_RIGHT,
-      SpriteName.SAND_MIDDLE_RIGHT,
-      SpriteName.SAND_BOTTOM_RIGHT,
-    ],
+    [SpriteName.WATER_MIDDLE_MIDDLE, SpriteName.SAND_TOP_RIGHT, SpriteName.SAND_MIDDLE_RIGHT, SpriteName.SAND_BOTTOM_RIGHT],
   ],
   [SpriteName.SAND_TOP_LEFT]: [
     [SpriteName.WATER_MIDDLE_MIDDLE],
@@ -283,19 +273,10 @@ export const SAND_RULES: LayerRules = {
     ],
   ],
   [SpriteName.BRIDGE_LEFT]: [
-    [
-      SpriteName.SAND_TOP_RIGHT,
-      SpriteName.SAND_MIDDLE_RIGHT,
-    ],
+    [SpriteName.SAND_TOP_RIGHT, SpriteName.SAND_MIDDLE_RIGHT],
     [SpriteName.BRIDGE_MIDDLE],
-    [
-      SpriteName.SAND_MIDDLE_RIGHT,
-      SpriteName.SAND_BOTTOM_RIGHT,
-    ],
-    [
-      SpriteName.SAND_MIDDLE_MIDDLE,
-      SpriteName.SAND_MIDDLE_LEFT,
-    ],
+    [SpriteName.SAND_MIDDLE_RIGHT, SpriteName.SAND_BOTTOM_RIGHT],
+    [SpriteName.SAND_MIDDLE_MIDDLE, SpriteName.SAND_MIDDLE_LEFT],
   ],
   [SpriteName.BRIDGE_MIDDLE]: [
     [SpriteName.WATER_MIDDLE_MIDDLE],
@@ -304,21 +285,9 @@ export const SAND_RULES: LayerRules = {
     [SpriteName.BRIDGE_MIDDLE, SpriteName.BRIDGE_LEFT],
   ],
   [SpriteName.BRIDGE_RIGHT]: [
-    [
-      SpriteName.SAND_TOP_LEFT,
-      SpriteName.SAND_MIDDLE_LEFT,
-    ],
-    [
-      SpriteName.SAND_MIDDLE_MIDDLE,
-      SpriteName.SAND_MIDDLE_RIGHT,
-    ],
-    [
-      SpriteName.SAND_MIDDLE_LEFT,
-      SpriteName.SAND_BOTTOM_LEFT,
-    ],
-    [
-      SpriteName.BRIDGE_MIDDLE,
-      SpriteName.BRIDGE_LEFT
-    ],
+    [SpriteName.SAND_TOP_LEFT, SpriteName.SAND_MIDDLE_LEFT],
+    [SpriteName.SAND_MIDDLE_MIDDLE, SpriteName.SAND_MIDDLE_RIGHT],
+    [SpriteName.SAND_MIDDLE_LEFT, SpriteName.SAND_BOTTOM_LEFT],
+    [SpriteName.BRIDGE_MIDDLE, SpriteName.BRIDGE_LEFT],
   ],
 };

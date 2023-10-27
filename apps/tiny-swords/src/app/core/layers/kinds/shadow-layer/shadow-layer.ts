@@ -1,5 +1,5 @@
-import { Layer } from "@core/layer";
-import { shadowConditions } from "./shadow-conditions";
+import { Layer } from '@core/layer';
+import { shadowConditions } from './shadow-conditions';
 
 /**
  * A class representing a layer for shadows.
@@ -13,8 +13,6 @@ export class ShadowLayer {
    * @param {Layer} layer - The base layer to apply shadows to.
    */
   constructor(gridX: number, gridY: number, level, layer) {
-    return new Layer(gridX, gridY).fill([
-      shadowConditions(level, layer),
-    ]);
+    return new Layer(gridX, gridY).fill([shadowConditions(level, layer)]);
   }
 }

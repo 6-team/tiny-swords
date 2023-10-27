@@ -1,4 +1,4 @@
-import { CoordsTuple } from '../sprite/sprite.types';
+import { CoordsTuple } from '@entities/sprite';
 
 export enum HeroActionAnimation {
   STANDS_STILL,

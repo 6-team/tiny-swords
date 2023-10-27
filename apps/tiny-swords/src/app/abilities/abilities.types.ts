@@ -1,4 +1,4 @@
-import { ISprite, TNumberOfPixels, TPixelsPosition } from '../common/common.types';
+import { ISprite, TNumberOfPixels, TPixelsPosition } from '@common/common.types';
 
 export interface IAbility<Context> {
   /**

@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
-import { IAbility } from '../abilities.types';
-import { ICharacter, IResource } from '../../common/common.types';
+import { IAbility } from '@abilities/abilities.types';
+import { ICharacter, IResource } from '@common/common.types';
 
 export type ICollectingCharacter = ICharacter<{ collecting: ICollecting }> & {
   collecting: ICollecting;
@@ -8,14 +8,14 @@ export type ICollectingCharacter = ICharacter<{ collecting: ICollecting }> & {
 
 export interface ICollecting extends IAbility<ICollectingCharacter> {
   /**
-   * Поток, в котором приходят массивы ресурсов, имеющихся у персонажа
+   * A stream in which arrays of resources available to a character come in
    */
   collection$: Observable<Array<IResource>>;
 
   /**
-   * Помещает предмет коллекционирования в коллекцию
+   * Places an item in a collection
    *
-   * @param item Предмет коллекционирования
+   * @param item Collector's item
    */
   collect(item: IResource): this;
 }
