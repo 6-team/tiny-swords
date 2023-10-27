@@ -43,7 +43,7 @@ export default class Hero
    * @type {IHeroSounds}
    * @private
    */
-  protected _sounds: IHeroSounds;
+  sounds: IHeroSounds;
 
   /**
    * Creates an instance of the Hero character.
@@ -115,13 +115,13 @@ export default class Hero
     fighting: IFighting;
     collecting: ICollecting;
   }): void {
-    this._sounds = new HeroSounds({ moving, fighting, collecting });
+    this.sounds = new HeroSounds({ moving, fighting, collecting });
 
     isMuttedStore.subscribe((value) => {
       if (value) {
-        this._sounds.muteSound();
+        this.sounds.muteSound();
       } else {
-        this._sounds.unmuteSound();
+        this.sounds.unmuteSound();
       }
     });
   }

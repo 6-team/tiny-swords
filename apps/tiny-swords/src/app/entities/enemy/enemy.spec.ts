@@ -46,7 +46,7 @@ describe('Enemy', () => {
     expect((enemy as any)._size).toBe(192);
     expect(enemy.moving).toBeInstanceOf(Moving);
     expect(enemy.fighting).toBeInstanceOf(Fighting);
-    expect((enemy as any)._sounds).toBeInstanceOf(EnemySound);
+    expect(enemy.sounds).toBeInstanceOf(EnemySound);
   });
 
   it('should subscribe to isMuttedStore', () => {
@@ -55,6 +55,6 @@ describe('Enemy', () => {
 
   it('should call unmuteSound when isMuttedStore returns false', () => {
     (isMuttedStore.subscribe as jest.Mock).mock.calls[0][0](false);
-    expect((enemy as any)._sounds.unmuteSound).toHaveBeenCalled();
+    expect(enemy.sounds.unmuteSound).toHaveBeenCalled();
   });
 });
