@@ -1,4 +1,4 @@
-import { ITile, TNumberOfPixels, TPixelsPosition } from '../common/common.types';
+import { ITile, TNumberOfPixels, TPixelsPosition } from '@common/common.types';
 
 export interface IAbility<Context> {
   /**
