@@ -1,6 +1,6 @@
 import { LayerCondition } from "@core/layer";
 import { TileName } from "@core/renderer";
-import { randomInteger } from "../../layers.utils";
+import { randomInteger } from "@core/layers";
 
 /**
  * Generate surface conditions for a 3x3 left building without a bridge.

@@ -1,6 +1,6 @@
-import { LayerCondition } from "@core/layer";
-import { TileName } from "@core/renderer";
-import { randomInteger } from "../../layers.utils";
+import { LayerCondition } from '@core/layer';
+import { TileName } from '@core/renderer';
+import { randomInteger } from '@core/layers';
 
 export const leftGroundConditions = (startCoords: [number, number]): LayerCondition[] => {
   const [x, y] = startCoords;
@@ -43,7 +43,7 @@ export const leftGroundConditions = (startCoords: [number, number]): LayerCondit
       coords: [x + 1, y - 2],
     },
   ];
-}
+};
 
 export const leftGroundBridgeConditions = (startCoords: [number, number]): LayerCondition[] => {
   const [x, y] = startCoords;
@@ -86,7 +86,7 @@ export const leftGroundBridgeConditions = (startCoords: [number, number]): Layer
       coords: [x + 1, y - 2],
     },
   ];
-}
+};
 
 export const rightGroundConditions = (endCoords: [number, number]): LayerCondition[] => {
   const [x, y] = endCoords;
@@ -129,7 +129,7 @@ export const rightGroundConditions = (endCoords: [number, number]): LayerConditi
       coords: [x + 1, y - 2],
     },
   ];
-}
+};
 
 export const rightGroundBridgeConditions = (endCoords: [number, number]): LayerCondition[] => {
   const [x, y] = endCoords;
@@ -172,19 +172,14 @@ export const rightGroundBridgeConditions = (endCoords: [number, number]): LayerC
       coords: [x + 1, y - 2],
     },
   ];
-}
+};
 
 export const borderWaterConditions = (gridX, gridY, border): LayerCondition[] => {
   const conditions = [];
 
   for (let y = 0; y < gridY; y++) {
     for (let x = 0; x < gridX; x++) {
-      if (
-        x < border
-        || y < border
-        || x >= gridX - border
-        || y >= gridY - border
-       ) {
+      if (x < border || y < border || x >= gridX - border || y >= gridY - border) {
         conditions.push({
           tile: TileName.WATER_MIDDLE_MIDDLE,
           coords: [x, y],
@@ -195,7 +190,7 @@ export const borderWaterConditions = (gridX, gridY, border): LayerCondition[] =>
   }
 
   return conditions;
-}
+};
 
 export const centerBridgeConditions = (gridX, gridY): LayerCondition[] => {
   const centerX = Math.floor(gridX / 2);
@@ -221,7 +216,7 @@ export const centerBridgeConditions = (gridX, gridY): LayerCondition[] => {
   }
 
   return conditions;
-}
+};
 
 export const centerStonesConditions = (gridX, gridY, border): LayerCondition[] => {
   const centerX = Math.floor(gridX / 2);
@@ -240,6 +235,4 @@ export const centerStonesConditions = (gridX, gridY, border): LayerCondition[] =
   }
 
   return conditions;
-}
-
-
+};

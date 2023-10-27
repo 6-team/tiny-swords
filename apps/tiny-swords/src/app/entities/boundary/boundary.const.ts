@@ -1,4 +1,4 @@
-import { CoordsTuple } from "../tile/tile.types";
+import { CoordsTuple } from "@entities/tile";
 
 export const enum BoundaryType {
   MIDDLE,

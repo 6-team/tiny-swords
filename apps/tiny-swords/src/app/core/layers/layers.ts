@@ -1,7 +1,7 @@
 import { LevelType } from '@core/level';
 import { Resource } from '@entities/resource';
 import { grid64 } from '@core/grid';
-import { getStartEndCoords } from './layers.utils';
+import { getStartEndCoords } from './utils';
 import { LayersMap, LayersRenderType } from './layers.types';
 import { GroundLayer } from './kinds/ground-layer/ground-layer';
 import { WaterLayer } from './kinds/water-layer/water-layer';
@@ -22,49 +22,49 @@ import { ElevationLayer } from './kinds/elevation-layer/elevation-layer';
 export class Layers {
   /**
    * Array of layers
-   * 
+   *
    * @type {Array<Layer>}
    */
   private _layers;
 
   /**
    * Resource Layer
-   * 
+   *
    * @type {ResourcesLayer}
    */
   private _resources;
 
   /**
    * Enemy Layer
-   * 
+   *
    * @type {EnemiesLayer}
    */
   private _enemies;
 
   /**
    * The size of the layer matrix by width
-   * 
+   *
    * @type {number}
    */
   gridX: number;
 
   /**
    * The size of the layer matrix in height
-   * 
+   *
    * @type {number}
    */
   gridY: number;
-  
+
   /**
    * Coordinates of initialization of players
-   * 
+   *
    * @type {number}
    */
   startCoords: [number, number];
 
   /**
    * Coordinates to go to the next level
-   * 
+   *
    * @type {number}
    */
   endCoords;
@@ -72,7 +72,7 @@ export class Layers {
   /**
    * Creating an array of layers by the type of the current level.
    * The building of the next level depends on the type of the next level
-   * 
+   *
    * @param {LevelType} level
    * @param {LevelType} nextLevel
    * @param {number} gridX
@@ -89,7 +89,7 @@ export class Layers {
 
     let terrainLayer;
 
-    switch(level) {
+    switch (level) {
       case LevelType.Ground:
         terrainLayer = new GroundLayer(gridX, gridY, border, startCoords, endCoords);
         break;
@@ -154,7 +154,11 @@ export class Layers {
     ];
 
     this._resources = new ResourcesLayer(gridX, gridY, level, [terrainLayer, buildingsLayer, signLayer, decoLayer]);
-    this._enemies = new EnemiesLayer(gridX, gridY, level, startCoords, endCoords, [terrainLayer, buildingsLayer, signLayer]);
+    this._enemies = new EnemiesLayer(gridX, gridY, level, startCoords, endCoords, [
+      terrainLayer,
+      buildingsLayer,
+      signLayer,
+    ]);
   }
 
   /**
@@ -222,7 +226,7 @@ export class Layers {
     return this._resources.array
       .filter(({ collapsed }) => collapsed)
       .map(({ options, coords }) => {
-        return new Resource({ type: options[0], coords: grid64.transformToPixels(coords[0], coords[1], 1, 1) })
+        return new Resource({ type: options[0], coords: grid64.transformToPixels(coords[0], coords[1], 1, 1) });
       });
   }
 
@@ -232,8 +236,6 @@ export class Layers {
    * @returns {[number, number][]} - Array of coordinates for initializing enemies
    */
   get enemies() {
-    return this._enemies.array
-      .filter(({ collapsed }) => collapsed)
-      .map(({ coords }) => (coords));
+    return this._enemies.array.filter(({ collapsed }) => collapsed).map(({ coords }) => coords);
   }
 }

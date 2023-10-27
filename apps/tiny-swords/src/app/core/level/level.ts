@@ -7,7 +7,7 @@ import { BehaviorSubject, Observable, map, of } from 'rxjs';
 import { grid64 } from '@core/grid';
 import { TCollisionArea } from '@abilities/abilities.types';
 import { Resource } from '@entities/resource';
-import { LevelType } from './level.types';
+import { LevelType } from '@core/level';
 
 /**
  * Represents a Level class responsible for managing and providing level data.
@@ -133,10 +133,8 @@ export class Level {
    */
   next(): Observable<ILevelData<LayersMap>> {
     const levels = [LevelType.Ground, LevelType.Sand, LevelType.Stones];
-    
-    this._currentLevelType = typeof this._nextLevelType === 'number'
-      ? this._nextLevelType
-      : randomElement(levels);
+
+    this._currentLevelType = typeof this._nextLevelType === 'number' ? this._nextLevelType : randomElement(levels);
 
     this._nextLevelType = randomElement(levels.filter((level) => level !== this._currentLevelType));
 
