@@ -1,18 +1,16 @@
 import {
+  BehaviorSubject,
   Observable,
   Subscription,
-  debounceTime,
   distinctUntilChanged,
   filter,
   first,
   map,
   skip,
   switchMap,
-  tap,
-  throttleTime,
   withLatestFrom,
 } from 'rxjs';
-import { MovingDirection, CharacterDirection } from '@shared';
+import { MovingDirection, CharacterDirection, IEntity } from '@shared';
 
 import { actions } from '@core/actions';
 import { grid64 } from '@core/grid';
@@ -36,7 +34,8 @@ export class AIController {
   private _boundsTiledCoords$: Observable<Array<TTiledCoords>>;
   private _enemyArea$: Observable<TTiledCoords>;
   private _ignoreMovements = false;
-  private _state: EnemyState = EnemyState.IDLING;
+  private _chaser: boolean;
+  private _state$ = new BehaviorSubject(EnemyState.IDLING);
 
   private _partollingSubscription: Subscription;
   private _chasingSubscription: Subscription;
@@ -54,6 +53,7 @@ export class AIController {
     streamDecorator = (movements$: Observable<MovingDirection>) => movements$,
   }: IAIControllerProps) {
     this._id = id;
+    this._chaser = chaser;
     this._heroes$ = heroes$;
     this._character = character;
     this._hero$ = hero$;
@@ -66,7 +66,7 @@ export class AIController {
     );
 
     if (chaser) {
-      this._state = EnemyState.CHASING;
+      this._state$.next(EnemyState.CHASING);
     }
 
     this._initPathFinder();
@@ -78,6 +78,11 @@ export class AIController {
         this._character.moving.moveTo(direction);
       },
     );
+
+    this._state$.pipe(filter((state: EnemyState) => state === EnemyState.ATTACKING)).subscribe(() => {
+      this._ignoreMovements = true;
+      this._attackWithDelay(this._character, 500);
+    });
 
     this._heroMovementSubscription = this._getHeroMovementsStream()
       .pipe(withLatestFrom(this._enemyArea$))
@@ -114,9 +119,15 @@ export class AIController {
    */
   private _getDirectionsStream(): Observable<MovingDirection> {
     return actions.updateEnemyListener().pipe(
-      filter(() => this._state === EnemyState.IDLING),
-      filter((enemy) => enemy.id === this._id && enemy.hasOwnProperty('direction') && !this._ignoreMovements),
-      map((enemy) => enemy.direction),
+      withLatestFrom(this._state$),
+      filter(
+        ([enemy, state]: [IEntity, EnemyState]) =>
+          enemy.id === this._id &&
+          enemy.hasOwnProperty('direction') &&
+          state === EnemyState.IDLING &&
+          !this._ignoreMovements,
+      ),
+      map(([enemy]) => enemy.direction),
     );
   }
 
@@ -127,8 +138,9 @@ export class AIController {
    */
   private _getHeroMovementsStream(): Observable<TTiledCoords> {
     return this._hero$.pipe(
-      filter(() => this._state === EnemyState.CHASING),
-      switchMap((hero: IMovingCharacter) => hero.moving.breakpoints$),
+      withLatestFrom(this._state$),
+      filter(([_, state]: [hero: IMovingCharacter, state: EnemyState]) => state === EnemyState.CHASING),
+      switchMap(([hero]: [hero: IMovingCharacter, state: EnemyState]) => hero.moving.breakpoints$),
       distinctUntilChanged(),
       skip(1),
       switchMap(() => this._hero$),
@@ -197,13 +209,11 @@ export class AIController {
       return;
     }
 
-    console.log(commands);
-
-    this._state = EnemyState.CHASING;
+    this._state$.next(EnemyState.CHASING);
 
     return enemy.moving.breakpoints$.pipe(distinctUntilChanged()).subscribe(() => {
       if (commands.length === 0) {
-        return;
+        this._state$.next(EnemyState.ATTACKING);
       }
 
       const command = commands.shift()!;
@@ -251,11 +261,12 @@ export class AIController {
     );
 
     if (enemyHasAttackCollision) {
-      this._ignoreMovements = true;
-      this._attackWithDelay(enemy, 500);
+      this._state$.next(EnemyState.ATTACKING);
 
       return this;
     }
+
+    this._state$.next(this._chaser ? EnemyState.CHASING : EnemyState.IDLING);
 
     const enemyArea = enemy.moving.getCollisionArea();
     const enemyBackArea: TPixelsCoords = [
@@ -272,9 +283,13 @@ export class AIController {
       enemy.moving.setCharacterDirection(
         enemy.moving.isRightDirection ? CharacterDirection.LEFT : CharacterDirection.RIGHT,
       );
-      this._ignoreMovements = true;
-      this._attackWithDelay(enemy, 500);
+
+      this._state$.next(EnemyState.ATTACKING);
+
+      return this;
     }
+
+    this._state$.next(this._chaser ? EnemyState.CHASING : EnemyState.IDLING);
 
     return this;
   }
