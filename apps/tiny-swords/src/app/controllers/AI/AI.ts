@@ -1,12 +1,15 @@
 import {
   Observable,
   Subscription,
+  debounceTime,
   distinctUntilChanged,
   filter,
   first,
   map,
   skip,
   switchMap,
+  tap,
+  throttleTime,
   withLatestFrom,
 } from 'rxjs';
 import { MovingDirection, CharacterDirection } from '@shared';
@@ -95,7 +98,7 @@ export class AIController {
     /**
      * Wait until character stops moving to calculate path correctly
      */
-    if (this._character.moving.isMoving) {
+    if (this._character.moving.isMoving || this._character.fighting.isAttacking) {
       return this;
     }
 
@@ -130,6 +133,7 @@ export class AIController {
       skip(1),
       switchMap(() => this._hero$),
       map((hero: IMovingCharacter) => grid64.transformToTiles(...hero.moving.getCollisionArea())),
+      filter((area: TCollisionArea) => area[0] % 1 === 0 && area[1] % 1 === 0),
     );
   }
 
@@ -181,10 +185,12 @@ export class AIController {
    */
   private _chase(heroArea: TTiledCoords, enemyArea: TTiledCoords): Subscription | undefined {
     const enemy = this._character;
-    const destination: TTiledCoords =
-      enemyArea[0] < heroArea[0]
-        ? [heroArea[0] - 1, heroArea[1], heroArea[2], heroArea[3]]
-        : [heroArea[0] + 1, heroArea[1], heroArea[2], heroArea[3]];
+    const destination: TTiledCoords = [
+      enemyArea[0] < heroArea[0] ? heroArea[0] - 1 : heroArea[0] + 1,
+      heroArea[1],
+      heroArea[2],
+      heroArea[3],
+    ];
     const commands = this._getPathDirections(enemyArea, destination);
 
     if (!commands) {
