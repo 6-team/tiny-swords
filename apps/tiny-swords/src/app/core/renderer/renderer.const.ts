@@ -1,27 +1,17 @@
-import { ElevationTile } from '../../entities/elevation/elevation';
-import { ElevationType } from '../../entities/elevation/elevation.const';
+import { ElevationTile, ElevationType } from '@entities/elevation';
 import { GroundTile, GroundType } from '@entities/ground';
-import { SandTile } from '../../entities/sand/sand';
-import { SandType } from '../../entities/sand/sand.const';
+import { SandTile, SandType } from '@entities/sand';
 import { FoamTile, FoamType } from '@entities/foam';
-import { WaterTile } from '../../entities/water/water';
-import { BridgeTile } from '../../entities/bridge/bridge';
-import { BridgeType } from '../../entities/bridge/bridge.const';
-import { DecoTile } from '../../entities/deco/deco';
-import { DecoType } from '../../entities/deco/deco.const';
-import { RocksTile } from '../../entities/rocks/rocks';
-import { TreeTile } from '../../entities/tree/tree';
-import { HouseTile } from '../../entities/house/house';
-import { TreeType } from '../../entities/tree/tree.const';
-import { RocksType } from '../../entities/rocks/rocks.const';
-import { HouseType } from '../../entities/house/house.const';
-import { BoundaryTile } from '../../entities/boundary/boundary';
-import { BoundaryType } from '../../entities/boundary/boundary.const';
+import { WaterTile } from '@entities/water';
+import { BridgeTile, BridgeType } from '@entities/bridge';
+import { DecoTile, DecoType } from '@entities/deco';
+import { RocksTile, RocksType } from '@entities/rocks';
+import { TreeTile, TreeType } from '@entities/tree';
+import { HouseTile, HouseType } from '@entities/house';
+import { BoundaryTile, BoundaryType } from '@entities/boundary';
 import { GoldMineTile, GoldMineType } from '@entities/gold-mine';
-import { SheepType } from '../../entities/sheep/sheep.const';
-import { SheepTile } from '../../entities/sheep/sheep';
-import { TowerTile } from '../../entities/tower/tower';
-import { TowerType } from '../../entities/tower/tower.const';
+import { SheepTile, SheepType } from '@entities/sheep';
+import { TowerTile, TowerType } from '@entities/tower';
 
 export const enum TileName {
   WATER_MIDDLE_MIDDLE,

@@ -1,9 +1,26 @@
-import { Tile } from '../tile';
+import { CoordsTuple, Tile } from '@entities/tile';
 import { DecoType, mapTerrainToCoords } from './deco.const';
 
+/**
+ * Represents a DecoTile, a specific type of Tile with decoration-related information.
+ */
 export class DecoTile extends Tile<DecoType> {
+  /**
+   * The type of the decoration tile.
+   * @type {DecoType}
+   */
   protected _type: DecoType;
+
+  /**
+   * The sprite URL for the decoration tile.
+   * @type {string}
+   */
   protected _sprite: string;
+
+  /**
+   * Creates a new DecoTile instance.
+   * @param {DecoType} type - The type of the decoration tile (default: DecoType.MUSHROOM_M).
+   */
 
   constructor(type: DecoType = DecoType.MUSHROOM_M) {
     super();
@@ -11,7 +28,12 @@ export class DecoTile extends Tile<DecoType> {
     this.setType(type);
   }
 
-  setType(type: DecoType = DecoType.MUSHROOM_M) {
+  /**
+   * Sets the type of the decoration tile and determines the corresponding sprite URL.
+   * @param {DecoType} type - The type of the decoration tile to set (default: DecoType.MUSHROOM_M).
+   * @returns {void}
+   */
+  setType(type: DecoType = DecoType.MUSHROOM_M): void {
     this._type = type;
 
     switch (type) {
@@ -88,7 +110,11 @@ export class DecoTile extends Tile<DecoType> {
     }
   }
 
-  protected _getCoordsMap() {
+  /**
+   * Retrieves the coordinate mapping for the decoration tile.
+   * @returns {object} A mapping of decoration types to coordinate values.
+   */
+  protected _getCoordsMap(): Record<DecoType, CoordsTuple> {
     return mapTerrainToCoords;
   }
 }

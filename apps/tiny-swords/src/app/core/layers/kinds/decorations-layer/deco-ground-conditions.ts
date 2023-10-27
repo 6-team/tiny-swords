@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { TileName } from "@core/renderer";
-import { Layer } from "@core/layer";
-import { createCoordsLayerDict, createLayerConditions, getQuantityCells, getShuffleFilterCoords } from "../../layers.utils";
-import { LayerCondition } from "@core/layer";
-import { LevelType } from "@core/level";
+import { TileName } from '@core/renderer';
+import { Layer } from '@core/layer';
+import { createCoordsLayerDict, createLayerConditions, getQuantityCells, getShuffleFilterCoords } from '@core/layers';
+import { LayerCondition } from '@core/layer';
+import { LevelType } from '@core/level';
 
 const groundWeightedTiles = (cells: number) => [
   {
@@ -42,7 +42,7 @@ const groundWeightedTiles = (cells: number) => [
       { tile: TileName.SHEEP_RIGHT, weight: 1 },
       { tile: TileName.SHEEP_LEFT, weight: 1 },
     ],
-  }
+  },
 ];
 
 const sandWeightedTiles = (cells: number) => [
@@ -83,7 +83,7 @@ const sandWeightedTiles = (cells: number) => [
       { tile: TileName.SHEEP_RIGHT, weight: 1 },
       { tile: TileName.SHEEP_LEFT, weight: 1 },
     ],
-  }
+  },
 ];
 
 const stonesWeightedTiles = (cells: number) => [
@@ -130,29 +130,33 @@ const stonesWeightedTiles = (cells: number) => [
 
 /**
  * Create a dictionary of boundary cells based on a layer.
- * 
+ *
  * @param {Layer} layer - The layer to analyze.
  * @returns {Object} A dictionary of boundary cells.
  */
-const layerBoundaryCellsDict = (layer) => createCoordsLayerDict(layer, (tile, boundary) => {
-  const isNotTerrain = tile >= TileName.BRIDGE_LEFT;
-  return boundary || isNotTerrain
-});
+const layerBoundaryCellsDict = (layer) =>
+  createCoordsLayerDict(layer, (tile, boundary) => {
+    const isNotTerrain = tile >= TileName.BRIDGE_LEFT;
+    return boundary || isNotTerrain;
+  });
 
 /**
  * Generate terrain decoration conditions based on the level and available cells.
- * 
+ *
  * @param {LevelType} level - The level type for the decorations.
  * @param {Array<Layer>} layers - An array of layers used for decoration elements.
  * @returns {Array<LayerCondition>} An array of decoration conditions for the terrain.
  */
 export const decorationsTerrainConditions = (level: LevelType, layers: Layer[]): LayerCondition[] => {
-  const layersBoundaryCellsDict = layers.reduce((acc, layer) => ({...acc, ...layerBoundaryCellsDict(layer.array)}), {});
-  const availableCells = getShuffleFilterCoords(layers[0], ([x, y]) => !layersBoundaryCellsDict[`${x}-${y}`]);   
-  
+  const layersBoundaryCellsDict = layers.reduce(
+    (acc, layer) => ({ ...acc, ...layerBoundaryCellsDict(layer.array) }),
+    {},
+  );
+  const availableCells = getShuffleFilterCoords(layers[0], ([x, y]) => !layersBoundaryCellsDict[`${x}-${y}`]);
+
   let weightedTiles;
-  
-  switch(level) {
+
+  switch (level) {
     case LevelType.Ground:
       weightedTiles = groundWeightedTiles(availableCells.length);
       break;
@@ -164,7 +168,5 @@ export const decorationsTerrainConditions = (level: LevelType, layers: Layer[]):
       break;
   }
 
-  return availableCells.length
-    ? createLayerConditions(availableCells, weightedTiles)
-    : [];
+  return availableCells.length ? createLayerConditions(availableCells, weightedTiles) : [];
 };

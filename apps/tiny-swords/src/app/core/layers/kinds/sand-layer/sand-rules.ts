@@ -1,22 +1,22 @@
-import { LayerRules, TileWeight } from "@core/layer";
-import { TileName } from "@core/renderer";
+import { LayerRules, TileWeight } from '@core/layer';
+import { TileName } from '@core/renderer';
 
 export const SAND_WEIGHT: TileWeight[] = [
-  [TileName.WATER_MIDDLE_MIDDLE,  1, true],
+  [TileName.WATER_MIDDLE_MIDDLE, 1, true],
 
-  [TileName.SAND_TOP_LEFT,      1, false],
-  [TileName.SAND_TOP_MIDDLE,    10, false],
-  [TileName.SAND_TOP_RIGHT,     1, false],
-  [TileName.SAND_MIDDLE_LEFT,   10, false],
+  [TileName.SAND_TOP_LEFT, 1, false],
+  [TileName.SAND_TOP_MIDDLE, 10, false],
+  [TileName.SAND_TOP_RIGHT, 1, false],
+  [TileName.SAND_MIDDLE_LEFT, 10, false],
   [TileName.SAND_MIDDLE_MIDDLE, 100, false],
-  [TileName.SAND_MIDDLE_RIGHT,  10, false],
-  [TileName.SAND_BOTTOM_LEFT,   1, false],
+  [TileName.SAND_MIDDLE_RIGHT, 10, false],
+  [TileName.SAND_BOTTOM_LEFT, 1, false],
   [TileName.SAND_BOTTOM_MIDDLE, 10, false],
-  [TileName.SAND_BOTTOM_RIGHT,  1, false],
+  [TileName.SAND_BOTTOM_RIGHT, 1, false],
 
-  [TileName.BRIDGE_LEFT,          1, false],
-  [TileName.BRIDGE_MIDDLE,        1, false],
-  [TileName.BRIDGE_RIGHT,         1, false],
+  [TileName.BRIDGE_LEFT, 1, false],
+  [TileName.BRIDGE_MIDDLE, 1, false],
+  [TileName.BRIDGE_RIGHT, 1, false],
 ];
 
 export const SAND_RULES: LayerRules = {
@@ -28,12 +28,7 @@ export const SAND_RULES: LayerRules = {
       TileName.SAND_BOTTOM_RIGHT,
       TileName.BRIDGE_MIDDLE,
     ],
-    [
-      TileName.WATER_MIDDLE_MIDDLE,
-      TileName.SAND_TOP_LEFT,
-      TileName.SAND_MIDDLE_LEFT,
-      TileName.SAND_BOTTOM_LEFT,
-    ],
+    [TileName.WATER_MIDDLE_MIDDLE, TileName.SAND_TOP_LEFT, TileName.SAND_MIDDLE_LEFT, TileName.SAND_BOTTOM_LEFT],
     [
       TileName.WATER_MIDDLE_MIDDLE,
       TileName.SAND_TOP_LEFT,
@@ -41,12 +36,7 @@ export const SAND_RULES: LayerRules = {
       TileName.SAND_TOP_RIGHT,
       TileName.BRIDGE_MIDDLE,
     ],
-    [
-      TileName.WATER_MIDDLE_MIDDLE,
-      TileName.SAND_TOP_RIGHT,
-      TileName.SAND_MIDDLE_RIGHT,
-      TileName.SAND_BOTTOM_RIGHT,
-    ],
+    [TileName.WATER_MIDDLE_MIDDLE, TileName.SAND_TOP_RIGHT, TileName.SAND_MIDDLE_RIGHT, TileName.SAND_BOTTOM_RIGHT],
   ],
   [TileName.SAND_TOP_LEFT]: [
     [TileName.WATER_MIDDLE_MIDDLE],
@@ -283,19 +273,10 @@ export const SAND_RULES: LayerRules = {
     ],
   ],
   [TileName.BRIDGE_LEFT]: [
-    [
-      TileName.SAND_TOP_RIGHT,
-      TileName.SAND_MIDDLE_RIGHT,
-    ],
+    [TileName.SAND_TOP_RIGHT, TileName.SAND_MIDDLE_RIGHT],
     [TileName.BRIDGE_MIDDLE],
-    [
-      TileName.SAND_MIDDLE_RIGHT,
-      TileName.SAND_BOTTOM_RIGHT,
-    ],
-    [
-      TileName.SAND_MIDDLE_MIDDLE,
-      TileName.SAND_MIDDLE_LEFT,
-    ],
+    [TileName.SAND_MIDDLE_RIGHT, TileName.SAND_BOTTOM_RIGHT],
+    [TileName.SAND_MIDDLE_MIDDLE, TileName.SAND_MIDDLE_LEFT],
   ],
   [TileName.BRIDGE_MIDDLE]: [
     [TileName.WATER_MIDDLE_MIDDLE],
@@ -304,21 +285,9 @@ export const SAND_RULES: LayerRules = {
     [TileName.BRIDGE_MIDDLE, TileName.BRIDGE_LEFT],
   ],
   [TileName.BRIDGE_RIGHT]: [
-    [
-      TileName.SAND_TOP_LEFT,
-      TileName.SAND_MIDDLE_LEFT,
-    ],
-    [
-      TileName.SAND_MIDDLE_MIDDLE,
-      TileName.SAND_MIDDLE_RIGHT,
-    ],
-    [
-      TileName.SAND_MIDDLE_LEFT,
-      TileName.SAND_BOTTOM_LEFT,
-    ],
-    [
-      TileName.BRIDGE_MIDDLE,
-      TileName.BRIDGE_LEFT
-    ],
+    [TileName.SAND_TOP_LEFT, TileName.SAND_MIDDLE_LEFT],
+    [TileName.SAND_MIDDLE_MIDDLE, TileName.SAND_MIDDLE_RIGHT],
+    [TileName.SAND_MIDDLE_LEFT, TileName.SAND_BOTTOM_LEFT],
+    [TileName.BRIDGE_MIDDLE, TileName.BRIDGE_LEFT],
   ],
 };

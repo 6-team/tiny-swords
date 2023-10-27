@@ -1,6 +1,6 @@
-import { Layer } from "@core/layer";
-import { LayerCell, LayerCondition } from "@core/layer";
-import { TileName } from "@core/renderer";
+import { Layer } from '@core/layer';
+import { LayerCell, LayerCondition } from '@core/layer';
+import { TileName } from '@core/renderer';
 
 /**
  * Returns a random element from an array.
@@ -11,7 +11,7 @@ import { TileName } from "@core/renderer";
  */
 export const randomElement = <T>(array: Array<T>): T => {
   return array[Math.floor(Math.random() * array.length)];
-}
+};
 
 /**
  * Generates a random integer between a specified range (inclusive).
@@ -24,7 +24,7 @@ export const randomInteger = (min: number, max: number): number => {
   const rand = min + Math.random() * (max + 1 - min);
 
   return Math.floor(rand);
-}
+};
 
 /**
  * Randomly selects an element from an array of items with weighted probabilities.
@@ -33,11 +33,10 @@ export const randomInteger = (min: number, max: number): number => {
  * @returns {TileName} - A randomly selected element based on weights.
  */
 export const weightedRandomElement = (items: [TileName, number, boolean?][]): TileName => {
-  const table = items
-    .flatMap(([item, weight]) => Array(weight).fill(item));
+  const table = items.flatMap(([item, weight]) => Array(weight).fill(item));
 
   return randomElement(table);
-}
+};
 
 /**
  * Generates random starting and ending coordinates for a level within the specified grid.
@@ -56,7 +55,7 @@ export const getStartEndCoords = (gridX: number, gridY: number, border: number):
     [border + 1, startY],
     [gridX - border - 2, endY],
   ];
-}
+};
 
 /**
  * Calculates the quantity of cells based on a percentage of the total cells.
@@ -65,9 +64,9 @@ export const getStartEndCoords = (gridX: number, gridY: number, border: number):
  * @param {number} percent - The percentage of cells to calculate.
  * @returns {number} - The calculated quantity of cells.
  */
-export const getQuantityCells = (allCells: number, percent: number) => {
-  return Math.floor(allCells / 100 * percent);
-}
+export const getQuantityCells = (allCells: number, percent: number): number => {
+  return Math.floor((allCells / 100) * percent);
+};
 
 /**
  * Creates a dictionary of coordinates for cells that meet a specified condition.
@@ -76,17 +75,20 @@ export const getQuantityCells = (allCells: number, percent: number) => {
  * @param {function} condition - A condition function that takes a tile name and boundary flag.
  * @returns {Record<string, true>} - A dictionary of coordinates where the condition is met.
  */
-export const createCoordsLayerDict = (cells: LayerCell[], condition: (tile: TileName, boundary: boolean) => boolean): Record<string, true> => {
+export const createCoordsLayerDict = (
+  cells: LayerCell[],
+  condition: (tile: TileName, boundary: boolean) => boolean,
+): Record<string, true> => {
   return cells.reduce((acc, { coords, options, boundary }) => {
     if (condition(options[0], boundary)) {
       return {
         ...acc,
-        [`${coords[0]}-${coords[1]}`]: true
-      }
+        [`${coords[0]}-${coords[1]}`]: true,
+      };
     }
     return acc;
   }, {});
-}
+};
 
 /**
  * Shuffles the elements in an array randomly.
@@ -110,7 +112,7 @@ const shuffleArray = <T>(array: Array<T>): Array<T> => {
   }
 
   return array;
-}
+};
 
 /**
  * Shuffles and filters coordinates from a layer based on a specified condition.
@@ -119,13 +121,12 @@ const shuffleArray = <T>(array: Array<T>): Array<T> => {
  * @param {function} condition - A condition function to filter coordinates.
  * @returns {Array<[number, number]>} - An array of shuffled and filtered coordinates.
  */
-export const getShuffleFilterCoords = (layer: Layer, condition: (coords: [number, number]) => boolean) => {
-  return shuffleArray(
-    layer.array
-      .map(({ coords }) => coords)
-      .filter(condition)
-  );
-}
+export const getShuffleFilterCoords = (
+  layer: Layer,
+  condition: (coords: [number, number]) => boolean,
+): Array<[number, number]> => {
+  return shuffleArray(layer.array.map(({ coords }) => coords).filter(condition));
+};
 
 /**
  * Creates an array of layer conditions for filling a layer with tiles.
@@ -144,7 +145,7 @@ export const createLayerConditions = (availableCells, tilesList): LayerCondition
 
     for (let j = 0; j < count; j++) {
       const coords = availableCells[cursor];
-  
+
       conditions.push({
         tile: weightedRandomElement(weightedTiles.map(({ tile, weight }) => [tile, weight])),
         coords,
@@ -153,7 +154,7 @@ export const createLayerConditions = (availableCells, tilesList): LayerCondition
 
       cursor++;
     }
-  };
+  }
 
   return conditions;
 };

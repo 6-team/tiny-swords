@@ -1,5 +1,5 @@
 import { TileName } from "@core/renderer";
-import { createCoordsLayerDict, createLayerConditions, getQuantityCells, getShuffleFilterCoords, randomInteger } from "../../layers.utils";
+import { createCoordsLayerDict, createLayerConditions, getQuantityCells, getShuffleFilterCoords, randomInteger } from "@core/layers";
 import { LayerCondition } from "@core/layer";
 import { LevelType } from "@core/level";
 import { Layer } from "@core/layer";
@@ -25,7 +25,7 @@ export const enemiesConditions = (level: LevelType, startCoords: [number, number
   const layerBoundaryCellsDict = (layer) => createCoordsLayerDict(layer, (tile, boundary) => {
     const isNotTerrain = tile >= TileName.BRIDGE_LEFT;
     return boundary || isNotTerrain
-  });  
+  });
   const layersBoundaryCellsDict = layers.reduce((acc, layer) => ({...acc, ...layerBoundaryCellsDict(layer.array)}), {
     [`${startCoords[0]}-${startCoords[1]}`]: true,
     [`${endCoords[0]}-${endCoords[1]}`]: true,
