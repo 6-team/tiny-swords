@@ -17,9 +17,7 @@
   import { LayersRenderType } from "@core/layers"
   import { collisions } from "@core/collisions";
   import { ImprovementTypes, type availableResourcesCheckType, type buyImprovementsType  } from "@common/common.types";
-  import { MainMenu } from "@components/mainMenu";
-  import { NextLevelMenu } from "@components/nextLevelMenu";
-  import { EndGameMenu } from "@components/EndGameMenu";
+  import { MainMenu,EndGameMenu, NextLevelMenu } from "@components";
   import { Hero } from '@entities/hero'
   import { Resource, ResourcesType } from '@entities/resource';
   import {

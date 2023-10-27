@@ -1,7 +1,7 @@
-import { ICollecting } from '../../abilities/collecting/collecting.types';
-import { IFighting } from '../../abilities/fighting/fighting.types';
-import { IMoving } from '../../abilities/moving/moving.types';
-import { ISounds } from './sounds.types';
+import { ICollecting } from '@abilities/collecting/collecting.types';
+import { IFighting } from '@abilities/fighting/fighting.types';
+import { IMoving } from '@abilities/moving/moving.types';
+import { ISounds } from '@core/sounds/sounds.types';
 
 export interface HeroSoundsConfig {
   moving: IMoving;

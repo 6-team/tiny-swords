@@ -1,9 +1,8 @@
 <script lang="ts">
-  import { isActiveMenuItemStore, isMainMenuStore, isMuttedStore } from '../../store/store';
-  import {Sounds, SystemSoundsType} from '../../core/sounds'
-  import { Button } from '../Button'
+  import { isActiveMenuItemStore, isMainMenuStore, isMuttedStore } from '@store';
+  import { Sounds, SystemSoundsType } from '@core/sounds'
+  import { Button } from '@components'
 
-  let showModal = false;
   let menuIndex = 0;
   let isActiveMenuItem = '';
 

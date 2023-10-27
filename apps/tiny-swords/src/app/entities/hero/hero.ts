@@ -1,11 +1,10 @@
-import { IHeroSounds } from './../../core/sounds/hero-sounds.types';
 import { Collecting } from '../../abilities/collecting';
 import { grid64 } from '../../core/grid';
 import { Character } from '../character';
 import { HeroType, mapHeroImages, mapHeroTypeToCoords } from './hero.const';
 import { HeroAbilities, HeroConfig } from './hero.types';
 import { isMuttedStore } from '../../store/store';
-import { HeroSounds } from '../../core/sounds';
+import { HeroSounds, IHeroSounds } from '@core/sounds';
 import { IMoving, IMovingCharacter } from '../../abilities/moving/moving.types';
 import { IFighting, IFightingCharacter } from '../../abilities/fighting/fighting.types';
 import { ICollecting, ICollectingCharacter } from '../../abilities/collecting/collecting.types';

@@ -1,9 +1,9 @@
 <script lang="ts">
     import UpgradeItem from "./UpgradeItem.svelte";
-    import { nextLevelMenu } from "../../store/store";
-    import { ResourcesType } from "../../entities/resource";
-    import {Button} from '../Button'
-    import {  type ImprovementItemType, ImprovementTypes, type availableResourcesCheckType, type buyImprovementsType } from "../../common/common.types";
+    import { nextLevelMenu } from "@store";
+    import { ResourcesType } from "@entities/resource";
+    import { Button } from '@components'
+    import {  type ImprovementItemType, ImprovementTypes, type availableResourcesCheckType, type buyImprovementsType } from "@common/common.types";
 
   export let createNewLevel: () => void;
     export let buyImprovements: buyImprovementsType;

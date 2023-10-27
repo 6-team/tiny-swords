@@ -1,4 +1,4 @@
-import { ResourcesType } from '../../entities/resource';
+import { ResourcesType } from '@entities/resource';
 
 export const quantityResources: { [K in ResourcesType]?: number } = {
   [ResourcesType.GOLD]: 100,
