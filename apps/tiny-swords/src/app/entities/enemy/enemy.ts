@@ -42,7 +42,7 @@ export default class Enemy
    * @type {IEnemySounds}
    * @private
    */
-  protected _sounds: IEnemySounds;
+  sounds: IEnemySounds;
 
   /**
    * Creates an instance of the Enemy character.
@@ -93,13 +93,13 @@ export default class Enemy
    * @private
    */
   private _initSounds({ fighting }: { fighting: IFighting }): void {
-    this._sounds = new EnemySound({ fighting });
+    this.sounds = new EnemySound({ fighting });
 
     isMuttedStore.subscribe((value) => {
       if (value) {
-        this._sounds.muteSound();
+        this.sounds.muteSound();
       } else {
-        this._sounds.unmuteSound();
+        this.sounds.unmuteSound();
       }
     });
   }
