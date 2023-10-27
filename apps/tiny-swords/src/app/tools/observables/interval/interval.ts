@@ -6,7 +6,7 @@ import { Subject } from 'rxjs';
  * @param ms Количество милисекунд
  * @returns Поток милисекунд
  */
-const createInterval = (ms: number) => {
+export const createInterval = (ms: number) => {
   const observable = new Subject<number>();
 
   function createTimeout() {

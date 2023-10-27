@@ -1,12 +1,12 @@
 import { TCollisionArea } from '../abilities.types';
-import { TNumberOfPixels, TPixelsPosition } from '../../common/common.types';
+import { TNumberOfPixels, TPixelsPosition } from "@common/common.types";
 import { MovingError, PIXELS_PER_FRAME, movementSetters, nextMoveCoordsGetters } from './moving.const';
 import { IMoving, IMovingCharacter, IMovingProps } from './moving.types';
 import { BehaviorSubject, Observable, combineLatest, distinctUntilChanged, filter, map, withLatestFrom } from 'rxjs';
-import { HeroActionAnimation } from '../../entities/hero/hero.const';
-import { grid64 } from '../../core/grid';
+import { HeroActionAnimation } from "@entities/hero";
+import { grid64 } from "@core/grid";
 import { MovingDirection, CharacterDirection } from '@shared';
-import { animationInterval$ } from '../../tools/observables/interval';
+import { animationInterval$ } from "@tools/observables";
 
 /**
  * Класс для передвигающихся элементов.

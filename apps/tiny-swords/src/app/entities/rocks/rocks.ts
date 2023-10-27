@@ -1,4 +1,4 @@
-import { Tile } from '@entities/tile';
+import { Tile } from '../tile';
 import { RocksType, mapTerrainToCoords } from './rocks.const';
 
 /**
@@ -18,7 +18,7 @@ export class RocksTile extends Tile<RocksType> {
    * @type {string}
    * @private
    */
-  protected _sprite;
+  protected _sprite:string;
 
   /**
    * Creates an instance of the RocksTile.

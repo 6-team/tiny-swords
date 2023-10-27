@@ -1,5 +1,5 @@
-import { Tile } from "../tile/tile";
-import { GoldMineType, mapTerrainToCoords } from "./gold-mine.const";
+import { Tile, CoordsTuple } from '../tile';
+import { GoldMineType, mapTerrainToCoords } from './gold-mine.const';
 
 export class GoldMineTile extends Tile<GoldMineType> {
   protected _type: GoldMineType;
@@ -15,7 +15,7 @@ export class GoldMineTile extends Tile<GoldMineType> {
     this._type = type;
   }
 
-  protected _getCoordsMap() {
-      return mapTerrainToCoords;
+  protected _getCoordsMap(): Record<GoldMineType, CoordsTuple> {
+    return mapTerrainToCoords;
   }
 }

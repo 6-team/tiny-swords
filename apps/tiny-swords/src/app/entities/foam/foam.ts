@@ -1,4 +1,4 @@
-import { Tile } from '../tile/tile';
+import { Tile, CoordsTuple } from '../tile';
 import { FoamType, mapTerrainToCoords } from './foam.const';
 
 export class FoamTile extends Tile<FoamType> {
@@ -8,14 +8,14 @@ export class FoamTile extends Tile<FoamType> {
   constructor(type: FoamType = FoamType.MIDDLE) {
     super();
 
-    this.setType(type);
+    this.setType(type)
   }
 
   setType(type: FoamType = FoamType.MIDDLE): void {
     this._type = type;
   }
 
-  protected _getCoordsMap() {
+  protected _getCoordsMap(): Record<FoamType, CoordsTuple> {
     return mapTerrainToCoords;
   }
 }
