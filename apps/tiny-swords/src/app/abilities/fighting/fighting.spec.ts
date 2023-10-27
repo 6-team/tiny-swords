@@ -1,6 +1,6 @@
 import { BehaviorSubject } from 'rxjs';
 import { AttackingType } from '@shared';
-import { Fighting } from './Fighting'; // wherever you 'Fighting' class is located
+import { Fighting } from './fighting'; // wherever you 'Fighting' class is located
 
 describe('Fighting class tests', () => {
   let fighting;

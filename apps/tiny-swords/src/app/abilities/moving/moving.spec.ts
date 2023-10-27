@@ -1,4 +1,4 @@
-import { Moving } from './Moving';
+import { Moving } from './moving';
 import { MovingDirection, CharacterDirection } from '@shared';
 
 jest.mock('@store', () => ({
