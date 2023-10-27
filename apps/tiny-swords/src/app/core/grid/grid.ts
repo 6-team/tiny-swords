@@ -1,6 +1,6 @@
-import { TPixelsCoords } from '../../abilities/abilities.types';
-import { SIZE_X, SIZE_Y, SPRITE_SIZE } from '../../common/common.const';
-import { IGrid, TNumberOfSprites, TPixelsPosition, TSpritePosition } from '../../common/common.types';
+import { TPixelsCoords } from '@abilities/abilities.types';
+import { SIZE_X, SIZE_Y, SPRITE_SIZE } from '@common/common.const';
+import { IGrid, TNumberOfSprites, TPixelsPosition, TSpritePosition } from '@common/common.types';
 
 /**
  * Represents a grid for sprite-based graphics.

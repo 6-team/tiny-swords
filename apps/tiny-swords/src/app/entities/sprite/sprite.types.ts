@@ -1,3 +1,3 @@
-import { TPixelsPosition } from '../../common/common.types';
+import { TPixelsPosition } from '@common/common.types';
 
 export type CoordsTuple = [TPixelsPosition, TPixelsPosition];

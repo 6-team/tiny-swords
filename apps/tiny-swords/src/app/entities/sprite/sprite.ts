@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { ISprite } from '../../common/common.types';
+import { ISprite } from '@common/common.types';
 import { ErrorEnum } from './sprite.const';
 import { CoordsTuple } from './sprite.types';
 
