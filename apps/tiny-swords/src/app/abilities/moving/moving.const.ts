@@ -15,7 +15,7 @@ export const movementSetters: Record<MovingDirection, (value: [number, number]) 
 };
 
 /**
- * @TODO Переписать 64 на tileSize, или может вообще вынести отсюда, чтобы не зависеть тут от Grid
+ * @TODO Переписать 64 на spriteSize, или может вообще вынести отсюда, чтобы не зависеть тут от Grid
  */
 export const nextMoveCoordsGetters: Record<MovingDirection, (value: [number, number]) => [number, number]> = {
   [MovingDirection.UP]: ([prevX, prevY]) => [prevX, prevY - 64],

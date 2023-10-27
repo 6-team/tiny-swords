@@ -1,7 +1,7 @@
-import { Tile } from '../tile/tile';
+import { Sprite } from '../sprite/sprite';
 import { ElevationType, mapTerrainToCoords } from './elevation.const';
 
-export class ElevationTile extends Tile<ElevationType> {
+export class ElevationSprite extends Sprite<ElevationType> {
   protected _type: ElevationType;
   protected _sprite = './img/Terrain/Ground/Tilemap_Elevation.png';
 

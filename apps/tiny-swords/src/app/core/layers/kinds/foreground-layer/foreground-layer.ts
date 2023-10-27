@@ -1,4 +1,4 @@
-import { CoordsTuple } from "@core/../entities/tile/tile.types";
+import { CoordsTuple } from "@core/../entities/sprite/sprite.types";
 import { Layer } from "@core/layer";
 import { LevelType } from "@core/level";
 import { foregroundLeftHouseConditions, foregroundLeftTowerConditions, foregroundRightHouseConditions, foregroundRightTowerConditions, foregroundTreeTopConditions } from "./foreground-conditions"

@@ -203,14 +203,14 @@ export class Fighting implements IFighting {
 
   #getRightAffectedArea(area: TCollisionArea): TCollisionArea {
     /**
-     * @TODO Переписать 64 на tileSize, или может вообще вынести отсюда, чтобы не зависеть тут от Grid
+     * @TODO Переписать 64 на spriteSize, или может вообще вынести отсюда, чтобы не зависеть тут от Grid
      */
     return [area[0] + 64, area[1], area[2], area[3]];
   }
 
   #getLeftAffectedArea(area: TCollisionArea): TCollisionArea {
     /**
-     * @TODO Переписать 64 на tileSize, или может вообще вынести отсюда, чтобы не зависеть тут от Grid
+     * @TODO Переписать 64 на spriteSize, или может вообще вынести отсюда, чтобы не зависеть тут от Grid
      */
     return [area[0] - 64, area[1], area[2], area[3]];
   }

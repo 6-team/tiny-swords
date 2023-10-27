@@ -140,7 +140,7 @@ export class Moving implements IMoving {
      * Если движение закончилось, но команда на движение не была прекращена
      */
     if (this._movingProgressRemaining === 0 && direction !== MovingDirection.IDLE) {
-      this._movingProgressRemaining = grid64.tileSize;
+      this._movingProgressRemaining = grid64.spriteSize;
       this._lastDirection = direction;
       this._breakpoints$.next(true);
 

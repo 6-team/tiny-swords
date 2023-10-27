@@ -1,4 +1,4 @@
-import { ITile, TNumberOfPixels, TPixelsPosition } from '../common/common.types';
+import { ISprite, TNumberOfPixels, TPixelsPosition } from '../common/common.types';
 
 export interface IAbility<Context> {
   /**
@@ -12,7 +12,7 @@ export interface IAbility<Context> {
 }
 
 export interface WithSetPersonageContext {
-  setContext(context: ITile): void;
+  setContext(context: ISprite): void;
 }
 
 export type TPixelsCoords = [

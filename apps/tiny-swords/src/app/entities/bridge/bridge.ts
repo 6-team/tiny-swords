@@ -1,7 +1,7 @@
-import { Tile } from '../tile/tile';
+import { Sprite } from '../sprite/sprite';
 import { BridgeType, mapTerrainToCoords } from './bridge.const';
 
-export class BridgeTile extends Tile<BridgeType> {
+export class BridgeSprite extends Sprite<BridgeType> {
   protected _type: BridgeType;
   protected _sprite = './img/Terrain/Bridge/Bridge_All.png';
 

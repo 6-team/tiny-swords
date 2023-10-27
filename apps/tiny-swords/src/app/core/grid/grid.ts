@@ -1,42 +1,42 @@
 import { TPixelsCoords } from '../../abilities/abilities.types';
-import { SIZE_X, SIZE_Y, TILE_SIZE } from '../../common/common.const';
-import { IGrid, TNumberOfTiles, TPixelsPosition, TTilePosition } from '../../common/common.types';
+import { SIZE_X, SIZE_Y, SPRITE_SIZE } from '../../common/common.const';
+import { IGrid, TNumberOfSprites, TPixelsPosition, TSpritePosition } from '../../common/common.types';
 
 export class Grid implements IGrid {
-  #tileSize: number;
-  #maxX: TNumberOfTiles;
-  #maxY: TNumberOfTiles;
+  #spriteSize: number;
+  #maxX: TNumberOfSprites;
+  #maxY: TNumberOfSprites;
 
-  constructor({ tileSize, maxX, maxY }: { tileSize: number; maxX: TNumberOfTiles; maxY: TNumberOfTiles }) {
-    this.#tileSize = tileSize;
+  constructor({ spriteSize, maxX, maxY }: { spriteSize: number; maxX: TNumberOfSprites; maxY: TNumberOfSprites }) {
+    this.#spriteSize = spriteSize;
     this.#maxX = maxX;
     this.#maxY = maxY;
   }
 
-  get tileSize() {
-    return this.#tileSize;
+  get spriteSize() {
+    return this.#spriteSize;
   }
 
   transformToPixels(
-    x: TTilePosition,
-    y: TTilePosition,
+    x: TSpritePosition,
+    y: TSpritePosition,
     height: number,
     width: number,
   ): [pxX: number, pxY: number, pxHeight: number, pxWidth: number] {
-    return [x, y, height, width].map((dimention) => dimention * this.#tileSize) as [number, number, number, number];
+    return [x, y, height, width].map((dimention) => dimention * this.#spriteSize) as [number, number, number, number];
   }
 
-  transformToTiles(x: TPixelsPosition, y: TPixelsPosition, height: number, width: number): TPixelsCoords {
-    return [x, y, height, width].map((dimention) => dimention / this.#tileSize) as TPixelsCoords;
+  transformToSprites(x: TPixelsPosition, y: TPixelsPosition, height: number, width: number): TPixelsCoords {
+    return [x, y, height, width].map((dimention) => dimention / this.#spriteSize) as TPixelsCoords;
   }
 
   getPrevPixels(dimention: TPixelsPosition): TPixelsPosition {
-    return dimention - this.#tileSize;
+    return dimention - this.#spriteSize;
   }
 
   getNextPixels(dimention: TPixelsPosition): TPixelsPosition {
-    return dimention + this.#tileSize;
+    return dimention + this.#spriteSize;
   }
 }
 
-export const grid64 = new Grid({ tileSize: TILE_SIZE, maxX: SIZE_X, maxY: SIZE_Y });
+export const grid64 = new Grid({ spriteSize: SPRITE_SIZE, maxX: SIZE_X, maxY: SIZE_Y });

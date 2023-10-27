@@ -1,7 +1,7 @@
-import { Tile, CoordsTuple } from '../tile';
+import { Sprite, CoordsTuple } from '../sprite';
 import { GoldMineType, mapTerrainToCoords } from './gold-mine.const';
 
-export class GoldMineTile extends Tile<GoldMineType> {
+export class GoldMineSprite extends Sprite<GoldMineType> {
   protected _type: GoldMineType;
   protected _sprite = './img/Resources/Gold_mine/GoldMine_Inactive.png';
 

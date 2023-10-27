@@ -1,5 +1,5 @@
 import { LayerCondition } from "@core/layer";
-import { TileName } from "@core/renderer";
+import { SpriteName } from "@core/renderer";
 import { randomInteger } from "../../layers.utils";
 
 export const leftGroundConditions = (startCoords: [number, number]): LayerCondition[] => {
@@ -7,39 +7,39 @@ export const leftGroundConditions = (startCoords: [number, number]): LayerCondit
 
   return [
     {
-      tile: TileName.ELEVATION_MIDDLE_LEFT,
+      sprite: SpriteName.ELEVATION_MIDDLE_LEFT,
       coords: [x - 1, y],
     },
     {
-      tile: TileName.ELEVATION_MIDDLE_MIDDLE,
+      sprite: SpriteName.ELEVATION_MIDDLE_MIDDLE,
       coords: [x, y],
     },
     {
-      tile: TileName.ELEVATION_MIDDLE_MIDDLE,
+      sprite: SpriteName.ELEVATION_MIDDLE_MIDDLE,
       coords: [x + 1, y],
     },
     {
-      tile: TileName.ELEVATION_MIDDLE_LEFT,
+      sprite: SpriteName.ELEVATION_MIDDLE_LEFT,
       coords: [x - 1, y - 1],
     },
     {
-      tile: TileName.ELEVATION_MIDDLE_MIDDLE,
+      sprite: SpriteName.ELEVATION_MIDDLE_MIDDLE,
       coords: [x, y - 1],
     },
     {
-      tile: TileName.ELEVATION_MIDDLE_MIDDLE,
+      sprite: SpriteName.ELEVATION_MIDDLE_MIDDLE,
       coords: [x + 1, y - 1],
     },
     {
-      tile: TileName.ELEVATION_MIDDLE_LEFT,
+      sprite: SpriteName.ELEVATION_MIDDLE_LEFT,
       coords: [x - 1, y - 2],
     },
     {
-      tile: TileName.ELEVATION_MIDDLE_MIDDLE,
+      sprite: SpriteName.ELEVATION_MIDDLE_MIDDLE,
       coords: [x, y - 2],
     },
     {
-      tile: TileName.ELEVATION_MIDDLE_MIDDLE,
+      sprite: SpriteName.ELEVATION_MIDDLE_MIDDLE,
       coords: [x + 1, y - 2],
     },
   ];
@@ -50,39 +50,39 @@ export const leftGroundBridgeConditions = (startCoords: [number, number]): Layer
 
   return [
     {
-      tile: TileName.ELEVATION_MIDDLE_LEFT,
+      sprite: SpriteName.ELEVATION_MIDDLE_LEFT,
       coords: [x - 1, y],
     },
     {
-      tile: TileName.ELEVATION_MIDDLE_MIDDLE,
+      sprite: SpriteName.ELEVATION_MIDDLE_MIDDLE,
       coords: [x, y],
     },
     {
-      tile: TileName.BRIDGE_LEFT,
+      sprite: SpriteName.BRIDGE_LEFT,
       coords: [x + 1, y],
     },
     {
-      tile: TileName.ELEVATION_MIDDLE_LEFT,
+      sprite: SpriteName.ELEVATION_MIDDLE_LEFT,
       coords: [x - 1, y - 1],
     },
     {
-      tile: TileName.ELEVATION_MIDDLE_MIDDLE,
+      sprite: SpriteName.ELEVATION_MIDDLE_MIDDLE,
       coords: [x, y - 1],
     },
     {
-      tile: TileName.ELEVATION_MIDDLE_RIGHT,
+      sprite: SpriteName.ELEVATION_MIDDLE_RIGHT,
       coords: [x + 1, y - 1],
     },
     {
-      tile: TileName.ELEVATION_TOP_LEFT,
+      sprite: SpriteName.ELEVATION_TOP_LEFT,
       coords: [x - 1, y - 2],
     },
     {
-      tile: TileName.ELEVATION_TOP_MIDDLE,
+      sprite: SpriteName.ELEVATION_TOP_MIDDLE,
       coords: [x, y - 2],
     },
     {
-      tile: TileName.ELEVATION_TOP_RIGHT,
+      sprite: SpriteName.ELEVATION_TOP_RIGHT,
       coords: [x + 1, y - 2],
     },
   ];
@@ -93,39 +93,39 @@ export const rightGroundConditions = (endCoords: [number, number]): LayerConditi
 
   return [
     {
-      tile: TileName.ELEVATION_MIDDLE_MIDDLE,
+      sprite: SpriteName.ELEVATION_MIDDLE_MIDDLE,
       coords: [x - 1, y],
     },
     {
-      tile: TileName.ELEVATION_MIDDLE_MIDDLE,
+      sprite: SpriteName.ELEVATION_MIDDLE_MIDDLE,
       coords: [x, y],
     },
     {
-      tile: TileName.ELEVATION_MIDDLE_RIGHT,
+      sprite: SpriteName.ELEVATION_MIDDLE_RIGHT,
       coords: [x + 1, y],
     },
     {
-      tile: TileName.ELEVATION_MIDDLE_MIDDLE,
+      sprite: SpriteName.ELEVATION_MIDDLE_MIDDLE,
       coords: [x - 1, y - 1],
     },
     {
-      tile: TileName.ELEVATION_MIDDLE_MIDDLE,
+      sprite: SpriteName.ELEVATION_MIDDLE_MIDDLE,
       coords: [x, y - 1],
     },
     {
-      tile: TileName.ELEVATION_MIDDLE_RIGHT,
+      sprite: SpriteName.ELEVATION_MIDDLE_RIGHT,
       coords: [x + 1, y - 1],
     },
     {
-      tile: TileName.ELEVATION_MIDDLE_MIDDLE,
+      sprite: SpriteName.ELEVATION_MIDDLE_MIDDLE,
       coords: [x - 1, y - 2],
     },
     {
-      tile: TileName.ELEVATION_MIDDLE_MIDDLE,
+      sprite: SpriteName.ELEVATION_MIDDLE_MIDDLE,
       coords: [x, y - 2],
     },
     {
-      tile: TileName.ELEVATION_MIDDLE_RIGHT,
+      sprite: SpriteName.ELEVATION_MIDDLE_RIGHT,
       coords: [x + 1, y - 2],
     },
   ];
@@ -136,39 +136,39 @@ export const rightGroundBridgeConditions = (endCoords: [number, number]): LayerC
 
   return [
     {
-      tile: TileName.BRIDGE_RIGHT,
+      sprite: SpriteName.BRIDGE_RIGHT,
       coords: [x - 1, y],
     },
     {
-      tile: TileName.ELEVATION_MIDDLE_MIDDLE,
+      sprite: SpriteName.ELEVATION_MIDDLE_MIDDLE,
       coords: [x, y],
     },
     {
-      tile: TileName.ELEVATION_MIDDLE_RIGHT,
+      sprite: SpriteName.ELEVATION_MIDDLE_RIGHT,
       coords: [x + 1, y],
     },
     {
-      tile: TileName.ELEVATION_MIDDLE_LEFT,
+      sprite: SpriteName.ELEVATION_MIDDLE_LEFT,
       coords: [x - 1, y - 1],
     },
     {
-      tile: TileName.ELEVATION_MIDDLE_MIDDLE,
+      sprite: SpriteName.ELEVATION_MIDDLE_MIDDLE,
       coords: [x, y - 1],
     },
     {
-      tile: TileName.ELEVATION_MIDDLE_RIGHT,
+      sprite: SpriteName.ELEVATION_MIDDLE_RIGHT,
       coords: [x + 1, y - 1],
     },
     {
-      tile: TileName.ELEVATION_TOP_LEFT,
+      sprite: SpriteName.ELEVATION_TOP_LEFT,
       coords: [x - 1, y - 2],
     },
     {
-      tile: TileName.ELEVATION_TOP_MIDDLE,
+      sprite: SpriteName.ELEVATION_TOP_MIDDLE,
       coords: [x, y - 2],
     },
     {
-      tile: TileName.ELEVATION_TOP_RIGHT,
+      sprite: SpriteName.ELEVATION_TOP_RIGHT,
       coords: [x + 1, y - 2],
     },
   ];
@@ -186,7 +186,7 @@ export const borderWaterConditions = (gridX, gridY, border): LayerCondition[] =>
         || y >= gridY - border
        ) {
         conditions.push({
-          tile: TileName.WATER_MIDDLE_MIDDLE,
+          sprite: SpriteName.WATER_MIDDLE_MIDDLE,
           coords: [x, y],
           boundary: true,
         });
@@ -208,12 +208,12 @@ export const centerBridgeConditions = (gridX, gridY): LayerCondition[] => {
   for (let i = 0; i < gridY; i++) {
     if (i === y) {
       conditions.push({
-        tile: TileName.BRIDGE_MIDDLE,
+        sprite: SpriteName.BRIDGE_MIDDLE,
         coords: [x, y],
       });
     } else {
       conditions.push({
-        tile: TileName.WATER_MIDDLE_MIDDLE,
+        sprite: SpriteName.WATER_MIDDLE_MIDDLE,
         coords: [x, i],
         boundary: true,
       });
@@ -232,7 +232,7 @@ export const centerStonesConditions = (gridX, gridY, border): LayerCondition[] =
   for (let i = 0; i < gridY; i++) {
     if (i > border && i < gridY - border - 1) {
       conditions.push({
-        tile: TileName.ELEVATION_MIDDLE_MIDDLE,
+        sprite: SpriteName.ELEVATION_MIDDLE_MIDDLE,
         coords: [x, i],
         boundary: false,
       });

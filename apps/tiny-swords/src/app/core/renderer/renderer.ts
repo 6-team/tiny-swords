@@ -1,6 +1,6 @@
-import { IResource, IGrid, ITile } from "@common/common.types";
+import { IResource, IGrid, ISprite } from "@common/common.types";
 import { Maybe } from "@tools/monads";
-import { TileName, mapTileNameToClass } from './renderer.const';
+import { SpriteName, mapSpriteNameToClass } from './renderer.const';
 import { RendererConfig } from './renderer.types';
 import { frames$ } from "@tools/observables";
 import { Subscription } from 'rxjs';
@@ -67,16 +67,16 @@ export class Renderer {
 
 
   /**
-   * Renders a game tile on the screen at the provided pixel coordinates.
+   * Renders a game sprite on the screen at the provided pixel coordinates.
    *
    * @param {[number, number, number, number]} elementPxCoords - The x and y coordinates along with height and width of the element in pixels.
-   * @param {ITile} tile - The tile to be rendered.
+   * @param {ISprite} sprite - The sprite to be rendered.
    *
    * @returns {Promise<Renderer>} A promise to the Renderer instance for chaining.
    */
-  async render(elementPxCoords: [number, number, number, number], tile: ITile): Promise<this> {
+  async render(elementPxCoords: [number, number, number, number], sprite: ISprite): Promise<this> {
     const [elementPxX, elementPxY, elementPxHeight, elementPxWidth] = elementPxCoords;
-    const { image, coords, size } = await tile.getData();
+    const { image, coords, size } = await sprite.getData();
 
     this._context.drawImage(
       image,
@@ -94,22 +94,22 @@ export class Renderer {
   }
 
   /**
-   * Renders a game tile on the screen at the provided pixel coordinates with an animation.
+   * Renders a game sprite on the screen at the provided pixel coordinates with an animation.
    *
    * @param {[number, number, number, number]} elementPxCoords - The x and y coordinates along with height and width of the element in pixels.
-   * @param {ITile} tile - The tile to be rendered.
+   * @param {ISprite} sprite - The sprite to be rendered.
    * @param {number} [deltaTime] - The amount of time that should be spent rendering the animation.
    *
    * @returns {Promise<Renderer>} A promise to the Renderer instance for chaining.
    */
-  async renderWithAnimation(elementPxCoords: [number, number, number, number], tile: ITile, deltaTime?: number): Promise<this> {
+  async renderWithAnimation(elementPxCoords: [number, number, number, number], sprite: ISprite, deltaTime?: number): Promise<this> {
     const [elementPxX, elementPxY, elementPxHeight, elementPxWidth] = elementPxCoords;
-    const { image, size, coords, scale } = await tile.getData();
+    const { image, size, coords, scale } = await sprite.getData();
 
     const dx =
-      this._scale > scale ? elementPxX * this._scale + (this._grid.tileSize * scale) / 2 : elementPxX * this._scale;
+      this._scale > scale ? elementPxX * this._scale + (this._grid.spriteSize * scale) / 2 : elementPxX * this._scale;
     const dy =
-      this._scale > scale ? elementPxY * this._scale + (this._grid.tileSize * scale) / 2 : elementPxY * this._scale;
+      this._scale > scale ? elementPxY * this._scale + (this._grid.spriteSize * scale) / 2 : elementPxY * this._scale;
 
     this._context.drawImage(
       image,
@@ -123,7 +123,7 @@ export class Renderer {
       elementPxWidth * scale,
     );
 
-    tile.switchAnimationFrame(deltaTime);
+    sprite.switchAnimationFrame(deltaTime);
 
     return this;
   }
@@ -132,33 +132,33 @@ export class Renderer {
   /**
    * Renders a movable game character.
    *
-   * @param {IMovingCharacter} tile - The movable character to be rendered.
+   * @param {IMovingCharacter} sprite - The movable character to be rendered.
    * @param {number} deltaTime - The amount of time that should be spent rendering the animation.
    *
    * @returns {Promise<void>}
    */
-  async renderMovable(tile: IMovingCharacter, deltaTime: number): Promise<void> {
-    const { coords, sizes } = tile.moving;
+  async renderMovable(sprite: IMovingCharacter, deltaTime: number): Promise<void> {
+    const { coords, sizes } = sprite.moving;
 
-    await this.renderWithAnimation([coords[0], coords[1], sizes[0], sizes[1]], tile, deltaTime);
+    await this.renderWithAnimation([coords[0], coords[1], sizes[0], sizes[1]], sprite, deltaTime);
   }
 
   /**
    * Renders the static background layer of the game map.
    *
-   * @param {Array<Array<TileName | null>>} map - 2D array representing the map to be rendered.
+   * @param {Array<Array<SpriteName | null>>} map - 2D array representing the map to be rendered.
    *
    * @returns {Promise<void>}
    */
-  async renderStaticLayer(map: Array<Array<TileName | null>>): Promise<void> {
+  async renderStaticLayer(map: Array<Array<SpriteName | null>>): Promise<void> {
     for (const [rowIndex, row] of enumerate(map)) {
-      for (const [tileNameIndex, tileName] of enumerate(row)) {
-        await new Maybe(tileName)
-          .map((name) => mapTileNameToClass[name])
+      for (const [spriteNameIndex, spriteName] of enumerate(row)) {
+        await new Maybe(spriteName)
+          .map((name) => mapSpriteNameToClass[name])
           .map((data) => {
             const { constructor: Constructor, args } = data;
 
-            return this.render(this._grid.transformToPixels(tileNameIndex, rowIndex, 1, 1), new Constructor(...args));
+            return this.render(this._grid.transformToPixels(spriteNameIndex, rowIndex, 1, 1), new Constructor(...args));
           })
           .extract();
       }
@@ -185,7 +185,7 @@ export class Renderer {
       this.clear();
 
       for (const movable of movables) {
-        new Maybe(movable).map((tile) => this.renderMovable(tile, deltaTime));
+        new Maybe(movable).map((sprite) => this.renderMovable(sprite, deltaTime));
       }
 
       lastTime = timeStamp;

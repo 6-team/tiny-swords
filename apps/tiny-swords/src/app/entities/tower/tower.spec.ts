@@ -1,24 +1,24 @@
-import { TowerTile } from './tower';
+import { TowerSprite } from './tower';
 import { TowerType } from './tower.const';
 
-describe('TowerTile', () => {
-  it('should create a TowerTile with the default type', () => {
-    const towerTile = new TowerTile();
+describe('TowerSprite', () => {
+  it('should create a TowerSprite with the default type', () => {
+    const towerSprite = new TowerSprite();
 
-    expect(towerTile.type).toBe(TowerType.TOP_LEFT);
+    expect(towerSprite.type).toBe(TowerType.TOP_LEFT);
   });
 
-  it('should create a TowerTile with the specified type', () => {
-    const towerTile = new TowerTile(TowerType.BOTTOM_RIGHT);
+  it('should create a TowerSprite with the specified type', () => {
+    const towerSprite = new TowerSprite(TowerType.BOTTOM_RIGHT);
 
-    expect(towerTile.type).toBe(TowerType.BOTTOM_RIGHT);
+    expect(towerSprite.type).toBe(TowerType.BOTTOM_RIGHT);
   });
 
-  it('should set the type of the TowerTile', () => {
-    const towerTile = new TowerTile();
+  it('should set the type of the TowerSprite', () => {
+    const towerSprite = new TowerSprite();
 
-    towerTile.setType(TowerType.MIDDLE_LEFT);
+    towerSprite.setType(TowerType.MIDDLE_LEFT);
 
-    expect(towerTile.type).toBe(TowerType.MIDDLE_LEFT);
+    expect(towerSprite.type).toBe(TowerType.MIDDLE_LEFT);
   });
 });

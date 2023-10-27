@@ -1,28 +1,28 @@
 import { FoamType } from './foam.const';
-import { FoamTile } from './foam';
+import { FoamSprite } from './foam';
 
-describe('FoamTile testing', () => {
-  let foamTile: FoamTile;
+describe('FoamSprite testing', () => {
+  let foamSprite: FoamSprite;
 
   beforeEach(() => {
-    foamTile = new FoamTile();
+    foamSprite = new FoamSprite();
   });
 
   it('should create an instance', () => {
-    expect(foamTile).toBeInstanceOf(FoamTile);
+    expect(foamSprite).toBeInstanceOf(FoamSprite);
   });
 
   it('should set foam type to MIDDLE by default', () => {
-    expect((foamTile as any)._type).toBe(FoamType.MIDDLE);
+    expect((foamSprite as any)._type).toBe(FoamType.MIDDLE);
   });
 
   it('should change foam type when setType is called', () => {
-    foamTile.setType(FoamType.TOP);
-    expect((foamTile as any)._type).toBe(FoamType.TOP);
+    foamSprite.setType(FoamType.TOP);
+    expect((foamSprite as any)._type).toBe(FoamType.TOP);
   });
 
   it('should have a valid coordinates map', () => {
-    const coordsMap = (foamTile as any)._getCoordsMap();
+    const coordsMap = (foamSprite as any)._getCoordsMap();
     expect(coordsMap).toBeDefined();
     expect(coordsMap).toBeInstanceOf(Object);
     Object.values([FoamType.LEFT, FoamType.MIDDLE, FoamType.BOTTOM, FoamType.RIGHT, FoamType.TOP]).forEach((type) => {

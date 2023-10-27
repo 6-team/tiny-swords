@@ -1,6 +1,6 @@
 # Resource
 
-The `Resource` class represents a tile with a resource entity. It extends the `Tile` class and provides functionality to manage and display resource entities.
+The `Resource` class represents a sprite with a resource entity. It extends the `Sprite` class and provides functionality to manage and display resource entities.
 
 ## Table of Contents
 

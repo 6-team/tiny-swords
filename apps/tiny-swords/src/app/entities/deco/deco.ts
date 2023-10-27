@@ -1,7 +1,7 @@
-import { Tile } from '../tile';
+import { Sprite } from '../sprite';
 import { DecoType, mapTerrainToCoords } from './deco.const';
 
-export class DecoTile extends Tile<DecoType> {
+export class DecoSprite extends Sprite<DecoType> {
   protected _type: DecoType;
   protected _sprite: string;
 

@@ -1,11 +1,11 @@
-import { Tile } from '../tile';
+import { Sprite } from '../sprite';
 import { RocksType, mapTerrainToCoords } from './rocks.const';
 
 /**
- * Represents a tile with a rocks entity.
- * @extends Tile
+ * Represents a sprite with a rocks entity.
+ * @extends Sprite
  */
-export class RocksTile extends Tile<RocksType> {
+export class RocksSprite extends Sprite<RocksType> {
   /**
    * The type of the rocks.
    * @type {RocksType}
@@ -21,8 +21,8 @@ export class RocksTile extends Tile<RocksType> {
   protected _sprite:string;
 
   /**
-   * Creates an instance of the RocksTile.
-   * @param {RocksTile} type - The type of the rocks (default is RocksTile.ROCKS_M).
+   * Creates an instance of the RocksSprite.
+   * @param {RocksSprite} type - The type of the rocks (default is RocksSprite.ROCKS_M).
    */
   constructor(type: RocksType = RocksType.ROCKS_M) {
     super();
@@ -32,7 +32,7 @@ export class RocksTile extends Tile<RocksType> {
 
   /**
    * Sets the type of the rocks.
-   * @param {RocksType} type - The type of the rocks (default is RocksTile.ROCKS_M).
+   * @param {RocksType} type - The type of the rocks (default is RocksSprite.ROCKS_M).
    */
   setType(type: RocksType = RocksType.ROCKS_M) {
     this._type = type;

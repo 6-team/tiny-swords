@@ -1,30 +1,30 @@
-import { SandTile, SandType, mapTerrainToCoords } from './';
+import { SandSprite, SandType, mapTerrainToCoords } from './';
 
-describe('SandTile', () => {
-  let tile: any;
+describe('SandSprite', () => {
+  let sprite: any;
 
   beforeEach(() => {
-    tile = new SandTile();
+    sprite = new SandSprite();
   });
 
-  it('should create an instance of SandTile', () => {
-    expect(tile).toBeInstanceOf(SandTile);
+  it('should create an instance of SandSprite', () => {
+    expect(sprite).toBeInstanceOf(SandSprite);
   });
 
   it('should initialize with type MIDDLE_MIDDLE by default', () => {
-    expect(tile._type).toEqual(SandType.MIDDLE_MIDDLE);
+    expect(sprite._type).toEqual(SandType.MIDDLE_MIDDLE);
   });
 
   it('should set type correctly', () => {
-    tile.setType(SandType.TOP_LEFT);
-    expect(tile._type).toEqual(SandType.TOP_LEFT);
+    sprite.setType(SandType.TOP_LEFT);
+    expect(sprite._type).toEqual(SandType.TOP_LEFT);
   });
 
   it('should have the correct sprite url', () => {
-    expect(tile._sprite).toEqual('./img/Terrain/Ground/Tilemap_Flat.png');
+    expect(sprite._sprite).toEqual('./img/Terrain/Ground/Tilemap_Flat.png');
   });
 
   it('should have correct coords map', () => {
-    expect(tile._getCoordsMap()).toMatchObject(mapTerrainToCoords);
+    expect(sprite._getCoordsMap()).toMatchObject(mapTerrainToCoords);
   });
 });

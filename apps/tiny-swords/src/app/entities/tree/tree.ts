@@ -1,7 +1,7 @@
-import { Tile } from "../tile/tile";
+import { Sprite } from "../sprite/sprite";
 import { TreeType, mapTerrainToCoords } from "./tree.const";
 
-export class TreeTile extends Tile<TreeType> {
+export class TreeSprite extends Sprite<TreeType> {
   protected _type: TreeType;
   protected _sprite = './img/Resources/Tree/Tree.png';
 

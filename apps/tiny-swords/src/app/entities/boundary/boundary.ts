@@ -1,7 +1,7 @@
-import { Tile } from '../tile/tile';
+import { Sprite } from '../sprite/sprite';
 import { BoundaryType, mapBoundaryToCoords } from './boundary.const';
 
-export class BoundaryTile extends Tile<BoundaryType> {
+export class BoundarySprite extends Sprite<BoundaryType> {
   protected _type: BoundaryType;
   protected _sprite = './img/Boundary/Boundary.png';
 

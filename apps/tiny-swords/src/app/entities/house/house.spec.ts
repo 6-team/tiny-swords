@@ -1,24 +1,24 @@
-import { HouseTile, HouseType } from './';
+import { HouseSprite, HouseType } from './';
 
-describe('HouseTile', () => {
-  let houseTile: HouseTile;
+describe('HouseSprite', () => {
+  let houseSprite: HouseSprite;
 
   beforeEach(() => {
-    houseTile = new HouseTile();
+    houseSprite = new HouseSprite();
   });
 
-  it('should create an instance of HouseTile', () => {
-    expect(houseTile).toBeInstanceOf(HouseTile);
+  it('should create an instance of HouseSprite', () => {
+    expect(houseSprite).toBeInstanceOf(HouseSprite);
   });
 
   it('should initialize with type TOP_LEFT by default', () => {
-    expect(houseTile.type).toEqual(HouseType.TOP_LEFT);
+    expect(houseSprite.type).toEqual(HouseType.TOP_LEFT);
   });
 
   describe('setType', () => {
     it('should set type correctly', () => {
-      houseTile.setType(HouseType.TOP_RIGHT);
-      expect(houseTile.type).toEqual(HouseType.TOP_RIGHT);
+      houseSprite.setType(HouseType.TOP_RIGHT);
+      expect(houseSprite.type).toEqual(HouseType.TOP_RIGHT);
     });
   });
 });

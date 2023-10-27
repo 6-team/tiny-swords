@@ -1,6 +1,6 @@
 # SandTyle
 
-The `SandTyle` class represents a tile with a sand entity. It extends the `Tile` class and provides functionality to manage and display sand entities.
+The `SandTyle` class represents a sprite with a sand entity. It extends the `Sprite` class and provides functionality to manage and display sand entities.
 
 ## Table of Contents
 
@@ -16,14 +16,14 @@ The `SandTyle` class represents a tile with a sand entity. It extends the `Tile`
 You can create a `SandTyle` instance with a specified sand type or use the default type, which is `SandType.TOP_LEFT`.
 
 ```javascript
-import { SandTyle } from './sandTile';
+import { SandTyle } from './sandSprite';
 import { SandType } from './sand.const';
 
 // Create a SandTyle with a specific type
-const sandTile = new SandTyle(SandType.TOP_LEFT);
+const sandSprite = new SandTyle(SandType.TOP_LEFT);
 
 // Create a SandTyle with the default type (SandType.TOP_LEFT)
-const defaultsandTile = new SandTyle();
+const defaultsandSprite = new SandTyle();
 ```
 
 ### Setting the Sand Type
@@ -31,7 +31,7 @@ const defaultsandTile = new SandTyle();
 You can set the type of the sand using the `setType` method.
 
 ```javascript
-sandTile.setType(SandType.TOP_RIGHT);
+sandSprite.setType(SandType.TOP_RIGHT);
 ```
 
 ## Properties

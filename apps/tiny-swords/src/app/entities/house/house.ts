@@ -1,11 +1,11 @@
-import { Tile } from '@entities/tile';
+import { Sprite } from '@entities/sprite';
 import { HouseType, mapTerrainToCoords } from './house.const';
 
 /**
- * Represents a tile with a house entity.
- * @extends Tile
+ * Represents a sprite with a house entity.
+ * @extends Sprite
  */
-export class HouseTile extends Tile<HouseType> {
+export class HouseSprite extends Sprite<HouseType> {
   /**
    * The type of the house.
    * @type {HouseType}
@@ -21,8 +21,8 @@ export class HouseTile extends Tile<HouseType> {
   protected _sprite = './img/Factions/Knights/Buildings/House/House_Blue.png';
 
   /**
-   * Creates an instance of the HouseTile.
-   * @param {HouseTile} type - The type of the house (default is HouseTile.TOP_LEFT).
+   * Creates an instance of the HouseSprite.
+   * @param {HouseSprite} type - The type of the house (default is HouseSprite.TOP_LEFT).
    */
   constructor(type: HouseType = HouseType.TOP_LEFT) {
     super();
@@ -32,7 +32,7 @@ export class HouseTile extends Tile<HouseType> {
 
   /**
    * Sets the type of the house.
-   * @param {HouseType} type - The type of the house (default is HouseTile.TOP_LEFT).
+   * @param {HouseType} type - The type of the house (default is HouseSprite.TOP_LEFT).
    */
   setType(type: HouseType = HouseType.TOP_LEFT): void {
     this._type = type;

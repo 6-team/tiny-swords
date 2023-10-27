@@ -1,14 +1,14 @@
 import { TPixelsCoords } from '@abilities/abilities.types';
 import { IResource, PowerUp } from '@common/common.types';
-import { Tile } from '@entities/tile';
+import { Sprite } from '@entities/sprite';
 import { ResourcesType, mapResourcesToCoords } from './resource.const';
 import { IResourceConfig } from './resource.types';
 
 /**
- * Represents a tile with a resource entity.
- * @extends Tile
+ * Represents a sprite with a resource entity.
+ * @extends Sprite
  */
-export class Resource extends Tile<ResourcesType> implements IResource {
+export class Resource extends Sprite<ResourcesType> implements IResource {
   /**
    * The type of the resource.
    * @type {ResourcesType}

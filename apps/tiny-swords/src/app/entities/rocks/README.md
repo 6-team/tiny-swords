@@ -1,6 +1,6 @@
-# RocksTile
+# RocksSprite
 
-The `RocksTile` class represents a tile with a rocks entity. It extends the `Tile` class and provides functionality to manage and display rocks entities.
+The `RocksSprite` class represents a sprite with a rocks entity. It extends the `Sprite` class and provides functionality to manage and display rocks entities.
 
 ## Table of Contents
 
@@ -11,19 +11,19 @@ The `RocksTile` class represents a tile with a rocks entity. It extends the `Til
 
 ## Usage
 
-### Creating a RocksTile
+### Creating a RocksSprite
 
-You can create a `RocksTile` instance with a specified rocks type or use the default type, which is `RocksType.ROCKS_M`.
+You can create a `RocksSprite` instance with a specified rocks type or use the default type, which is `RocksType.ROCKS_M`.
 
 ```javascript
-import { RocksTile } from './rocksTile';
+import { RocksSprite } from './rocksSprite';
 import { RocksType } from './rocks.const';
 
-// Create a RocksTile with a specific type
-const rocksTile = new RocksTile(RocksType.ROCKS_M);
+// Create a RocksSprite with a specific type
+const rocksSprite = new RocksSprite(RocksType.ROCKS_M);
 
-// Create a RocksTile with the default type (RocksType.ROCKS_M)
-const defaultRocksTile = new RocksTile();
+// Create a RocksSprite with the default type (RocksType.ROCKS_M)
+const defaultRocksSprite = new RocksSprite();
 ```
 
 ### Setting the Rocks Type
@@ -31,7 +31,7 @@ const defaultRocksTile = new RocksTile();
 You can set the type of the rocks using the `setType` method.
 
 ```javascript
-rocksTile.setType(RocksType.ROCKS_M);
+rocksSprite.setType(RocksType.ROCKS_M);
 ```
 
 ## Properties
@@ -46,4 +46,4 @@ rocksTile.setType(RocksType.ROCKS_M);
 
 ## Installation
 
-You can include the `RocksTile` class in your project by importing it as shown in the usage examples.
+You can include the `RocksSprite` class in your project by importing it as shown in the usage examples.

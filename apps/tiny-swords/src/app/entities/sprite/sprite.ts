@@ -1,8 +1,8 @@
-import { ITile } from '../../common/common.types';
-import { ErrorEnum } from './tile.const';
-import { CoordsTuple } from './tile.types';
+import { ISprite } from '../../common/common.types';
+import { ErrorEnum } from './sprite.const';
+import { CoordsTuple } from './sprite.types';
 
-export abstract class Tile<T extends string | number | symbol> implements ITile {
+export abstract class Sprite<T extends string | number | symbol> implements ISprite {
   protected abstract _sprite: string;
   protected abstract _type: T;
 

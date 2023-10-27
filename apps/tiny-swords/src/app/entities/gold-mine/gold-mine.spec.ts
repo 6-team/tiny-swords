@@ -1,15 +1,15 @@
 import { GoldMineType } from './gold-mine.const';
-import { GoldMineTile } from './gold-mine';
+import { GoldMineSprite } from './gold-mine';
 
-describe('GoldMineTile testing', () => {
-  let goldMine: GoldMineTile;
+describe('GoldMineSprite testing', () => {
+  let goldMine: GoldMineSprite;
 
   beforeEach(() => {
-    goldMine = new GoldMineTile();
+    goldMine = new GoldMineSprite();
   });
 
   it('should create an instance', () => {
-    expect(goldMine).toBeInstanceOf(GoldMineTile);
+    expect(goldMine).toBeInstanceOf(GoldMineSprite);
   });
 
   it('should set gold mine type to TOP_LEFT by default', () => {

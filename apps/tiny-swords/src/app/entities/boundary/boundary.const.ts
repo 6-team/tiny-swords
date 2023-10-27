@@ -1,4 +1,4 @@
-import { CoordsTuple } from "../tile/tile.types";
+import { CoordsTuple } from "../sprite/sprite.types";
 
 export const enum BoundaryType {
   MIDDLE,

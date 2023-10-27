@@ -1,6 +1,6 @@
 import { Layer } from "@core/layer";
 import { LayerCondition } from "@core/layer";
-import { TileName } from "@core/renderer";
+import { SpriteName } from "@core/renderer";
 
 /**
  * Creates an array of layer conditions representing boundary conditions based on provided layers.
@@ -14,7 +14,7 @@ export const boundaryConditions = (layers: Layer[]): LayerCondition[] => {
     layers.forEach((layer) => {
       layer.array.forEach(({ coords, boundary }) => {
         if (boundary) {
-          conditions.push({ tile: TileName.BOUNDARY, coords, })
+          conditions.push({ sprite: SpriteName.BOUNDARY, coords, })
         }
       });
     });
