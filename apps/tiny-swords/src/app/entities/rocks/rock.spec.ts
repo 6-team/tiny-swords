@@ -1,4 +1,4 @@
-import { RocksTile, RocksType, mapTerrainToCoords } from './index';
+import { RocksTile, RocksType, mapTerrainToCoords } from './';
 
 describe('RocksTile', () => {
   let tile: any;

@@ -1,4 +1,4 @@
-import { HouseTile, HouseType, mapTerrainToCoords } from './index';
+import { HouseTile, HouseType } from './';
 
 describe('HouseTile', () => {
   let houseTile: HouseTile;

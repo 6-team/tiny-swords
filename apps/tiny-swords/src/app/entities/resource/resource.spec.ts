@@ -1,5 +1,4 @@
-import { Resource } from './resource';
-import { ResourcesType } from './resource.const';
+import { Resource, ResourcesType } from './';
 
 describe('Resource', () => {
   let resource: Resource;

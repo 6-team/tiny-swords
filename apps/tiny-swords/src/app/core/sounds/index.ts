@@ -1,4 +1,3 @@
-export { Sounds } from './sounds';
-export { SystemSoundsType, СharacterSoundsType } from './sounds.const';
-export { HeroSounds } from './hero-sounds';
-export type { HeroSoundsConfig } from './hero-sounds/hero-sounds.types';
+export * from './sounds';
+export * from './sounds.const';
+export * from './hero-sounds';

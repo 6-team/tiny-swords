@@ -1,8 +1,7 @@
 import { quantityResources } from './hero-resource-bar.const';
 import { IHeroResourcesBar } from './hero-resource-bar.types';
-import { Resource } from '@entities/resource';
+import { Resource, ResourcesType } from '@entities/resource';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { ResourcesType } from '@entities/resource';
 
 /**
  * A class for working with the hero's resources.

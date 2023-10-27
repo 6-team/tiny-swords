@@ -1,4 +1,4 @@
-import { EnemySound } from './../../core/sounds/enemy-sounds';
+import { EnemySound } from '@core/sounds/enemy-sounds';
 import { grid64 } from '../../core/grid';
 import { Character } from '../character';
 import { EnemyType, mapEnemyTypeToCoords } from './enemy.const';
