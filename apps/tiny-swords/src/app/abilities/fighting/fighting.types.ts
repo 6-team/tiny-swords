@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
-import { IAbility, TCollisionArea, TPixelsCoords } from '../abilities.types';
+import { IAbility, TCollisionArea, TPixelsCoords } from '@abilities/abilities.types';
 import { AttackingType } from '@shared';
-import { ICharacter } from '../../common/common.types';
+import { ICharacter } from '@common/common.types';
 
 export interface IFightingProps {
   getAffectedArea?: (fighting: IFighting) => TCollisionArea;
@@ -15,92 +15,92 @@ export type IFightingCharacter = ICharacter<{ fighting: IFighting }> & {
 
 export interface IFighting extends IAbility<IFightingCharacter> {
   /**
-   * Поток атак
+   * Stream of attacks
    */
   attack$: Observable<AttackingType>;
 
   /**
-   * Поток состояний атаки: атака началась, атака закончилась
+   * Stream of attack states: attack started, attack ended
    */
   isAttacking$: Observable<boolean>;
 
   /**
-   * Поток состояния смерти
+   * Stream of the state of death
    */
   isDied$: Observable<boolean>;
 
   /**
-   * Поток уменьшения жизней
+   * Stream of diminishing lives
    */
   isHitted$: Observable<boolean>;
 
   /**
-   * Поток количества имеющихся жизней
+   * Slow of the number of available lives
    */
   livesCount$: Observable<number>;
 
   /**
-   * Поток количества заблокированных жизней
+   * Stream of the number of blocked lives
    */
   blockedLivesCount$: Observable<number>;
 
   /**
-   * Атакует ли персонаж прямо сейчас
+   * Is the character attacking right now
    */
   isAttacking: boolean;
 
   /**
-   * Метод для атаки.
+   * Method for attacking.
    *
-   * @param type Тип удара
-   * @returns Объект способности
+   * @param type Attack type
+   * @returns Object of ability
    */
   attack(type?: AttackingType): this;
 
   /**
-   * Метод для получения урона
+   * Method for taking damage
    *
-   * @returns Объект способности
+   * @returns Object of ability
    */
   takeDamage(): this;
 
   /**
-   * Метод для сброса состояния способности
+   * Method for resetting the state of an ability
    *
-   * @returns Объект способности
+   * @returns Object of ability
    */
   reset(): this;
 
   /**
-   * Метод добавления одной жизни
+   * Method of adding one life
    *
-   * @returns Объект способности
+   * @returns Object of ability
    */
   addLive(): this;
 
   /**
-   * Метод для разблокировки одной жизни
+   * Method to unlock one life
    *
-   * @returns Объект способности
+   * @returns Object of ability
    */
   unblockLive(): this;
 
   /**
-   * Метод для проверки возможности добавления жизни
+   * Method to test whether life can be added
    *
    */
   checkAddLive(): boolean;
 
   /**
-   * Метод для проверки возможности разблокировки жизни
+   * Method to check if life can be unlocked
    *
    */
   checkUnblockLive(): boolean;
 
   /**
-   * Вычисляет зону, куда будет атаковать персонаж и которая будет считаться зоной поражения для других.
+   * Calculates the area where the character will attack and which will be considered a kill zone for others.
    *
-   * @returns Зона поражения в виде кортежа пикселей
+   * @returns The affected area as a tuple of pixels
    */
   getAffectedArea(): TPixelsCoords;
 }

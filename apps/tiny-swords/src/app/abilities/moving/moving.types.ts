@@ -1,6 +1,6 @@
 import { CharacterDirection, MovingDirection } from '@shared';
-import { ICharacter, TNumberOfPixels } from '../../common/common.types';
-import { IAbility, TCollisionArea } from '../abilities.types';
+import { ICharacter, TNumberOfPixels } from '@common/common.types';
+import { IAbility, TCollisionArea } from '@abilities/abilities.types';
 import { Observable } from 'rxjs';
 
 export interface IMovingProps {
@@ -17,84 +17,84 @@ export type IMovingCharacter = ICharacter<{ moving: IMoving }> & {
 
 export interface IMoving extends IAbility<IMovingCharacter> {
   /**
-   * Размеры персонажа
+   * Character Size
    */
   sizes: [height: number, width: number];
 
   /**
-   * Поток координат персонажа
+   * Character coordinate stream
    */
   coords: [x: TNumberOfPixels, y: TNumberOfPixels];
 
   /**
-   * В движении ли персонаж в данный момент
+   * Whether the character is currently on the move
    */
   isMoving: boolean;
 
   /**
-   * Повернут ли персонаж вправо
+   * Is the character turned to the right
    */
   isRightDirection: boolean;
 
   /**
-   * Устанавливает направление персонажа, пока он стоит на месте.
+   * Sets the character's direction while the character is standing still.
    *
-   * @param direction Направление персонажа
-   * @returns Объект способности
+   * @param direction Character direction
+   * @returns Object of ability
    */
   setCharacterDirection(direction: CharacterDirection): this;
 
   /**
-   * Принудительно устанавливает координаты персонажу
+   * Forcibly sets coordinates to a character
    *
-   * @param coords Новые координаты
-   * @returns Объект способности
+   * @param coords New coordinates
+   * @returns Object of ability
    */
   setCoords(coords: [x: TNumberOfPixels, y: TNumberOfPixels]): this;
 
   /**
-   * Запускает движение персонажа в указанном направлении
+   * Starts the character moving in the specified direction
    *
-   * @param direction Направление движения
-   * @returns Объект способности
+   * @param direction Direction of movement
+   * @returns Object of ability
    */
   moveTo(direction: MovingDirection): this;
 
   /**
-   * Запускает анимацию персонажа для указанного направления
+   * Starts a character animation for the specified direction
    *
-   * @param direction Направление движения
-   * @returns Объект способности
+   * @param direction Direction of movement
+   * @returns Object of ability
    */
   animate(direction: MovingDirection): this;
 
   /**
-   * Возвращает зону персонажа, которая участвует в сравнении коллизий.
+   * Returns the character's zone that is involved in the collision comparison.
    *
-   * @returns Зона для сравнения коллизий
+   * @returns Area for comparison of collisions
    */
   getCollisionArea(): TCollisionArea;
 
   /**
-   * Возвращает зону коллизии персонажа, которая будет при перемещении в указанном направлении.
+   * Returns the character's collision zone, which will be when moving in the specified direction.
    *
-   * @param direction Направление движения
-   * @returns Координаты и размеры
+   * @param direction Direction of movement
+   * @returns Coordinates and dimensions
    */
   getNextCollisionArea(direction: MovingDirection): TCollisionArea;
 
   /**
-   * Поток координат персонажа
+   * Character coordinate stream
    */
   coords$: Observable<[x: TNumberOfPixels, y: TNumberOfPixels]>;
 
   /**
-   * Поток направлений движения
+   * Stream of traffic directions
    */
   movements$: Observable<MovingDirection>;
 
   /**
-   * Поток координат, когда персонаж оказывается в очередной клетке
+   * Coordinate stream when the character is in another cell
    */
   breakpoints$: Observable<[x: TNumberOfPixels, y: TNumberOfPixels]>;
 }
