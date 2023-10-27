@@ -1,9 +1,6 @@
 import { filter } from 'rxjs';
-
 import { MovingDirection } from '@shared';
-
-import { Sounds } from '@core/sounds';
-import { СharacterSoundsType } from '@core/sounds/sounds.const';
+import { Sounds, СharacterSoundsType } from '@core/sounds';
 import { IResource } from '@common/common.types';
 import { HeroSoundsConfig, IHeroSounds } from './hero-sounds.types';
 

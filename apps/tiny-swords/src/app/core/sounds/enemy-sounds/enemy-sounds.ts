@@ -1,7 +1,6 @@
 import { EnemySoundsConfig, IEnemySounds } from './enemy-sounds.types';
 import { filter } from 'rxjs';
-import { Sounds } from '@core/sounds/';
-import { СharacterSoundsType } from '@core/sounds/sounds.const';
+import { Sounds, СharacterSoundsType } from '@core/sounds/';
 
 /**
  * EnemySound class extends the Sounds class,
