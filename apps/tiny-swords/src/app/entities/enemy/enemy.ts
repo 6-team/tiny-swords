@@ -1,7 +1,7 @@
 import { EnemySound } from './../../core/sounds/enemy-sounds';
 import { grid64 } from '../../core/grid';
 import { Character } from '../character';
-import { EnemyType, mapEnemyTypeToCoords } from './enemy.const';
+import { EnemyType, mapEnemyImages, mapEnemyTypeToCoords } from './enemy.const';
 import { EnemyAbilities, EnemyConfig } from './enemy.types';
 import { isMuttedStore } from '../../store';
 import { IEnemySounds } from '../../core/sounds/enemy-sounds.types';
@@ -16,14 +16,17 @@ export default class Enemy
   extends Character<EnemyType, EnemyAbilities>
   implements IMovingCharacter, IFightingCharacter
 {
-  protected _sprite = './img/Factions/Goblins/Troops/Torch/Red/Torch_Red.png';
+  protected _sprite: string;
   protected _type = EnemyType.TORCH_RED;
   protected _size = ENEMY_SIZE;
 
   sounds: IEnemySounds;
 
-  constructor({ height, width, initialX, initialY, initialDirection, id }: EnemyConfig) {
+  constructor({ height, width, initialX, initialY, initialDirection, id, type = EnemyType.TORCH_RED }: EnemyConfig) {
     super({ id });
+
+    this._type = type;
+    this._sprite = mapEnemyImages[type];
 
     const fighting = new Fighting({ availibleLives: 1, blockedLives: 0 });
     const moving = new Moving({

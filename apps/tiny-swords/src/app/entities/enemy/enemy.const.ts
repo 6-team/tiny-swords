@@ -17,8 +17,17 @@ export enum EnemyActionAnimation {
 
 export const enum EnemyType {
   TORCH_RED,
+  TNT_RED,
 }
 
 export const mapEnemyTypeToCoords: Record<EnemyType, CoordsTuple> = {
   [EnemyType.TORCH_RED]: [0, 22],
+  [EnemyType.TNT_RED]: [0, 22],
+};
+
+const path = './img/Factions/Goblins/Troops/';
+
+export const mapEnemyImages: Record<EnemyType, string> = {
+  [EnemyType.TORCH_RED]: `${path}Torch/Red/Torch_Red.png`,
+  [EnemyType.TNT_RED]: `${path}TNT/Red/TNT_Red.png`,
 };

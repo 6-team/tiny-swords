@@ -3,6 +3,7 @@ import { CharacterDirection } from '@shared';
 import { IMoving } from '@abilities/moving';
 import { IFighting } from '@abilities/fighting';
 import { TNumberOfPixels, TTilePosition } from '@common/common.types';
+import { EnemyType } from './enemy.const';
 
 export type EnemyAbilities = {
   moving: IMoving;
@@ -16,4 +17,5 @@ export interface EnemyConfig {
   initialY: TTilePosition;
   initialDirection?: CharacterDirection;
   id: string;
+  type?: EnemyType;
 }

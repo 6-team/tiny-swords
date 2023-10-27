@@ -9,6 +9,7 @@ import { grid64 } from '@core/grid';
 import { collisions } from '@core/collisions';
 import { TCollisionArea, TPixelsCoords } from '@abilities/abilities.types';
 import { Enemy } from '@entities/enemy';
+import { EnemyType } from '@entities/enemy/enemy.const';
 
 /**
  * Represents a collection of enemy characters.
@@ -40,6 +41,7 @@ export class Enemies {
   ): Enemy {
     const [x, y] = coords;
     const [initialX, initialY, height, width] = grid64.transformToPixels(x - 1, y - 1, 3, 3);
+    const chaser = this._enemies.getValue().length === 1;
 
     const enemy = new Enemy({
       initialDirection: CharacterDirection.LEFT,
@@ -48,6 +50,7 @@ export class Enemies {
       height,
       width,
       id,
+      type: chaser ? EnemyType.TNT_RED : EnemyType.TORCH_RED,
     });
 
     this.addEnemy(enemy);
@@ -57,7 +60,7 @@ export class Enemies {
       heroes$,
       bounds$,
       hero$,
-      chaser: this._enemies.getValue().length === 1,
+      chaser,
       character: enemy,
       streamDecorator: (originalStream$: Observable<MovingDirection>) =>
         collisions.preventBoundsDecorator({ character: enemy, otherCharacters$: heroes$, bounds$, originalStream$ }),
