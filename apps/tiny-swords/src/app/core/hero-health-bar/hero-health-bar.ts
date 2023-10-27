@@ -1,5 +1,6 @@
+import { HealthBar } from '@entities/health-bar';
+
 import { IHeroHealthBar, IHeroHealthBarConfig } from './hero-health-bar.types';
-import { HealthBar } from '../../entities/health-bar';
 
 export class HeroHealthBar extends HealthBar<IHeroHealthBarConfig> implements IHeroHealthBar {
   private readonly initialHealthBarConfig: IHeroHealthBarConfig;

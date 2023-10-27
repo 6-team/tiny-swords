@@ -14,7 +14,7 @@
       "@controllers/*": ["apps/tiny-swords/src/app/controllers/*"],
       "@core/*": ["apps/tiny-swords/src/app/core/*"],
       "@entities/*": ["apps/tiny-swords/src/app/entities/*"],
-      "@store/*": ["apps/tiny-swords/src/app/store/*"],
+      "@store": ["apps/tiny-swords/src/app/store/index.ts"],
       "@tools/*": ["apps/tiny-swords/src/app/tools/*"]
     }
   },
