@@ -1,7 +1,6 @@
 import {
   Observable,
   Subscription,
-  delay,
   distinctUntilChanged,
   filter,
   first,
@@ -96,9 +95,11 @@ export class AIController {
     /**
      * Wait until character stops moving to calculate path correctly
      */
-    this._character.moving.breakpoints$.pipe(first(), delay(1000)).subscribe(() => {
-      this._chasingSubscription = this._chase(heroArea, enemyArea);
-    });
+    if (this._character.moving.isMoving) {
+      return this;
+    }
+
+    this._chasingSubscription = this._chase(heroArea, enemyArea);
 
     return this;
   };
@@ -128,7 +129,7 @@ export class AIController {
       distinctUntilChanged(),
       skip(1),
       switchMap(() => this._hero$),
-      map((hero: IFightingCharacter) => grid64.transformToTiles(...hero.fighting.getAffectedArea())),
+      map((hero: IMovingCharacter) => grid64.transformToTiles(...hero.moving.getCollisionArea())),
     );
   }
 
@@ -180,11 +181,17 @@ export class AIController {
    */
   private _chase(heroArea: TTiledCoords, enemyArea: TTiledCoords): Subscription | undefined {
     const enemy = this._character;
-    const commands = this._getPathDirections(enemyArea, heroArea);
+    const destination: TTiledCoords =
+      enemyArea[0] < heroArea[0]
+        ? [heroArea[0] - 1, heroArea[1], heroArea[2], heroArea[3]]
+        : [heroArea[0] + 1, heroArea[1], heroArea[2], heroArea[3]];
+    const commands = this._getPathDirections(enemyArea, destination);
 
     if (!commands) {
       return;
     }
+
+    console.log(commands);
 
     this._state = EnemyState.CHASING;
 
