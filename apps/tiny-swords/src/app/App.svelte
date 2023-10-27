@@ -44,7 +44,7 @@
 
   const level = new Level();
   const heroes = new Heroes(level.startCoords);
-  const nextLevelTile$ = level.endCoords$.pipe(map(([x, y]) => grid64.transformToPixels(x, y, 1, 1)));
+  const nextLevelSprite$ = level.endCoords$.pipe(map(([x, y]) => grid64.transformToPixels(x, y, 1, 1)));
   const gameResources = new HeroResourcesBar([new Resource({type: ResourcesType.GOLD, quantity: 0}), new Resource({type: ResourcesType.WOOD, quantity: 0})])
 
   nextLevelMenu.subscribe(value => isNextLevelMenu = value);
@@ -232,10 +232,10 @@
     });
   }
 
-  function checkCollisions(character: Hero, nextLevelTile: TPixelsCoords): void {
+  function checkCollisions(character: Hero, nextLevelSprite: TPixelsCoords): void {
     const hasCollisionWithNextLevelArea = collisions.hasCollision(
       character.moving.getCollisionArea(),
-      nextLevelTile
+      nextLevelSprite
     );
 
     if (hasCollisionWithNextLevelArea) {
@@ -291,8 +291,8 @@
       interactiveScene.renderMovableLayer([...enemies, ...heroes]);
 
       for (const hero of heroes) {
-        hero.moving.breakpoints$.pipe(withLatestFrom(nextLevelTile$)).subscribe(([_, nextLevelTile]) => {
-          checkCollisions(hero, nextLevelTile);
+        hero.moving.breakpoints$.pipe(withLatestFrom(nextLevelSprite$)).subscribe(([_, nextLevelSprite]) => {
+          checkCollisions(hero, nextLevelSprite);
         });
 
         hero.fighting.attack$.subscribe(() => checkAttackCollisions(hero));

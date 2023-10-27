@@ -1,10 +1,10 @@
 import { Matrix } from '@tools/matrix';
-import { TileName } from '@core/renderer';
+import { SpriteName } from '@core/renderer';
 import { randomElement, weightedRandomElement } from '../layers';
-import { LayerCell, LayerCondition, LayerRules, TileWeight } from './layer.types';
+import { LayerCell, LayerCondition, LayerRules, SpriteWeight } from './layer.types';
 
 /**
- * Represents a class for creating a layer for static rendering and filling it with tiles
+ * Represents a class for creating a layer for static rendering and filling it with sprites
  */
 export class Layer {
   /**
@@ -73,8 +73,8 @@ export class Layer {
    */
   fill(conditionsList: LayerCondition[][]): Layer {
     conditionsList.forEach((conditions: LayerCondition[]) => {
-      conditions.forEach(({ tile, coords, boundary }) => {
-        this._setLayerCell({ coords, boundary, options: [tile], collapsed: true });
+      conditions.forEach(({ sprite, coords, boundary }) => {
+        this._setLayerCell({ coords, boundary, options: [sprite], collapsed: true });
       });
     });
 
@@ -85,24 +85,24 @@ export class Layer {
    * Fills the layer using the "Collapse of the wave function" algorithm.
    *
    * @param {LayerRules} rules - Array of rules
-   * @param {TileWeight[]} tileOptions - Array of weighted tiles
+   * @param {SpriteWeight[]} spriteOptions - Array of weighted sprites
    * @returns {Layer} - The current Layer instance
    */
-  wfc(rules: LayerRules, tileOptions: TileWeight[]): Layer {
-    const tileTypes: TileName[] = tileOptions.map(([tile]) => tile);
+  wfc(rules: LayerRules, spriteOptions: SpriteWeight[]): Layer {
+    const spriteTypes: SpriteName[] = spriteOptions.map(([sprite]) => sprite);
 
-    this._initializeNonCollapsedCells(tileTypes);
-    this._collapseCellOptions(rules, tileTypes);
+    this._initializeNonCollapsedCells(spriteTypes);
+    this._collapseCellOptions(rules, spriteTypes);
 
     const initLayer = this._cloneLayerMatrix();
     let j = 0;
 
     while (j < 10e6) {
       const cell = this._defineCellToUpdate();
-      this._setRandomTileByIndex(cell, tileOptions);
+      this._setRandomSpriteByIndex(cell, spriteOptions);
 
       try {
-        this._collapseCellOptions(rules, tileTypes);
+        this._collapseCellOptions(rules, spriteTypes);
       } catch (e) {
         console.log('Generation error, iterations: ', j);
         this._layer = initLayer;
@@ -128,17 +128,17 @@ export class Layer {
   }
 
   /**
-   * Initializes non-collapsed cells with the available tile options.
+   * Initializes non-collapsed cells with the available sprite options.
    *
-   * @param {TileName[]} tileTypes - Array of available tile types
+   * @param {SpriteName[]} spriteTypes - Array of available sprite types
    */
-  private _initializeNonCollapsedCells(tileTypes: TileName[]): void {
+  private _initializeNonCollapsedCells(spriteTypes: SpriteName[]): void {
     this._layer.array.forEach(({ coords, collapsed }) => {
       if (!collapsed) {
         this._setLayerCell({
           coords,
           collapsed: false,
-          options: [...tileTypes],
+          options: [...spriteTypes],
           boundary: false,
         });
       }
@@ -146,12 +146,12 @@ export class Layer {
   }
 
   /**
-   * Updates cell entropy based on rules and available tile types.
+   * Updates cell entropy based on rules and available sprite types.
    *
    * @param {LayerRules} rules - Array of rules
-   * @param {TileName[]} tileTypes - Array of available tile types
+   * @param {SpriteName[]} spriteTypes - Array of available sprite types
    */
-  private _collapseCellOptions(rules: LayerRules, tileTypes: TileName[]): void {
+  private _collapseCellOptions(rules: LayerRules, spriteTypes: SpriteName[]): void {
     const nextGrid = new Matrix<LayerCell>(this._gridX, this._gridY);
 
     this._layer.array.forEach((cell) => {
@@ -161,7 +161,7 @@ export class Layer {
       if (cell.collapsed) {
         nextGrid.set({ x, y }, cell);
       } else {
-        let options = [...tileTypes];
+        let options = [...spriteTypes];
 
         if (y > 0) {
           const up = this._layer.get({ x, y: y - 1 });
@@ -201,18 +201,18 @@ export class Layer {
   /**
    * Updates the available options based on a rule.
    *
-   * @param {TileName[]} options - Current available options
-   * @param {TileName[]} neighborOptions - Options from neighboring cells
+   * @param {SpriteName[]} options - Current available options
+   * @param {SpriteName[]} neighborOptions - Options from neighboring cells
    * @param {LayerRules} rules - Array of rules
    * @param {number} direction - Direction of the neighbor cell
-   * @returns {TileName[]} - Updated available options
+   * @returns {SpriteName[]} - Updated available options
    */
   private _updateOptionsBasedOnRule(
-    options: TileName[],
-    neighborOptions: TileName[],
+    options: SpriteName[],
+    neighborOptions: SpriteName[],
     rules: LayerRules,
     direction: number,
-  ): TileName[] {
+  ): SpriteName[] {
     const validOptions = neighborOptions.flatMap((option) => rules[option][direction]);
 
     return this._checkValid(options, validOptions);
@@ -224,7 +224,7 @@ export class Layer {
    * @param {number} x - X-coordinate
    * @param {number} y - Y-coordinate
    * @param {boolean} collapsed - Whether the cell is collapsed
-   * @param {TileName[]} options - Array of available tile options
+   * @param {SpriteName[]} options - Array of available sprite options
    * @param {boolean} boundary - Whether the cell is on the boundary
    */
   private _setLayerCell(cell: LayerCell): void {
@@ -234,38 +234,38 @@ export class Layer {
   }
 
   /**
-   * Set a random tile using weight
+   * Set a random sprite using weight
    *
    * @param {LayerCell} cell - layer cell
-   * @param {TileWeight[]} tileTypes - Array of weighed tiles
+   * @param {SpriteWeight[]} spriteTypes - Array of weighed sprites
    */
-  private _setRandomTileByIndex({ coords, options }: LayerCell, tileOptions: TileWeight[]): void {
-    const optionsWeight = tileOptions.filter(([tile]) => options.includes(tile));
-    let tileName = null;
+  private _setRandomSpriteByIndex({ coords, options }: LayerCell, spriteOptions: SpriteWeight[]): void {
+    const optionsWeight = spriteOptions.filter(([sprite]) => options.includes(sprite));
+    let spriteName = null;
 
     if (optionsWeight.length) {
-      tileName = weightedRandomElement(optionsWeight);
+      spriteName = weightedRandomElement(optionsWeight);
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const [_, __, boundary] = optionsWeight.find(([tile]) => tileName === tile);
+      const [_, __, boundary] = optionsWeight.find(([sprite]) => spriteName === sprite);
 
       this._setLayerCell({
         coords,
         collapsed: true,
-        options: [tileName],
+        options: [spriteName],
         boundary,
       });
     } else {
       this._setLayerCell({
         coords,
         collapsed: true,
-        options: [tileName],
+        options: [spriteName],
         boundary: false,
       });
     }
   }
 
   /**
-   * Selecting a random cell for collapse by the minimum possible tiles
+   * Selecting a random cell for collapse by the minimum possible sprites
    *
    * @returns {LayerCell} - Layer cell
    */
@@ -294,13 +294,13 @@ export class Layer {
   }
 
   /**
-   * Narrowing the list of possible tiles
+   * Narrowing the list of possible sprites
    *
-   * @param {TileName[]} options - List of all cell tiles
-   * @param {TileName[]} valid - List of valid tiles
-   * @returns {TileName[]} - List of filtered tiles
+   * @param {SpriteName[]} options - List of all cell sprites
+   * @param {SpriteName[]} valid - List of valid sprites
+   * @returns {SpriteName[]} - List of filtered sprites
    */
-  private _checkValid(options: TileName[], valid: TileName[]): TileName[] {
+  private _checkValid(options: SpriteName[], valid: SpriteName[]): SpriteName[] {
     const filteredOption = options.filter((option: number) => {
       return valid.includes(option);
     });

@@ -1,4 +1,4 @@
-import { CoordsTuple } from '@entities/tile';
+import { CoordsTuple } from '@entities/sprite';
 
 export const enum SandType {
   TOP_LEFT,

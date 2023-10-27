@@ -1,28 +1,28 @@
 import { DecoType } from './deco.const';
-import { DecoTile } from './deco';
+import { DecoSprite } from './deco';
 
-describe('DecoTile testing', () => {
-  let decoTile: DecoTile;
+describe('DecoSprite testing', () => {
+  let decoSprite: DecoSprite;
 
   beforeEach(() => {
-    decoTile = new DecoTile();
+    decoSprite = new DecoSprite();
   });
 
   it('should create an instance', () => {
-    expect(decoTile).toBeInstanceOf(DecoTile);
+    expect(decoSprite).toBeInstanceOf(DecoSprite);
   });
 
   it('should set deco type to MUSHROOM_M by default', () => {
-    expect((decoTile as any)._type).toBe(DecoType.MUSHROOM_M);
+    expect((decoSprite as any)._type).toBe(DecoType.MUSHROOM_M);
   });
 
   it('should change deco type when setType is called', () => {
-    decoTile.setType(DecoType.BONE_M_LEFT);
-    expect((decoTile as any)._type).toBe(DecoType.BONE_M_LEFT);
+    decoSprite.setType(DecoType.BONE_M_LEFT);
+    expect((decoSprite as any)._type).toBe(DecoType.BONE_M_LEFT);
   });
 
   it('should have a valid coordinates map', () => {
-    const coordsMap = (decoTile as any)._getCoordsMap();
+    const coordsMap = (decoSprite as any)._getCoordsMap();
     expect(coordsMap).toBeDefined();
     expect(coordsMap).toBeInstanceOf(Object);
     Object.values([DecoType.MUSHROOM_S, DecoType.BUSH_S, DecoType.BONE_S_LEFT, DecoType.PUMPKIN_S]).forEach((type) => {

@@ -1,20 +1,20 @@
-import { TileName } from "@core/renderer";
+import { SpriteName } from "@core/renderer";
 
 export interface LayerCell {
 	collapsed: boolean,
 	coords: [number, number],
-	options: TileName[],
+	options: SpriteName[],
 	boundary: boolean,
 }
 
 export interface LayerCondition {
-  tile: TileName;
+  sprite: SpriteName;
   coords: [number, number];
 	boundary?: boolean;
 }
 
 export interface LayerRules {
-  [key: number]: TileName[][];
+  [key: number]: SpriteName[][];
 }
 
-export type TileWeight = [TileName, number, boolean];
+export type SpriteWeight = [SpriteName, number, boolean];

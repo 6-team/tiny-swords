@@ -1,28 +1,28 @@
-import { ElevationTile } from './elevation';
+import { ElevationSprite } from './elevation';
 import { ElevationType } from './elevation.const';
 
-describe('ElevationTile testing', () => {
-  let elevationTile: ElevationTile;
+describe('ElevationSprite testing', () => {
+  let elevationSprite: ElevationSprite;
 
   beforeEach(() => {
-    elevationTile = new ElevationTile();
+    elevationSprite = new ElevationSprite();
   });
 
   it('should create an instance', () => {
-    expect(elevationTile).toBeInstanceOf(ElevationTile);
+    expect(elevationSprite).toBeInstanceOf(ElevationSprite);
   });
 
   it('should set elevation type to MIDDLE_MIDDLE by default', () => {
-    expect((elevationTile as any)._type).toBe(ElevationType.MIDDLE_MIDDLE);
+    expect((elevationSprite as any)._type).toBe(ElevationType.MIDDLE_MIDDLE);
   });
 
   it('should change elevation type when setType is called', () => {
-    elevationTile.setType(ElevationType.BOTTOM_RIGHT);
-    expect((elevationTile as any)._type).toBe(ElevationType.BOTTOM_RIGHT);
+    elevationSprite.setType(ElevationType.BOTTOM_RIGHT);
+    expect((elevationSprite as any)._type).toBe(ElevationType.BOTTOM_RIGHT);
   });
 
   it('should have a valid coordinates map', () => {
-    const coordsMap = (elevationTile as any)._getCoordsMap();
+    const coordsMap = (elevationSprite as any)._getCoordsMap();
     expect(coordsMap).toBeDefined();
     expect(coordsMap).toBeInstanceOf(Object);
     Object.values([

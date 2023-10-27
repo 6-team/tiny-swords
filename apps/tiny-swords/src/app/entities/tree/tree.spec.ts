@@ -1,24 +1,24 @@
-import { TreeTile } from './tree';
+import { TreeSprite } from './tree';
 import { TreeType } from './tree.const';
 
-describe('TreeTile', () => {
-  it('should create a TreeTile with the default type', () => {
-    const towerTile = new TreeTile();
+describe('TreeSprite', () => {
+  it('should create a TreeSprite with the default type', () => {
+    const towerSprite = new TreeSprite();
 
-    expect(towerTile.type).toBe(TreeType.STRUMP);
+    expect(towerSprite.type).toBe(TreeType.STRUMP);
   });
 
-  it('should create a TreeTile with the specified type', () => {
-    const towerTile = new TreeTile(TreeType.BOTTOM_RIGHT);
+  it('should create a TreeSprite with the specified type', () => {
+    const towerSprite = new TreeSprite(TreeType.BOTTOM_RIGHT);
 
-    expect(towerTile.type).toBe(TreeType.BOTTOM_RIGHT);
+    expect(towerSprite.type).toBe(TreeType.BOTTOM_RIGHT);
   });
 
-  it('should set the type of the TreeTile', () => {
-    const towerTile = new TreeTile();
+  it('should set the type of the TreeSprite', () => {
+    const towerSprite = new TreeSprite();
 
-    towerTile.setType(TreeType.MIDDLE_LEFT);
+    towerSprite.setType(TreeType.MIDDLE_LEFT);
 
-    expect(towerTile.type).toBe(TreeType.MIDDLE_LEFT);
+    expect(towerSprite.type).toBe(TreeType.MIDDLE_LEFT);
   });
 });

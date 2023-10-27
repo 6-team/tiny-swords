@@ -1,6 +1,6 @@
-# HouseTile
+# HouseSprite
 
-The `HouseTile` class represents a tile with a house entity. It extends the `Tile` class and provides functionality to manage and display house entities.
+The `HouseSprite` class represents a sprite with a house entity. It extends the `Sprite` class and provides functionality to manage and display house entities.
 
 ## Table of Contents
 
@@ -11,19 +11,19 @@ The `HouseTile` class represents a tile with a house entity. It extends the `Til
 
 ## Usage
 
-### Creating a HouseTile
+### Creating a HouseSprite
 
-You can create a `HouseTile` instance with a specified house type or use the default type, which is `HouseType.TOP_LEFT`.
+You can create a `HouseSprite` instance with a specified house type or use the default type, which is `HouseType.TOP_LEFT`.
 
 ```javascript
-import { HouseTile } from './houseTile';
+import { HouseSprite } from './houseSprite';
 import { HouseType } from './house.const';
 
-// Create a HouseTile with a specific type
-const houseTile = new HouseTile(HouseType.TOP_LEFT);
+// Create a HouseSprite with a specific type
+const houseSprite = new HouseSprite(HouseType.TOP_LEFT);
 
-// Create a HouseTile with the default type (HouseType.TOP_LEFT)
-const defaultHouseTile = new HouseTile();
+// Create a HouseSprite with the default type (HouseType.TOP_LEFT)
+const defaultHouseSprite = new HouseSprite();
 ```
 
 ### Setting the House Type
@@ -31,7 +31,7 @@ const defaultHouseTile = new HouseTile();
 You can set the type of the house using the `setType` method.
 
 ```javascript
-houseTile.setType(HouseType.TOP_RIGHT);
+houseSprite.setType(HouseType.TOP_RIGHT);
 ```
 
 ## Properties
@@ -46,4 +46,4 @@ houseTile.setType(HouseType.TOP_RIGHT);
 
 ## Installation
 
-You can include the `HouseTile` class in your project by importing it as shown in the usage examples.
+You can include the `HouseSprite` class in your project by importing it as shown in the usage examples.

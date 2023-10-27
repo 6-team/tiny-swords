@@ -68,7 +68,7 @@ describe('layers utils testing', () => {
       { coords: [2, 2], options: ['B'], boundary: false },
       { coords: [3, 3], options: ['A'], boundary: true },
     ];
-    const condition = (tile, boundary) => tile === 'A' && !boundary;
+    const condition = (sprite, boundary) => sprite === 'A' && !boundary;
     const result = createCoordsLayerDict(cells, condition);
 
     expect(result).toStrictEqual({ '1-1': true });
@@ -84,23 +84,23 @@ describe('layers utils testing', () => {
     result.forEach((coords) => expect(condition(coords)).toBe(true));
   });
 
-  it('createLayerConditions should create an array of layer conditions for tile placement', () => {
+  it('createLayerConditions should create an array of layer conditions for sprite placement', () => {
     const availableCells = [
       [1, 1],
       [2, 2],
       [3, 3],
     ];
-    const tilesList = [
+    const spritesList = [
       {
         count: 2,
-        weightedTiles: [
+        weightedSprites: [
           ['A', 2],
           ['B', 3],
         ],
       },
-      { count: 1, weightedTiles: [['C', 1]] },
+      { count: 1, weightedSprites: [['C', 1]] },
     ];
-    const result = createLayerConditions(availableCells, tilesList);
+    const result = createLayerConditions(availableCells, spritesList);
 
     expect(result).toHaveLength(3);
   });

@@ -1,7 +1,7 @@
 import { ForegroundLayer } from './foreground-layer';
 import { Layer } from '@core/layer';
 import { LevelType } from '@core/level';
-import { CoordsTuple } from '@entities/tile';
+import { CoordsTuple } from '@entities/sprite';
 
 describe('ForegroundLayer', () => {
   it('should create a ForegroundLayer instance filled with foreground conditions', () => {

@@ -30,22 +30,22 @@ describe('Layer class functions', () => {
   it('fill(conditionsList) methods updates Layer cells accordingly', () => {
     layer.fill([
       [
-        { tile: 'tile1', coords: [0, 0], boundary: true },
-        { tile: 'tile2', coords: [1, 1], boundary: true },
+        { sprite: 'sprite1', coords: [0, 0], boundary: true },
+        { sprite: 'sprite2', coords: [1, 1], boundary: true },
       ],
     ]);
 
     expect(layer._layer.get({ x: 0, y: 0 })).toEqual({
       collapsed: true,
       coords: [0, 0],
-      options: ['tile1'],
+      options: ['sprite1'],
       boundary: true,
     });
 
     expect(layer._layer.get({ x: 1, y: 1 })).toEqual({
       collapsed: true,
       coords: [1, 1],
-      options: ['tile2'],
+      options: ['sprite2'],
       boundary: true,
     });
   });
@@ -58,41 +58,41 @@ describe('Layer class functions', () => {
     expect(layer._allCellsCollapsed()).toBe(true);
   });
 
-  it('_initializeNonCollapsedCells(tileTypes) initializes non-collapsed cells with provided tileTypes', () => {
-    const tileTypes = ['tile1', 'tile2'];
-    layer._initializeNonCollapsedCells(tileTypes);
+  it('_initializeNonCollapsedCells(spriteTypes) initializes non-collapsed cells with provided spriteTypes', () => {
+    const spriteTypes = ['sprite1', 'sprite2'];
+    layer._initializeNonCollapsedCells(spriteTypes);
     layer._layer.array.forEach((cell) => {
       if (!cell.collapsed) {
-        expect(cell.options).toEqual(tileTypes);
+        expect(cell.options).toEqual(spriteTypes);
       }
     });
   });
 
   it('_setLayerCell(cell) updates the desired cell in the layer', () => {
-    const cellData = { collapsed: false, coords: [0, 1], options: ['tile1'], boundary: true };
+    const cellData = { collapsed: false, coords: [0, 1], options: ['sprite1'], boundary: true };
     layer._setLayerCell(cellData);
     expect(layer._layer.get({ x: 0, y: 1 })).toEqual(cellData);
   });
 
-  it('_setRandomTileByIndex(cell, tileTypes) sets a random tile by index', () => {
-    const cellData = { collapsed: false, coords: [0, 0], options: ['tile1', 'tile2'] };
-    const tileTypes = [
-      ['tile1', 1, true],
-      ['tile2', 1, false],
+  it('_setRandomSpriteByIndex(cell, spriteTypes) sets a random sprite by index', () => {
+    const cellData = { collapsed: false, coords: [0, 0], options: ['sprite1', 'sprite2'] };
+    const spriteTypes = [
+      ['sprite1', 1, true],
+      ['sprite2', 1, false],
     ];
 
     for (let i = 0; i < 10; i++) {
       // Run multiple times to take randomness into account
-      layer._setRandomTileByIndex(cellData, tileTypes);
+      layer._setRandomSpriteByIndex(cellData, spriteTypes);
       const resultCell = layer._layer.get({ x: 0, y: 0 });
-      expect(['tile1', 'tile2']).toContain(resultCell.options[0]);
+      expect(['sprite1', 'sprite2']).toContain(resultCell.options[0]);
       expect(resultCell.collapsed).toBe(true);
     }
   });
 
   it('_checkValid(options, valid) returns a filtered list of options that are valid', () => {
-    const options = ['tile1', 'tile2', 'tile3'];
-    const valid = ['tile2', 'tile3'];
+    const options = ['sprite1', 'sprite2', 'sprite3'];
+    const valid = ['sprite2', 'sprite3'];
     const result = layer._checkValid(options, valid);
     expect(result).toEqual(valid);
   });
@@ -104,24 +104,24 @@ describe('Layer class functions', () => {
     expect(clonedMatrix.array).toEqual(layer._layer.array);
   });
 
-  it('_collapseCellOptions(rules, tileTypes) modifies layer based on rules and tile types', () => {
+  it('_collapseCellOptions(rules, spriteTypes) modifies layer based on rules and sprite types', () => {
     layer.fill([
       [
-        { tile: 'tile1', coords: [0, 2], boundary: false },
-        { tile: 'tile2', coords: [1, 1], boundary: false },
+        { sprite: 'sprite1', coords: [0, 2], boundary: false },
+        { sprite: 'sprite2', coords: [1, 1], boundary: false },
       ],
     ]);
 
     const rules = {
-      tile1: [['tile2'], [], [], []],
-      tile2: [[], [], ['tile1'], []],
+      sprite1: [['sprite2'], [], [], []],
+      sprite2: [[], [], ['sprite1'], []],
     };
 
-    const tileTypes = ['tile1', 'tile2'];
+    const spriteTypes = ['sprite1', 'sprite2'];
 
-    layer._collapseCellOptions(rules, tileTypes);
+    layer._collapseCellOptions(rules, spriteTypes);
 
     const updatedCell = layer._layer.get({ x: 1, y: 2 });
-    expect(updatedCell.options).not.toContain('tile2');
+    expect(updatedCell.options).not.toContain('sprite2');
   });
 });

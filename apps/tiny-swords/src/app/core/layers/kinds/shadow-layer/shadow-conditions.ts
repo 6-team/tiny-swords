@@ -1,27 +1,27 @@
 import { Layer, LayerCondition } from '@core/layer';
 import { LevelType } from '@core/level';
-import { TileName } from '@core/renderer';
+import { SpriteName } from '@core/renderer';
 
 /**
- * Get ground conditions based on the given tile and coordinates.
+ * Get ground conditions based on the given sprite and coordinates.
  *
- * @param {TileName} tile - The tile type.
- * @param {Array<number>} coords - The coordinates [x, y] for the tile.
+ * @param {SpriteName} sprite - The sprite type.
+ * @param {Array<number>} coords - The coordinates [x, y] for the sprite.
  * @returns {Array<LayerCondition>} An array of ground conditions.
  */
-const getGroundConditions = (tile: TileName, coords: [number, number]): LayerCondition[] => {
-  switch (tile) {
+const getGroundConditions = (sprite: SpriteName, coords: [number, number]): LayerCondition[] => {
+  switch (sprite) {
     // shadow bridge
-    case TileName.BRIDGE_MIDDLE:
-      return [{ tile: TileName.BRIDGE_SHADOW, coords }];
+    case SpriteName.BRIDGE_MIDDLE:
+      return [{ sprite: SpriteName.BRIDGE_SHADOW, coords }];
 
     // Grass under the bridge foundations
-    case TileName.BRIDGE_LEFT:
-      return [{ tile: TileName.GROUND_MIDDLE_RIGHT, coords }];
-    case TileName.BRIDGE_RIGHT:
-      return [{ tile: TileName.GROUND_MIDDLE_LEFT, coords }];
-    case TileName.TREE_STRUMP:
-      return [{ tile: TileName.GROUND_MIDDLE_MIDDLE, coords }];
+    case SpriteName.BRIDGE_LEFT:
+      return [{ sprite: SpriteName.GROUND_MIDDLE_RIGHT, coords }];
+    case SpriteName.BRIDGE_RIGHT:
+      return [{ sprite: SpriteName.GROUND_MIDDLE_LEFT, coords }];
+    case SpriteName.TREE_STRUMP:
+      return [{ sprite: SpriteName.GROUND_MIDDLE_MIDDLE, coords }];
 
     default:
       return [];
@@ -29,23 +29,23 @@ const getGroundConditions = (tile: TileName, coords: [number, number]): LayerCon
 };
 
 /**
- * Get sand conditions based on the given tile and coordinates.
+ * Get sand conditions based on the given sprite and coordinates.
  *
- * @param {TileName} tile - The tile type.
- * @param {Array<number>} coords - The coordinates [x, y] for the tile.
+ * @param {SpriteName} sprite - The sprite type.
+ * @param {Array<number>} coords - The coordinates [x, y] for the sprite.
  * @returns {Array<LayerCondition>} An array of sand conditions.
  */
-const getSandConditions = (tile: TileName, coords: [number, number]): LayerCondition[] => {
-  switch (tile) {
+const getSandConditions = (sprite: SpriteName, coords: [number, number]): LayerCondition[] => {
+  switch (sprite) {
     // Shadow under the bridge
-    case TileName.BRIDGE_MIDDLE:
-      return [{ tile: TileName.BRIDGE_SHADOW, coords }];
+    case SpriteName.BRIDGE_MIDDLE:
+      return [{ sprite: SpriteName.BRIDGE_SHADOW, coords }];
 
     // Sand under the bridge foundations
-    case TileName.BRIDGE_LEFT:
-      return [{ tile: TileName.SAND_MIDDLE_RIGHT, coords }];
-    case TileName.BRIDGE_RIGHT:
-      return [{ tile: TileName.SAND_MIDDLE_LEFT, coords }];
+    case SpriteName.BRIDGE_LEFT:
+      return [{ sprite: SpriteName.SAND_MIDDLE_RIGHT, coords }];
+    case SpriteName.BRIDGE_RIGHT:
+      return [{ sprite: SpriteName.SAND_MIDDLE_LEFT, coords }];
 
     default:
       return [];
@@ -53,19 +53,19 @@ const getSandConditions = (tile: TileName, coords: [number, number]): LayerCondi
 };
 
 /**
- * Get stone conditions based on the given tile and coordinates.
+ * Get stone conditions based on the given sprite and coordinates.
  *
- * @param {TileName} tile - The tile type.
- * @param {Array<number>} coords - The coordinates [x, y] for the tile.
+ * @param {SpriteName} sprite - The sprite type.
+ * @param {Array<number>} coords - The coordinates [x, y] for the sprite.
  * @returns {Array<LayerCondition>} An array of stone conditions.
  */
-const getStonesConditions = (tile: TileName, coords: [number, number]): LayerCondition[] => {
-  switch (tile) {
+const getStonesConditions = (sprite: SpriteName, coords: [number, number]): LayerCondition[] => {
+  switch (sprite) {
     // Stone under the bridge foundations
-    case TileName.BRIDGE_LEFT:
-      return [{ tile: TileName.ELEVATION_MIDDLE_RIGHT, coords }];
-    case TileName.BRIDGE_RIGHT:
-      return [{ tile: TileName.ELEVATION_MIDDLE_LEFT, coords }];
+    case SpriteName.BRIDGE_LEFT:
+      return [{ sprite: SpriteName.ELEVATION_MIDDLE_RIGHT, coords }];
+    case SpriteName.BRIDGE_RIGHT:
+      return [{ sprite: SpriteName.ELEVATION_MIDDLE_LEFT, coords }];
 
     default:
       return [];

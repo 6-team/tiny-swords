@@ -65,7 +65,7 @@ export default class Hero
       getCollisionArea: (moving) => {
         const [x1, y1] = moving.coords;
 
-        return [x1 + grid64.tileSize, y1 + grid64.tileSize, grid64.tileSize, grid64.tileSize];
+        return [x1 + grid64.spriteSize, y1 + grid64.spriteSize, grid64.spriteSize, grid64.spriteSize];
       },
     });
 

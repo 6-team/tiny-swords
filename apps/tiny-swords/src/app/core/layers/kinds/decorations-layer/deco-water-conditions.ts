@@ -1,14 +1,14 @@
-import { TileName } from '@core/renderer';
+import { SpriteName } from '@core/renderer';
 import { createCoordsLayerDict, createLayerConditions, getQuantityCells, getShuffleFilterCoords } from '@core/layers';
 import { LayerCondition } from '@core/layer';
 
-const waterWeightedTiles = (cells: number) => [
+const waterWeightedSprites = (cells: number) => [
   {
     count: getQuantityCells(cells, 15),
-    weightedTiles: [
-      { tile: TileName.ROCKS_S, weight: 5 },
-      { tile: TileName.ROCKS_M, weight: 2 },
-      { tile: TileName.ROCKS_L, weight: 1 },
+    weightedSprites: [
+      { sprite: SpriteName.ROCKS_S, weight: 5 },
+      { sprite: SpriteName.ROCKS_M, weight: 2 },
+      { sprite: SpriteName.ROCKS_L, weight: 1 },
     ],
   },
 ];
@@ -20,8 +20,8 @@ const waterWeightedTiles = (cells: number) => [
  * @returns {Object} A dictionary of water cells.
  */
 const layerCellsDict = (layer) =>
-  createCoordsLayerDict(layer, (tile) => {
-    return tile === TileName.WATER_MIDDLE_MIDDLE;
+  createCoordsLayerDict(layer, (sprite) => {
+    return sprite === SpriteName.WATER_MIDDLE_MIDDLE;
   });
 
 /**
@@ -33,7 +33,7 @@ const layerCellsDict = (layer) =>
 export const decorationsWaterConditions = (layers): LayerCondition[] => {
   const layersCellsDict = layers.reduce((acc, layer) => ({ ...acc, ...layerCellsDict(layer.array) }), {});
   const availableCells = getShuffleFilterCoords(layers[0], ([x, y]) => layersCellsDict[`${x}-${y}`]);
-  const weightedTiles = waterWeightedTiles(availableCells.length);
+  const weightedSprites = waterWeightedSprites(availableCells.length);
 
-  return availableCells.length ? createLayerConditions(availableCells, weightedTiles) : [];
+  return availableCells.length ? createLayerConditions(availableCells, weightedSprites) : [];
 };

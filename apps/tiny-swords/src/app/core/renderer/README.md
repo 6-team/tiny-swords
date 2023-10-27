@@ -29,21 +29,21 @@ renderer.clear();
 
 ### render
 
-The render method is used to render a static in-game element. Method arguments include the size and placement of the element and the specific tile to be rendered.
+The render method is used to render a static in-game element. Method arguments include the size and placement of the element and the specific sprite to be rendered.
 
 ```typescript
-tile = someTile; // ITile object
+sprite = someSprite; // ISprite object
 elementPxCoords = [0, 0, 100, 100]; // x, y, width, height in pixels
-renderer.render(elementPxCoords, tile);
+renderer.render(elementPxCoords, sprite);
 ```
 
 ### renderWithAnimation
 
-Used to add animation to a static in-game tile, it accepts the same arguments as render, with an additional deltaTime argument to decide the duration of the animation.
+Used to add animation to a static in-game sprite, it accepts the same arguments as render, with an additional deltaTime argument to decide the duration of the animation.
 
 ```typescript
 deltaTime = 1000; // milliseconds
-renderer.renderWithAnimation(elementPxCoords, tile, deltaTime);
+renderer.renderWithAnimation(elementPxCoords, sprite, deltaTime);
 ```
 
 ### renderMovable
@@ -51,7 +51,7 @@ renderer.renderWithAnimation(elementPxCoords, tile, deltaTime);
 The renderMovable method is used for rendering an in-game element that can move such as characters or enemies.
 
 ```typescript
-renderer.renderMovable(movableTile, deltaTime);
+renderer.renderMovable(movableSprite, deltaTime);
 ```
 
 ### renderStaticLayer and renderMovableLayer

@@ -10,7 +10,7 @@ import { animationInterval$ } from '@tools/observables';
 
 /**
  * Moving is a class for handling moving elements.
- * Coordinates are specified in tiles, and the chosen coordinate system then translates the values into pixels
+ * Coordinates are specified in sprites, and the chosen coordinate system then translates the values into pixels
  *
  * @class
  * @implements {IMoving}
@@ -155,7 +155,7 @@ export class Moving implements IMoving {
      * If the movement has ended but the movement command has not been terminated
      */
     if (this._movingProgressRemaining === 0 && direction !== MovingDirection.IDLE) {
-      this._movingProgressRemaining = grid64.tileSize;
+      this._movingProgressRemaining = grid64.spriteSize;
       this._lastDirection = direction;
       this._breakpoints$.next(true);
 

@@ -1,25 +1,25 @@
-import { Tile, CoordsTuple } from '@entities/tile';
+import { Sprite, CoordsTuple } from '@entities/sprite';
 import { GoldMineType, mapTerrainToCoords } from './gold-mine.const';
 
 /**
- * Represents a GoldMineTile, a specific type of Tile with gold mine-related information.
+ * Represents a GoldMineSprite, a specific type of Sprite with gold mine-related information.
  */
-export class GoldMineTile extends Tile<GoldMineType> {
+export class GoldMineSprite extends Sprite<GoldMineType> {
   /**
-   * The type of the gold mine tile.
+   * The type of the gold mine sprite.
    * @type {GoldMineType}
    */
   protected _type: GoldMineType;
 
   /**
-   * The sprite URL for the gold mine tile.
+   * The sprite URL for the gold mine sprite.
    * @type {string}
    */
   protected _sprite = './img/Resources/Gold_mine/GoldMine_Inactive.png';
 
   /**
-   * Creates a new GoldMineTile instance.
-   * @param {GoldMineType} type - The type of the gold mine tile (default: GoldMineType.TOP_LEFT).
+   * Creates a new GoldMineSprite instance.
+   * @param {GoldMineType} type - The type of the gold mine sprite (default: GoldMineType.TOP_LEFT).
    */
   constructor(type: GoldMineType = GoldMineType.TOP_LEFT) {
     super();
@@ -27,8 +27,8 @@ export class GoldMineTile extends Tile<GoldMineType> {
   }
 
   /**
-   * Sets the type of the gold mine tile.
-   * @param {GoldMineType} type - The type of the gold mine tile to set (default: GoldMineType.TOP_LEFT).
+   * Sets the type of the gold mine sprite.
+   * @param {GoldMineType} type - The type of the gold mine sprite to set (default: GoldMineType.TOP_LEFT).
    * @returns {void}
    */
   setType(type: GoldMineType = GoldMineType.TOP_LEFT): void {
@@ -36,7 +36,7 @@ export class GoldMineTile extends Tile<GoldMineType> {
   }
 
   /**
-   * Retrieves the coordinate mapping for the gold mine tile.
+   * Retrieves the coordinate mapping for the gold mine sprite.
    * @returns {object} A mapping of gold mine types to coordinate values.
    */
   protected _getCoordsMap(): Record<GoldMineType, CoordsTuple> {

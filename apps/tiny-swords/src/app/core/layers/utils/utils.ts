@@ -1,6 +1,6 @@
 import { Layer } from '@core/layer';
 import { LayerCell, LayerCondition } from '@core/layer';
-import { TileName } from '@core/renderer';
+import { SpriteName } from '@core/renderer';
 
 /**
  * Returns a random element from an array.
@@ -29,10 +29,10 @@ export const randomInteger = (min: number, max: number): number => {
 /**
  * Randomly selects an element from an array of items with weighted probabilities.
  *
- * @param {[TileName, number, boolean?][]} items - An array of items, each represented as [element, weight, boundary?].
- * @returns {TileName} - A randomly selected element based on weights.
+ * @param {[SpriteName, number, boolean?][]} items - An array of items, each represented as [element, weight, boundary?].
+ * @returns {SpriteName} - A randomly selected element based on weights.
  */
-export const weightedRandomElement = (items: [TileName, number, boolean?][]): TileName => {
+export const weightedRandomElement = (items: [SpriteName, number, boolean?][]): SpriteName => {
   const table = items.flatMap(([item, weight]) => Array(weight).fill(item));
 
   return randomElement(table);
@@ -72,12 +72,12 @@ export const getQuantityCells = (allCells: number, percent: number): number => {
  * Creates a dictionary of coordinates for cells that meet a specified condition.
  *
  * @param {LayerCell[]} cells - An array of layer cells to evaluate.
- * @param {function} condition - A condition function that takes a tile name and boundary flag.
+ * @param {function} condition - A condition function that takes a sprite name and boundary flag.
  * @returns {Record<string, true>} - A dictionary of coordinates where the condition is met.
  */
 export const createCoordsLayerDict = (
   cells: LayerCell[],
-  condition: (tile: TileName, boundary: boolean) => boolean,
+  condition: (sprite: SpriteName, boundary: boolean) => boolean,
 ): Record<string, true> => {
   return cells.reduce((acc, { coords, options, boundary }) => {
     if (condition(options[0], boundary)) {
@@ -129,25 +129,25 @@ export const getShuffleFilterCoords = (
 };
 
 /**
- * Creates an array of layer conditions for filling a layer with tiles.
+ * Creates an array of layer conditions for filling a layer with sprites.
  *
  * @param {Array<[number, number]>} availableCells - An array of available cell coordinates.
- * @param {Array<{ count: number, weightedTiles: Array<{ tile: TileName, weight: number }> }>} tilesList - A list of tiles with counts and weights.
- * @returns {Array<LayerCondition>} - An array of layer conditions for tile placement.
+ * @param {Array<{ count: number, weightedSprites: Array<{ sprite: SpriteName, weight: number }> }>} spritesList - A list of sprites with counts and weights.
+ * @returns {Array<LayerCondition>} - An array of layer conditions for sprite placement.
  */
-export const createLayerConditions = (availableCells, tilesList): LayerCondition[] => {
+export const createLayerConditions = (availableCells, spritesList): LayerCondition[] => {
   const conditions = [];
 
   let cursor = 0;
 
-  for (let i = 0; i < tilesList.length; i++) {
-    const { count, weightedTiles } = tilesList[i];
+  for (let i = 0; i < spritesList.length; i++) {
+    const { count, weightedSprites } = spritesList[i];
 
     for (let j = 0; j < count; j++) {
       const coords = availableCells[cursor];
 
       conditions.push({
-        tile: weightedRandomElement(weightedTiles.map(({ tile, weight }) => [tile, weight])),
+        sprite: weightedRandomElement(weightedSprites.map(({ sprite, weight }) => [sprite, weight])),
         coords,
         boundary: false,
       });

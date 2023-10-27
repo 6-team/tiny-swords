@@ -1,25 +1,25 @@
 import { WithSetPersonageContext } from '@abilities/abilities.types';
 import { ICharacter } from '@common/common.types';
-import { Tile } from '@entities/tile';
+import { Sprite } from '@entities/sprite';
 import { CharacterConfig } from './character.types';
 
 /**
  * This class represents a Character with specific type and abilities.
  * The type of the character is determined by CharacterType, whereas its abilities are
- * determined by Abilities. The class extends from the Tile class and implements the
+ * determined by Abilities. The class extends from the Sprite class and implements the
  * ICharacter interface.
  *
  * @template CharacterType
  * @template Abilities
  *
- * @extends {Tile<CharacterType>}
+ * @extends {Sprite<CharacterType>}
  * @implements {ICharacter<Abilities>}
  */
 export default abstract class Character<
     CharacterType extends string | number | symbol,
     Abilities extends Record<string | symbol | number, WithSetPersonageContext>,
   >
-  extends Tile<CharacterType>
+  extends Sprite<CharacterType>
   implements ICharacter<Abilities>
 {
   /**

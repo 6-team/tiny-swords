@@ -1,11 +1,11 @@
-import { Tile } from '@entities/tile';
+import { Sprite } from '@entities/sprite';
 import { SandType, mapTerrainToCoords } from './sand.const';
 
 /**
- * Represents a tile with a sand entity.
- * @extends Tile
+ * Represents a sprite with a sand entity.
+ * @extends Sprite
  */
-export class SandTile extends Tile<SandType> {
+export class SandSprite extends Sprite<SandType> {
   /**
    * The type of the sand.
    * @type {SandType}
@@ -21,8 +21,8 @@ export class SandTile extends Tile<SandType> {
   protected _sprite = './img/Terrain/Ground/Tilemap_Flat.png';
 
   /**
-   * Creates an instance of the SandTile.
-   * @param {SandTile} type - The type of the sand (default is SandTile.TOP_LEFT).
+   * Creates an instance of the SandSprite.
+   * @param {SandSprite} type - The type of the sand (default is SandSprite.TOP_LEFT).
    */
   constructor(type: SandType = SandType.MIDDLE_MIDDLE) {
     super();
@@ -32,7 +32,7 @@ export class SandTile extends Tile<SandType> {
 
   /**
    * Sets the type of the sand.
-   * @param {SandType} type - The type of the sand (default is SandTile.TOP_LEFT).
+   * @param {SandType} type - The type of the sand (default is SandSprite.TOP_LEFT).
    */
   setType(type: SandType = SandType.MIDDLE_MIDDLE): void {
     this._type = type;

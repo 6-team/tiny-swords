@@ -1,6 +1,6 @@
 # Layers Class
 
-The `Layers` class is designed for creating an array of layers for static rendering based on the level type. It offers a versatile solution for managing and rendering different elements of a game level, including terrain, buildings, decorations, and more.
+The `Layers` class is designed for creating an array of layers for static rendering based on the level type. It offers a versasprite solution for managing and rendering different elements of a game level, including terrain, buildings, decorations, and more.
 
 ## Class Description
 

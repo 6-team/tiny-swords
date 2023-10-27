@@ -1,4 +1,4 @@
-import { CoordsTuple } from '@entities/tile';
+import { CoordsTuple } from '@entities/sprite';
 
 export enum HeroActionAnimation {
   STANDS_STILL,

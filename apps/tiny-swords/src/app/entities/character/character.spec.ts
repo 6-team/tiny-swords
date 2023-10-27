@@ -1,5 +1,5 @@
 import Character from './character';
-import { CoordsTuple } from '@entities/tile';
+import { CoordsTuple } from '@entities/sprite';
 
 class TestCharacter extends Character<string, { movable: { setContext: () => void } }> {
   protected _type: string;

@@ -1,8 +1,16 @@
-import { ITile } from '../../common/common.types';
-import { ErrorEnum } from './tile.const';
-import { CoordsTuple } from './tile.types';
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { ISprite } from '@common/common.types';
+import { ErrorEnum } from './sprite.const';
+import { CoordsTuple } from './sprite.types';
 
-export abstract class Tile<T extends string | number | symbol> implements ITile {
+/**
+ * Abstract class representing a Sprite for sprite-based graphics and animations.
+ * 
+ * @abstract
+ * @implements {ISprite}
+ * @template T - Type of the sprite (can be string, number, or symbol)
+ */
+export abstract class Sprite<T extends string | number | symbol> implements ISprite {
   protected abstract _sprite: string;
   protected abstract _type: T;
 
@@ -23,9 +31,9 @@ export abstract class Tile<T extends string | number | symbol> implements ITile 
   }
 
   /**
-   * Инициирует загрузку изображения и возвращает промис
+   * Initiates the loading of an image and returns a promise.
    *
-   * @returns Промис для загрузки изображения
+   * @returns {Promise<HTMLImageElement>} A promise that resolves with the loaded image.
    */
   protected _load() {
     return new Promise<HTMLImageElement>((resolve, reject) => {
@@ -38,9 +46,9 @@ export abstract class Tile<T extends string | number | symbol> implements ITile 
   }
 
   /**
-   * Устанавливает кадр анимации
-   *
-   * @param row Номер кадра анимации
+   * Sets the animation frame.
+   * 
+   * @param {number} row - The animation frame number.
    */
   setAnimation(row: number): void {
     this._row = row;
@@ -48,14 +56,14 @@ export abstract class Tile<T extends string | number | symbol> implements ITile 
   }
 
   /**
-   * Устанавливает анимацию, воспроизводит её один раз и возвращает предыдущую анимацию
+   * Sets an animation, plays it once, and returns the previous animation.
    *
-   * @param row Номер анимации
+   * @param {number} row - The animation frame number.
+   * @returns {Promise<void>} A promise that resolves when the animation is completed.
+   *
+   * If the previous animation has not finished, the call is ignored and the returned promise is rejected.
    */
   setAnimationOnce(row: number): Promise<void> {
-    /**
-     * Если предыдущая анимация не завершилась, игнорируем вызов
-     */
     if (this._animationResolve) {
       return Promise.reject();
     }
@@ -74,18 +82,18 @@ export abstract class Tile<T extends string | number | symbol> implements ITile 
   }
 
   /**
-   * Устанавливает тип персонажа, что определяет его внешний вид
+   * Sets the sprite type, which determines its appearance.
    *
-   * @param type Тип персонажа
+   * @param {T} type - The type of the sprite.
    */
   setType(type: T): void {
     this._type = type;
   }
 
   /**
-   * Перключает кадр анимации, если последний кадр был показан достаточное количество времени
+   * Switches the animation frame if the last frame has been displayed for a sufficient amount of time.
    *
-   * @param deltaTime Время, которое прошло с показа предыдущего фрейма
+   * @param {number} deltaTime - The time elapsed since the previous frame was displayed.
    */
   switchAnimationFrame(deltaTime: number) {
     if (this._framePerTime > 1000 / this._fps) {
@@ -101,9 +109,9 @@ export abstract class Tile<T extends string | number | symbol> implements ITile 
   }
 
   /**
-   * Загружает изображение элемента и возвращает его вместе с доп. данными.
+   * Loads the image of the element and returns it along with additional data.
    *
-   * @returns Промис с изображением и мета-данными к нему
+   * @returns {Promise<{ image: HTMLImageElement, coords: CoordsTuple, size: number, scale: number }>} A promise that resolves with an object containing the image and metadata.
    */
   async getData() {
     if (!this._image) {

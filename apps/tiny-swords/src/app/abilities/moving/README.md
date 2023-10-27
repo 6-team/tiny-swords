@@ -1,6 +1,6 @@
 # Moving
 
-The `Moving` class implements the `IMoving` interface and provides the functionality to manage the movement of game elements. The class translates coordinates specified in tiles into pixels, ensuring smooth movement.
+The `Moving` class implements the `IMoving` interface and provides the functionality to manage the movement of game elements. The class translates coordinates specified in sprites into pixels, ensuring smooth movement.
 
 ## Table of Contents
 

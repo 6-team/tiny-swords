@@ -1,4 +1,4 @@
-import { CoordsTuple } from '@entities/tile';
+import { CoordsTuple } from '@entities/sprite';
 import { Layer } from '@core/layer';
 import { LevelType } from '@core/level';
 import {

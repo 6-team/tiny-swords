@@ -1,5 +1,5 @@
 import { LayerCondition } from "@core/layer";
-import { TileName } from "@core/renderer";
+import { SpriteName } from "@core/renderer";
 
 /**
  * Generates water conditions for a given layer.
@@ -11,7 +11,7 @@ export const fullWaterConditions = (layer): LayerCondition[] => {
   const conditions = [];
 
   layer.array.forEach(({ coords }) => {
-    conditions.push({ tile: TileName.WATER_MIDDLE_MIDDLE, coords, })
+    conditions.push({ sprite: SpriteName.WATER_MIDDLE_MIDDLE, coords, })
   });
 
   return conditions;

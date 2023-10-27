@@ -1,13 +1,13 @@
-import { CoordsTuple, Tile } from '@entities/tile';
+import { CoordsTuple, Sprite } from '@entities/sprite';
 
 import { TowerType, mapTerrainToCoords } from './tower.const';
 
 /**
- * Represents a tile with a tower entity.
+ * Represents a sprite with a tower entity.
  *
- * @extends Tile
+ * @extends Sprite
  */
-export class TowerTile extends Tile<TowerType> {
+export class TowerSprite extends Sprite<TowerType> {
   /**
    * The type of the tower.
    * @protected
@@ -16,16 +16,16 @@ export class TowerTile extends Tile<TowerType> {
   protected _type: TowerType;
 
   /**
-   * The sprite URL for the tower tile.
+   * The sprite URL for the tower sprite.
    * @protected
    * @type {string}
    */
   protected _sprite = './img/Factions/Knights/Buildings/Tower/Tower_Blue.png';
 
   /**
-   * Creates a new `TowerTile` instance with the specified type.
+   * Creates a new `TowerSprite` instance with the specified type.
    *
-   * @param {TowerType} type - The type of the tower tile.
+   * @param {TowerType} type - The type of the tower sprite.
    */
   constructor(type: TowerType = TowerType.TOP_LEFT) {
     super();
@@ -43,7 +43,7 @@ export class TowerTile extends Tile<TowerType> {
   }
 
   /**
-   * Gets the coordinates map for tower tiles.
+   * Gets the coordinates map for tower sprites.
    * @protected
    * @returns {Record<T, CoordsTuple>} - The coordinates map.
    */

@@ -1,5 +1,5 @@
 import { boundaryConditions } from './boundary-conditions';
-import { TileName } from '@core/renderer';
+import { SpriteName } from '@core/renderer';
 import { BoundaryLayer } from '@core/layers/kinds/boundary-layer/boundary-layer';
 import { Layer } from '@core/layer';
 
@@ -24,10 +24,10 @@ describe('boundaryConditions', () => {
     const result = boundaryConditions(layers);
 
     expect(result).toEqual([
-      { tile: TileName.BOUNDARY, coords: [0, 0] },
-      { tile: TileName.BOUNDARY, coords: [2, 2] },
-      { tile: TileName.BOUNDARY, coords: [3, 3] },
-      { tile: TileName.BOUNDARY, coords: [4, 4] },
+      { sprite: SpriteName.BOUNDARY, coords: [0, 0] },
+      { sprite: SpriteName.BOUNDARY, coords: [2, 2] },
+      { sprite: SpriteName.BOUNDARY, coords: [3, 3] },
+      { sprite: SpriteName.BOUNDARY, coords: [4, 4] },
     ]);
   });
 });

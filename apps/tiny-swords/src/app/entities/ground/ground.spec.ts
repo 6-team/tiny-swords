@@ -1,28 +1,28 @@
 import { GroundType } from './ground.const';
-import { GroundTile } from './ground';
+import { GroundSprite } from './ground';
 
-describe('GroundTile testing', () => {
-  let groundTile: GroundTile;
+describe('GroundSprite testing', () => {
+  let groundSprite: GroundSprite;
 
   beforeEach(() => {
-    groundTile = new GroundTile();
+    groundSprite = new GroundSprite();
   });
 
   it('should create an instance', () => {
-    expect(groundTile).toBeInstanceOf(GroundTile);
+    expect(groundSprite).toBeInstanceOf(GroundSprite);
   });
 
   it('should set ground type to MIDDLE_MIDDLE by default', () => {
-    expect((groundTile as any)._type).toBe(GroundType.MIDDLE_MIDDLE);
+    expect((groundSprite as any)._type).toBe(GroundType.MIDDLE_MIDDLE);
   });
 
   it('should change ground type when setType is called', () => {
-    groundTile.setType(GroundType.TOP_LEFT);
-    expect((groundTile as any)._type).toBe(GroundType.TOP_LEFT);
+    groundSprite.setType(GroundType.TOP_LEFT);
+    expect((groundSprite as any)._type).toBe(GroundType.TOP_LEFT);
   });
 
   it('should have a valid coordinates map', () => {
-    const coordsMap = (groundTile as any)._getCoordsMap();
+    const coordsMap = (groundSprite as any)._getCoordsMap();
     expect(coordsMap).toBeDefined();
     expect(coordsMap).toBeInstanceOf(Object);
     Object.values([

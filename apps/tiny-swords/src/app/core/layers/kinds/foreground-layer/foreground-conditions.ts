@@ -1,5 +1,5 @@
 import { LayerCondition } from "@core/layer";
-import { TileName } from "@core/renderer";
+import { SpriteName } from "@core/renderer";
 
 /**
  * Template for the upper part of the left house.
@@ -9,8 +9,8 @@ import { TileName } from "@core/renderer";
  */
 export const foregroundLeftHouseConditions = (enter: [number, number]): LayerCondition[] => {
   return [
-    { tile: TileName.HOUSE_TOP_LEFT, coords: [enter[0] - 1, enter[1] - 3] },
-    { tile: TileName.HOUSE_TOP_RIGHT, coords: [enter[0], enter[1] - 3] },
+    { sprite: SpriteName.HOUSE_TOP_LEFT, coords: [enter[0] - 1, enter[1] - 3] },
+    { sprite: SpriteName.HOUSE_TOP_RIGHT, coords: [enter[0], enter[1] - 3] },
   ];
 }
 
@@ -22,8 +22,8 @@ export const foregroundLeftHouseConditions = (enter: [number, number]): LayerCon
  */
 export const foregroundRightHouseConditions = (exit: [number, number]): LayerCondition[] => {
   return [
-    { tile: TileName.HOUSE_TOP_LEFT, coords: [exit[0], exit[1] - 3] },
-    { tile: TileName.HOUSE_TOP_RIGHT, coords: [exit[0] + 1, exit[1] - 3] },
+    { sprite: SpriteName.HOUSE_TOP_LEFT, coords: [exit[0], exit[1] - 3] },
+    { sprite: SpriteName.HOUSE_TOP_RIGHT, coords: [exit[0] + 1, exit[1] - 3] },
   ];
 }
 
@@ -37,14 +37,14 @@ export const foregroundTreeTopConditions = (layer): LayerCondition[] => {
   let conditions = [];
 
   layer.array.forEach(({ coords, options }) => {
-    if (options[0] === TileName.TREE_STRUMP) {
+    if (options[0] === SpriteName.TREE_STRUMP) {
       conditions = [
         ...conditions,
         ...[
-          { tile: TileName.TREE_TOP_MIDDLE, coords: [coords[0], coords[1] - 2] },
-          { tile: TileName.TREE_MIDDLE_LEFT, coords: [coords[0] - 1, coords[1] - 1] },
-          { tile: TileName.TREE_MIDDLE_MIDDLE, coords: [coords[0], coords[1] - 1] },
-          { tile: TileName.TREE_MIDDLE_RIGHT, coords: [coords[0] + 1, coords[1] - 1] },
+          { sprite: SpriteName.TREE_TOP_MIDDLE, coords: [coords[0], coords[1] - 2] },
+          { sprite: SpriteName.TREE_MIDDLE_LEFT, coords: [coords[0] - 1, coords[1] - 1] },
+          { sprite: SpriteName.TREE_MIDDLE_MIDDLE, coords: [coords[0], coords[1] - 1] },
+          { sprite: SpriteName.TREE_MIDDLE_RIGHT, coords: [coords[0] + 1, coords[1] - 1] },
         ]
       ];
     }
@@ -61,8 +61,8 @@ export const foregroundTreeTopConditions = (layer): LayerCondition[] => {
  */
 export const foregroundLeftTowerConditions = (enter: [number, number]): LayerCondition[] => {
   return [
-    { tile: TileName.TOWER_TOP_LEFT, coords: [enter[0] - 1, enter[1] - 3] },
-    { tile: TileName.TOWER_TOP_RIGHT, coords: [enter[0], enter[1] - 3] },
+    { sprite: SpriteName.TOWER_TOP_LEFT, coords: [enter[0] - 1, enter[1] - 3] },
+    { sprite: SpriteName.TOWER_TOP_RIGHT, coords: [enter[0], enter[1] - 3] },
   ];
 }
 
@@ -74,7 +74,7 @@ export const foregroundLeftTowerConditions = (enter: [number, number]): LayerCon
  */
 export const foregroundRightTowerConditions = (exit: [number, number]): LayerCondition[] => {
   return [
-    { tile: TileName.TOWER_TOP_LEFT, coords: [exit[0], exit[1] - 3] },
-    { tile: TileName.TOWER_TOP_RIGHT, coords: [exit[0] + 1, exit[1] - 3] },
+    { sprite: SpriteName.TOWER_TOP_LEFT, coords: [exit[0], exit[1] - 3] },
+    { sprite: SpriteName.TOWER_TOP_RIGHT, coords: [exit[0] + 1, exit[1] - 3] },
   ];
 }

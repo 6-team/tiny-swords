@@ -1,25 +1,25 @@
-import { CoordsTuple, Tile } from '@entities/tile';
+import { CoordsTuple, Sprite } from '@entities/sprite';
 import { BridgeType, mapTerrainToCoords } from './bridge.const';
 
 /**
- * Represents a BridgeTile, a specific type of Tile with bridge-related information.
+ * Represents a BridgeSprite, a specific type of Sprite with bridge-related information.
  */
-export class BridgeTile extends Tile<BridgeType> {
+export class BridgeSprite extends Sprite<BridgeType> {
   /**
-   * The type of the bridge tile.
+   * The type of the bridge sprite.
    * @type {BridgeType}
    */
   protected _type: BridgeType;
 
   /**
-   * The sprite URL for the bridge tile.
+   * The sprite URL for the bridge sprite.
    * @type {string}
    */
   protected _sprite = './img/Terrain/Bridge/Bridge_All.png';
 
   /**
-   * Creates a new BridgeTile instance.
-   * @param {BridgeType} type - The type of the bridge tile (default: BridgeType.MIDDLE).
+   * Creates a new BridgeSprite instance.
+   * @param {BridgeType} type - The type of the bridge sprite (default: BridgeType.MIDDLE).
    */
   constructor(type: BridgeType = BridgeType.MIDDLE) {
     super();
@@ -27,8 +27,8 @@ export class BridgeTile extends Tile<BridgeType> {
   }
 
   /**
-   * Sets the type of the bridge tile.
-   * @param {BridgeType} type - The type of the bridge tile to set (default: BridgeType.MIDDLE).
+   * Sets the type of the bridge sprite.
+   * @param {BridgeType} type - The type of the bridge sprite to set (default: BridgeType.MIDDLE).
    * @returns {void}
    */
   setType(type: BridgeType = BridgeType.MIDDLE): void {
@@ -36,7 +36,7 @@ export class BridgeTile extends Tile<BridgeType> {
   }
 
   /**
-   * Retrieves the coordinate mapping for the bridge tile.
+   * Retrieves the coordinate mapping for the bridge sprite.
    * @returns {object} A mapping of bridge types to coordinate values.
    */
   protected _getCoordsMap(): Record<BridgeType, CoordsTuple> {
