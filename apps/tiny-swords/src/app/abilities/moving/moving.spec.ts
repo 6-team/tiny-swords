@@ -1,69 +1,60 @@
 import { Moving } from './moving';
-import { MovingDirection, CharacterDirection } from '@shared';
+import { CharacterDirection, MovingDirection } from '@shared';
+import { timer } from 'rxjs';
+import { TNumberOfPixels, TPixelsPosition } from '@common/common.types';
 
-jest.mock('@store', () => ({
-  isMuttedStore: {
+jest.mock('svelte/store', () => ({
+  writable: jest.fn(() => ({
+    set: jest.fn(),
+    update: jest.fn(),
     subscribe: jest.fn(),
-  },
+  })),
 }));
-
-jest.mock('@tools/observables', () => {
-  const { BehaviorSubject } = require('rxjs');
-  return {
-    animationInterval$: new BehaviorSubject(null),
-  };
-});
-jest.mock('@core/grid', () => ({
-  grid64: {
-    tileSize: 64,
-  },
-}));
-
 describe('Moving', () => {
-  let moving;
+  let moving: Moving;
+  const fakeContext = {
+    setAnimation: jest.fn(),
+  };
+  const initialX: TPixelsPosition = 0;
+  const initialY: TPixelsPosition = 0;
+  const height: TNumberOfPixels = 64;
 
   beforeEach(() => {
-    const props = {
-      height: 200,
-      width: 200,
-      initialX: 0,
-      initialY: 0,
-    };
-    moving = new Moving(props);
-    moving.setContext({
-      setAnimation: jest.fn(),
+    moving = new Moving({ height, initialX, initialY });
+    moving.setContext(fakeContext as any);
+    jest.clearAllMocks();
+  });
+
+  test('should create Moving instance successfully', () => {
+    expect(moving).toBeDefined();
+  });
+
+  test('should set coordinates successfully', () => {
+    const newCoords: [TPixelsPosition, TPixelsPosition] = [100, 100];
+    moving.setCoords(newCoords);
+    expect(moving.coords).toEqual(newCoords);
+  });
+
+  test('should move to directions successfully', () => {
+    Object.values(MovingDirection).forEach((direction) => {
+      moving.moveTo(direction);
+      expect(moving['_moveStream$'].getValue()).toBe(direction);
     });
   });
 
-  test('setContext method should set context', () => {
-    const context = {
-      setAnimation: jest.fn(),
-    };
-    moving.setContext(context);
-    expect(moving._context).toBe(context);
+  test('should set character direction successfully', () => {
+    Object.values(CharacterDirection).forEach((direction) => {
+      moving.setCharacterDirection(direction);
+      expect(moving['_direction']).toBe(direction);
+    });
   });
 
-  test('setCharacterDirection method should set character direction', () => {
-    moving.setCharacterDirection(CharacterDirection.LEFT);
-    expect(moving._direction).toBe(CharacterDirection.LEFT);
+  test('should animate direction successfully', (done) => {
+    moving.animate(MovingDirection.RIGHT);
 
-    moving.setCharacterDirection(CharacterDirection.RIGHT);
-    expect(moving._direction).toBe(CharacterDirection.RIGHT);
-  });
-
-  test('setCoords method should correctly set coordinates', () => {
-    const coords = [200, 200];
-    moving.setCoords(coords);
-    expect(moving._coords$.getValue()).toEqual(coords);
-  });
-
-  test('moveTo method should signal the direction of movement', () => {
-    moving.moveTo(MovingDirection.RIGHT);
-    expect(moving._moveStream$.getValue()).toBe(MovingDirection.RIGHT);
-  });
-
-  test('animate method sets direction for animation', () => {
-    moving.animate(MovingDirection.LEFT);
-    expect(moving._animationStream$.getValue()).toBe(MovingDirection.LEFT);
+    timer(1000).subscribe(() => {
+      expect(moving['_animationStream$'].getValue()).toBe(MovingDirection.RIGHT);
+      done();
+    });
   });
 });
