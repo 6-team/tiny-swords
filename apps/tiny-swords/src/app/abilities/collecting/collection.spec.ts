@@ -1,5 +1,5 @@
 import { BehaviorSubject } from 'rxjs';
-import { Collecting } from './Collecting';
+import { Collecting } from './collecting';
 
 describe('Collecting class', () => {
   let collecting: Collecting;
