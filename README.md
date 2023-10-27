@@ -22,7 +22,7 @@ This NX monorepository consists of two projects:
 
 ## Architecture
 
-![Screenshot 2023-10-27 at 15 26 03](https://github.com/6-team/tiny-swords/assets/9673297/ada8712e-45fa-4d04-b8fe-f4f20ea5cd88)
+![Screenshot 2023-10-27 at 15 53 59](https://github.com/6-team/tiny-swords/assets/9673297/d21380d7-b39f-4312-aa7f-d2b6d6b99862)
 [Miro board](https://miro.com/app/board/uXjVMlliL_I=/)
 
 ## Features
