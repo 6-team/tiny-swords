@@ -22,7 +22,8 @@ This NX monorepository consists of two projects:
 
 ## Architecture
 
-<iframe width="768" height="571" src="https://miro.com/app/embed/uXjVMlliL_I=/?pres=1&frameId=3458764567905472174&embedId=982204728294" frameborder="0" scrolling="no" allow="fullscreen; clipboard-read; clipboard-write" allowfullscreen></iframe>
+![Screenshot 2023-10-27 at 15 26 03](https://github.com/6-team/tiny-swords/assets/9673297/ada8712e-45fa-4d04-b8fe-f4f20ea5cd88)
+[Miro board](https://miro.com/app/board/uXjVMlliL_I=/)
 
 ## Features
 
