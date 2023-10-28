@@ -9,7 +9,7 @@ export type TNumberOfPixels = number;
 
 export type TPixelsPosition = number;
 
-export type TTiledCoords = [x: TTilePosition, y: TTilePosition, height: TNumberOfTiles, width: TNumberOfTiles];
+export type TTiledCoords = [x: TSpritePosition, y: TSpritePosition, height: TNumberOfSprites, width: TNumberOfSprites];
 
 export interface IGrid {
   spriteSize: number;
@@ -33,7 +33,8 @@ export interface ISprite {
   switchAnimationFrame(deltaTime: number): void;
 }
 
-export interface ICharacter<Abilities extends Record<string | symbol | number, WithSetPersonageContext>> extends ISprite {
+export interface ICharacter<Abilities extends Record<string | symbol | number, WithSetPersonageContext>>
+  extends ISprite {
   getAbility<Name extends keyof Abilities>(name: Name): Abilities[Name];
 }
 

@@ -3,7 +3,7 @@ import { Graph } from '@tools/graph';
 import { Errors } from './pathfinder.const';
 import { IPathFinderProps } from './pathfinder.types';
 
-import type { TNumberOfTiles, TTilePosition, TTiledCoords } from '@common/common.types';
+import type { TNumberOfSprites, TSpritePosition, TTiledCoords } from '@common/common.types';
 
 /**
  * @class Designed to find the shortest path between two coordinates on the map
@@ -40,11 +40,11 @@ export class PathFinder {
   /**
    * Creates vertex name from coordinates
    *
-   * @param {TTilePosition} x — X-axis coordinate
-   * @param {TTilePosition} y — Y-axis coordinate
+   * @param {TSpritePosition} x — X-axis coordinate
+   * @param {TSpritePosition} y — Y-axis coordinate
    * @returns Vertex name
    */
-  createVertexName(x: TTilePosition, y: TTilePosition): string {
+  createVertexName(x: TSpritePosition, y: TSpritePosition): string {
     return `${x}_${y}`;
   }
 
@@ -54,12 +54,12 @@ export class PathFinder {
    * @param name Vertex name
    * @returns Coordinates
    */
-  extractCoords(name: string): [x: TTilePosition, y: TTilePosition] {
+  extractCoords(name: string): [x: TSpritePosition, y: TSpritePosition] {
     if (!/^\d+_\d+$/.test(name)) {
       throw new Error(Errors.WRONG_VERTEX_NAME);
     }
 
-    return name.split('_').map((num: string) => Number(num)) as [TTilePosition, TTilePosition];
+    return name.split('_').map((num: string) => Number(num)) as [TSpritePosition, TSpritePosition];
   }
 
   /**
@@ -107,12 +107,12 @@ export class PathFinder {
    * Creates a graph representation of the map
    *
    * @private
-   * @param {TNumberOfTiles} maxX Map width in tiles
-   * @param {TNumberOfTiles} maxY Map height in tiles
+   * @param {TNumberOfSprites} maxX Map width in tiles
+   * @param {TNumberOfSprites} maxY Map height in tiles
    * @param {Array<TTiledCoords>} bounds Map boundaries
    * @returns Graph representation of the map
    */
-  private _createGraph(maxX: TNumberOfTiles, maxY: TNumberOfTiles, bounds: Array<TTiledCoords>): Graph<string> {
+  private _createGraph(maxX: TNumberOfSprites, maxY: TNumberOfSprites, bounds: Array<TTiledCoords>): Graph<string> {
     const boundsSet = new Set(bounds.map((coords: TTiledCoords) => this.createVertexName(coords[0], coords[1])));
     const graph = new Graph<string>(null, true);
 
