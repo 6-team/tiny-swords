@@ -11,7 +11,7 @@ import { Resource } from '@entities/resource';
  * WebSocket server endpoint URL.
  * @type {string}
  */
-const ENDPOINT = 'ws://localhost:3016';
+const ENDPOINT = 'https://tiny-swords-b4d29a0600f2.herokuapp.com/';
 
 /**
  * Class for performing real-time actions through WebSocket.
