@@ -1,7 +1,7 @@
-import { TNumberOfTiles, TTiledCoords } from '@common/common.types';
+import { TNumberOfSprites, TTiledCoords } from '@common/common.types';
 
 export interface IPathFinderProps {
-  width: TNumberOfTiles;
-  height: TNumberOfTiles;
+  width: TNumberOfSprites;
+  height: TNumberOfSprites;
   bounds: Array<TTiledCoords>;
 }
