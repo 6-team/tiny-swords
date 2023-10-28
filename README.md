@@ -17,17 +17,13 @@ There are two game modes available for players - singleplayer and multiplayer.
 ## Project Description
 
 This NX monorepository consists of two projects:
-- [Client](https://github.com/6-team/tiny-swords/tree/main/apps/tiny-swords) - SPA Svelte web application
-- [Backend](https://github.com/6-team/tiny-swords/tree/main/apps/backend) - Node.js server for multiplayer support
+- [Client](https://github.com/6-team/tiny-swords/tree/main/apps/tiny-swords/src/app) - SPA Svelte web application
+- [Backend](https://github.com/6-team/tiny-swords/tree/main/apps/backend/src) - Node.js server for multiplayer support
 
 ## Architecture
 
 ![Screenshot 2023-10-27 at 15 53 59](https://github.com/6-team/tiny-swords/assets/9673297/d21380d7-b39f-4312-aa7f-d2b6d6b99862)
 [Miro board](https://miro.com/app/board/uXjVMlliL_I=/)
-
-## Features
-
-Description of features
 
 ## For developers
 
