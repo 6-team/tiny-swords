@@ -23,7 +23,7 @@ describe('Enemies', () => {
   const enemies = new Enemies();
 
   beforeAll(() => {
-    enemy = enemies.initEnemy({ id: '1', coords: [1, 1] }, of([]), of([]));
+    enemy = enemies.initEnemy({ id: '1', coords: [1, 1] }, of([]), of([]), of(null));
     console.log(enemy);
   });
 
@@ -39,7 +39,7 @@ describe('Enemies', () => {
   });
 
   it('should add an enemy to the collection', () => {
-    const newEnemy = enemies.initEnemy({ id: '2', coords: [2, 2] }, of([]), of([]));
+    const newEnemy = enemies.initEnemy({ id: '2', coords: [2, 2] }, of([]), of([]), of(null));
 
     expect(enemies.enemies).toContain(newEnemy);
   });

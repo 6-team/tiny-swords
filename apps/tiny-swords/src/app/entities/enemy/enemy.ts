@@ -1,7 +1,7 @@
 import { EnemySound, IEnemySounds } from '@core/sounds/enemy-sounds';
 import { grid64 } from '@core/grid';
 import { Character } from '@entities/character';
-import { EnemyType, mapEnemyTypeToCoords } from './enemy.const';
+import { EnemyType, mapEnemyImages, mapEnemyTypeToCoords } from './enemy.const';
 import { EnemyAbilities, EnemyConfig } from './enemy.types';
 import { isMuttedStore } from '@store';
 import { Fighting, IFighting, IFightingCharacter } from '@abilities/fighting';
@@ -21,7 +21,7 @@ export default class Enemy
    * @type {string}
    * @private
    */
-  protected _sprite = './img/Factions/Goblins/Troops/Torch/Red/Torch_Red.png';
+  protected _sprite: string;
 
   /**
    * The type of the enemy.
@@ -48,8 +48,11 @@ export default class Enemy
    * Creates an instance of the Enemy character.
    * @param {EnemyConfig} config - The configuration object for the Enemy.
    */
-  constructor({ height, width, initialX, initialY, initialDirection, id }: EnemyConfig) {
+  constructor({ height, width, initialX, initialY, initialDirection, id, type = EnemyType.TORCH_RED }: EnemyConfig) {
     super({ id });
+
+    this._type = type;
+    this._sprite = mapEnemyImages[type];
 
     const fighting = new Fighting({ availibleLives: 1, blockedLives: 0 });
     const moving = new Moving({

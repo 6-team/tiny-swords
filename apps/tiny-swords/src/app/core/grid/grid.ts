@@ -1,10 +1,9 @@
-import { TPixelsCoords } from '@abilities/abilities.types';
 import { SIZE_X, SIZE_Y, SPRITE_SIZE } from '@common/common.const';
-import { IGrid, TNumberOfSprites, TPixelsPosition, TSpritePosition } from '@common/common.types';
+import { IGrid, TNumberOfSprites, TPixelsPosition, TSpritePosition, TTiledCoords } from '@common/common.types';
 
 /**
  * Represents a grid for sprite-based graphics.
- * 
+ *
  * @implements {IGrid}
  */
 export class Grid implements IGrid {
@@ -53,16 +52,16 @@ export class Grid implements IGrid {
   }
 
   /**
-   * Transforms pixel coordinates to sprite coordinates.
+   * Transforms pixel coordinates to tiled coordinates.
    *
    * @param {TPixelsPosition} x - The X-coordinate in pixels.
    * @param {TPixelsPosition} y - The Y-coordinate in pixels.
    * @param {number} height - The height in pixels.
    * @param {number} width - The width in pixels.
-   * @returns {TPixelsCoords} An array representing sprite coordinates and dimensions.
+   * @returns {TPixelsCoords} An array representing tiled coordinates and dimensions.
    */
-  transformToSprites(x: TPixelsPosition, y: TPixelsPosition, height: number, width: number): TPixelsCoords {
-    return [x, y, height, width].map((dimention) => dimention / this.#spriteSize) as TPixelsCoords;
+  transformToTiles(x: TPixelsPosition, y: TPixelsPosition, height: number, width: number): TTiledCoords {
+    return [x, y, height, width].map((dimention) => dimention / this.#spriteSize) as TTiledCoords;
   }
 
   /**

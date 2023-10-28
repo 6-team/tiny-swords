@@ -9,6 +9,7 @@ import { grid64 } from '@core/grid';
 import { collisions } from '@core/collisions';
 import { TCollisionArea, TPixelsCoords } from '@abilities/abilities.types';
 import { Enemy } from '@entities/enemy';
+import { EnemyType } from '@entities/enemy/enemy.const';
 
 /**
  * Represents a collection of enemy characters.
@@ -36,9 +37,11 @@ export class Enemies {
     { id, coords }: IEntity,
     bounds$: Observable<Array<TCollisionArea>>,
     heroes$: Observable<Array<IMovingCharacter & IFightingCharacter>>,
+    hero$: Observable<(IMovingCharacter & IFightingCharacter) | null>,
   ): Enemy {
     const [x, y] = coords;
     const [initialX, initialY, height, width] = grid64.transformToPixels(x - 1, y - 1, 3, 3);
+    const chaser = this._enemies.getValue().length === 1;
 
     const enemy = new Enemy({
       initialDirection: CharacterDirection.LEFT,
@@ -47,17 +50,21 @@ export class Enemies {
       height,
       width,
       id,
+      type: chaser ? EnemyType.TNT_RED : EnemyType.TORCH_RED,
     });
+
+    this.addEnemy(enemy);
 
     new AIController({
       id,
       heroes$,
+      bounds$,
+      hero$,
+      chaser,
       character: enemy,
       streamDecorator: (originalStream$: Observable<MovingDirection>) =>
         collisions.preventBoundsDecorator({ character: enemy, otherCharacters$: heroes$, bounds$, originalStream$ }),
     });
-
-    this.addEnemy(enemy);
 
     return enemy;
   }

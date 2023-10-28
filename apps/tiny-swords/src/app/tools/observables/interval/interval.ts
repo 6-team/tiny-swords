@@ -21,4 +21,4 @@ export const createInterval = (ms: number) => {
   return observable.asObservable();
 };
 
-export const animationInterval$ = createInterval(16);
+export const animationInterval$ = createInterval(12);
