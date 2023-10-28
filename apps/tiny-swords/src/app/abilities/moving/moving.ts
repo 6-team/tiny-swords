@@ -1,16 +1,19 @@
-import { TCollisionArea } from '../abilities.types';
-import { TNumberOfPixels, TPixelsPosition } from '../../common/common.types';
+import { TCollisionArea } from '@abilities/abilities.types';
+import { TNumberOfPixels, TPixelsPosition } from '@common/common.types';
 import { MovingError, PIXELS_PER_FRAME, movementSetters, nextMoveCoordsGetters } from './moving.const';
 import { IMoving, IMovingCharacter, IMovingProps } from './moving.types';
 import { BehaviorSubject, Observable, combineLatest, distinctUntilChanged, filter, map, withLatestFrom } from 'rxjs';
-import { HeroActionAnimation } from '../../entities/hero/hero.const';
-import { grid64 } from '../../core/grid';
+import { HeroActionAnimation } from '@entities/hero';
+import { grid64 } from '@core/grid';
 import { MovingDirection, CharacterDirection } from '@shared';
-import { animationInterval$ } from '../../tools/observables/interval';
+import { animationInterval$ } from '@tools/observables';
 
 /**
- * Класс для передвигающихся элементов.
- * Координаты задаются в тайлах, а выбранная система координат уже переводит значения в пиксели
+ * Moving is a class for handling moving elements.
+ * Coordinates are specified in sprites, and the chosen coordinate system then translates the values into pixels
+ *
+ * @class
+ * @implements {IMoving}
  */
 export class Moving implements IMoving {
   private _breakpoints$ = new BehaviorSubject<boolean>(true);
@@ -21,7 +24,7 @@ export class Moving implements IMoving {
   private _sizes: [height: TNumberOfPixels, width: TNumberOfPixels];
   private _direction = CharacterDirection.RIGHT;
   private _movingProgressRemaining = 0;
-  private _breakpointReached: boolean = true;
+  private _breakpointReached = true;
   private _getCollisionAreaFunc?: IMovingProps['getCollisionArea'];
   private _coords$: BehaviorSubject<[TPixelsPosition, TPixelsPosition]>;
   private _context?: IMovingCharacter;
@@ -30,6 +33,17 @@ export class Moving implements IMoving {
   readonly breakpoints$: Observable<[TPixelsPosition, TPixelsPosition]>;
   readonly movements$: Observable<MovingDirection> = this._moveStream$.asObservable();
 
+  /**
+   * Creates a Moving instance.
+   *
+   * @param {object} props - An object containing properties for creating a Moving instance.
+   *
+   * @param {TNumberOfPixels} props.height - The height of the moving element.
+   * @param {TNumberOfPixels} props.width - The width of the moving element (uses the same value as height if not provided).
+   * @param {TPixelsPosition} props.initialX - The initial x-coordinate of the moving element.
+   * @param {TPixelsPosition} props.initialY - The initial y-coordinate of the moving element.
+   * @param {IMovingProps['getCollisionArea']} props.getCollisionArea - Function to get the collision area of the moving element.
+   */
   constructor({ height, width, initialX, initialY, getCollisionArea }: IMovingProps) {
     this._sizes = [height, width || height];
     this._getCollisionAreaFunc = getCollisionArea;
@@ -57,25 +71,26 @@ export class Moving implements IMoving {
   }
 
   /**
-   * Устанавливает контекст/носителя данной способности.
-   * Нужно, чтобы вызывать его методы, такие как показ анимации, изменение изображения и т.п.
+   * Sets the context or the host of this ability.
+   * It is used to call upon its methods, such as the display of animations, modifying the image, etc.
    *
-   * @param context Контекст
-   * @returns Объект способности
+   * @param {IMovingCharacter} context - The context.
+   *
+   * @returns {Moving} - Returns Moving object.
    */
-  setContext(context: IMovingCharacter) {
+  setContext(context: IMovingCharacter): this {
     this._context = context;
 
     return this;
   }
 
   /**
-   * Устанавливает направление персонажа, пока он стоит на месте.
+   * Sets the character's direction while the character is standing still.
    *
-   * @param direction Направление персонажа
-   * @returns Объект способности
+   * @param {CharacterDirection} direction Character direction
+   * @returns {this}
    */
-  setCharacterDirection(direction: CharacterDirection) {
+  setCharacterDirection(direction: CharacterDirection): this {
     this._setCharacterDirection(direction);
     this._context.setAnimation(
       this.isRightDirection ? HeroActionAnimation.STANDS_STILL : HeroActionAnimation.STANDS_STILL_LEFT,
@@ -85,23 +100,23 @@ export class Moving implements IMoving {
   }
 
   /**
-   * Принудительно устанавливает координаты персонажу
+   * Forcibly sets coordinates to a character
    *
-   * @param coords Новые координаты
-   * @returns Объект способности
+   * @param {[TPixelsPosition, TPixelsPosition]} coords Новые координаты
+   * @returns {this}
    */
-  setCoords(coords: [TPixelsPosition, TPixelsPosition]) {
+  setCoords(coords: [TPixelsPosition, TPixelsPosition]): this {
     this._coords$.next(coords);
 
     return this;
   }
 
   /**
-   * Проверяет, задан ли у этой способности контекст, то есть персонаж
+   * Checks if this ability has a context, i.e. character
    *
-   * @returns Доступен ли контекст
+   * @returns {boolean} -  Whether context is available
    */
-  private _hasContext = () => {
+  private _hasContext = (): boolean => {
     return Boolean(this._context);
   };
 
@@ -116,17 +131,17 @@ export class Moving implements IMoving {
   };
 
   /**
-   * Обрабатывает получение нового фрейма.
-   * В каждом фрейме проверяется, происходит ли сейчас движение персонажа.
-   * И если перстнаж стоит на месте, только тогда ему задаётся новое направление движения.
+   * Processes the receipt of a new frame.
+   * Each frame checks if the character is currently moving.
+   * And if the finger is standing still, only then it is given a new direction of movement.
    *
    * @private
    * @param param0 [time, direction, movement, coords]
-   * @returns Объект способности
+   * @returns {this}
    */
   private _handleFrameChange = ([_, direction]): this => {
     /**
-     * Если вручную не остановлен и остались еще непройденные пиксели, то продолжаем двигать
+     * If manually not stopped and there are still unpassed pixels, keep moving it
      */
     if (this._movingProgressRemaining > 0) {
       this._movingProgressRemaining -= PIXELS_PER_FRAME;
@@ -137,10 +152,10 @@ export class Moving implements IMoving {
     }
 
     /**
-     * Если движение закончилось, но команда на движение не была прекращена
+     * If the movement has ended but the movement command has not been terminated
      */
     if (this._movingProgressRemaining === 0 && direction !== MovingDirection.IDLE) {
-      this._movingProgressRemaining = grid64.tileSize;
+      this._movingProgressRemaining = grid64.spriteSize;
       this._lastDirection = direction;
       this._breakpoints$.next(true);
 
@@ -148,7 +163,7 @@ export class Moving implements IMoving {
     }
 
     /**
-     * Если движение закончилось, и последняя команда не требует нового движения
+     * If the movement has ended and the last command does not require a new movement
      */
     if (this._movingProgressRemaining === 0 && direction === MovingDirection.IDLE && !this._breakpointReached) {
       this._lastDirection = direction;
@@ -160,11 +175,11 @@ export class Moving implements IMoving {
   };
 
   /**
-   * Обрабатывает получение нового направления движения: устанавливает нужную анимацию движения.
+   * Processes the receipt of a new motion direction: sets the desired motion animation.
    *
    * @private
-   * @param direction Направление движения
-   * @returns Объект способности
+   * @param {MovingDirection} direction Direction of movement
+   * @returns {this}
    */
   private _handleMovementChange = (direction: MovingDirection): this => {
     this._setCharacterDirection(direction);
@@ -174,11 +189,11 @@ export class Moving implements IMoving {
   };
 
   /**
-   * Устанавливает флаг, что персонаж повернут вправо
+   * Sets a flag that the character is turned to the right
    *
    * @private
-   * @param direction Направление движения персонажа
-   * @returns Объект способности
+   * @param {MovingDirection | CharacterDirection} direction Direction of movement
+   * @returns {this}
    */
   private _setCharacterDirection(direction: MovingDirection | CharacterDirection): this {
     if ([MovingDirection.LEFT, CharacterDirection.LEFT].includes(direction)) {
@@ -193,11 +208,11 @@ export class Moving implements IMoving {
   }
 
   /**
-   * Задаёт анимацию движения персонажу, исходя из полученного направления движения
+   * Sets the character's movement animation based on the received movement direction
    *
    * @private
-   * @param direction Направление движения персонажа
-   * @returns Объект способности
+   * @param direction Direction of character movement
+   * @returns {this}
    */
   private _setAnimation(direction: MovingDirection): this {
     if (!this._context) {
@@ -227,12 +242,12 @@ export class Moving implements IMoving {
   }
 
   /**
-   * Возвращает зону коллизии персонажа, которая будет при перемещении в указанном направлении.
+   * Returns the character's collision zone, which will be when moving in the specified direction.
    *
-   * @param direction Направление движения
-   * @returns Координаты и размеры
+   * @param {MovingDirection} direction Direction of movement
+   * @returns {TCollisionArea} Coordinates and dimensions
    */
-  getNextCollisionArea(direction: MovingDirection) {
+  getNextCollisionArea(direction: MovingDirection): TCollisionArea {
     const nextCoordsGetter = nextMoveCoordsGetters[direction];
     const collisionArea = this.getCollisionArea();
     const coords = nextCoordsGetter([collisionArea[0], collisionArea[1]]);
@@ -242,44 +257,68 @@ export class Moving implements IMoving {
   }
 
   /**
-   * Возвращает зону персонажа, которая участвует в сравнении коллизий.
+   * Returns the character's zone that is involved in the collision comparison.
    *
-   * @returns Зона для сравнения коллизий
+   * @returns Area for comparison of collisions
    */
   getCollisionArea(): TCollisionArea {
     return this._getCollisionAreaFunc
       ? this._getCollisionAreaFunc(this)
       : [this.coords[0], this.coords[1], this._sizes[0], this._sizes[1]];
   }
-
+  /**
+   * Movement
+   * @param {MovingDirection} direction
+   * @returns {this}
+   */
   moveTo(direction: MovingDirection): this {
     this._moveStream$.next(direction);
 
     return this;
   }
 
+  /**
+   * Animate
+   * @param {MovingDirection} direction
+   * @returns {this}
+   */
   animate(direction: MovingDirection): this {
     this._animationStream$.next(direction);
 
     return this;
   }
 
+  /**
+   * Getting coordinates
+   */
   get coords() {
     return this._coords$.getValue();
   }
 
+  /**
+   * Check if there is movement
+   */
   get isMoving() {
     return !this._breakpointReached;
   }
 
+  /**
+   * Checking if the hero is looking to the right side
+   */
   get isRightDirection() {
     return this._direction === CharacterDirection.RIGHT;
   }
 
+  /**
+   * Checking if the hero is looking to the left side
+   */
   get isLeftDirection() {
     return this._direction === CharacterDirection.LEFT;
   }
 
+  /**
+   * Getting the size
+   */
   get sizes() {
     return this._sizes;
   }

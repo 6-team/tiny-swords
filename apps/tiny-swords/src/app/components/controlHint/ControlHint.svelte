@@ -14,9 +14,9 @@
      <table class="hint__controls">
       <tr class="hint__controls-row">
         <td>A</td>
+        <td>W</td>
         <td>S</td>
         <td>D</td>
-        <td>W</td>
       </tr>
       <tr  class="hint__controls-row">
         <td class='arrow-left'><img height="20" width="20" src="./img/UI/arrow.png" alt="arrow"/></td>

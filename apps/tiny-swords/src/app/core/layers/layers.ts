@@ -1,7 +1,7 @@
 import { LevelType } from '@core/level';
 import { Resource } from '@entities/resource';
 import { grid64 } from '@core/grid';
-import { getStartEndCoords } from './layers.utils';
+import { getStartEndCoords } from './utils';
 import { LayersMap, LayersRenderType } from './layers.types';
 import { GroundLayer } from './kinds/ground-layer/ground-layer';
 import { WaterLayer } from './kinds/water-layer/water-layer';

@@ -1,12 +1,12 @@
-import { CoordsTuple, Tile } from '@entities/tile';
+import { CoordsTuple, Sprite } from '@entities/sprite';
 
 import { SheepType, mapSheepToCoords } from './sheep.const';
 
 /**
- * Represents a tile with a sheep entity.
- * @extends Tile
+ * Represents a sprite with a sheep entity.
+ * @extends Sprite
  */
-export class SheepTile extends Tile<SheepType> {
+export class SheepSprite extends Sprite<SheepType> {
   /**
    * The type of the sheep.
    * @type {SheepType}
@@ -22,7 +22,7 @@ export class SheepTile extends Tile<SheepType> {
   protected _sprite = './img/Resources/Sheep/HappySheep_Idle.png';
 
   /**
-   * Creates an instance of the SheepTile.
+   * Creates an instance of the SheepSprite.
    * @param {SheepType} type - The type of the sheep (default is SheepType.SHEEP_RIGHT).
    */
   constructor(type = SheepType.SHEEP_RIGHT) {

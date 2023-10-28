@@ -1,4 +1,4 @@
-import { TileName } from "@core/renderer";
+import { SpriteName } from "@core/renderer";
 
 export const enum LayersRenderType {
   Background,
@@ -7,6 +7,6 @@ export const enum LayersRenderType {
 
 export interface LayersMap {
 	type: LayersRenderType;
-	map: (TileName | null)[][];
+	map: (SpriteName | null)[][];
 	renderOrder: number;
 }

@@ -1,9 +1,9 @@
 import { Observable, combineLatest, distinctUntilChanged, map } from 'rxjs';
-import { TCollisionArea } from '../../abilities/abilities.types';
+import { TCollisionArea } from "@abilities/abilities.types";
 import { MovingDirection } from '@shared';
-import { animationInterval$ } from '../../tools/observables/interval';
+import { animationInterval$ } from "@tools/observables";
 import { IPreventBoundsDecoratorProps } from './collisions.types';
-import { IMovingCharacter } from '../../abilities/moving/moving.types';
+import { IMovingCharacter } from "@abilities/moving";
 
 export class Collisions {
   static _instance: Collisions;
@@ -17,15 +17,16 @@ export class Collisions {
   }
 
   /**
-   * Проверяет коллизию между двумя зонами/элементами.
-   * Зона — это координаты левой верхней точки вместе с высотой и шириной зоны в пикселях.
-   *
-   * @param elementArea Первая зона
-   * @param anotherElementArea Друга зона, которая будет сравниваться с первой
-   *
-   * @returns Произошла ли коллизия
+   Checks for collision between two areas/elements.
+   An area is defined by the coordinates of the top-left corner along with the height and width of the area in pixels.
+
+   @param elementArea The first area
+   @param anotherElementArea The other area that will be compared with the first one
+
+   @returns Whether a collision occurred or not
    */
-  hasCollision(elementArea: TCollisionArea, anotherElementArea: TCollisionArea) {
+
+  hasCollision(elementArea: TCollisionArea, anotherElementArea: TCollisionArea): boolean {
     const [rect1Left, rect1Top, rect1Height, rect1Width] = elementArea;
     const [rect2Left, rect2Top, rect2Height, rect2Width] = anotherElementArea;
 
@@ -42,15 +43,16 @@ export class Collisions {
   }
 
   /**
-   * Декоратор для потока движений, который фильтрует поток, запрещая наступать на границы карты и других персонажей
-   *
-   * @param props.character Персонаж
-   * @param props.otherCharacters$ Поток с массивом других персонажей, с которыми тоже нельзя допускать коллизии
-   * @param props.bounds$ Поток массивов координат, на которые персонажу заступать нельзя
-   * @param props.originalStream$ Оригинальный поток движений, который нужно модифицировать
-   *
-   * @returns Направление движения: либо IDLE, если нельзя, либо изначальное полученное значение
+   Decorator for a motion stream that filters the stream, preventing collision with map boundaries and other characters.
+
+   @param character Character
+   @param otherCharacters$ Stream with an array of other characters to avoid collision with
+   @param bounds$ Stream of coordinate arrays that the character cannot step on
+   @param originalStream$ The original motion stream to modify
+
+   @returns Motion direction: either IDLE if collision is forbidden, or the initial received value
    */
+
   preventBoundsDecorator({
     character,
     otherCharacters$,

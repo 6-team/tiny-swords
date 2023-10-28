@@ -1,9 +1,9 @@
 import { WithSetPersonageContext } from '../abilities/abilities.types';
 import { ResourcesType } from '../entities/resource';
 
-export type TNumberOfTiles = number;
+export type TNumberOfSprites = number;
 
-export type TTilePosition = number;
+export type TSpritePosition = number;
 
 export type TNumberOfPixels = number;
 
@@ -12,7 +12,7 @@ export type TPixelsPosition = number;
 export type TTiledCoords = [x: TTilePosition, y: TTilePosition, height: TNumberOfTiles, width: TNumberOfTiles];
 
 export interface IGrid {
-  tileSize: number;
+  spriteSize: number;
   transformToPixels(
     x: number,
     y: number,
@@ -21,7 +21,7 @@ export interface IGrid {
   ): [pxX: number, pxY: number, pxHeight: number, pxWidth: number];
 }
 
-export interface ITile {
+export interface ISprite {
   getData(): Promise<{
     image: HTMLImageElement;
     coords: [number, number];
@@ -33,7 +33,7 @@ export interface ITile {
   switchAnimationFrame(deltaTime: number): void;
 }
 
-export interface ICharacter<Abilities extends Record<string | symbol | number, WithSetPersonageContext>> extends ITile {
+export interface ICharacter<Abilities extends Record<string | symbol | number, WithSetPersonageContext>> extends ISprite {
   getAbility<Name extends keyof Abilities>(name: Name): Abilities[Name];
 }
 

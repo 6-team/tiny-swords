@@ -1,32 +1,35 @@
-import { Layer } from "@core/layer";
-import { LayerCondition } from "@core/layer";
-import { LevelType } from "@core/level";
-import { TileName } from "@core/renderer";
+import { Layer } from '@core/layer';
+import { LayerCondition } from '@core/layer';
+import { LevelType } from '@core/level';
+import { SpriteName } from '@core/renderer';
 
 /**
- * Generates elevation conditions based on the provided tile and coordinates.
+ * Generates elevation conditions based on the provided sprite and coordinates.
  *
- * @param {number} tile - The tile value for which elevation conditions are determined.
- * @param {[number, number]} coords - The coordinates [x, y] associated with the tile.
+ * @param {number} sprite - The sprite value for which elevation conditions are determined.
+ * @param {[number, number]} coords - The coordinates [x, y] associated with the sprite.
  *
- * @returns {Array} An array of elevation conditions, each containing a tile and new coordinates.
+ * @returns {Array} An array of elevation conditions, each containing a sprite and new coordinates.
  */
-const getStonesConditions = (tile, coords) => {
-  switch(tile) {
-    case TileName.BRIDGE_MIDDLE:
-      return [{ tile: TileName.BRIDGE_SHADOW, coords: [coords[0], coords[1] + 1] }];
+const getStonesConditions = (
+  sprite: SpriteName,
+  coords: [number, number],
+): [{ sprite: SpriteName; coords: [number, number] }] | [] => {
+  switch (sprite) {
+    case SpriteName.BRIDGE_MIDDLE:
+      return [{ sprite: SpriteName.BRIDGE_SHADOW, coords: [coords[0], coords[1] + 1] }];
 
-    case TileName.ELEVATION_BOTTOM_LEFT:
-      return [{ tile: TileName.ELEVATION_EDGE_LEFT, coords: [coords[0], coords[1] + 1] }];
-    case TileName.ELEVATION_BOTTOM_MIDDLE:
-      return [{ tile: TileName.ELEVATION_EDGE_MIDDLE, coords: [coords[0], coords[1] + 1] }];
-    case TileName.ELEVATION_BOTTOM_RIGHT:
-      return [{ tile: TileName.ELEVATION_EDGE_RIGHT, coords: [coords[0], coords[1] + 1] }];
-  
+    case SpriteName.ELEVATION_BOTTOM_LEFT:
+      return [{ sprite: SpriteName.ELEVATION_EDGE_LEFT, coords: [coords[0], coords[1] + 1] }];
+    case SpriteName.ELEVATION_BOTTOM_MIDDLE:
+      return [{ sprite: SpriteName.ELEVATION_EDGE_MIDDLE, coords: [coords[0], coords[1] + 1] }];
+    case SpriteName.ELEVATION_BOTTOM_RIGHT:
+      return [{ sprite: SpriteName.ELEVATION_EDGE_RIGHT, coords: [coords[0], coords[1] + 1] }];
+
     default:
       return [];
   }
-}
+};
 
 /**
  * Generates elevation conditions for additional elevation layers, such as shadows under bridges, grass or sand on bridges, or foam.
@@ -38,19 +41,16 @@ const getStonesConditions = (tile, coords) => {
  */
 export const elevationConditions = (level: LevelType, layer: Layer): LayerCondition[] => {
   let conditions = [];
-  
+
   if (level === LevelType.Stones) {
     layer.array.forEach(({ coords, options }) => {
       const conditionsCell = getStonesConditions(options[0], coords);
 
       if (conditionsCell.length) {
-        conditions = [
-          ...conditions,
-          ...conditionsCell,
-        ];
+        conditions = [...conditions, ...conditionsCell];
       }
     });
   }
 
   return conditions;
-}
+};

@@ -1,12 +1,12 @@
-import { CoordsTuple, Tile } from '@entities/tile';
+import { CoordsTuple, Sprite } from '@entities/sprite';
 
 import { WaterType, mapWaterToCoords } from './water.const';
 
 /**
- * Represents a tile with a water entity.
- * @extends Tile
+ * Represents a sprite with a water entity.
+ * @extends Sprite
  */
-export class WaterTile extends Tile<WaterType> {
+export class WaterSprite extends Sprite<WaterType> {
   /**
    * The type of the water.
    * @type {WaterType}
@@ -22,7 +22,7 @@ export class WaterTile extends Tile<WaterType> {
   protected _sprite = './img/Terrain/Water/Water.png';
 
   /**
-   * Creates an instance of the WaterTile.
+   * Creates an instance of the WaterSprite.
    * @param {WaterType} type - The type of the water (default is WaterType.MIDDLE_MIDDLE).
    */
   constructor(type = WaterType.MIDDLE_MIDDLE) {

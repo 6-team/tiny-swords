@@ -1,9 +1,8 @@
 <script lang="ts">
-  import { isActiveMenuItemStore, isMainMenuStore, isMuttedStore } from '../../store/store';
-  import {Sounds, SystemSoundsType} from '../../core/sounds'
-  import { Button } from '../Button'
+  import { isActiveMenuItemStore, isMainMenuStore, isMuttedStore } from '@store';
+  import { Sounds, SystemSoundsType } from '@core/sounds'
+  import { Button } from '@components'
 
-  let showModal = false;
   let menuIndex = 0;
   let isActiveMenuItem = '';
 
@@ -44,31 +43,31 @@
     }
   }
 
-  const bgTiles = [
+  const bgSprites = [
     ["./img/UI/cut_layout/1.png","./img/UI/cut_layout/2.png","./img/UI/cut_layout/3.png"],
     ["./img/UI/cut_layout/4.png","./img/UI/cut_layout/5.png","./img/UI/cut_layout/6.png"],
     ["./img/UI/cut_layout/7.png","./img/UI/cut_layout/8.png","./img/UI/cut_layout/9.png"]
   ]
 
-  function expandBg(bgTiles: Array<Array<string>>, count:number):Array<Array<string>> {
-    const createTile = (row:number):Array<string> => ([bgTiles[row][0], bgTiles[row][1], bgTiles[row][1], bgTiles[row][2]]);
+  function expandBg(bgSprites: Array<Array<string>>, count:number):Array<Array<string>> {
+    const createSprite = (row:number):Array<string> => ([bgSprites[row][0], bgSprites[row][1], bgSprites[row][1], bgSprites[row][2]]);
     let result = [];
 
     if (count === 1) {
-      result.push(createTile(0), createTile(2));
+      result.push(createSprite(0), createSprite(2));
     } else if (count > 1) {
-      result.push(createTile(0));
+      result.push(createSprite(0));
 
     for (let j = 0; j < count - 1; j++) {
-      result.push(createTile(1));
+      result.push(createSprite(1));
     }
 
-    result.push(createTile(2));
+    result.push(createSprite(2));
   }
 
   return result;
 }
-  const expandedBg = expandBg(bgTiles, menuLink.length);
+  const expandedBg = expandBg(bgSprites, menuLink.length);
 
   const playSystemSoundMenuClick = () =>  menuSound.playSound(SystemSoundsType.MENU_CLICK, 0.3)
 
@@ -108,7 +107,7 @@
       {#each expandedBg as row }
         <div class="bg-row">
           {#each row as col }
-            <img src={col} alt='bg-tile'/>
+            <img src={col} alt='bg-sprite'/>
           {/each}
         </div>
       {/each}

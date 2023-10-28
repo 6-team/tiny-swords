@@ -4,7 +4,7 @@ import { IEntity, MovingDirection } from '@shared';
 
 import { IMovingCharacter } from '@abilities/moving';
 import { TCollisionArea, TPixelsCoords } from '@abilities/abilities.types';
-import { CoordsTuple } from '@entities/tile';
+import { CoordsTuple } from '@entities/sprite';
 import { HeroType, Hero } from '@entities/hero';
 import { KeyboardController } from '@controllers/keyboard';
 import { ServerController } from '@controllers/server';

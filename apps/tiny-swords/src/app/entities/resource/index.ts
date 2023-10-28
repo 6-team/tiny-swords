@@ -1,2 +1,2 @@
-export { Resource } from './resource';
-export { ResourcesType } from './resource.const';
+export * from './resource';
+export * from './resource.const';

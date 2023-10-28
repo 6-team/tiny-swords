@@ -1,192 +1,187 @@
-import { LayerCondition } from "@core/layer";
-import { TileName } from "@core/renderer";
-import { randomInteger } from "../../layers.utils";
+import { LayerCondition } from '@core/layer';
+import { SpriteName } from '@core/renderer';
+import { randomInteger } from '@core/layers';
 
 export const leftSandConditions = (startCoords: [number, number]): LayerCondition[] => {
   const [x, y] = startCoords;
 
   return [
     {
-      tile: TileName.SAND_MIDDLE_LEFT,
+      sprite: SpriteName.SAND_MIDDLE_LEFT,
       coords: [x - 1, y],
     },
     {
-      tile: TileName.SAND_MIDDLE_MIDDLE,
+      sprite: SpriteName.SAND_MIDDLE_MIDDLE,
       coords: [x, y],
     },
     {
-      tile: TileName.SAND_MIDDLE_MIDDLE,
+      sprite: SpriteName.SAND_MIDDLE_MIDDLE,
       coords: [x + 1, y],
     },
     {
-      tile: TileName.SAND_MIDDLE_LEFT,
+      sprite: SpriteName.SAND_MIDDLE_LEFT,
       coords: [x - 1, y - 1],
     },
     {
-      tile: TileName.SAND_MIDDLE_MIDDLE,
+      sprite: SpriteName.SAND_MIDDLE_MIDDLE,
       coords: [x, y - 1],
     },
     {
-      tile: TileName.SAND_MIDDLE_MIDDLE,
+      sprite: SpriteName.SAND_MIDDLE_MIDDLE,
       coords: [x + 1, y - 1],
     },
     {
-      tile: TileName.SAND_MIDDLE_LEFT,
+      sprite: SpriteName.SAND_MIDDLE_LEFT,
       coords: [x - 1, y - 2],
     },
     {
-      tile: TileName.SAND_MIDDLE_MIDDLE,
+      sprite: SpriteName.SAND_MIDDLE_MIDDLE,
       coords: [x, y - 2],
     },
     {
-      tile: TileName.SAND_MIDDLE_MIDDLE,
+      sprite: SpriteName.SAND_MIDDLE_MIDDLE,
       coords: [x + 1, y - 2],
     },
   ];
-}
+};
 
 export const leftSandBridgeConditions = (startCoords: [number, number]): LayerCondition[] => {
   const [x, y] = startCoords;
 
   return [
     {
-      tile: TileName.SAND_MIDDLE_LEFT,
+      sprite: SpriteName.SAND_MIDDLE_LEFT,
       coords: [x - 1, y],
     },
     {
-      tile: TileName.SAND_MIDDLE_MIDDLE,
+      sprite: SpriteName.SAND_MIDDLE_MIDDLE,
       coords: [x, y],
     },
     {
-      tile: TileName.BRIDGE_LEFT,
+      sprite: SpriteName.BRIDGE_LEFT,
       coords: [x + 1, y],
     },
     {
-      tile: TileName.SAND_MIDDLE_LEFT,
+      sprite: SpriteName.SAND_MIDDLE_LEFT,
       coords: [x - 1, y - 1],
     },
     {
-      tile: TileName.SAND_MIDDLE_MIDDLE,
+      sprite: SpriteName.SAND_MIDDLE_MIDDLE,
       coords: [x, y - 1],
     },
     {
-      tile: TileName.SAND_MIDDLE_RIGHT,
+      sprite: SpriteName.SAND_MIDDLE_RIGHT,
       coords: [x + 1, y - 1],
     },
     {
-      tile: TileName.SAND_TOP_LEFT,
+      sprite: SpriteName.SAND_TOP_LEFT,
       coords: [x - 1, y - 2],
     },
     {
-      tile: TileName.SAND_TOP_MIDDLE,
+      sprite: SpriteName.SAND_TOP_MIDDLE,
       coords: [x, y - 2],
     },
     {
-      tile: TileName.SAND_TOP_RIGHT,
+      sprite: SpriteName.SAND_TOP_RIGHT,
       coords: [x + 1, y - 2],
     },
   ];
-}
+};
 
 export const rightSandConditions = (endCoords: [number, number]): LayerCondition[] => {
   const [x, y] = endCoords;
 
   return [
     {
-      tile: TileName.SAND_MIDDLE_MIDDLE,
+      sprite: SpriteName.SAND_MIDDLE_MIDDLE,
       coords: [x - 1, y],
     },
     {
-      tile: TileName.SAND_MIDDLE_MIDDLE,
+      sprite: SpriteName.SAND_MIDDLE_MIDDLE,
       coords: [x, y],
     },
     {
-      tile: TileName.SAND_MIDDLE_RIGHT,
+      sprite: SpriteName.SAND_MIDDLE_RIGHT,
       coords: [x + 1, y],
     },
     {
-      tile: TileName.SAND_MIDDLE_MIDDLE,
+      sprite: SpriteName.SAND_MIDDLE_MIDDLE,
       coords: [x - 1, y - 1],
     },
     {
-      tile: TileName.SAND_MIDDLE_MIDDLE,
+      sprite: SpriteName.SAND_MIDDLE_MIDDLE,
       coords: [x, y - 1],
     },
     {
-      tile: TileName.SAND_MIDDLE_RIGHT,
+      sprite: SpriteName.SAND_MIDDLE_RIGHT,
       coords: [x + 1, y - 1],
     },
     {
-      tile: TileName.SAND_MIDDLE_MIDDLE,
+      sprite: SpriteName.SAND_MIDDLE_MIDDLE,
       coords: [x - 1, y - 2],
     },
     {
-      tile: TileName.SAND_MIDDLE_MIDDLE,
+      sprite: SpriteName.SAND_MIDDLE_MIDDLE,
       coords: [x, y - 2],
     },
     {
-      tile: TileName.SAND_MIDDLE_RIGHT,
+      sprite: SpriteName.SAND_MIDDLE_RIGHT,
       coords: [x + 1, y - 2],
     },
   ];
-}
+};
 
 export const rightSandBridgeConditions = (endCoords: [number, number]): LayerCondition[] => {
   const [x, y] = endCoords;
 
   return [
     {
-      tile: TileName.BRIDGE_RIGHT,
+      sprite: SpriteName.BRIDGE_RIGHT,
       coords: [x - 1, y],
     },
     {
-      tile: TileName.SAND_MIDDLE_MIDDLE,
+      sprite: SpriteName.SAND_MIDDLE_MIDDLE,
       coords: [x, y],
     },
     {
-      tile: TileName.SAND_MIDDLE_RIGHT,
+      sprite: SpriteName.SAND_MIDDLE_RIGHT,
       coords: [x + 1, y],
     },
     {
-      tile: TileName.SAND_MIDDLE_LEFT,
+      sprite: SpriteName.SAND_MIDDLE_LEFT,
       coords: [x - 1, y - 1],
     },
     {
-      tile: TileName.SAND_MIDDLE_MIDDLE,
+      sprite: SpriteName.SAND_MIDDLE_MIDDLE,
       coords: [x, y - 1],
     },
     {
-      tile: TileName.SAND_MIDDLE_RIGHT,
+      sprite: SpriteName.SAND_MIDDLE_RIGHT,
       coords: [x + 1, y - 1],
     },
     {
-      tile: TileName.SAND_TOP_LEFT,
+      sprite: SpriteName.SAND_TOP_LEFT,
       coords: [x - 1, y - 2],
     },
     {
-      tile: TileName.SAND_TOP_MIDDLE,
+      sprite: SpriteName.SAND_TOP_MIDDLE,
       coords: [x, y - 2],
     },
     {
-      tile: TileName.SAND_TOP_RIGHT,
+      sprite: SpriteName.SAND_TOP_RIGHT,
       coords: [x + 1, y - 2],
     },
   ];
-}
+};
 
 export const borderWaterConditions = (gridX, gridY, border): LayerCondition[] => {
   const conditions = [];
 
   for (let y = 0; y < gridY; y++) {
     for (let x = 0; x < gridX; x++) {
-      if (
-        x < border
-        || y < border
-        || x >= gridX - border
-        || y >= gridY - border
-       ) {
+      if (x < border || y < border || x >= gridX - border || y >= gridY - border) {
         conditions.push({
-          tile: TileName.WATER_MIDDLE_MIDDLE,
+          sprite: SpriteName.WATER_MIDDLE_MIDDLE,
           coords: [x, y],
           boundary: true,
         });
@@ -195,7 +190,7 @@ export const borderWaterConditions = (gridX, gridY, border): LayerCondition[] =>
   }
 
   return conditions;
-}
+};
 
 export const centerBridgeConditions = (gridX, gridY): LayerCondition[] => {
   const centerX = Math.floor(gridX / 2);
@@ -208,12 +203,12 @@ export const centerBridgeConditions = (gridX, gridY): LayerCondition[] => {
   for (let i = 0; i < gridY; i++) {
     if (i === y) {
       conditions.push({
-        tile: TileName.BRIDGE_MIDDLE,
+        sprite: SpriteName.BRIDGE_MIDDLE,
         coords: [x, y],
       });
     } else {
       conditions.push({
-        tile: TileName.WATER_MIDDLE_MIDDLE,
+        sprite: SpriteName.WATER_MIDDLE_MIDDLE,
         coords: [x, i],
         boundary: true,
       });
@@ -221,7 +216,7 @@ export const centerBridgeConditions = (gridX, gridY): LayerCondition[] => {
   }
 
   return conditions;
-}
+};
 
 export const centerSandConditions = (gridX, gridY, border): LayerCondition[] => {
   const centerX = Math.floor(gridX / 2);
@@ -232,7 +227,7 @@ export const centerSandConditions = (gridX, gridY, border): LayerCondition[] => 
   for (let i = 0; i < gridY; i++) {
     if (i > border && i < gridY - border - 1) {
       conditions.push({
-        tile: TileName.SAND_MIDDLE_MIDDLE,
+        sprite: SpriteName.SAND_MIDDLE_MIDDLE,
         coords: [x, i],
         boundary: false,
       });
@@ -240,6 +235,4 @@ export const centerSandConditions = (gridX, gridY, border): LayerCondition[] => 
   }
 
   return conditions;
-}
-
-
+};

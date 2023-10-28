@@ -1,5 +1,5 @@
 import { LayerCondition } from "@core/layer";
-import { TileName } from "@core/renderer";
+import { SpriteName } from "@core/renderer";
 
 /**
  * Generates sign conditions for a layer.
@@ -10,10 +10,10 @@ import { TileName } from "@core/renderer";
 export const signConditions = (enter: [number, number], exit: [number, number]): LayerCondition[] => {
   return [
     // left sign
-    { tile: TileName.DECO_SIGN_STOP_BOTTOM, coords: [enter[0] - 1, enter[1]], boundary: true },
-    { tile: TileName.DECO_SIGN_STOP_TOP, coords: [enter[0] - 1, enter[1] - 1] },
+    { sprite: SpriteName.DECO_SIGN_STOP_BOTTOM, coords: [enter[0] - 1, enter[1]], boundary: true },
+    { sprite: SpriteName.DECO_SIGN_STOP_TOP, coords: [enter[0] - 1, enter[1] - 1] },
     // right sign
-    { tile: TileName.DECO_SIGH_RIGHT_BOTTOM, coords: [exit[0] + 1, exit[1]], boundary: true },
-    { tile: TileName.DECO_SIGH_RIGHT_TOP, coords: [exit[0] + 1, exit[1] - 1] },
+    { sprite: SpriteName.DECO_SIGH_RIGHT_BOTTOM, coords: [exit[0] + 1, exit[1]], boundary: true },
+    { sprite: SpriteName.DECO_SIGH_RIGHT_TOP, coords: [exit[0] + 1, exit[1] - 1] },
   ];
 }
